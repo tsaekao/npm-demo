@@ -1,0 +1,45 @@
+{
+  "name": "rtvjs",
+  "version": "0.0.1",
+  "description": "Runtime Type Verification Isomorphic JavaScript Library",
+  "main": "dist/rtv.umd.js",
+  "module": "dist/rtv.esm.js",
+  "jsnext:main": "dist/rtv.esm.js",
+  "scripts": {
+    "start": "node -r ./test/node.js",
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/stefcameron/rtvjs.git"
+  },
+  "keywords": [
+    "javascript",
+    "test",
+    "runtime",
+    "verify",
+    "verification",
+    "assertion",
+    "type",
+    "integration",
+    "isomorphic"
+  ],
+  "author": {
+    "name": "Stefan Cameron",
+    "url": "https://twitter.com/stefcameron"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/stefcameron/rtvjs/issues"
+  },
+  "homepage": "https://gitlab.com/stefcameron/rtvjs#README",
+  "dependencies": {
+    "lodash-es": "4.17.4"
+  },
+  "devDependencies": {
+    "rollup": "0.50.0",
+    "rollup-plugin-json": "2.3.0",
+    "rollup-plugin-node-resolve": "3.0.0"
+  }
+}
