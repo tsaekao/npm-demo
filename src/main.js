@@ -4,7 +4,12 @@
 
 import { default as isString } from 'lodash-es/isString';
 import { version as VERSION } from '../package.json';
-import * as types from './types';
+import * as typeMap from './types';
+import * as qualifierMap from './qualiiers';
+import Enumeration from './Enumeration';
+
+var types = new Enumeration(typeMap);
+var qualifiers = new Enumeration(qualifierMap);
 
 var rtv = {
   _version: VERSION,

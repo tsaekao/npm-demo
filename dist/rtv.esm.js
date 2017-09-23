@@ -184,29 +184,235 @@ var version = "0.0.1";
 
 //// Type Definitions \\\\
 
+'use strict';
+
+/**
+ * @namespace types
+ */
+
+/**
+ * String rules per qualifiers:
+ * - REQUIRED: Must be a non-empty string.
+ * - EXPECTED | OPTIONAL: Can be an empty string.
+ * @name types.STRING
+ * @const {String}
+ * @see {@link qualifiers}
+ */
 var STRING = 'string';
 
+/**
+ * Boolean rules per qualifiers: Must be a boolean.
+ * @name types.BOOLEAN
+ * @const {String}
+ * @see {@link qualifiers}
+ */
+var BOOLEAN = 'boolean';
 
+/**
+ * Number rules per qualifiers:
+ * - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
+ * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
+ * @name types.NUMBER
+ * @const {String}
+ * @see {@link qualifiers}
+ * @see {@link types.FINITE}
+ */
+var NUMBER = 'number';
 
+/**
+ * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`.
+ * @name types.FINITE
+ * @const {String}
+ * @see {@link qualifiers}
+ * @see {@link types.NUMBER}
+ */
+var FINITE = 'finite';
 
+/**
+ * Int rules per qualifiers: Must be a finite integer, but is not necessarily _safe_.
+ * @name types.INT
+ * @const {String}
+ * @see {@link qualifiers}
+ * @see {@link types.FLOAT}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
+ */
+var INT = 'int';
 
+/**
+ * Float rules per qualifiers: Must be a finite floating point number.
+ * @name types.FLOAT
+ * @const {String}
+ * @see {@link qualifiers}
+ * @see {@link types.INT}
+ */
+var FLOAT = 'float';
 
+var OBJECT = 'object';
+var EXT_OBJECT = 'extendedObject';
+var PLAIN_OBJECT = 'plainObject';
+var CLASS_OBJECT = 'classObject';
+var OBJECT_MAP = 'objectMap';
 
-
-
-
-
-
-
-
+var ARRAY = 'array';
+var JSON = 'json';
+var FUNCTION = 'function';
+var REGEXP = 'regexp';
+var DATE = 'date';
+var ERROR = 'error';
 
 // TODO: useful? var ENUM = 'enum';
-// TODO: useful? var PROPERTY = 'property';
+// TODO: useful? var PROPERTY = 'property'; -- yes, good for 'any' type, perhaps use 'ANY'?
 // TODO: Add types for ES6 types: Symbol, Weak/Map, Weak/Set
+
+
+var typeMap = Object.freeze({
+	STRING: STRING,
+	BOOLEAN: BOOLEAN,
+	NUMBER: NUMBER,
+	FINITE: FINITE,
+	INT: INT,
+	FLOAT: FLOAT,
+	OBJECT: OBJECT,
+	EXT_OBJECT: EXT_OBJECT,
+	PLAIN_OBJECT: PLAIN_OBJECT,
+	CLASS_OBJECT: CLASS_OBJECT,
+	OBJECT_MAP: OBJECT_MAP,
+	ARRAY: ARRAY,
+	JSON: JSON,
+	FUNCTION: FUNCTION,
+	REGEXP: REGEXP,
+	DATE: DATE,
+	ERROR: ERROR
+});
+
+//// Qualifier Definitions \\\\
+
+'use strict';
+
+/**
+ * @namespace qualifiers
+ */
+
+/**
+ * Required qualifier: Property _must_ exist and be of the expected type.
+ *  Depending on the type, additional requirements may be enforced.
+ *
+ * See specific type for additional rules.
+ *
+ * @name qualifiers.REQUIRED
+ * @const {String}
+ * @see {@link types}
+ */
+var REQUIRED = '!';
+
+/**
+ * Expected qualifier: Property _should_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced.
+ *
+ * In general, an expected property must be defined, but could be `null`.
+ *
+ * See specific type for additional rules.
+ *
+ * @name qualifiers.EXPECTED
+ * @const {String}
+ * @see {@link types}
+ */
+var EXPECTED = '+';
+
+/**
+ * Optional qualifier: Property _may_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced (i.e. less so
+ *  than with the `EXPECTED` qualifier).
+ *
+ * In general, an optional property could be `undefined` (i.e does not need to be
+ *  defined). If it is defined, then it is treated as an `EXPECTED` property.
+ *
+ * See specific type for additional rules.
+ *
+ * @name qualifiers.OPTIONAL
+ * @const {String}
+ * @see {@link types}
+ */
+var OPTIONAL = '?';
+
+
+var qualifierMap = Object.freeze({
+	REQUIRED: REQUIRED,
+	EXPECTED: EXPECTED,
+	OPTIONAL: OPTIONAL
+});
+
+//// Enumeration \\\\
+
+'use strict';
+
+/**
+ * Simple enumeration type.
+ * @class Enumeration
+ * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
+ *  be `undefined`.
+ * @throws {Error} If `map` is falsy or empty.
+ * @throws {Error} If `map` has a key that maps to `undefined`.
+ */
+var Enumeration = function(map) {
+    map = map || {};
+
+    var keys = Object.keys(map);
+    var values = [];
+
+    if (keys.length === 0) {
+        throw new Error('map must contain at least one key');
+    }
+
+    // shallow-clone each key in the map into this
+    keys.forEach((key) => {
+        if (map[key] === undefined) {
+            throw new Error('map[' + key + '] cannot be undefined');
+        }
+
+        var value = map[key];
+        values.push(value);
+        this[key] = value;
+    });
+
+    /**
+     * [internal] List of enumeration values.
+     * @name Enumeration#_values
+     * @type Array.<String>
+     */
+    Object.defineProperty(this, '_values', {
+        enumerable: false, // internal
+        configurable: true,
+        value: values
+    });
+};
+
+/**
+ * Validates a value as being in this enumeration. Throws an exception if the value
+ *  is not in this enumeration, unless `silent` is true.
+ * @method Enumeration#validate
+ * @param {*} value Value to check. Cannot be undefined.
+ * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+ *  an exception if the specified value is not in this enumeration.
+ * @returns {*} The specified value if it is in this enumeration, or `undefined` if
+ *  `silent` is true and the value is not in this enumeration.
+ */
+Enumeration.prototype.validate = function(value, silent) {
+    if (this._values.indexOf(value) >= 0) {
+        return value;
+    } else if (silent) {
+        return undefined;
+    } else {
+        throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
+    }
+};
 
 //// Main entry point \\\\
 
 'use strict';
+
+var types = new Enumeration(typeMap);
+var qualifiers = new Enumeration(qualifierMap);
 
 var rtv = {
   _version: version,
@@ -217,7 +423,7 @@ var rtv = {
   verify: function(value) {
     if (this.config.enabled) {
       if (!this.check(value)) {
-        throw new Error('value must be a ' + STRING + ': ' + value);
+        throw new Error('value must be a ' + types.STRING + ': ' + value);
       }
     }
   },

@@ -4,6 +4,10 @@ __Runtime Type Verification Isomorphic JavaScript Library__
 
 This library runs equally well in modern browsers and on the server with Node.js.
 
+# Documentation
+
+[Documentation](dist/rtv.js.md)
+
 # Changes
 
 [Changelog](CHANGELOG.md)
@@ -19,7 +23,6 @@ This library runs equally well in modern browsers and on the server with Node.js
 # TODO
 
 - [ ] Implement the library...
-- [ ] Add Markdown documentation output to `/dist` and reference from `README.md`: https://github.com/jsdoc2md/jsdoc-to-markdown
 - [ ] Add linting: ESLint
 - [ ] Add unit test system: Karma + Jasmine
 - [ ] Add minified output: UglifyJS?
