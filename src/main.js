@@ -8,6 +8,11 @@ import * as typeMap from './types';
 import * as qualifierMap from './qualiiers';
 import Enumeration from './Enumeration';
 
+/**
+ * RTV.js
+ * @namespace rtv
+ */
+
 var types = new Enumeration(typeMap);
 var qualifiers = new Enumeration(qualifierMap);
 
