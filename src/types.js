@@ -19,6 +19,27 @@
  * - `null`
  * - `undefined`
  *
+ * <h4>Rules Per Qualifiers</h4>
+ *
+ * {@link rtv.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
+ *  every type herein abides by those basic rules. Each type will also impose
+ *  additional rules specific to the type of value it represents.
+ *
+ * For example, while the {@link rtv.types.FINITE FINITE} type states that the
+ *  value must not be `NaN`, `+Infinity`, nor `-Infinity`, it could be `null` if
+ *  the qualifier used is `EXPECTED`, and it could be `undefined` if the qualifier
+ *  used is `OPTIONAL`.
+ *
+ * <h4>Arguments</h4>
+ *
+ * Some types will accept, or may even expect, arguments. An argument immediately
+ *  follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
+ *  This would specify that the value must be a {@link rtv.types.PLAIN_OBJECT plain object}
+ *  with a shape that includes a property named 'hello', that property being a
+ *  {@link rtv.qualifiers.REQUIRED required} {@link rtv.types.STRING string}.
+ *
+ * Optional and required arguments are specified for each type, where applicable.
+ *
  * @namespace rtv.types
  */
 
@@ -64,19 +85,23 @@ export var NUMBER = 'number';
 export var SYMBOL = 'symbol';
 
 /**
- * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`.
+ * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
+ *  value can be either a safe integer or a {@link rtv.types.FLOAT floating point number}.
  * @name rtv.types.FINITE
  * @const {String}
  * @see {@link rtv.qualifiers}
  * @see {@link rtv.types.NUMBER}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
  */
 export var FINITE = 'finite';
 
 /**
- * Int rules per qualifiers: Must be a finite integer, but is not necessarily _safe_.
+ * Int rules per qualifiers: Must be a {@link rtv.types.FINITE finite} integer,
+ *  but is not necessarily _safe_.
  * @name rtv.types.INT
  * @const {String}
  * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.FINITE}
  * @see {@link rtv.types.FLOAT}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
  */
@@ -92,36 +117,39 @@ export var INT = 'int';
 export var FLOAT = 'float';
 
 /**
- * An object is anything that is not a {@link rtv.types primitive}, which means it
- *  includes the `Array` type. To test for an array, use the {@link rtv.types.ARRAY ARRAY}
- *  type instead.
+ * An _any_ object is anything that is not a {@link rtv.types primitive}, which
+ *  means it includes the `Array` type, as well as functions and arguments. To
+ *  test for an array, use the {@link rtv.types.ARRAY ARRAY} type. To
+ *  test for a function, use the {@link rtv.types.FUNCTION FUNCTION} type.
  *
- * The following values are considered objects:
+ * The following values are considered any objects:
  *
  * - `{}`
+ * - `new Object()`
  * - `[]`
+ * - `new Array()`
  * - `function(){}`
  * - `arguments` (function arguments)
- * - `new Object()`
  * - `new String('')`
  * - `new Boolean(true)`
  * - `new Number(1)`
- * - `new RegExp('r')`
- * - `new function() {}`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new function() {}` (class instance)
  * - `new Set()`
  * - `new WeakSet()`
  * - `new Map()`
  * - `new WeakMap()`
  *
- * The following values __are not__ considered objects (because they are considered
- *  {@link rtv.types primitives}):
+ * The following values __are not__ considered any objects (because they are
+ *  considered to be {@link rtv.types primitives}):
  *
  * - `Symbol('s')`
  * - `true`
  * - `1`
  * - `''`
- * - `null` (NOTE: `typeof null === 'object'` in JavaScript; the OBJECT type
- *   allows testing for this undesirable fact)
+ * - `null` (NOTE: `typeof null === 'object'` in JavaScript; the `ANY_OBJECT`
+ *   type allows testing for this undesirable fact)
  * - `undefined`
  *
  * Object rules per qualifiers:
@@ -130,20 +158,185 @@ export var FLOAT = 'float';
  * - EXPECTED: `null` is allowed.
  * - OPTIONAL: `undefined` is allowed.
  *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
+ * @name rtv.types.ANY_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
+export var ANY_OBJECT = 'anyObject';
+
+/**
+ * An object is one that extends from `JavaScript.Object` and is not
+ *  a function, array, regular expression, arguments, nor a
+ *  {@link rtv.types primitive}.
+ *
+ * This is the __default__ (imputed) type for shape descriptions, which means
+ *  the object itself (the value being tested), prior to being checked against
+ *  its shape, will be tested according to this type.
+ *
+ * The following values are considered objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ *
+ * The following values __are not__ considered objects:
+ *
+ * - `[]`
+ * - `new Array()`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
  * @name rtv.types.OBJECT
  * @const {String}
  * @see {@link rtv.qualifiers}
- * @see {@link rtv.types.EXT_OBJECT}
+ * @see {@link rtv.types.ANY_OBJECT}
  * @see {@link rtv.types.PLAIN_OBJECT}
  * @see {@link rtv.types.CLASS_OBJECT}
  * @see {@link rtv.types.MAP_OBJECT}
  */
 export var OBJECT = 'object';
 
-export var EXT_OBJECT = 'extendedObject';
+/**
+ * A _plain_ object is one that is created directly from the `Object` constructor,
+ *  whether using `new Object()` or the literal `{}`.
+ *
+ * The following values are considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `[]`
+ * - `new Array()`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new function() {}` (class instance)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
+ * @name rtv.types.PLAIN_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
 export var PLAIN_OBJECT = 'plainObject';
+
+/**
+ * A _class_ object is one that is created by invoking the `new` operator on a
+ *  function (other than a primitive type function), generating a new object,
+ *  commonly referred to as a _class instance_, whose prototype (`__proto__`)
+ *  is a reference to that function's `prototype`.
+ *
+ * The following values are considered class objects:
+ *
+ * - `new function() {}`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `[]`
+ * - `new Array()`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Argument (optional):
+ *
+ * - // TODO: require a function, or optional function, to check 'instanceof'?
+ * - A nested shape description.
+ *
+ * @name rtv.types.CLASS_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
 export var CLASS_OBJECT = 'classObject';
-export var MAP_OBJECT = 'mapObject'; // TODO: useful? same as PLAIN_OBJECT?
+
+export var MAP_OBJECT = 'mapObject'; // this allows a regex or type to enforce expected keys
 
 export var ARRAY = 'array';
 export var JSON = 'json';

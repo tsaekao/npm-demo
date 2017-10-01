@@ -19,12 +19,12 @@ var qualifiers = new Enumeration(qualifierMap);
 var rtv = {
   _version: VERSION,
 
-  check: function(value) {
+  check: function(value, shape) {
     return isString(value) && !!value;
   },
-  verify: function(value) {
+  verify: function(value, shape) {
     if (this.config.enabled) {
-      if (!this.check(value)) {
+      if (!this.check(value, shape)) {
         throw new Error('value must be a ' + types.STRING + ': ' + value);
       }
     }
