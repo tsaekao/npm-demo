@@ -43,6 +43,8 @@
  * @namespace rtv.types
  */
 
+ // TODO: turn this into 'collection_descriptor' and use it for mapObject,
+ //  Map, WeakMap, Set, WeakSet?
 /**
  * Map Object Descriptor
  * @typedef {Object} rtv.types.map_object_descriptor
@@ -52,21 +54,26 @@
  *  key names.
  *
  * For example, to require numerical keys, the following expression could be
- *  specified: `'^\\d+$'`.
+ *  used: `'^\\d+$'`.
  *
  * @property {String} [flags] Optional. A string specifying any flags to use
  *  with the regular expression specified in `keys`. If this property is _falsy_,
  *  default `RegExp` flags will be used.
  *
  * @property {rtv.types.typeset} [values=types.ANY] Optional. A
- *  type set describing all values in the map. Defaults to the
+ *  typeset describing each value in the map. Defaults to the
  *  {@link rtv.types.ANY ANY} type which allows _anything_. All values must match
- *  this typeset.
+ *  this typeset (but the map object is not required to have any
+ *  entries/properties to be considered valid, unless `count` is specified).
  *
  * For example, to require arrays of non-empty string values, the following
- *  typeset could be specified: `[[types.STRING]]`.
+ *  typeset could be used: `[[types.STRING]]`.
  *
- * @see rtv.types
+ * @property {number} [count=-1] Optional. The number of entries expected in
+ *  the map object. A negative value allows for any number of entries. Zero
+ *  requires an empty map object.
+ *
+ * @see rtv.types.MAP_OBJECT
  */
 
 /**
@@ -374,15 +381,15 @@ export var CLASS_OBJECT = 'classObject';
  * A _map_ object is an {@link rtv.types.OBJECT OBJECT} that is treated as a
  *  hash map with an expected set of keys and values. Keys can be described
  *  using a regular expression, and values can be described using a
- *  {@link rtv.types.typeset typeset}.
+ *  {@link rtv.types.typeset typeset}. Empty maps are permitted.
  *
  * Map object rules per qualifiers: Same as {@link rtv.types.OBJECT OBJECT} rules.
  *
  * Argument (optional):
  *
  * - A {@link rtv.types.map_object_descriptor map descriptor} specifying the rules
- *   for the keys and/or values found in the map. If this is not specified, the
- *   default map descriptor options apply.
+ *   for the keys and/or values found in the map. If not specified, the default
+ *   map descriptor options apply.
  *
  * @name rtv.types.MAP_OBJECT
  * @const {String}
@@ -394,8 +401,41 @@ export var CLASS_OBJECT = 'classObject';
  */
 export var MAP_OBJECT = 'mapObject';
 
+// TODO: Is there a way that ARRAY could take a parameter, that being the
+//  required length of the array, defaulting to -1 for any length? Perhaps
+//  only when using the full form as `[ARRAY, 2, [STRING]]` instead of the
+//  short form as `[[STRING]]`? If so, then this would be up to par with
+//  the MAP_OBJECT where a count can be specified...
+/**
+ * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
+ * @name rtv.types.ARRAY
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ */
 export var ARRAY = 'array';
+
+/**
+ * JSON rules per qualifiers: Must be a JSON value:
+ *
+ * - {@link rtv.types.STRING string}, however __empty strings__ are permitted,
+ *   even if the qualifier is `REQUIRED`;
+ * - {@link rtv.types.BOOLEAN boolean};
+ * - {@link rtv.types.FINITE finite number};
+ * - {@link rtv.types.PLAIN_OBJECT plain object};
+ * - {@link rtv.types.ARRAY array};
+ * - `null`
+ *
+ * Since this type checks for _any_ valid JSON value, empty string and `null`
+ *  values are permitted, even when the typeset is qualified as `REQUIRED`.
+ *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
+ *  qualifier.
+ *
+ * @name rtv.types.JSON
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ */
 export var JSON = 'json';
+
 export var FUNCTION = 'function';
 export var REGEXP = 'regexp';
 export var DATE = 'date';
