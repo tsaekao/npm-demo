@@ -36,7 +36,10 @@ var rtv = {
 
   Context: function(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
-  }
+  },
+
+  types: types,
+  qualifiers: qualifiers
 };
 
 export default rtv;

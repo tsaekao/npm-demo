@@ -4,6 +4,15 @@ __Runtime Type Verification Isomorphic JavaScript Library__
 
 This library runs equally well in modern browsers and on the server with Node.js.
 
+# Goals
+
+Shapes must be:
+
+*   serializable to JSON so they remain portable;
+*   composable (shapes can reference other shapes);
+*   easy to express (rich types and qualifiers);
+*   easy to customize (with validators).
+
 # Documentation
 
 [Documentation](dist/rtv.js.md)
@@ -31,3 +40,4 @@ This library runs equally well in modern browsers and on the server with Node.js
 - [ ] Add Gitlab CI config, or use TravisCI?
 - [ ] Publish to npm
     - [ ] Add `.npmignore`
+- [ ] Make sure 'Goals' section is complete and accurate, add some links

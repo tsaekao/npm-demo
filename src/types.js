@@ -44,6 +44,38 @@
  */
 
 /**
+ * Map Object Descriptor
+ * @typedef {Object} rtv.types.map_object_descriptor
+ * @property {String} [keys] Optional. A string-based regular expression
+ *  describing the names of keys (own-enumerable properties) found in the
+ *  object being treated as a map. By default, there are no restrictions on
+ *  key names.
+ *
+ * For example, to require numerical keys, the following expression could be
+ *  specified: `'^\\d+$'`.
+ *
+ * @property {String} [flags] Optional. A string specifying any flags to use
+ *  with the regular expression specified in `keys`. If this property is _falsy_,
+ *  default `RegExp` flags will be used.
+ *
+ * @property {rtv.types.typeset} [values=types.ANY] Optional. A
+ *  type set describing all values in the map. Defaults to the
+ *  {@link rtv.types.ANY ANY} type which allows _anything_. All values must match
+ *  this typeset.
+ *
+ * For example, to require arrays of non-empty string values, the following
+ *  typeset could be specified: `[[types.STRING]]`.
+ *
+ * @see rtv.types
+ */
+
+/**
+ * Typeset
+ * @typedef {Object} rtv.types.typeset
+ * // TODO
+ */
+
+/**
  * String rules per qualifiers:
  *
  * - REQUIRED: Must be a non-empty string.
@@ -152,7 +184,7 @@ export var FLOAT = 'float';
  *   type allows testing for this undesirable fact)
  * - `undefined`
  *
- * Object rules per qualifiers:
+ * Any object rules per qualifiers:
  *
  * - REQUIRED: Per the lists above.
  * - EXPECTED: `null` is allowed.
@@ -261,7 +293,7 @@ export var OBJECT = 'object';
  * - `null`
  * - `undefined`
  *
- * Object rules per qualifiers:
+ * Plain object rules per qualifiers:
  *
  * - REQUIRED: Per the lists above.
  * - EXPECTED: `null` is allowed.
@@ -284,8 +316,8 @@ export var PLAIN_OBJECT = 'plainObject';
 /**
  * A _class_ object is one that is created by invoking the `new` operator on a
  *  function (other than a primitive type function), generating a new object,
- *  commonly referred to as a _class instance_, whose prototype (`__proto__`)
- *  is a reference to that function's `prototype`.
+ *  commonly referred to as a _class instance_. This object's prototype
+ *  (`__proto__`) is a reference to that function's `prototype`.
  *
  * The following values are considered class objects:
  *
@@ -315,15 +347,17 @@ export var PLAIN_OBJECT = 'plainObject';
  * - `null`
  * - `undefined`
  *
- * Object rules per qualifiers:
+ * Class object rules per qualifiers:
  *
  * - REQUIRED: Per the lists above.
  * - EXPECTED: `null` is allowed.
  * - OPTIONAL: `undefined` is allowed.
  *
- * Argument (optional):
+ * Arguments (optional, specify one or the other, or both in order):
  *
- * - // TODO: require a function, or optional function, to check 'instanceof'?
+ * - A reference to a constructor function. If specified, the class object
+ *   (instance) must have this class function in its inheritance chain such
+ *   that `<class_object> instanceof <function> === true`.
  * - A nested shape description.
  *
  * @name rtv.types.CLASS_OBJECT
@@ -336,7 +370,29 @@ export var PLAIN_OBJECT = 'plainObject';
  */
 export var CLASS_OBJECT = 'classObject';
 
-export var MAP_OBJECT = 'mapObject'; // this allows a regex or type to enforce expected keys
+/**
+ * A _map_ object is an {@link rtv.types.OBJECT OBJECT} that is treated as a
+ *  hash map with an expected set of keys and values. Keys can be described
+ *  using a regular expression, and values can be described using a
+ *  {@link rtv.types.typeset typeset}.
+ *
+ * Map object rules per qualifiers: Same as {@link rtv.types.OBJECT OBJECT} rules.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.map_object_descriptor map descriptor} specifying the rules
+ *   for the keys and/or values found in the map. If this is not specified, the
+ *   default map descriptor options apply.
+ *
+ * @name rtv.types.MAP_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ */
+export var MAP_OBJECT = 'mapObject';
 
 export var ARRAY = 'array';
 export var JSON = 'json';

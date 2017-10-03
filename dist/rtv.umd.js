@@ -198,71 +198,396 @@ var version = "0.0.1";
 'use strict';
 
 /**
- * @namespace types
+ * Types
+ *
+ * <h4>Primitives</h4>
+ *
+ * In RTV.js, a primitive is considered to be one of the following types:
+ *
+ * - `string` (note that `new String('s')` does not produce a _primitive_, it
+ *   produces an _object_, and should generally be avoided).
+ * - `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
+ *   it produces an _object_, and should generally be avoided).
+ * - `number` (note that `new Number(1)` does not produce a _primitive_,
+ *   it produces an _object_, and should generally be avoided).
+ * - `Symbol`
+ * - `null`
+ * - `undefined`
+ *
+ * <h4>Rules Per Qualifiers</h4>
+ *
+ * {@link rtv.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
+ *  every type herein abides by those basic rules. Each type will also impose
+ *  additional rules specific to the type of value it represents.
+ *
+ * For example, while the {@link rtv.types.FINITE FINITE} type states that the
+ *  value must not be `NaN`, `+Infinity`, nor `-Infinity`, it could be `null` if
+ *  the qualifier used is `EXPECTED`, and it could be `undefined` if the qualifier
+ *  used is `OPTIONAL`.
+ *
+ * <h4>Arguments</h4>
+ *
+ * Some types will accept, or may even expect, arguments. An argument immediately
+ *  follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
+ *  This would specify that the value must be a {@link rtv.types.PLAIN_OBJECT plain object}
+ *  with a shape that includes a property named 'hello', that property being a
+ *  {@link rtv.qualifiers.REQUIRED required} {@link rtv.types.STRING string}.
+ *
+ * Optional and required arguments are specified for each type, where applicable.
+ *
+ * @namespace rtv.types
+ */
+
+/**
+ * Map Object Descriptor
+ * @typedef {Object} rtv.types.map_object_descriptor
+ * @property {String} [keys] Optional. A string-based regular expression
+ *  describing the names of keys (own-enumerable properties) found in the
+ *  object being treated as a map. By default, there are no restrictions on
+ *  key names.
+ *
+ * For example, to require numerical keys, the following expression could be
+ *  specified: `'^\\d+$'`.
+ *
+ * @property {String} [flags] Optional. A string specifying any flags to use
+ *  with the regular expression specified in `keys`. If this property is _falsy_,
+ *  default `RegExp` flags will be used.
+ *
+ * @property {rtv.types.typeset} [values=types.ANY] Optional. A
+ *  type set describing all values in the map. Defaults to the
+ *  {@link rtv.types.ANY ANY} type which allows _anything_. All values must match
+ *  this typeset.
+ *
+ * For example, to require arrays of non-empty string values, the following
+ *  typeset could be specified: `[[types.STRING]]`.
+ *
+ * @see rtv.types
+ */
+
+/**
+ * Typeset
+ * @typedef {Object} rtv.types.typeset
+ * // TODO
  */
 
 /**
  * String rules per qualifiers:
+ *
  * - REQUIRED: Must be a non-empty string.
  * - EXPECTED | OPTIONAL: Can be an empty string.
- * @name types.STRING
+ *
+ * @name rtv.types.STRING
  * @const {String}
- * @see {@link qualifiers}
+ * @see {@link rtv.qualifiers}
  */
 var STRING = 'string';
 
 /**
  * Boolean rules per qualifiers: Must be a boolean.
- * @name types.BOOLEAN
+ * @name rtv.types.BOOLEAN
  * @const {String}
- * @see {@link qualifiers}
+ * @see {@link rtv.qualifiers}
  */
 var BOOLEAN = 'boolean';
 
 /**
  * Number rules per qualifiers:
+ *
  * - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
  * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
- * @name types.NUMBER
+ *
+ * @name rtv.types.NUMBER
  * @const {String}
- * @see {@link qualifiers}
- * @see {@link types.FINITE}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.FINITE}
  */
 var NUMBER = 'number';
 
 /**
- * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`.
- * @name types.FINITE
+ * Symbol rules per qualifiers: Must be a symbol.
+ * @name rtv.types.SYMBOL
  * @const {String}
- * @see {@link qualifiers}
- * @see {@link types.NUMBER}
+ * @see {@link rtv.qualifiers}
+ */
+var SYMBOL = 'symbol';
+
+/**
+ * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
+ *  value can be either a safe integer or a {@link rtv.types.FLOAT floating point number}.
+ * @name rtv.types.FINITE
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.NUMBER}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
  */
 var FINITE = 'finite';
 
 /**
- * Int rules per qualifiers: Must be a finite integer, but is not necessarily _safe_.
- * @name types.INT
+ * Int rules per qualifiers: Must be a {@link rtv.types.FINITE finite} integer,
+ *  but is not necessarily _safe_.
+ * @name rtv.types.INT
  * @const {String}
- * @see {@link qualifiers}
- * @see {@link types.FLOAT}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.FINITE}
+ * @see {@link rtv.types.FLOAT}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
  */
 var INT = 'int';
 
 /**
  * Float rules per qualifiers: Must be a finite floating point number.
- * @name types.FLOAT
+ * @name rtv.types.FLOAT
  * @const {String}
- * @see {@link qualifiers}
- * @see {@link types.INT}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.INT}
  */
 var FLOAT = 'float';
 
+/**
+ * An _any_ object is anything that is not a {@link rtv.types primitive}, which
+ *  means it includes the `Array` type, as well as functions and arguments. To
+ *  test for an array, use the {@link rtv.types.ARRAY ARRAY} type. To
+ *  test for a function, use the {@link rtv.types.FUNCTION FUNCTION} type.
+ *
+ * The following values are considered any objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `[]`
+ * - `new Array()`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new function() {}` (class instance)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ *
+ * The following values __are not__ considered any objects (because they are
+ *  considered to be {@link rtv.types primitives}):
+ *
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null` (NOTE: `typeof null === 'object'` in JavaScript; the `ANY_OBJECT`
+ *   type allows testing for this undesirable fact)
+ * - `undefined`
+ *
+ * Any object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
+ * @name rtv.types.ANY_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
+var ANY_OBJECT = 'anyObject';
+
+/**
+ * An object is one that extends from `JavaScript.Object` and is not
+ *  a function, array, regular expression, arguments, nor a
+ *  {@link rtv.types primitive}.
+ *
+ * This is the __default__ (imputed) type for shape descriptions, which means
+ *  the object itself (the value being tested), prior to being checked against
+ *  its shape, will be tested according to this type.
+ *
+ * The following values are considered objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ *
+ * The following values __are not__ considered objects:
+ *
+ * - `[]`
+ * - `new Array()`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
+ * @name rtv.types.OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
 var OBJECT = 'object';
-var EXT_OBJECT = 'extendedObject';
+
+/**
+ * A _plain_ object is one that is created directly from the `Object` constructor,
+ *  whether using `new Object()` or the literal `{}`.
+ *
+ * The following values are considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `[]`
+ * - `new Array()`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new function() {}` (class instance)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Plain object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional):
+ *
+ * - A nested shape description.
+ *
+ * @name rtv.types.PLAIN_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
 var PLAIN_OBJECT = 'plainObject';
+
+/**
+ * A _class_ object is one that is created by invoking the `new` operator on a
+ *  function (other than a primitive type function), generating a new object,
+ *  commonly referred to as a _class instance_. This object's prototype
+ *  (`__proto__`) is a reference to that function's `prototype`.
+ *
+ * The following values are considered class objects:
+ *
+ * - `new function() {}`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `[]`
+ * - `new Array()`
+ * - `function(){}`
+ * - `arguments` (function arguments)
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `/re/`
+ * - `new RegExp('re')`
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
+ * - `Symbol('s')`
+ * - `true`
+ * - `1`
+ * - `''`
+ * - `null`
+ * - `undefined`
+ *
+ * Class object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional, specify one or the other, or both in order):
+ *
+ * - A reference to a constructor function. If specified, the class object
+ *   (instance) must have this class function in its inheritance chain such
+ *   that `<class_object> instanceof <function> === true`.
+ * - A nested shape description.
+ *
+ * @name rtv.types.CLASS_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.MAP_OBJECT}
+ */
 var CLASS_OBJECT = 'classObject';
-var OBJECT_MAP = 'objectMap';
+
+/**
+ * A _map_ object is an {@link rtv.types.OBJECT OBJECT} that is treated as a
+ *  hash map with an expected set of keys and values. Keys can be described
+ *  using a regular expression, and values can be described using a
+ *  {@link rtv.types.typeset typeset}.
+ *
+ * Map object rules per qualifiers: Same as {@link rtv.types.OBJECT OBJECT} rules.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.map_object_descriptor map descriptor} specifying the rules
+ *   for the keys and/or values found in the map. If this is not specified, the
+ *   default map descriptor options apply.
+ *
+ * @name rtv.types.MAP_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.ANY_OBJECT}
+ * @see {@link rtv.types.OBJECT}
+ * @see {@link rtv.types.PLAIN_OBJECT}
+ * @see {@link rtv.types.CLASS_OBJECT}
+ */
+var MAP_OBJECT = 'mapObject';
 
 var ARRAY = 'array';
 var JSON = 'json';
@@ -273,21 +598,22 @@ var ERROR = 'error';
 
 // TODO: useful? var ENUM = 'enum';
 // TODO: useful? var PROPERTY = 'property'; -- yes, good for 'any' type, perhaps use 'ANY'?
-// TODO: Add types for ES6 types: Symbol, Weak/Map, Weak/Set
+// TODO: Add types for ES6 types: Weak/Map, Weak/Set
 
 
 var typeMap = Object.freeze({
 	STRING: STRING,
 	BOOLEAN: BOOLEAN,
 	NUMBER: NUMBER,
+	SYMBOL: SYMBOL,
 	FINITE: FINITE,
 	INT: INT,
 	FLOAT: FLOAT,
+	ANY_OBJECT: ANY_OBJECT,
 	OBJECT: OBJECT,
-	EXT_OBJECT: EXT_OBJECT,
 	PLAIN_OBJECT: PLAIN_OBJECT,
 	CLASS_OBJECT: CLASS_OBJECT,
-	OBJECT_MAP: OBJECT_MAP,
+	MAP_OBJECT: MAP_OBJECT,
 	ARRAY: ARRAY,
 	JSON: JSON,
 	FUNCTION: FUNCTION,
@@ -301,18 +627,22 @@ var typeMap = Object.freeze({
 'use strict';
 
 /**
- * @namespace qualifiers
+ * Qualifiers
+ * @namespace rtv.qualifiers
  */
 
 /**
  * Required qualifier: Property _must_ exist and be of the expected type.
  *  Depending on the type, additional requirements may be enforced.
  *
+ * Unless otherwise stated in type-specific rules, this qualifier does not allow
+ *  a property value to be `null` or `undefined`.
+ *
  * See specific type for additional rules.
  *
- * @name qualifiers.REQUIRED
+ * @name rtv.qualifiers.REQUIRED
  * @const {String}
- * @see {@link types}
+ * @see {@link rtv.types}
  */
 var REQUIRED = '!';
 
@@ -320,13 +650,15 @@ var REQUIRED = '!';
  * Expected qualifier: Property _should_ exist and be of the expected type.
  *  Depending on the type, some requirements may not be enforced.
  *
- * In general, an expected property must be defined, but could be `null`.
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_
+ *  a property value to be defined (i.e. not `undefined`), but _allows_ the
+ *  value to be `null`.
  *
  * See specific type for additional rules.
  *
- * @name qualifiers.EXPECTED
+ * @name rtv.qualifiers.EXPECTED
  * @const {String}
- * @see {@link types}
+ * @see {@link rtv.types}
  */
 var EXPECTED = '+';
 
@@ -335,14 +667,15 @@ var EXPECTED = '+';
  *  Depending on the type, some requirements may not be enforced (i.e. less so
  *  than with the `EXPECTED` qualifier).
  *
- * In general, an optional property could be `undefined` (i.e does not need to be
- *  defined). If it is defined, then it is treated as an `EXPECTED` property.
+ * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
+ *  property value to be `undefined` (i.e. a property does not need to be defined).
+ *  If the property is defined, then it is treated as an `EXPECTED` value.
  *
  * See specific type for additional rules.
  *
- * @name qualifiers.OPTIONAL
+ * @name rtv.qualifiers.OPTIONAL
  * @const {String}
- * @see {@link types}
+ * @see {@link rtv.types}
  */
 var OPTIONAL = '?';
 
@@ -359,7 +692,7 @@ var qualifierMap = Object.freeze({
 
 /**
  * Simple enumeration type.
- * @class Enumeration
+ * @class rtv.Enumeration
  * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
  *  be `undefined`.
  * @throws {Error} If `map` is falsy or empty.
@@ -388,7 +721,7 @@ var Enumeration = function(map) {
 
     /**
      * [internal] List of enumeration values.
-     * @name Enumeration#_values
+     * @name rtv.Enumeration#_values
      * @type Array.<String>
      */
     Object.defineProperty(this, '_values', {
@@ -401,7 +734,7 @@ var Enumeration = function(map) {
 /**
  * Validates a value as being in this enumeration. Throws an exception if the value
  *  is not in this enumeration, unless `silent` is true.
- * @method Enumeration#validate
+ * @method rtv.Enumeration#validate
  * @param {*} value Value to check. Cannot be undefined.
  * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
  *  an exception if the specified value is not in this enumeration.
@@ -422,18 +755,23 @@ Enumeration.prototype.validate = function(value, silent) {
 
 'use strict';
 
+/**
+ * RTV.js
+ * @namespace rtv
+ */
+
 var types = new Enumeration(typeMap);
 var qualifiers = new Enumeration(qualifierMap);
 
 var rtv = {
   _version: version,
 
-  check: function(value) {
+  check: function(value, shape) {
     return isString(value) && !!value;
   },
-  verify: function(value) {
+  verify: function(value, shape) {
     if (this.config.enabled) {
-      if (!this.check(value)) {
+      if (!this.check(value, shape)) {
         throw new Error('value must be a ' + types.STRING + ': ' + value);
       }
     }
@@ -445,7 +783,10 @@ var rtv = {
 
   Context: function(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
-  }
+  },
+
+  types: types,
+  qualifiers: qualifiers
 };
 
 return rtv;
