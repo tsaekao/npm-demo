@@ -227,35 +227,63 @@ var version = "0.0.1";
  * @namespace rtv.types
  */
 
- // TODO: turn this into 'collection_descriptor' and use it for mapObject,
- //  Map, WeakMap, Set, WeakSet?
 /**
- * Map Object Descriptor
- * @typedef {Object} rtv.types.map_object_descriptor
- * @property {String} [keys] Optional. A string-based regular expression
+ * Collection Descriptor
+ *
+ * Describes the keys and values in a collection-based object, which is one of
+ *  the following types:
+ *
+ * - {@link rtv.types.MAP_OBJECT MAP_OBJECT}
+ * - {@link rtv.types.MAP MAP}
+ * - {@link rtv.types.WEAK_MAP WEAK_MAP}
+ * - {@link rtv.types.SET SET}
+ * - {@link rtv.types.WEAK_SET WEAK_SET}
+ *
+ * Note that an {@link rtv.types.ARRAY ARRAY} is __not__ included in this list
+ *  because the array type has special syntax for describing the type of its items.
+ *
+ * For example, the following descriptors both verify a collection of 3-letter
+ *  string keys (upper- or lowercase) to finite numbers:
+ *
+ * - `{keyExp: '[a-z]{3}', keyExpFlags: 'i', values: rtv.types.FINITE}`
+ * - `{keyExp: '[a-zA-Z]{3}', values: rtv.types.FINITE}`
+ *
+ * @typedef {Object} rtv.types.collection_descriptor
+ * @property {rtv.types.typeset} [keys] Optional. A typeset describing each key
+ *  in the collection.
+ *
+ * The type of collection being described may restrict the types that this typeset
+ *  can include. For example, the {@link rtv.types.MAP_OBJECT MAP_OBJECT} collection
+ *  only supports the {@link rtv.types.STRING STRING} type due to the nature of
+ *  its JavaScript Object-based implementation.
+ *
+ * @property {String} [keyExp] Optional. A string-based regular expression
  *  describing the names of keys (own-enumerable properties) found in the
- *  object being treated as a map. By default, there are no restrictions on
- *  key names.
+ *  collection.
+ *
+ * By default, there are no restrictions on key names. This expression is only
+ *  used if the `keys` typeset includes the {@link rtv.types.STRING STRING} type.
  *
  * For example, to require numerical keys, the following expression could be
  *  used: `'^\\d+$'`.
  *
- * @property {String} [flags] Optional. A string specifying any flags to use
- *  with the regular expression specified in `keys`. If this property is _falsy_,
- *  default `RegExp` flags will be used.
+ * @property {String} [keyExpFlags] Optional. A string specifying any flags to use
+ *  with the regular expression specified in `keyExp`. If this property is _falsy_,
+ *  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or
+ *  does not apply per the `keys` typeset.
  *
- * @property {rtv.types.typeset} [values=types.ANY] Optional. A
- *  typeset describing each value in the map. Defaults to the
- *  {@link rtv.types.ANY ANY} type which allows _anything_. All values must match
- *  this typeset (but the map object is not required to have any
- *  entries/properties to be considered valid, unless `count` is specified).
+ * @property {rtv.types.typeset} [values] Optional. A typeset describing each value
+ *  in the collection. Defaults to the {@link rtv.types.ANY ANY} type which allows
+ *  _anything_. All values must match this typeset (but the collection is not
+ *  required to have any entries/properties to be considered valid, unless
+ *  `count` is specified).
  *
  * For example, to require arrays of non-empty string values, the following
  *  typeset could be used: `[[types.STRING]]`.
  *
  * @property {number} [count=-1] Optional. The number of entries expected in
- *  the map object. A negative value allows for any number of entries. Zero
- *  requires an empty map object.
+ *  the collection. A negative value allows for any number of entries. Zero
+ *  requires an empty collection.
  *
  * @see rtv.types.MAP_OBJECT
  */
@@ -397,7 +425,10 @@ var ANY_OBJECT = 'anyObject';
 
 /**
  * An object is one that extends from `JavaScript.Object` and is not
- *  a function, array, regular expression, arguments, nor a
+ *  a {@link rtv.types.FUNCTION function}, {@link rtv.types.ARRAY array},
+ *  {@link rtv.types.REGEXP regular expression}, function arguments object,
+ *  {@link rtv.types.MAP map}, {@link rtv.types.WEAK_MAP weak map},
+ *  {@link rtv.types.SET set}, {@link rtv.types.WEAK_SET weak set}, nor a
  *  {@link rtv.types primitive}.
  *
  * This is the __default__ (imputed) type for shape descriptions, which means
@@ -412,10 +443,6 @@ var ANY_OBJECT = 'anyObject';
  * - `new Boolean(true)`
  * - `new Number(1)`
  * - `new function() {}` (class instance)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
  *
  * The following values __are not__ considered objects:
  *
@@ -425,6 +452,10 @@ var ANY_OBJECT = 'anyObject';
  * - `new RegExp('re')`
  * - `function(){}`
  * - `arguments` (function arguments)
+ * - `new Set()`
+ * - `new WeakSet()`
+ * - `new Map()`
+ * - `new WeakMap()`
  * - `Symbol('s')`
  * - `true`
  * - `1`
@@ -514,7 +545,7 @@ var PLAIN_OBJECT = 'plainObject';
  *
  * - `new function() {}`
  *
- * The following values __are not__ considered plain objects:
+ * The following values __are not__ considered class objects:
  *
  * - `{}`
  * - `new Object()`
@@ -571,9 +602,12 @@ var CLASS_OBJECT = 'classObject';
  *
  * Argument (optional):
  *
- * - A {@link rtv.types.map_object_descriptor map descriptor} specifying the rules
- *   for the keys and/or values found in the map. If not specified, the default
- *   map descriptor options apply.
+ * - A {@link rtv.types.collection_descriptor collection descriptor} specifying
+ *   the rules for the keys and/or values found in the map. If not specified,
+ *   the default collection descriptor options apply. __NOTE:__ Since a map object
+ *   is based on a JavaScript Object (which only supports string-based keys), the
+ *   collection descriptor's `keys` type defaults to (and is required to be)
+ *   {@link rtv.types.STRING STRING}.
  *
  * @name rtv.types.MAP_OBJECT
  * @const {String}
@@ -582,6 +616,8 @@ var CLASS_OBJECT = 'classObject';
  * @see {@link rtv.types.OBJECT}
  * @see {@link rtv.types.PLAIN_OBJECT}
  * @see {@link rtv.types.CLASS_OBJECT}
+ * @see {@link rtv.types.MAP}
+ * @see {@link rtv.types.WEAK_MAP}
  */
 var MAP_OBJECT = 'mapObject';
 
@@ -620,14 +656,97 @@ var ARRAY = 'array';
  */
 var JSON = 'json';
 
+/**
+ * Function rules per qualifiers: Must be a `function`.
+ * @name rtv.types.FUNCTION
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ */
 var FUNCTION = 'function';
+
+/**
+ * RegExp rules per qualifiers: Must be a `RegExp` instance.
+ * @name rtv.types.REGEXP
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+ */
 var REGEXP = 'regexp';
+
+/**
+ * Date rules per qualifiers: Must be a `Date` instance.
+ * @name rtv.types.DATE
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+ */
 var DATE = 'date';
+
+/**
+ * Error rules per qualifiers: Must be an `Error` instance.
+ * @name rtv.types.ERROR
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+ */
 var ERROR = 'error';
 
-// TODO: useful? var ENUM = 'enum';
+/**
+ * Promise rules per qualifiers: Must be a `Promise` instance.
+ * @name rtv.types.PROMISE
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+ */
+var PROMISE = 'promise';
+
+/**
+ * An ES6 map supports any object as its keys, unlike a
+ *  {@link rtv.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
+ *  be described using a regular expression (if they are strings), and values can
+ *  be described using a {@link rtv.types.typeset typeset}. Empty maps are permitted.
+ *
+ * Map rules per qualifiers: Must be a `Map` instance.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.collection_descriptor collection descriptor} specifying
+ *   the rules for the keys and/or values found in the map. If not specified,
+ *   the default collection descriptor options apply.
+ *
+ * @name rtv.types.MAP_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.MAP_OBJECT}
+ * @see {@link rtv.types.WEAK_MAP}
+ */
+var MAP = 'map';
+
+/**
+ * An ES6 weak map supports any object as its keys, unlike a
+ *  {@link rtv.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
+ *  be described using a regular expression (if they are strings), and values can
+ *  be described using a {@link rtv.types.typeset typeset}. Empty maps are permitted.
+ *
+ * Weak map rules per qualifiers: Must be a `WeakMap` instance.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.collection_descriptor collection descriptor} specifying
+ *   the rules for the keys and/or values found in the map. If not specified,
+ *   the default collection descriptor options apply.
+ *
+ * @name rtv.types.MAP_OBJECT
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.MAP_OBJECT}
+ * @see {@link rtv.types.MAP}
+ */
+var WEAK_MAP = 'weakMap';
+
+// TODO: Add SET and WEAK_SET types -- sets technically don't have keys, so collection_descriptor.keys, etc.
+//  should be ignored...
 // TODO: useful? var PROPERTY = 'property'; -- yes, good for 'any' type, perhaps use 'ANY'?
-// TODO: Add types for ES6 types: Weak/Map, Weak/Set
 
 
 var typeMap = Object.freeze({
@@ -648,7 +767,10 @@ var typeMap = Object.freeze({
 	FUNCTION: FUNCTION,
 	REGEXP: REGEXP,
 	DATE: DATE,
-	ERROR: ERROR
+	ERROR: ERROR,
+	PROMISE: PROMISE,
+	MAP: MAP,
+	WEAK_MAP: WEAK_MAP
 });
 
 //// Qualifier Definitions \\\\
