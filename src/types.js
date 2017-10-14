@@ -52,8 +52,8 @@
  * - {@link rtv.types.MAP_OBJECT MAP_OBJECT}
  * - {@link rtv.types.MAP MAP}
  * - {@link rtv.types.WEAK_MAP WEAK_MAP}
- * - {@link rtv.types.SET SET}
- * - {@link rtv.types.WEAK_SET WEAK_SET}
+ * - {@link rtv.types.SET SET} (with some exceptions)
+ * - {@link rtv.types.WEAK_SET WEAK_SET} (with some exceptions)
  *
  * Note that an {@link rtv.types.ARRAY ARRAY} is __not__ included in this list
  *  because the array type has special syntax for describing the type of its items.
@@ -73,6 +73,9 @@
  *  only supports the {@link rtv.types.STRING STRING} type due to the nature of
  *  its JavaScript Object-based implementation.
  *
+ * NOTE: This property is ignored when the collection is a {@link rtv.types.SET SET}
+ *  or a {@link rtv.types.WEAK_SET WEAK_SET} because sets do not have keys.
+ *
  * @property {String} [keyExp] Optional. A string-based regular expression
  *  describing the names of keys (own-enumerable properties) found in the
  *  collection.
@@ -83,10 +86,16 @@
  * For example, to require numerical keys, the following expression could be
  *  used: `'^\\d+$'`.
  *
+ * NOTE: This property is ignored when the collection is a {@link rtv.types.SET SET}
+ *  or a {@link rtv.types.WEAK_SET WEAK_SET} because sets do not have keys.
+ *
  * @property {String} [keyExpFlags] Optional. A string specifying any flags to use
  *  with the regular expression specified in `keyExp`. If this property is _falsy_,
  *  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or
  *  does not apply per the `keys` typeset.
+ *
+ * NOTE: This property is ignored when the collection is a {@link rtv.types.SET SET}
+ *  or a {@link rtv.types.WEAK_SET WEAK_SET} because sets do not have keys.
  *
  * @property {rtv.types.typeset} [values] Optional. A typeset describing each value
  *  in the collection. Defaults to the {@link rtv.types.ANY ANY} type which allows
@@ -106,9 +115,42 @@
 
 /**
  * Typeset
+ *
+ * // TODO: document rtv.types.typeset
+ *
  * @typedef {Object} rtv.types.typeset
- * // TODO
  */
+
+/**
+ * Property Validator
+ *
+ * // TODO: document rtv.types.property_validator
+ *
+ * @typedef {Function} rtv.types.property_validator
+ */
+
+/**
+ * The any type is special in that it allows _anything_, which includes `null`
+ *  and `undefined` values. Because of this, it's the most liberal in terms of
+ *  types as well as qualifiers. A more specific type should be used whenever
+ *  possible to ensure a higher degree of confidence in the value being validated.
+ *
+ * Any rules per qualifiers:
+ *
+ * - REQUIRED: Property must be defined _somewhere_ in the prototype chain, but
+ *   its value can be anything, including `null` and `undefined`.
+ * - EXPECTED: Same rules as REQUIRED.
+ * - OPTIONAL: Since this qualifier removes the property's need for existence
+ *   in the prototype chain, it renders the verification moot (i.e. the property
+ *   might as well not be included in the {@link rtv.shape_descriptor shape descriptor}
+ *   unless a {@link rtv.types.property_validator property validator} is being
+ *   used to do customized verification.
+ *
+ * @name rtv.types.ANY
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ */
+export var ANY = 'any';
 
 /**
  * String rules per qualifiers:
@@ -530,7 +572,7 @@ export var PROMISE = 'promise';
  *   the rules for the keys and/or values found in the map. If not specified,
  *   the default collection descriptor options apply.
  *
- * @name rtv.types.MAP_OBJECT
+ * @name rtv.types.MAP
  * @const {String}
  * @see {@link rtv.qualifiers}
  * @see {@link rtv.types.MAP_OBJECT}
@@ -552,7 +594,7 @@ export var MAP = 'map';
  *   the rules for the keys and/or values found in the map. If not specified,
  *   the default collection descriptor options apply.
  *
- * @name rtv.types.MAP_OBJECT
+ * @name rtv.types.WEAK_MAP
  * @const {String}
  * @see {@link rtv.qualifiers}
  * @see {@link rtv.types.MAP_OBJECT}
@@ -560,6 +602,42 @@ export var MAP = 'map';
  */
 export var WEAK_MAP = 'weakMap';
 
-// TODO: Add SET and WEAK_SET types -- sets technically don't have keys, so collection_descriptor.keys, etc.
-//  should be ignored...
-// TODO: useful? var PROPERTY = 'property'; -- yes, good for 'any' type, perhaps use 'ANY'?
+/**
+ * An ES6 set is a collection of _unique_ values without associated keys. Values can
+ *  be described using a {@link rtv.types.typeset typeset}. Empty sets are permitted.
+ *
+ * Set rules per qualifiers: Must be a `Set` instance.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.collection_descriptor collection descriptor} specifying
+ *   the rules for the values found in the set (note that key-related rules are
+ *   ignored since they are not applicable). If not specified, the default
+ *   collection descriptor options apply.
+ *
+ * @name rtv.types.SET
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.WEAK_SET}
+ */
+export var SET = 'set';
+
+/**
+ * An ES6 weak set is a collection of _unique_ values without associated keys. Values can
+ *  be described using a {@link rtv.types.typeset typeset}. Empty sets are permitted.
+ *
+ * Weak set rules per qualifiers: Must be a `WeakSet` instance.
+ *
+ * Argument (optional):
+ *
+ * - A {@link rtv.types.collection_descriptor collection descriptor} specifying
+ *   the rules for the values found in the set (note that key-related rules are
+ *   ignored since they are not applicable). If not specified, the default
+ *   collection descriptor options apply.
+ *
+ * @name rtv.types.WEAK_SET
+ * @const {String}
+ * @see {@link rtv.qualifiers}
+ * @see {@link rtv.types.SET}
+ */
+export var WEAK_SET = 'weakSet';

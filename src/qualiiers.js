@@ -11,8 +11,9 @@
  * Required qualifier: Property _must_ exist and be of the expected type.
  *  Depending on the type, additional requirements may be enforced.
  *
- * Unless otherwise stated in type-specific rules, this qualifier does not allow
- *  a property value to be `null` or `undefined`.
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, and does not
+ *  allow its value to be `null` or `undefined`.
  *
  * See specific type for additional rules.
  *
@@ -29,6 +30,9 @@ export var REQUIRED = '!';
  * Unless otherwise stated in type-specific rules, this qualifier _requires_
  *  a property value to be defined (i.e. not `undefined`), but _allows_ the
  *  value to be `null`.
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, does not allow
+ *  its value to be `undefined`, but does _allow_ its value to be `null`.
  *
  * See specific type for additional rules.
  *
@@ -44,8 +48,9 @@ export var EXPECTED = '+';
  *  than with the `EXPECTED` qualifier).
  *
  * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
- *  property value to be `undefined` (i.e. a property does not need to be defined).
- *  If the property is defined, then it is treated as an `EXPECTED` value.
+ *  property value to be `null` as well as `undefined`, and does _not_ require
+ *  it to be defined anywhere in the prototype chain. If the property is defined,
+ *  then it is treated as an `EXPECTED` value.
  *
  * See specific type for additional rules.
  *

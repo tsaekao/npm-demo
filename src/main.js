@@ -13,6 +13,14 @@ import Enumeration from './Enumeration';
  * @namespace rtv
  */
 
+/**
+ * Shape Descriptor
+ *
+ * // TODO: document rtv.shape_descriptor (already referenced)
+ *
+ * @typedef {Object} rtv.shape_descriptor
+ */
+
 var types = new Enumeration(typeMap);
 var qualifiers = new Enumeration(qualifierMap);
 
