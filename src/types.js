@@ -111,12 +111,47 @@
  *  requires an empty collection.
  *
  * @see rtv.types.MAP_OBJECT
+ * @see rtv.types.MAP
+ * @see rtv.types.WEAK_MAP
+ * @see rtv.types.SET
+ * @see rtv.types.WEAK_SET
  */
 
 /**
  * Typeset
  *
- * // TODO: document rtv.types.typeset
+ * Describes a property found in a {@link rtv.shape_descriptor shape descriptor}.
+ *  It can be any one of the following JavaScript values:
+ *
+ * - `String '<type>'`: For a single type, such as {@link rtv.types.FINITE 'FINITE'}
+ *   for a finite number.
+ * - `Array []`: For multiple type possibilities, using an OR conjunction, which
+ *   means the value of the property being described must be one of the types listed.
+ *   Note that when a nested array is encountered (i.e. an array within a typeset),
+ *   it is treated as the shortcut {@link rtv.types.ARRAY ARRAY} form, implying an
+ *   array of values of some type, e.g. `values: [[STRING, FINITE]]` would describe
+ *   a 'values' property that could be an array of non-empty strings or finite numbers.
+ * - `Object {}`: For a nested {@link rtv.shape_descriptor shape descriptor} of implied
+ *   {@link rtv.types.OBJECT OBJECT} type (unless qualified with a specific object
+ *   type like {@link rtv.types.PLAIN_OBJECT PLAIN_OBJECT}, for example).
+ * - `Function`: For a {@link rtv.types.property_validator property validator}
+ *   that will certify the value of the property using custom code.
+ *
+ * <h4>Example</h4>
+ *
+ * <pre><code>
+ * const contactShape = {
+ *   name: rtv.types.STRING, // required, non-empty, string
+ *   tags: [rtv.types.ARRAY, [rtv.types.STRING]], // required array of non-empty strings
+ *   tags2: [[rtv.types.STRING]], // same as 'tags' but using shortcut array format
+ *   details: { // required nested object of type `rtv.types.OBJECT` (default)
+ *     birthday: [rtv.qualifiers.EXPECTED, rtv.types.DATE] // Date (could be null)
+ *   },
+ *   notes: [rtv.types.STRING, function(value) { // required non-empty string...
+ *     return value.length < 500; // ...less than 500 characters long
+ *   }]
+ * };
+ * </code></pre>
  *
  * @typedef {Object} rtv.types.typeset
  */
@@ -124,7 +159,9 @@
 /**
  * Property Validator
  *
- * // TODO: document rtv.types.property_validator
+ * // TODO: document rtv.types.property_validator (already referenced)
+ *
+ * Note one disadvantage: cannot be de/serialized via JSON.
  *
  * @typedef {Function} rtv.types.property_validator
  */
@@ -289,9 +326,10 @@ export var ANY_OBJECT = 'anyObject';
  *  {@link rtv.types.SET set}, {@link rtv.types.WEAK_SET weak set}, nor a
  *  {@link rtv.types primitive}.
  *
- * This is the __default__ (imputed) type for shape descriptions, which means
- *  the object itself (the value being tested), prior to being checked against
- *  its shape, will be tested according to this type.
+ * This is the __default__ (imputed) type for
+ *  {@link rtv.shape_descriptor shape descriptors}, which means the object itself
+ *  (the value being tested), prior to being checked against its shape, will be
+ *  tested according to this type.
  *
  * The following values are considered objects:
  *
@@ -433,7 +471,7 @@ export var PLAIN_OBJECT = 'plainObject';
  * - EXPECTED: `null` is allowed.
  * - OPTIONAL: `undefined` is allowed.
  *
- * Arguments (optional, specify one or the other, or both in order):
+ * Arguments (optional, specify one or the other, or both __in order__):
  *
  * - A reference to a constructor function. If specified, the class object
  *   (instance) must have this class function in its inheritance chain such

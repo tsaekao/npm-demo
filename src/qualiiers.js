@@ -27,9 +27,6 @@ export var REQUIRED = '!';
  * Expected qualifier: Property _should_ exist and be of the expected type.
  *  Depending on the type, some requirements may not be enforced.
  *
- * Unless otherwise stated in type-specific rules, this qualifier _requires_
- *  a property value to be defined (i.e. not `undefined`), but _allows_ the
- *  value to be `null`.
  * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
  *  property to be defined _somewhere_ within the prototype chain, does not allow
  *  its value to be `undefined`, but does _allow_ its value to be `null`.
