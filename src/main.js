@@ -21,7 +21,7 @@ import Enumeration from './Enumeration';
  * @typedef {Object} rtv.shape_descriptor
  */
 
-var types = new Enumeration(typeMap);
+const types = new Enumeration(typeMap);
 var qualifiers = new Enumeration(qualifierMap);
 
 var rtv = {

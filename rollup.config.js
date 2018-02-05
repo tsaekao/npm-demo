@@ -4,6 +4,7 @@
 
 import { default as jsonPlugin } from 'rollup-plugin-json';
 import { default as resolvePlugin } from 'rollup-plugin-node-resolve';
+import { default as babel } from 'rollup-plugin-babel';
 import pkg from './package.json';
 
 const LIB_NAME = 'rtv';
@@ -35,7 +36,10 @@ export default {
     ' */',
   plugins: [
     jsonPlugin(),
-    resolvePlugin()
+    resolvePlugin(),
+    babel({
+      exclude: 'node_modules/**'
+    })
   ],
   watch: {
     include: 'src/**',

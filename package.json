@@ -7,8 +7,9 @@
   "jsnext:main": "dist/rtv.esm.js",
   "scripts": {
     "start": "node -r ./test/node.js",
-    "docs": "jsdoc2md src/**/*.js > dist/rtv.js.md",
-    "build": "rollup -c",
+    "build:docs": "jsdoc2md src/**/*.js > dist/rtv.js.md",
+    "build:lib": "rollup -c",
+    "build": "npm run build:lib && npm run build:docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -39,8 +40,12 @@
     "lodash-es": "4.17.4"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
     "jsdoc-to-markdown": "3.0.0",
     "rollup": "0.50.0",
+    "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-json": "2.3.0",
     "rollup-plugin-node-resolve": "3.0.0"
   }
