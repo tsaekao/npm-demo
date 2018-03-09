@@ -820,8 +820,7 @@ Describes the possible types for a given value. It can be any one of the followi
 
 <h4>Example: Objects</h4>
 
-<pre><code>
-const contactShape = {
+<pre><code>const contactShape = {
   name: rtv.t.STRING, // required, non-empty, string
   tags: [rtv.t.ARRAY, [rtv.t.STRING]], // required array of non-empty strings
   // tags: [[rtv.t.STRING]], // same as above, but using shortcut array format
@@ -861,15 +860,13 @@ rtv.verify({
 
 <h4>Example: String</h4>
 
-<pre><code>
-rtv.verify('foo', rtv.t.STRING); // OK
+<pre><code>rtv.verify('foo', rtv.t.STRING); // OK
 rtv.verify('foo', rtv.t.FINITE); // ERROR
 </code></pre>
 
 <h4>Example: Array</h4>
 
-<pre><code>
-const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
+<pre><code>const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
 rtv.verify('foo', typeset); // OK
 rtv.verify(1, typeset); // OK
 </code></pre>
