@@ -7,7 +7,7 @@
   "jsnext:main": "dist/rtv.esm.js",
   "scripts": {
     "start": "node -r ./test/node.js",
-    "build:docs": "jsdoc2md src/**/*.js > dist/rtv.js.md",
+    "build:docs": "jsdoc2md \"src/**/*.js\" > dist/rtv.js.md",
     "build:lib": "rollup -c",
     "build": "npm run build:lib && npm run build:docs",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -37,16 +37,16 @@
   },
   "homepage": "https://gitlab.com/stefcameron/rtvjs#README",
   "dependencies": {
-    "lodash-es": "4.17.4"
+    "lodash-es": "^4.17.7"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
-    "jsdoc-to-markdown": "3.0.0",
-    "rollup": "0.50.0",
+    "jsdoc-to-markdown": "^4.0.1",
+    "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-json": "2.3.0",
-    "rollup-plugin-node-resolve": "3.0.0"
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.2.0"
   }
 }

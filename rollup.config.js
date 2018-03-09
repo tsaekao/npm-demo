@@ -10,7 +10,7 @@ import pkg from './package.json';
 const LIB_NAME = 'rtv';
 
 export default {
-  input: 'src/main.js',
+  input: 'src/rtv.js',
   output: [
     // ES Modules build
     // TODO: Is this format useful?

@@ -4,7 +4,7 @@
 
 /**
  * Simple enumeration type.
- * @class rtv.Enumeration
+ * @class rtvref.Enumeration
  * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
  *  be `undefined`.
  * @throws {Error} If `map` is falsy or empty.
@@ -33,7 +33,7 @@ var Enumeration = function(map) {
 
     /**
      * [internal] List of enumeration values.
-     * @name rtv.Enumeration#_values
+     * @name rtvref.Enumeration#_values
      * @type Array.<String>
      */
     Object.defineProperty(this, '_values', {
@@ -46,7 +46,7 @@ var Enumeration = function(map) {
 /**
  * Validates a value as being in this enumeration. Throws an exception if the value
  *  is not in this enumeration, unless `silent` is true.
- * @method rtv.Enumeration#validate
+ * @method rtvref.Enumeration#validate
  * @param {*} value Value to check. Cannot be undefined.
  * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
  *  an exception if the specified value is not in this enumeration.

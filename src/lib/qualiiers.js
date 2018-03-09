@@ -4,7 +4,7 @@
 
 /**
  * Qualifiers
- * @namespace rtv.qualifiers
+ * @namespace rtvref.qualifiers
  */
 
 /**
@@ -17,11 +17,11 @@
  *
  * See specific type for additional rules.
  *
- * @name rtv.qualifiers.REQUIRED
+ * @name rtvref.qualifiers.REQUIRED
  * @const {String}
- * @see {@link rtv.types}
+ * @see {@link rtvref.types}
  */
-export var REQUIRED = '!';
+export const REQUIRED = '!';
 
 /**
  * Expected qualifier: Property _should_ exist and be of the expected type.
@@ -33,11 +33,11 @@ export var REQUIRED = '!';
  *
  * See specific type for additional rules.
  *
- * @name rtv.qualifiers.EXPECTED
+ * @name rtvref.qualifiers.EXPECTED
  * @const {String}
- * @see {@link rtv.types}
+ * @see {@link rtvref.types}
  */
-export var EXPECTED = '+';
+export const EXPECTED = '+';
 
 /**
  * Optional qualifier: Property _may_ exist and be of the expected type.
@@ -51,8 +51,8 @@ export var EXPECTED = '+';
  *
  * See specific type for additional rules.
  *
- * @name rtv.qualifiers.OPTIONAL
+ * @name rtvref.qualifiers.OPTIONAL
  * @const {String}
- * @see {@link rtv.types}
+ * @see {@link rtvref.types}
  */
-export var OPTIONAL = '?';
+export const OPTIONAL = '?';
