@@ -1,30 +1,38 @@
 /*!
- * rtv 0.0.1
- * @license MIT, https://gitlab.com/stefcameron/rtvjs/blob/master/LICENSE.md
- * Parts of Lodash used internally: https://github.com/lodash/lodash/
- */
+* rtvjs 0.0.1
+* @license MIT, https://gitlab.com/stefcameron/rtvjs/blob/master/LICENSE.md
+* Parts of Lodash used internally: https://github.com/lodash/lodash/
+*/
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
 	(function() {
-		var current = global.rtv;
+		var current = global.rtvjs;
 		var exports = factory();
-		global.rtv = exports;
-		exports.noConflict = function() { global.rtv = current; return exports; };
+		global.rtvjs = exports;
+		exports.noConflict = function() { global.rtvjs = current; return exports; };
 	})();
 }(this, (function () { 'use strict';
 
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
 /** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+
+var _freeGlobal = freeGlobal;
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
+var root = _freeGlobal || freeSelf || Function('return this')();
+
+var _root = root;
 
 /** Built-in value references. */
-var Symbol = root.Symbol;
+var Symbol$1 = _root.Symbol;
+
+var _Symbol = Symbol$1;
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -40,7 +48,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 var nativeObjectToString = objectProto.toString;
 
 /** Built-in value references. */
-var symToStringTag$1 = Symbol ? Symbol.toStringTag : undefined;
+var symToStringTag = _Symbol ? _Symbol.toStringTag : undefined;
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -50,24 +58,26 @@ var symToStringTag$1 = Symbol ? Symbol.toStringTag : undefined;
  * @returns {string} Returns the raw `toStringTag`.
  */
 function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag$1),
-      tag = value[symToStringTag$1];
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
 
   try {
-    value[symToStringTag$1] = undefined;
+    value[symToStringTag] = undefined;
     var unmasked = true;
   } catch (e) {}
 
   var result = nativeObjectToString.call(value);
   if (unmasked) {
     if (isOwn) {
-      value[symToStringTag$1] = tag;
+      value[symToStringTag] = tag;
     } else {
-      delete value[symToStringTag$1];
+      delete value[symToStringTag];
     }
   }
   return result;
 }
+
+var _getRawTag = getRawTag;
 
 /** Used for built-in method references. */
 var objectProto$1 = Object.prototype;
@@ -90,12 +100,14 @@ function objectToString(value) {
   return nativeObjectToString$1.call(value);
 }
 
+var _objectToString = objectToString;
+
 /** `Object#toString` result references. */
-var nullTag = '[object Null]';
-var undefinedTag = '[object Undefined]';
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+var symToStringTag$1 = _Symbol ? _Symbol.toStringTag : undefined;
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -108,10 +120,12 @@ function baseGetTag(value) {
   if (value == null) {
     return value === undefined ? undefinedTag : nullTag;
   }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
+  return (symToStringTag$1 && symToStringTag$1 in Object(value))
+    ? _getRawTag(value)
+    : _objectToString(value);
 }
+
+var _baseGetTag = baseGetTag;
 
 /**
  * Checks if `value` is classified as an `Array` object.
@@ -137,6 +151,8 @@ function baseGetTag(value) {
  * // => false
  */
 var isArray = Array.isArray;
+
+var isArray_1 = isArray;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -166,6 +182,8 @@ function isObjectLike(value) {
   return value != null && typeof value == 'object';
 }
 
+var isObjectLike_1 = isObjectLike;
+
 /** `Object#toString` result references. */
 var stringTag = '[object String]';
 
@@ -188,14 +206,14 @@ var stringTag = '[object String]';
  */
 function isString(value) {
   return typeof value == 'string' ||
-    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
+    (!isArray_1(value) && isObjectLike_1(value) && _baseGetTag(value) == stringTag);
 }
+
+var isString_1 = isString;
 
 var version = "0.0.1";
 
 //// Type Definitions \\\\
-
-'use strict';
 
 /**
  * Types
@@ -334,8 +352,7 @@ var version = "0.0.1";
  *
  * <h4>Example: Objects</h4>
  *
- * <pre><code>
- * const contactShape = {
+ * <pre><code>const contactShape = {
  *   name: rtv.t.STRING, // required, non-empty, string
  *   tags: [rtv.t.ARRAY, [rtv.t.STRING]], // required array of non-empty strings
  *   // tags: [[rtv.t.STRING]], // same as above, but using shortcut array format
@@ -375,15 +392,13 @@ var version = "0.0.1";
  *
  * <h4>Example: String</h4>
  *
- * <pre><code>
- * rtv.verify('foo', rtv.t.STRING); // OK
+ * <pre><code>rtv.verify('foo', rtv.t.STRING); // OK
  * rtv.verify('foo', rtv.t.FINITE); // ERROR
  * </code></pre>
  *
  * <h4>Example: Array</h4>
  *
- * <pre><code>
- * const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
+ * <pre><code>const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
  * rtv.verify('foo', typeset); // OK
  * rtv.verify(1, typeset); // OK
  * </code></pre>
@@ -945,8 +960,6 @@ var typeMap = Object.freeze({
 
 //// Qualifier Definitions \\\\
 
-'use strict';
-
 /**
  * Qualifiers
  * @namespace rtvref.qualifiers
@@ -1009,9 +1022,31 @@ var qualifierMap = Object.freeze({
 	OPTIONAL: OPTIONAL
 });
 
-//// Enumeration \\\\
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
 
-'use strict';
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+//// Enumeration \\\\
 
 /**
  * Simple enumeration type.
@@ -1022,64 +1057,72 @@ var qualifierMap = Object.freeze({
  * @throws {Error} If `map` has a key that maps to `undefined`.
  */
 
-var Enumeration = function Enumeration(map) {
-    var _this = this;
+var Enumeration = function () {
+    function Enumeration(map) {
+        var _this = this;
 
-    map = map || {};
+        classCallCheck(this, Enumeration);
 
-    var keys = Object.keys(map);
-    var values = [];
+        map = map || {};
 
-    if (keys.length === 0) {
-        throw new Error('map must contain at least one key');
-    }
+        var keys = Object.keys(map);
+        var values = [];
 
-    // shallow-clone each key in the map into this
-    keys.forEach(function (key) {
-        if (map[key] === undefined) {
-            throw new Error('map[' + key + '] cannot be undefined');
+        if (keys.length === 0) {
+            throw new Error('map must contain at least one key');
         }
 
-        var value = map[key];
-        values.push(value);
-        _this[key] = value;
-    });
+        // shallow-clone each key in the map into this
+        keys.forEach(function (key) {
+            if (map[key] === undefined) {
+                throw new Error('map[' + key + '] cannot be undefined');
+            }
+
+            var value = map[key];
+            values.push(value);
+            _this[key] = value;
+        });
+
+        /**
+         * [internal] List of enumeration values.
+         * @name rtvref.Enumeration#_values
+         * @type Array.<String>
+         */
+        Object.defineProperty(this, '_values', {
+            enumerable: false, // internal
+            configurable: true,
+            value: values
+        });
+    }
 
     /**
-     * [internal] List of enumeration values.
-     * @name rtvref.Enumeration#_values
-     * @type Array.<String>
+     * Validates a value as being in this enumeration. Throws an exception if the value
+     *  is not in this enumeration, unless `silent` is true.
+     * @method rtvref.Enumeration#verify
+     * @param {*} value Value to check. Cannot be undefined.
+     * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+     *  an exception if the specified value is not in this enumeration.
+     * @returns {*} The specified value if it is in this enumeration, or `undefined` if
+     *  `silent` is true and the value is not in this enumeration.
      */
-    Object.defineProperty(this, '_values', {
-        enumerable: false, // internal
-        configurable: true,
-        value: values
-    });
-};
 
-/**
- * Validates a value as being in this enumeration. Throws an exception if the value
- *  is not in this enumeration, unless `silent` is true.
- * @method rtvref.Enumeration#validate
- * @param {*} value Value to check. Cannot be undefined.
- * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
- *  an exception if the specified value is not in this enumeration.
- * @returns {*} The specified value if it is in this enumeration, or `undefined` if
- *  `silent` is true and the value is not in this enumeration.
- */
-Enumeration.prototype.validate = function (value, silent) {
-    if (this._values.indexOf(value) >= 0) {
-        return value;
-    } else if (silent) {
-        return undefined;
-    } else {
-        throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
-    }
-};
+
+    createClass(Enumeration, [{
+        key: 'verify',
+        value: function verify(value, silent) {
+            if (this._values.indexOf(value) >= 0) {
+                return value;
+            } else if (silent) {
+                return undefined;
+            } else {
+                throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
+            }
+        }
+    }]);
+    return Enumeration;
+}();
 
 //// Main entry point \\\\
-
-'use strict';
 
 /**
  * RTV.js - Reference
@@ -1128,7 +1171,7 @@ var rtv = {
    */
   check: function check(value, shape) {
     // TODO: testing 'check'
-    return isString(value) && !!value;
+    return isString_1(value) && !!value;
   },
 
 

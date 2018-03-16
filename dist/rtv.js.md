@@ -23,7 +23,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
     * [.Enumeration](#rtvref.Enumeration)
         * [new Enumeration(map)](#new_rtvref.Enumeration_new)
         * [._values](#rtvref.Enumeration+_values) : <code>Array.&lt;String&gt;</code>
-        * [.validate(value, [silent])](#rtvref.Enumeration+validate) ⇒ <code>\*</code>
+        * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>String</code>
         * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>String</code>
@@ -66,7 +66,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
 * [.Enumeration](#rtvref.Enumeration)
     * [new Enumeration(map)](#new_rtvref.Enumeration_new)
     * [._values](#rtvref.Enumeration+_values) : <code>Array.&lt;String&gt;</code>
-    * [.validate(value, [silent])](#rtvref.Enumeration+validate) ⇒ <code>\*</code>
+    * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
 
 <a name="new_rtvref.Enumeration_new"></a>
 
@@ -89,9 +89,9 @@ Simple enumeration type.
 [internal] List of enumeration values.
 
 **Kind**: instance property of [<code>Enumeration</code>](#rtvref.Enumeration)  
-<a name="rtvref.Enumeration+validate"></a>
+<a name="rtvref.Enumeration+verify"></a>
 
-#### enumeration.validate(value, [silent]) ⇒ <code>\*</code>
+#### enumeration.verify(value, [silent]) ⇒ <code>\*</code>
 Validates a value as being in this enumeration. Throws an exception if the value
  is not in this enumeration, unless `silent` is true.
 
@@ -790,11 +790,11 @@ For example, the following descriptors both verify a collection of 3-letter
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| keys | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each key  in the collection. The type of collection being described may restrict the types that this typeset  can include. For example, the [MAP_OBJECT](#rtvref.types.MAP_OBJECT) collection  only supports the [STRING](#rtvref.types.STRING) type due to the nature of  its JavaScript Object-based implementation. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
-| keyExp | <code>String</code> |  | Optional. A string-based regular expression  describing the names of keys (own-enumerable properties) found in the  collection. By default, there are no restrictions on key names. This expression is only  used if the `keys` typeset includes the [STRING](#rtvref.types.STRING) type. For example, to require numerical keys, the following expression could be  used: `'^\\d+$'`. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
-| keyExpFlags | <code>String</code> |  | Optional. A string specifying any flags to use  with the regular expression specified in `keyExp`. If this property is _falsy_,  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or  does not apply per the `keys` typeset. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
-| values | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each value  in the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any entries/properties to be considered valid, unless  `count` is specified). For example, to require arrays of non-empty string values, the following  typeset could be used: `[[types.STRING]]`. |
-| count | <code>Number</code> | <code>-1</code> | Optional. The number of entries expected in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. |
+| [keys] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each key  in the collection. The type of collection being described may restrict the types that this typeset  can include. For example, the [MAP_OBJECT](#rtvref.types.MAP_OBJECT) collection  only supports the [STRING](#rtvref.types.STRING) type due to the nature of  its JavaScript Object-based implementation. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [keyExp] | <code>String</code> |  | Optional. A string-based regular expression  describing the names of keys (own-enumerable properties) found in the  collection. By default, there are no restrictions on key names. This expression is only  used if the `keys` typeset includes the [STRING](#rtvref.types.STRING) type. For example, to require numerical keys, the following expression could be  used: `'^\\d+$'`. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [keyExpFlags] | <code>String</code> |  | Optional. A string specifying any flags to use  with the regular expression specified in `keyExp`. If this property is _falsy_,  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or  does not apply per the `keys` typeset. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [values] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each value  in the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any entries/properties to be considered valid, unless  `count` is specified). For example, to require arrays of non-empty string values, the following  typeset could be used: `[[types.STRING]]`. |
+| [count] | <code>Number</code> | <code>-1</code> | Optional. The number of entries expected in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. |
 
 <a name="rtvref.types.typeset"></a>
 

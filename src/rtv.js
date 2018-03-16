@@ -2,8 +2,8 @@
 
 'use strict';
 
-import { default as isString } from 'lodash-es/isString';
-import { version as VERSION } from '../package.json';
+import isString from 'lodash/isString';
+import {version as VERSION} from '../package.json';
 import * as typeMap from './lib/types';
 import * as qualifierMap from './lib/qualiiers';
 import Enumeration from './lib/Enumeration';
