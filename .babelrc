@@ -1,8 +1,29 @@
 {
-  "presets": [
-    ["env", {"modules": false}]
-  ],
-  "plugins": [
-    "external-helpers"
-  ]
+  "env": {
+    "build": {
+      "presets": [
+        ["env", {
+          "modules": false,
+          "targets": {"browsers": ["last 2 versions"]}
+        }]
+      ],
+      "plugins": [
+        // externalize helpers so that they can be included only once per output
+        //  to keep output size smaller
+        // @see babel-plugin-external-helpers
+        "external-helpers"
+      ]
+    },
+    "test": {
+      "presets": [
+        ["env", {
+          "modules": "commonjs"
+        }]
+      ],
+      "plugins": [
+        // NOTE: do not externalize helpers ('external-helpers') because each
+        //  module is individually compiled by Babel when loaded by Mocha
+      ]
+    }
+  }
 }

@@ -5,14 +5,37 @@
   "main": "dist/rtv.umd.js",
   "module": "dist/rtv.esm.js",
   "jsnext:main": "dist/rtv.esm.js",
+  "nyc": {
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "include": [
+      "src/**/*.js"
+    ],
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "report-dir": "./coverage",
+    "reporter": [
+      "text",
+      "text-summary",
+      "html"
+    ]
+  },
   "scripts": {
     "clean": "rm -rf ./build",
-    "start": "node -r ./test/node.js",
+    "start": "npm run build:lib && node -r ./tools/node.js",
     "build:docs": "jsdoc2md \"src/**/*.js\" > dist/rtv.js.md",
-    "build:lib": "rollup -c",
+    "build:lib": "BABEL_ENV=build rollup -c",
     "build": "npm run clean && npm run build:lib && npm run build:docs",
     "lint": "eslint rollup.config.js \"src/**/*.js\"",
-    "test:unit": "echo \"Error: no test specified\" && exit 1",
+    "test:watch": "npm run test:unit -- -w",
+    "test:unit": "BABEL_ENV=test nyc mocha -c --require mocha-setup.js --recursive ./test",
     "test": "npm run lint && npm run test:unit"
   },
   "repository": {
@@ -46,7 +69,6 @@
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
-    "eslint": "^4.18.2",
     "jsdoc-to-markdown": "^4.0.1",
     "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",
@@ -54,5 +76,12 @@
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.2.0",
     "rollup-plugin-uglify": "^3.0.0"
+  },
+  "optionalDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.18.2",
+    "mocha": "^5.0.4",
+    "nyc": "^11.6.0",
+    "sinon": "^4.4.6"
   }
 }

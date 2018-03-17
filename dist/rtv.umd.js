@@ -437,7 +437,6 @@ var version = "0.0.1";
  * @const {String}
  * @see {@link rtvref.qualifiers}
  */
-
 var ANY = 'any';
 
 /**
@@ -979,7 +978,6 @@ var typeMap = Object.freeze({
  * @const {String}
  * @see {@link rtvref.types}
  */
-
 var REQUIRED = '!';
 
 /**
@@ -1056,70 +1054,87 @@ var createClass = function () {
  * @throws {Error} If `map` is falsy or empty.
  * @throws {Error} If `map` has a key that maps to `undefined`.
  */
-
 var Enumeration = function () {
-    function Enumeration(map) {
-        var _this = this;
+  function Enumeration(map) {
+    var _this = this;
 
-        classCallCheck(this, Enumeration);
+    classCallCheck(this, Enumeration);
 
-        map = map || {};
+    map = map || {};
 
-        var keys = Object.keys(map);
-        var values = [];
+    var keys = Object.keys(map);
+    var values = [];
 
-        if (keys.length === 0) {
-            throw new Error('map must contain at least one key');
-        }
+    if (keys.length === 0) {
+      throw new Error('map must contain at least one key');
+    }
 
-        // shallow-clone each key in the map into this
-        keys.forEach(function (key) {
-            if (map[key] === undefined) {
-                throw new Error('map[' + key + '] cannot be undefined');
-            }
+    // shallow-clone each key in the map into this
+    keys.forEach(function (key) {
+      if (map[key] === undefined) {
+        throw new Error('map[' + key + '] cannot be undefined');
+      }
 
-            var value = map[key];
-            values.push(value);
-            _this[key] = value;
-        });
+      var value = map[key];
+      values.push(value);
+      _this[key] = value;
+    });
 
-        /**
-         * [internal] List of enumeration values.
-         * @name rtvref.Enumeration#_values
-         * @type Array.<String>
-         */
-        Object.defineProperty(this, '_values', {
-            enumerable: false, // internal
-            configurable: true,
-            value: values
-        });
+    /**
+     * [internal] List of enumeration values.
+     * @name rtvref.Enumeration#_values
+     * @type Array.<String>
+     */
+    Object.defineProperty(this, '_values', {
+      enumerable: false, // internal
+      configurable: true,
+      value: values
+    });
+  }
+
+  /**
+   * Validates a value as being in this enumeration. Throws an exception if the value
+   *  is not in this enumeration, unless `silent` is true.
+   * @method rtvref.Enumeration#verify
+   * @param {*} value Value to check. Cannot be undefined.
+   * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+   *  an exception if the specified value is not in this enumeration.
+   * @returns {*} The specified value if it is in this enumeration, or `undefined` if
+   *  `silent` is true and the value is not in this enumeration.
+   */
+
+
+  createClass(Enumeration, [{
+    key: 'verify',
+    value: function verify(value, silent) {
+      if (this._values.indexOf(value) >= 0) {
+        return value;
+      } else if (silent) {
+        return undefined;
+      }
+
+      throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
     }
 
     /**
-     * Validates a value as being in this enumeration. Throws an exception if the value
-     *  is not in this enumeration, unless `silent` is true.
-     * @method rtvref.Enumeration#verify
-     * @param {*} value Value to check. Cannot be undefined.
-     * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
-     *  an exception if the specified value is not in this enumeration.
-     * @returns {*} The specified value if it is in this enumeration, or `undefined` if
-     *  `silent` is true and the value is not in this enumeration.
+     * A string representation of this Enumeration.
+     * @returns {string} String representation.
      */
 
+  }, {
+    key: 'toString',
+    value: function toString() {
+      var _this2 = this;
 
-    createClass(Enumeration, [{
-        key: 'verify',
-        value: function verify(value, silent) {
-            if (this._values.indexOf(value) >= 0) {
-                return value;
-            } else if (silent) {
-                return undefined;
-            } else {
-                throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
-            }
-        }
-    }]);
-    return Enumeration;
+      var pairs = Object.keys(this).map(function (k) {
+        return [k, _this2[k]];
+      });
+      return '{Enumeration pairs=[' + pairs.map(function (p) {
+        return '[' + p + ']';
+      }).join(', ') + ']}';
+    }
+  }]);
+  return Enumeration;
 }();
 
 //// Main entry point \\\\

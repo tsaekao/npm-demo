@@ -61,6 +61,15 @@ class Enumeration {
 
     throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
   }
+
+  /**
+   * A string representation of this Enumeration.
+   * @returns {string} String representation.
+   */
+  toString() {
+    const pairs = Object.keys(this).map((k) => [k, this[k]]);
+    return `{Enumeration pairs=[${pairs.map((p) => `[${p}]`).join(', ')}]}`;
+  }
 }
 
 export default Enumeration;
