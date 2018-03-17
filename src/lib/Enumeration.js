@@ -1,7 +1,5 @@
 //// Enumeration \\\\
 
-'use strict';
-
 /**
  * Simple enumeration type.
  * @class rtvref.Enumeration
@@ -14,22 +12,22 @@ class Enumeration {
   constructor(map) {
     map = map || {};
 
-    var keys = Object.keys(map);
-    var values = [];
+    const keys = Object.keys(map);
+    const values = [];
 
     if (keys.length === 0) {
-        throw new Error('map must contain at least one key');
+      throw new Error('map must contain at least one key');
     }
 
     // shallow-clone each key in the map into this
     keys.forEach((key) => {
-        if (map[key] === undefined) {
-            throw new Error('map[' + key + '] cannot be undefined');
-        }
+      if (map[key] === undefined) {
+        throw new Error('map[' + key + '] cannot be undefined');
+      }
 
-        var value = map[key];
-        values.push(value);
-        this[key] = value;
+      const value = map[key];
+      values.push(value);
+      this[key] = value;
     });
 
     /**
@@ -38,9 +36,9 @@ class Enumeration {
      * @type Array.<String>
      */
     Object.defineProperty(this, '_values', {
-        enumerable: false, // internal
-        configurable: true,
-        value: values
+      enumerable: false, // internal
+      configurable: true,
+      value: values
     });
   }
 
@@ -55,15 +53,14 @@ class Enumeration {
    *  `silent` is true and the value is not in this enumeration.
    */
   verify(value, silent) {
-      if (this._values.indexOf(value) >= 0) {
-          return value;
-      } else if (silent) {
-          return undefined;
-      } else {
-          throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
-      }
-  };
-};
+    if (this._values.indexOf(value) >= 0) {
+      return value;
+    } else if (silent) {
+      return undefined;
+    }
 
+    throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
+  }
+}
 
 export default Enumeration;

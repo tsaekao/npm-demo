@@ -1,7 +1,5 @@
 //// Rollup Configuration \\\\
 
-'use strict';
-
 const jsonPlugin = require('rollup-plugin-json');
 const resolvePlugin = require('rollup-plugin-node-resolve');
 const cjsPlugin = require('rollup-plugin-commonjs');

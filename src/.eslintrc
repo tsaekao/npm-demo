@@ -1,0 +1,10 @@
+//// src ESLint Configuration \\\\
+
+{
+  "extends": ["../.eslintrc"],
+  "env": {
+    // don't assume anything, since this library is isomorphic
+    "browser": false,
+    "node": false
+  }
+}

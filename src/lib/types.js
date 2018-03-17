@@ -1,7 +1,5 @@
 //// Type Definitions \\\\
 
-'use strict';
-
 /**
  * Types
  *

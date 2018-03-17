@@ -1,7 +1,5 @@
 //// Main entry point \\\\
 
-'use strict';
-
 import isString from 'lodash/isString';
 import {version as VERSION} from '../package.json';
 import * as typeMap from './lib/types';
@@ -90,7 +88,7 @@ const rtv = {
           rtv.verify(newValue, types.BOOLEAN);
           value = newValue;
         }
-      }
+      };
     })()
   }),
 

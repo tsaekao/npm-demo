@@ -1,7 +1,5 @@
 //// Qualifier Definitions \\\\
 
-'use strict';
-
 /**
  * Qualifiers
  * @namespace rtvref.qualifiers
