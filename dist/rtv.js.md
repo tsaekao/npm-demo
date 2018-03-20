@@ -2,18 +2,21 @@
 
 <dl>
 <dt><a href="#rtvref">rtvref</a> : <code>object</code></dt>
-<dd><p>RTV.js - Reference</p>
+<dd><h1>RTV.js Reference</h1>
+
 <p>Members herein are <em>indirectly</em> exposed through the <a href="#rtv">rtv</a> object.</p>
 </dd>
 <dt><a href="#rtv">rtv</a> : <code>object</code></dt>
-<dd><p>RTV.js - Runtime Verification Library.</p>
+<dd><h1>RTV.js</h1>
+
+<p>Runtime Verification Library for browsers and Node.js.</p>
 </dd>
 </dl>
 
 <a name="rtvref"></a>
 
 ## rtvref : <code>object</code>
-RTV.js - Reference
+<h1>RTV.js Reference</h1>
 
 Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
 
@@ -54,7 +57,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.SET](#rtvref.types.SET) : <code>String</code>
         * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
         * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
-        * [.typeset](#rtvref.types.typeset) : <code>Object</code>
+        * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
         * [.property_validator](#rtvref.types.property_validator) : <code>function</code>
     * [.shape_descriptor](#rtvref.shape_descriptor) : <code>Object</code>
 
@@ -107,7 +110,7 @@ Validates a value as being in this enumeration. Throws an exception if the value
 <a name="rtvref.qualifiers"></a>
 
 ### rtvref.qualifiers : <code>object</code>
-Qualifiers
+<h2>Qualifiers</h2>
 
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
@@ -153,8 +156,8 @@ Optional qualifier: Property _may_ exist and be of the expected type.
 
 Unless otherwise stated in type-specific rules, this qualifier _allows_ a
  property value to be `null` as well as `undefined`, and does _not_ require
- it to be defined anywhere in the prototype chain. If the property is defined,
- then it is treated as an `EXPECTED` value.
+ the property to be defined anywhere in the prototype chain. If the property
+ is defined, then it is treated as an `EXPECTED` value.
 
 See specific type for additional rules.
 
@@ -163,9 +166,9 @@ See specific type for additional rules.
 <a name="rtvref.types"></a>
 
 ### rtvref.types : <code>object</code>
-Types
+<h2>Types</h2>
 
-<h4>Primitives</h4>
+<h3>Primitives</h3>
 
 In RTV.js, a primitive is considered to be one of the following types:
 
@@ -179,7 +182,7 @@ In RTV.js, a primitive is considered to be one of the following types:
 - `null`
 - `undefined`
 
-<h4>Rules Per Qualifiers</h4>
+<h3>Rules Per Qualifiers</h3>
 
 [Qualifiers](#rtvref.qualifiers) state basic rules. Unless otherwise stated,
  every type herein abides by those basic rules. Each type will also impose
@@ -190,7 +193,7 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
  the qualifier used is `EXPECTED`, and it could be `undefined` if the qualifier
  used is `OPTIONAL`.
 
-<h4>Arguments</h4>
+<h3>Arguments</h3>
 
 Some types will accept, or may even expect, arguments. An argument immediately
  follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
@@ -228,7 +231,7 @@ Optional and required arguments are specified for each type, where applicable.
     * [.SET](#rtvref.types.SET) : <code>String</code>
     * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
     * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
-    * [.typeset](#rtvref.types.typeset) : <code>Object</code>
+    * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
     * [.property_validator](#rtvref.types.property_validator) : <code>function</code>
 
 <a name="rtvref.types.ANY"></a>
@@ -757,7 +760,7 @@ Argument (optional):
 <a name="rtvref.types.collection_descriptor"></a>
 
 #### types.collection_descriptor : <code>Object</code>
-Collection Descriptor
+<h3>Collection Descriptor</h3>
 
 Describes the keys and values in a collection-based object, which is one of
  the following types:
@@ -798,27 +801,42 @@ For example, the following descriptors both verify a collection of 3-letter
 
 <a name="rtvref.types.typeset"></a>
 
-#### types.typeset : <code>Object</code>
-Typeset
+#### types.typeset : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
+<h3>Typeset</h3>
 
 Describes the possible types for a given value. It can be any one of the following
  JavaScript types:
 
 - `Object`: For the root or a nested [shape descriptor](#rtvref.shape_descriptor)
-  of implied [OBJECT](#rtvref.types.OBJECT) type (unless qualified with a specific
+  of _implied_ [OBJECT](#rtvref.types.OBJECT) type (unless qualified with a specific
   object type like [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), for example).
 - `String`: For a single type, such as ['FINITE'](#rtvref.types.FINITE)
   for a finite number.
-- `Array`: For multiple type possibilities, using an OR conjunction, which
-  means the value of the property being described must be one of the types listed.
-  Note that when a nested array is encountered (i.e. an array within a typeset),
-  it is treated as the shortcut [ARRAY](#rtvref.types.ARRAY) form, implying an
-  array of values of some type, e.g. `values: [[STRING, FINITE]]` would describe
-  a 'values' property that could be an array of non-empty strings or finite numbers.
+- `Array`: For multiple type possibilities, optionally [qualified](#rtvref.qualifiers),
+  using an __OR__ conjunction, which means the value of the property being described must
+  be at least one of the types listed, but not all. Note that when a nested array is
+  encountered (i.e. an array within a typeset), it is treated as the shortcut
+  [ARRAY](#rtvref.types.ARRAY) form, implying an array of nested typesets, e.g.
+  `values: [BOOLEAN, [STRING, FINITE]]` would describe a 'values' property that should
+  be a boolean, or an array of non-empty strings or finite numbers.
 - `Function`: For a [property validator](#rtvref.types.property_validator)
-  that will certify the value of the property using custom code.
+  that will verify the value of the property using custom code. Only one validator
+  can be specified for a given typeset, and it will only be called if the value
+  was verified against at least one of the other types listed. If no other types
+  were listed (i.e. using the `Array` form, as described above), then the validator
+  is called immediately.
 
-<h4>Example: Objects</h4>
+Note that all typesets use an _implied_ [required](#rtvref.qualifiers.REQUIRED)
+ qualifier unless otherwise specified. To qualify a typeset, a
+ [qualifier](#rtvref.qualifiers) may be specified as the __first__ element
+ in the `Array` form (if specified, it must be the first element). For example,
+ `note: [rtv.q.EXPECTED, rtv.t.STRING]` would describe an expected, but not required,
+ string, which could therefore be either empty or even `null`. The `Array` form
+ must be used in order to qualify a typeset as other than required, and the
+ qualifier applies to all immediate types in the typeset (which means each
+ nested typeset can have its own qualifier).
+
+<h4>Example: Object</h4>
 
 <pre><code>const contactShape = {
   name: rtv.t.STRING, // required, non-empty, string
@@ -871,29 +889,60 @@ rtv.verify('foo', typeset); // OK
 rtv.verify(1, typeset); // OK
 </code></pre>
 
+<h4>Example: Function</h4>
+
+<pre><code>rtv.verify(123, (v) => v > 100); // OK
+rtv.verify('123', [rtv.t.STRING, (v) => parseInt(v) > 100); // OK
+</code></pre>
+
+<h4>Example: Alternate Qualifier</h4>
+
+<pre><code>const person = {
+  name: rtv.t.STRING, // required, non-empty
+  age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => v >= 18] // 18 or older, if specified
+};
+rtv.verify({name: 'Bob'}, person); // OK
+rtv.verify({name: ''}, person); // ERROR
+rtv.verify({name: 'Steve', age: 17}, person); // ERROR
+rtv.verify({name: 'Steve', age: null}, person); // OK
+</code></pre>
+
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.property_validator"></a>
 
 #### types.property_validator : <code>function</code>
-Property Validator
+<h3>Property Validator</h3>
 
 // TODO: document rtvref.types.property_validator (already referenced)
 
 Note one disadvantage: cannot be de/serialized via JSON.
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value being verified. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification (where the last element would be a reference to this function). |
+
 <a name="rtvref.shape_descriptor"></a>
 
 ### rtvref.shape_descriptor : <code>Object</code>
-Shape Descriptor
+<h2>Shape Descriptor</h2>
 
-// TODO: document rtvref.shape_descriptor (already referenced)
+// TODO: document rtvref.shape_descriptor (already referenced). The 'Object'
+//  type here means an actual Object, NOT anything that could be an object
+//  like Array, Function, etc.
+
+Describes the shape (i.e. interface) of an object as a map of expected or
+ possible properties to [typesets](#rtvref.types.typeset).
 
 **Kind**: static typedef of [<code>rtvref</code>](#rtvref)  
 <a name="rtv"></a>
 
 ## rtv : <code>object</code>
-RTV.js - Runtime Verification Library.
+<h1>RTV.js</h1>
+
+Runtime Verification Library for browsers and Node.js.
 
 **Kind**: global namespace  
 

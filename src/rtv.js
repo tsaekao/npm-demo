@@ -7,16 +7,21 @@ import * as qualifierMap from './lib/qualiiers';
 import Enumeration from './lib/Enumeration';
 
 /**
- * RTV.js - Reference
+ * <h1>RTV.js Reference</h1>
  *
  * Members herein are _indirectly_ exposed through the {@link rtv} object.
  * @namespace rtvref
  */
 
 /**
- * Shape Descriptor
+ * <h2>Shape Descriptor</h2>
  *
- * // TODO: document rtvref.shape_descriptor (already referenced)
+ * // TODO: document rtvref.shape_descriptor (already referenced). The 'Object'
+ * //  type here means an actual Object, NOT anything that could be an object
+ * //  like Array, Function, etc.
+ *
+ * Describes the shape (i.e. interface) of an object as a map of expected or
+ *  possible properties to {@link rtvref.types.typeset typesets}.
  *
  * @typedef {Object} rtvref.shape_descriptor
  */
@@ -25,7 +30,9 @@ const types = new Enumeration(typeMap);
 const qualifiers = new Enumeration(qualifierMap);
 
 /**
- * RTV.js - Runtime Verification Library.
+ * <h1>RTV.js</h1>
+ *
+ * Runtime Verification Library for browsers and Node.js.
  * @namespace rtv
  */
 const rtv = {

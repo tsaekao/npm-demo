@@ -1,9 +1,9 @@
 //// Type Definitions \\\\
 
 /**
- * Types
+ * <h2>Types</h2>
  *
- * <h4>Primitives</h4>
+ * <h3>Primitives</h3>
  *
  * In RTV.js, a primitive is considered to be one of the following types:
  *
@@ -17,7 +17,7 @@
  * - `null`
  * - `undefined`
  *
- * <h4>Rules Per Qualifiers</h4>
+ * <h3>Rules Per Qualifiers</h3>
  *
  * {@link rtvref.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
  *  every type herein abides by those basic rules. Each type will also impose
@@ -28,7 +28,7 @@
  *  the qualifier used is `EXPECTED`, and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * <h4>Arguments</h4>
+ * <h3>Arguments</h3>
  *
  * Some types will accept, or may even expect, arguments. An argument immediately
  *  follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
@@ -42,7 +42,7 @@
  */
 
 /**
- * Collection Descriptor
+ * <h3>Collection Descriptor</h3>
  *
  * Describes the keys and values in a collection-based object, which is one of
  *  the following types:
@@ -116,26 +116,41 @@
  */
 
 /**
- * Typeset
+ * <h3>Typeset</h3>
  *
  * Describes the possible types for a given value. It can be any one of the following
  *  JavaScript types:
  *
  * - `Object`: For the root or a nested {@link rtvref.shape_descriptor shape descriptor}
- *   of implied {@link rtvref.types.OBJECT OBJECT} type (unless qualified with a specific
+ *   of _implied_ {@link rtvref.types.OBJECT OBJECT} type (unless qualified with a specific
  *   object type like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example).
  * - `String`: For a single type, such as {@link rtvref.types.FINITE 'FINITE'}
  *   for a finite number.
- * - `Array`: For multiple type possibilities, using an OR conjunction, which
- *   means the value of the property being described must be one of the types listed.
- *   Note that when a nested array is encountered (i.e. an array within a typeset),
- *   it is treated as the shortcut {@link rtvref.types.ARRAY ARRAY} form, implying an
- *   array of values of some type, e.g. `values: [[STRING, FINITE]]` would describe
- *   a 'values' property that could be an array of non-empty strings or finite numbers.
+ * - `Array`: For multiple type possibilities, optionally {@link rtvref.qualifiers qualified},
+ *   using an __OR__ conjunction, which means the value of the property being described must
+ *   be at least one of the types listed, but not all. Note that when a nested array is
+ *   encountered (i.e. an array within a typeset), it is treated as the shortcut
+ *   {@link rtvref.types.ARRAY ARRAY} form, implying an array of nested typesets, e.g.
+ *   `values: [BOOLEAN, [STRING, FINITE]]` would describe a 'values' property that should
+ *   be a boolean, or an array of non-empty strings or finite numbers.
  * - `Function`: For a {@link rtvref.types.property_validator property validator}
- *   that will certify the value of the property using custom code.
+ *   that will verify the value of the property using custom code. Only one validator
+ *   can be specified for a given typeset, and it will only be called if the value
+ *   was verified against at least one of the other types listed. If no other types
+ *   were listed (i.e. using the `Array` form, as described above), then the validator
+ *   is called immediately.
  *
- * <h4>Example: Objects</h4>
+ * Note that all typesets use an _implied_ {@link rtvref.qualifiers.REQUIRED required}
+ *  qualifier unless otherwise specified. To qualify a typeset, a
+ *  {@link rtvref.qualifiers qualifier} may be specified as the __first__ element
+ *  in the `Array` form (if specified, it must be the first element). For example,
+ *  `note: [rtv.q.EXPECTED, rtv.t.STRING]` would describe an expected, but not required,
+ *  string, which could therefore be either empty or even `null`. The `Array` form
+ *  must be used in order to qualify a typeset as other than required, and the
+ *  qualifier applies to all immediate types in the typeset (which means each
+ *  nested typeset can have its own qualifier).
+ *
+ * <h4>Example: Object</h4>
  *
  * <pre><code>const contactShape = {
  *   name: rtv.t.STRING, // required, non-empty, string
@@ -188,17 +203,38 @@
  * rtv.verify(1, typeset); // OK
  * </code></pre>
  *
- * @typedef {Object} rtvref.types.typeset
+ * <h4>Example: Function</h4>
+ *
+ * <pre><code>rtv.verify(123, (v) => v > 100); // OK
+ * rtv.verify('123', [rtv.t.STRING, (v) => parseInt(v) > 100); // OK
+ * </code></pre>
+ *
+ * <h4>Example: Alternate Qualifier</h4>
+ *
+ * <pre><code>const person = {
+ *   name: rtv.t.STRING, // required, non-empty
+ *   age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => v >= 18] // 18 or older, if specified
+ * };
+ * rtv.verify({name: 'Bob'}, person); // OK
+ * rtv.verify({name: ''}, person); // ERROR
+ * rtv.verify({name: 'Steve', age: 17}, person); // ERROR
+ * rtv.verify({name: 'Steve', age: null}, person); // OK
+ * </code></pre>
+ *
+ * @typedef {(Object|String|Array|Function)} rtvref.types.typeset
  */
 
 /**
- * Property Validator
+ * <h3>Property Validator</h3>
  *
  * // TODO: document rtvref.types.property_validator (already referenced)
  *
  * Note one disadvantage: cannot be de/serialized via JSON.
  *
  * @typedef {Function} rtvref.types.property_validator
+ * @param {*} value The value being verified.
+ * @param {rtvref.types.typeset} typeset Reference to the typeset used for
+ *  verification (where the last element would be a reference to this function).
  */
 
 /**

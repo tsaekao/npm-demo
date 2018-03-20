@@ -1,7 +1,7 @@
 //// Qualifier Definitions \\\\
 
 /**
- * Qualifiers
+ * <h2>Qualifiers</h2>
  * @namespace rtvref.qualifiers
  */
 
@@ -44,8 +44,8 @@ export const EXPECTED = '+';
  *
  * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
  *  property value to be `null` as well as `undefined`, and does _not_ require
- *  it to be defined anywhere in the prototype chain. If the property is defined,
- *  then it is treated as an `EXPECTED` value.
+ *  the property to be defined anywhere in the prototype chain. If the property
+ *  is defined, then it is treated as an `EXPECTED` value.
  *
  * See specific type for additional rules.
  *
