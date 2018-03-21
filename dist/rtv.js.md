@@ -58,7 +58,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
         * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
-        * [.property_validator](#rtvref.types.property_validator) : <code>function</code>
+        * [.property_validator](#rtvref.types.property_validator) ⇒ <code>boolean</code>
     * [.shape_descriptor](#rtvref.shape_descriptor) : <code>Object</code>
 
 <a name="rtvref.Enumeration"></a>
@@ -196,7 +196,7 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
 <h3>Arguments</h3>
 
 Some types will accept, or may even expect, arguments. An argument immediately
- follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
+ follows the type in the description, such as `[PLAIN_OBJECT, {hello: STRING}]`.
  This would specify that the value must be a [plain object](#rtvref.types.PLAIN_OBJECT)
  with a shape that includes a property named 'hello', that property being a
  [required](#rtvref.qualifiers.REQUIRED) [string](#rtvref.types.STRING).
@@ -232,7 +232,7 @@ Optional and required arguments are specified for each type, where applicable.
     * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
     * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
-    * [.property_validator](#rtvref.types.property_validator) : <code>function</code>
+    * [.property_validator](#rtvref.types.property_validator) ⇒ <code>boolean</code>
 
 <a name="rtvref.types.ANY"></a>
 
@@ -550,7 +550,7 @@ Arguments (optional, specify one or the other, or both __in order__):
 - A reference to a constructor function. If specified, the class object
   (instance) must have this class function in its inheritance chain such
   that `<class_object> instanceof <function> === true`.
-- A nested shape description.
+- A nested [shape descriptor](#rtvref.shape_descriptor).
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -910,19 +910,31 @@ rtv.verify({name: 'Steve', age: null}, person); // OK
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.property_validator"></a>
 
-#### types.property_validator : <code>function</code>
+#### types.property_validator ⇒ <code>boolean</code>
 <h3>Property Validator</h3>
 
-// TODO: document rtvref.types.property_validator (already referenced)
+A function used as a [typeset](#rtvref.types.typeset), or as a subset to
+ a typeset, to provide custom verification of the value being verified.
 
-Note one disadvantage: cannot be de/serialized via JSON.
+A typeset may only have one validator, and the validator is only called if
+ the value being verified was verified by at least one type in the typeset.
+ The position of the validator within the typeset (if the typeset is an array),
+ does not change when the validator is invoked (i.e. before one type or after
+ another; it's always called last, if called at all).
+
+There is one disadvantage to using a property validator: It cannot be de/serialized
+ via JSON, which means it cannot be transmitted or persisted. One option would be
+ to customize the de/serialization to JSON by serializing the validator to a
+ special object with properties that would inform the deserialization process
+ on how to reconstruct the validator dynamically.
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**Returns**: <code>boolean</code> - `true` to verify the value, `false` to reject it.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being verified. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification (where the last element would be a reference to this function). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). |
 
 <a name="rtvref.shape_descriptor"></a>
 

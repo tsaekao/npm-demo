@@ -2,8 +2,8 @@
 
 import isString from 'lodash/isString';
 import {version as VERSION} from '../package.json';
-import * as typeMap from './lib/types';
-import * as qualifierMap from './lib/qualiiers';
+import * as allTypes from './lib/types';
+import * as allQualifiers from './lib/qualiiers';
 import Enumeration from './lib/Enumeration';
 
 /**
@@ -26,8 +26,8 @@ import Enumeration from './lib/Enumeration';
  * @typedef {Object} rtvref.shape_descriptor
  */
 
-const types = new Enumeration(typeMap);
-const qualifiers = new Enumeration(qualifierMap);
+const types = new Enumeration(allTypes);
+const qualifiers = new Enumeration(allQualifiers);
 
 /**
  * <h1>RTV.js</h1>

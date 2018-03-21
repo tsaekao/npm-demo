@@ -246,7 +246,7 @@ var version = "0.0.1";
  * <h3>Arguments</h3>
  *
  * Some types will accept, or may even expect, arguments. An argument immediately
- *  follows the type in the description, such as `PLAIN_OBJECT, {hello: STRING}`.
+ *  follows the type in the description, such as `[PLAIN_OBJECT, {hello: STRING}]`.
  *  This would specify that the value must be a {@link rtvref.types.PLAIN_OBJECT plain object}
  *  with a shape that includes a property named 'hello', that property being a
  *  {@link rtvref.qualifiers.REQUIRED required} {@link rtvref.types.STRING string}.
@@ -442,14 +442,28 @@ var version = "0.0.1";
 /**
  * <h3>Property Validator</h3>
  *
- * // TODO: document rtvref.types.property_validator (already referenced)
+ * A function used as a {@link rtvref.types.typeset typeset}, or as a subset to
+ *  a typeset, to provide custom verification of the value being verified.
  *
- * Note one disadvantage: cannot be de/serialized via JSON.
+ * A typeset may only have one validator, and the validator is only called if
+ *  the value being verified was verified by at least one type in the typeset.
+ *  The position of the validator within the typeset (if the typeset is an array),
+ *  does not change when the validator is invoked (i.e. before one type or after
+ *  another; it's always called last, if called at all).
+ *
+ * There is one disadvantage to using a property validator: It cannot be de/serialized
+ *  via JSON, which means it cannot be transmitted or persisted. One option would be
+ *  to customize the de/serialization to JSON by serializing the validator to a
+ *  special object with properties that would inform the deserialization process
+ *  on how to reconstruct the validator dynamically.
  *
  * @typedef {Function} rtvref.types.property_validator
  * @param {*} value The value being verified.
  * @param {rtvref.types.typeset} typeset Reference to the typeset used for
- *  verification (where the last element would be a reference to this function).
+ *  verification. Note that the typeset may contain nested typeset(s), and may
+ *  be part of a larger parent typeset (though there would be no reference to
+ *  the parent typeset, if any).
+ * @returns {boolean} `true` to verify the value, `false` to reject it.
  */
 
 /**
@@ -762,7 +776,7 @@ var PLAIN_OBJECT = 'plainObject';
  * - A reference to a constructor function. If specified, the class object
  *   (instance) must have this class function in its inheritance chain such
  *   that `<class_object> instanceof <function> === true`.
- * - A nested shape description.
+ * - A nested {@link rtvref.shape_descriptor shape descriptor}.
  *
  * @name rtvref.types.CLASS_OBJECT
  * @const {String}
@@ -806,8 +820,9 @@ var MAP_OBJECT = 'mapObject';
 // TODO: Is there a way that ARRAY could take a parameter, that being the
 //  required length of the array, defaulting to -1 for any length? Perhaps
 //  only when using the full form as `[ARRAY, 2, [STRING]]` instead of the
-//  short form as `[[STRING]]`? If so, then this would be up to par with
-//  the MAP_OBJECT where a count can be specified...
+//  short form as `[[STRING]]`? Maybe `[2, [STRING]]` would even work for short
+//  hand. If so, then this would be up to par with the MAP_OBJECT where a count
+//  can be specified...
 /**
  * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
  * @name rtvref.types.ARRAY
@@ -966,7 +981,7 @@ var SET = 'set';
  */
 var WEAK_SET = 'weakSet';
 
-var typeMap = Object.freeze({
+var allTypes = Object.freeze({
 	ANY: ANY,
 	STRING: STRING,
 	BOOLEAN: BOOLEAN,
@@ -1050,7 +1065,7 @@ var EXPECTED = '+';
  */
 var OPTIONAL = '?';
 
-var qualifierMap = Object.freeze({
+var allQualifiers = Object.freeze({
 	REQUIRED: REQUIRED,
 	EXPECTED: EXPECTED,
 	OPTIONAL: OPTIONAL
@@ -1195,8 +1210,8 @@ var Enumeration = function () {
  * @typedef {Object} rtvref.shape_descriptor
  */
 
-var types = new Enumeration(typeMap);
-var qualifiers = new Enumeration(qualifierMap);
+var types = new Enumeration(allTypes);
+var qualifiers = new Enumeration(allQualifiers);
 
 /**
  * <h1>RTV.js</h1>
