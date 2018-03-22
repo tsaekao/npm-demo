@@ -35,8 +35,8 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.ANY](#rtvref.types.ANY) : <code>String</code>
         * [.STRING](#rtvref.types.STRING) : <code>String</code>
         * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>String</code>
-        * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
         * [.SYMBOL](#rtvref.types.SYMBOL) : <code>String</code>
+        * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
         * [.FINITE](#rtvref.types.FINITE) : <code>String</code>
         * [.INT](#rtvref.types.INT) : <code>String</code>
         * [.FLOAT](#rtvref.types.FLOAT) : <code>String</code>
@@ -56,9 +56,14 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>String</code>
         * [.SET](#rtvref.types.SET) : <code>String</code>
         * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
+        * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
         * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
+        * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
         * [.property_validator](#rtvref.types.property_validator) ⇒ <code>boolean</code>
+        * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+        * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
+        * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
     * [.shape_descriptor](#rtvref.shape_descriptor) : <code>Object</code>
 
 <a name="rtvref.Enumeration"></a>
@@ -189,19 +194,9 @@ In RTV.js, a primitive is considered to be one of the following types:
  additional rules specific to the type of value it represents.
 
 For example, while the [FINITE](#rtvref.types.FINITE) type states that the
- value must not be `NaN`, `+Infinity`, nor `-Infinity`, it could be `null` if
- the qualifier used is `EXPECTED`, and it could be `undefined` if the qualifier
+ value must not be `NaN`, `+Infinity`, nor `-Infinity`; it could be `null` if
+ the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  used is `OPTIONAL`.
-
-<h3>Arguments</h3>
-
-Some types will accept, or may even expect, arguments. An argument immediately
- follows the type in the description, such as `[PLAIN_OBJECT, {hello: STRING}]`.
- This would specify that the value must be a [plain object](#rtvref.types.PLAIN_OBJECT)
- with a shape that includes a property named 'hello', that property being a
- [required](#rtvref.qualifiers.REQUIRED) [string](#rtvref.types.STRING).
-
-Optional and required arguments are specified for each type, where applicable.
 
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
@@ -209,8 +204,8 @@ Optional and required arguments are specified for each type, where applicable.
     * [.ANY](#rtvref.types.ANY) : <code>String</code>
     * [.STRING](#rtvref.types.STRING) : <code>String</code>
     * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>String</code>
-    * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
     * [.SYMBOL](#rtvref.types.SYMBOL) : <code>String</code>
+    * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
     * [.FINITE](#rtvref.types.FINITE) : <code>String</code>
     * [.INT](#rtvref.types.INT) : <code>String</code>
     * [.FLOAT](#rtvref.types.FLOAT) : <code>String</code>
@@ -230,9 +225,14 @@ Optional and required arguments are specified for each type, where applicable.
     * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>String</code>
     * [.SET](#rtvref.types.SET) : <code>String</code>
     * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
+    * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
     * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
+    * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
     * [.property_validator](#rtvref.types.property_validator) ⇒ <code>boolean</code>
+    * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+    * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
+    * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
 
 <a name="rtvref.types.ANY"></a>
 
@@ -263,12 +263,21 @@ String rules per qualifiers:
 - REQUIRED: Must be a non-empty string.
 - EXPECTED | OPTIONAL: Can be an empty string.
 
+Arguments (optional): [STRING_args](#rtvref.types.STRING_args)
+
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.BOOLEAN"></a>
 
 #### types.BOOLEAN : <code>String</code>
 Boolean rules per qualifiers: Must be a boolean.
+
+**Kind**: static constant of [<code>types</code>](#rtvref.types)  
+**See**: [qualifiers](#rtvref.qualifiers)  
+<a name="rtvref.types.SYMBOL"></a>
+
+#### types.SYMBOL : <code>String</code>
+Symbol rules per qualifiers: Must be a symbol.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
@@ -280,24 +289,21 @@ Number rules per qualifiers:
 - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
 - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
 
+Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
+
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
 
 - [qualifiers](#rtvref.qualifiers)
 - [FINITE](#rtvref.types.FINITE)
 
-<a name="rtvref.types.SYMBOL"></a>
-
-#### types.SYMBOL : <code>String</code>
-Symbol rules per qualifiers: Must be a symbol.
-
-**Kind**: static constant of [<code>types</code>](#rtvref.types)  
-**See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.FINITE"></a>
 
 #### types.FINITE : <code>String</code>
 Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
  value can be either a safe integer or a [floating point number](#rtvref.types.FLOAT).
+
+Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -312,6 +318,8 @@ Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
 Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) integer,
  but is not necessarily _safe_.
 
+Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
+
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
 
@@ -324,6 +332,8 @@ Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) integer,
 
 #### types.FLOAT : <code>String</code>
 Float rules per qualifiers: Must be a finite floating point number.
+
+Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -375,9 +385,7 @@ Any object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional):
-
-- A nested shape description.
+Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -437,9 +445,7 @@ Object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional):
-
-- A nested shape description.
+Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -490,9 +496,7 @@ Plain object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional):
-
-- A nested shape description.
+Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -509,7 +513,8 @@ Arguments (optional):
 A _class_ object is one that is created by invoking the `new` operator on a
  function (other than a primitive type function), generating a new object,
  commonly referred to as a _class instance_. This object's prototype
- (`__proto__`) is a reference to that function's `prototype`.
+ (`__proto__`) is a reference to that function's `prototype` and has a
+ `constructor` property that is `===` to the function.
 
 The following values are considered class objects:
 
@@ -545,12 +550,7 @@ Class object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional, specify one or the other, or both __in order__):
-
-- A reference to a constructor function. If specified, the class object
-  (instance) must have this class function in its inheritance chain such
-  that `<class_object> instanceof <function> === true`.
-- A nested [shape descriptor](#rtvref.shape_descriptor).
+Arguments (optional): [CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -571,14 +571,7 @@ A _map_ object is an [OBJECT](#rtvref.types.OBJECT) that is treated as a
 
 Map object rules per qualifiers: Same as [OBJECT](#rtvref.types.OBJECT) rules.
 
-Argument (optional):
-
-- A [collection descriptor](#rtvref.types.collection_descriptor) specifying
-  the rules for the keys and/or values found in the map. If not specified,
-  the default collection descriptor options apply. __NOTE:__ Since a map object
-  is based on a JavaScript Object (which only supports string-based keys), the
-  collection descriptor's `keys` type defaults to (and is required to be)
-  [STRING](#rtvref.types.STRING).
+Arguments (optional): [collection_descriptor](#rtvref.types.collection_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -679,11 +672,7 @@ An ES6 map supports any object as its keys, unlike a
 
 Map rules per qualifiers: Must be a `Map` instance.
 
-Argument (optional):
-
-- A [collection descriptor](#rtvref.types.collection_descriptor) specifying
-  the rules for the keys and/or values found in the map. If not specified,
-  the default collection descriptor options apply.
+Arguments (optional): [collection_descriptor](#rtvref.types.collection_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -702,11 +691,7 @@ An ES6 weak map supports any object as its keys, unlike a
 
 Weak map rules per qualifiers: Must be a `WeakMap` instance.
 
-Argument (optional):
-
-- A [collection descriptor](#rtvref.types.collection_descriptor) specifying
-  the rules for the keys and/or values found in the map. If not specified,
-  the default collection descriptor options apply.
+Arguments (optional): [collection_descriptor](#rtvref.types.collection_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -723,12 +708,7 @@ An ES6 set is a collection of _unique_ values without associated keys. Values ca
 
 Set rules per qualifiers: Must be a `Set` instance.
 
-Argument (optional):
-
-- A [collection descriptor](#rtvref.types.collection_descriptor) specifying
-  the rules for the values found in the set (note that key-related rules are
-  ignored since they are not applicable). If not specified, the default
-  collection descriptor options apply.
+Arguments (optional): [collection_descriptor](#rtvref.types.collection_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -744,12 +724,7 @@ An ES6 weak set is a collection of _unique_ values without associated keys. Valu
 
 Weak set rules per qualifiers: Must be a `WeakSet` instance.
 
-Argument (optional):
-
-- A [collection descriptor](#rtvref.types.collection_descriptor) specifying
-  the rules for the values found in the set (note that key-related rules are
-  ignored since they are not applicable). If not specified, the default
-  collection descriptor options apply.
+Arguments (optional): [collection_descriptor](#rtvref.types.collection_descriptor)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -757,6 +732,28 @@ Argument (optional):
 - [qualifiers](#rtvref.qualifiers)
 - [SET](#rtvref.types.SET)
 
+<a name="rtvref.types.type_arguments"></a>
+
+#### types.type_arguments : <code>Object</code>
+<h3>Type Arguments</a></h3>
+
+Some types will accept, or may even expect, one or more arguments. Each type
+ will specify whether it has arguments, and if they're optional or required.
+ Arguments are specified as a single object immediately following a type in an
+ __Array__ [typeset](#rtvref.types.typeset) (i.e. an Array must be used as
+ the typeset in order to provide arguments for a type).
+
+If a type does not accept any arguments, but an arguments object is provided,
+ it will simply be ignored (i.e. it will __not__ be treated as a nested
+ [shape descriptor](#rtvref.shape_descriptor)).
+
+An arguments object immediately follows its type in a typeset, such as
+ `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
+ [plain object](#rtvref.types.PLAIN_OBJECT) with a shape that includes a
+ property named 'hello', that property being a
+ [required](#rtvref.qualifiers.REQUIRED) [string](#rtvref.types.STRING).
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.collection_descriptor"></a>
 
 #### types.collection_descriptor : <code>Object</code>
@@ -783,17 +780,17 @@ For example, the following descriptors both verify a collection of 3-letter
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **See**
 
-- rtvref.types.MAP_OBJECT
-- rtvref.types.MAP
-- rtvref.types.WEAK_MAP
-- rtvref.types.SET
-- rtvref.types.WEAK_SET
+- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
+- [MAP](#rtvref.types.MAP)
+- [WEAK_MAP](#rtvref.types.WEAK_MAP)
+- [SET](#rtvref.types.SET)
+- [WEAK_SET](#rtvref.types.WEAK_SET)
 
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| [keys] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each key  in the collection. The type of collection being described may restrict the types that this typeset  can include. For example, the [MAP_OBJECT](#rtvref.types.MAP_OBJECT) collection  only supports the [STRING](#rtvref.types.STRING) type due to the nature of  its JavaScript Object-based implementation. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [keys] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each key  in the collection. The type of collection being described may restrict the types that this typeset  can include. For example, the [MAP_OBJECT](#rtvref.types.MAP_OBJECT) collection  only supports the [STRING](#rtvref.types.STRING) type due to the nature of  its JavaScript `Object`-based implementation. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
 | [keyExp] | <code>String</code> |  | Optional. A string-based regular expression  describing the names of keys (own-enumerable properties) found in the  collection. By default, there are no restrictions on key names. This expression is only  used if the `keys` typeset includes the [STRING](#rtvref.types.STRING) type. For example, to require numerical keys, the following expression could be  used: `'^\\d+$'`. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
 | [keyExpFlags] | <code>String</code> |  | Optional. A string specifying any flags to use  with the regular expression specified in `keyExp`. If this property is _falsy_,  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or  does not apply per the `keys` typeset. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
 | [values] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each value  in the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any entries/properties to be considered valid, unless  `count` is specified). For example, to require arrays of non-empty string values, the following  typeset could be used: `[[types.STRING]]`. |
@@ -809,32 +806,49 @@ Describes the possible types for a given value. It can be any one of the followi
 
 - `Object`: For the root or a nested [shape descriptor](#rtvref.shape_descriptor)
   of _implied_ [OBJECT](#rtvref.types.OBJECT) type (unless qualified with a specific
-  object type like [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), for example).
+  object type like [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), for example, when
+  using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`).
 - `String`: For a single type, such as ['FINITE'](#rtvref.types.FINITE)
   for a finite number.
-- `Array`: For multiple type possibilities, optionally [qualified](#rtvref.qualifiers),
-  using an __OR__ conjunction, which means the value of the property being described must
-  be at least one of the types listed, but not all. Note that when a nested array is
-  encountered (i.e. an array within a typeset), it is treated as the shortcut
-  [ARRAY](#rtvref.types.ARRAY) form, implying an array of nested typesets, e.g.
-  `values: [BOOLEAN, [STRING, FINITE]]` would describe a 'values' property that should
-  be a boolean, or an array of non-empty strings or finite numbers.
 - `Function`: For a [property validator](#rtvref.types.property_validator)
   that will verify the value of the property using custom code. Only one validator
   can be specified for a given typeset, and it will only be called if the value
-  was verified against at least one of the other types listed. If no other types
+  was verified against at least one of the other types listed (regardless of the
+  validator function's position when specified in a typeset array). If no other types
   were listed (i.e. using the `Array` form, as described above), then the validator
   is called immediately.
+- `Array`: For multiple type possibilities, optionally [qualified](#rtvref.qualifiers),
+  using an __OR__ conjunction, which means the value of the property being described must
+  be at _least one_ of the types listed, but not all. Matching is done in a short-circuit
+  fashion, from the first to the last element in the typeset. If a simpler type is
+  likely, it's more performant to specify those first in the typeset to avoid a match
+  attempt on a nested shape or array.
+  - An Array is necessary to [qualify](#rtvref.qualifiers) the typeset as not
+    required (see _Typeset Qualifiers_ below).
+  - An Array is also necessary if a type needs or requires
+    [arguments](#rtvref.types.type_arguments).
+  - If the first element is an `Object`, it's treated as a nested
+    [shape descriptor](#rtvref.shape_descriptor) describing an object of the
+    default `OBJECT` type. To include a shape descriptor at any other position
+    within the array, it __must__ be preceded by a type, even if the default
+    `OBJECT` type is being used (i.e. `OBJECT` must be specified as the type).
+  - If the first element is an `Array`, it's treated as a nested list with an
+    implied `ARRAY` type, e.g. `[BOOLEAN, [STRING, FINITE]]` would describe a
+    property that should be a boolean, or an array of non-empty strings or finite
+    numbers.
+  - If the first element is a `Function`, it's treated as a property validator.
 
-Note that all typesets use an _implied_ [required](#rtvref.qualifiers.REQUIRED)
+<h4>Typeset Qualifiers</h4>
+
+All typesets use an _implied_ [required](#rtvref.qualifiers.REQUIRED)
  qualifier unless otherwise specified. To qualify a typeset, a
  [qualifier](#rtvref.qualifiers) may be specified as the __first__ element
  in the `Array` form (if specified, it must be the first element). For example,
- `note: [rtv.q.EXPECTED, rtv.t.STRING]` would describe an expected, but not required,
- string, which could therefore be either empty or even `null`. The `Array` form
- must be used in order to qualify a typeset as other than required, and the
- qualifier applies to all immediate types in the typeset (which means each
- nested typeset can have its own qualifier).
+ `{note: [EXPECTED, STRING]}` would describe an object with a 'note' property
+ that is an expected, but not required, string, which could therefore be either
+ empty or even `null`. The `Array` form must be used in order to qualify a
+ typeset as other than required, and the qualifier applies to all immediate
+ types in the typeset (which means each nested typeset can have its own qualifier).
 
 <h4>Example: Object</h4>
 
@@ -908,6 +922,22 @@ rtv.verify({name: 'Steve', age: null}, person); // OK
 </code></pre>
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+<a name="rtvref.types.fully_qualified_typeset"></a>
+
+#### types.fully_qualified_typeset : <code>Array</code>
+<h3>Fully-Qualified Typeset</h3>
+
+A [typeset](#rtvref.types.typeset) expressed without any shortcut notations
+ to make it easier to parse, especially as the `match` parameter given to a
+ [property validator](#rtvref.types.property_validator).
+
+For example:
+
+- `STRING` -> `[REQUIRED, STRING]`
+- `{note: STRING}` -> `[REQUIRED, OBJECT, {note: [REQUIRED, STRING]}]`
+- `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.property_validator"></a>
 
 #### types.property_validator ⇒ <code>boolean</code>
@@ -934,7 +964,59 @@ There is one disadvantage to using a property validator: It cannot be de/seriali
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being verified. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). |
+| match | <code>Array</code> | A __first-level__, [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the type that matched. This means the first level of this  subset of `typeset` (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example,  if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this parameter  would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). This typeset is as it was specified in the  parent shape, and therefore it may not be fully-qualified. |
+
+<a name="rtvref.types.STRING_args"></a>
+
+#### types.STRING_args : <code>Object</code>
+[STRING](#rtvref.types.STRING) arguments.
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [qualifiers](#rtvref.qualifiers)  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| [exact] | <code>String</code> |  | An exact value to match. |
+| [min] | <code>Number</code> |  | Minimum length. Defaults to 1 for a `REQUIRED` string,  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified. |
+| [max] | <code>Number</code> | <code>-1</code> | Maximum length. -1 means no maximum. Ignored if `exact`  is specified. |
+| [partial] | <code>String</code> |  | A partial value to match (must be somewhere within the string).  Ignored if `exact` is specified. |
+
+<a name="rtvref.types.numeric_args"></a>
+
+#### types.numeric_args : <code>Object</code>
+Numeric value arguments. Applies to all numeric types.
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**
+
+- [qualifiers](#rtvref.qualifiers)
+- [NUMBER](#rtvref.types.NUMBER)
+- [FINITE](#rtvref.types.FINITE)
+- [INT](#rtvref.types.INT)
+- [FLOAT](#rtvref.types.FLOAT)
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [exact] | <code>String</code> | An exact value to match. |
+| [min] | <code>Number</code> | Minimum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
+| [max] | <code>Number</code> | Maximum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
+
+<a name="rtvref.types.CLASS_OBJECT_args"></a>
+
+#### types.CLASS_OBJECT_args : <code>Object</code>
+[CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) arguments.
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof <function> === true`. Note that  this property is not serializable to JSON. |
+| [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. |
 
 <a name="rtvref.shape_descriptor"></a>
 
