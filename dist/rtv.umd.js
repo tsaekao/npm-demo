@@ -543,8 +543,8 @@ var version = "0.0.1";
  */
 var ANY = 'any';
 
-// TODO: Add 're: string' and 'reFlags: string' args (strings because of JSON requirement...)
-//  for a regular expression test.
+// TODO: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
+//  for a regular expression test. Similar prop names to collection_descriptor.
 /**
  * {@link rtvref.types.STRING STRING} arguments.
  * @typedef {Object} rtvref.types.STRING_args
@@ -1273,12 +1273,16 @@ var Enumeration = function () {
 /**
  * <h2>Shape Descriptor</h2>
  *
- * // TODO: document rtvref.shape_descriptor (already referenced). The 'Object'
- * //  type here means an actual Object, NOT anything that could be an object
- * //  like Array, Function, etc.
+ * Describes the shape (i.e. interface) of an object as a map of properties to
+ *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
+ *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
+ *  along with possible types.
  *
- * Describes the shape (i.e. interface) of an object as a map of expected or
- *  possible properties to {@link rtvref.types.typeset typesets}.
+ * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
+ *  a given shape, properties that are not part of the shape are ignored. If
+ *  successfully checked/verified, the value is guaranteed to provide the properties
+ *  described in the shape, and each property is guaranteed to be assigned to a
+ *  value of at least one type described in each property's typeset.
  *
  * @typedef {Object} rtvref.shape_descriptor
  */
@@ -1309,6 +1313,7 @@ var rtv = {
 
   /**
    * Checks a value against a shape for compliance.
+   * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
    * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
@@ -1323,6 +1328,7 @@ var rtv = {
 
   /**
    * __Requires__ a value to be compliant to a shape.
+   * @function rtv.verify
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
    * @returns {Boolean} `true` if the `value` is compliant to the `shape`; otherwise,
@@ -1340,8 +1346,19 @@ var rtv = {
   },
 
 
-  // TODO: docs
+  /**
+   * RTV Library Configuration
+   * @name rtv.config
+   * @type {rtv.config_properties}
+   */
   config: Object.defineProperties({}, {
+
+    /**
+     * Configuration Properties
+     * @typedef {Object} rtv.config_properties
+     * @property {Boolean} enabled // TODO[docs]
+     */
+
     enabled: function () {
       var value = true;
       return {
@@ -1358,7 +1375,11 @@ var rtv = {
     }()
   }),
 
-  // TODO: docs
+  /**
+   * Contextual RTV Generator // TODO[docs]
+   * @function rtv.Context
+   * @param {String} context
+   */
   Context: function Context(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
   }

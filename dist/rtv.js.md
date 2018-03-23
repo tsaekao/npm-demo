@@ -1023,12 +1023,16 @@ Numeric value arguments. Applies to all numeric types.
 ### rtvref.shape_descriptor : <code>Object</code>
 <h2>Shape Descriptor</h2>
 
-// TODO: document rtvref.shape_descriptor (already referenced). The 'Object'
-//  type here means an actual Object, NOT anything that could be an object
-//  like Array, Function, etc.
+Describes the shape (i.e. interface) of an object as a map of properties to
+ [typesets](#rtvref.types.typeset). Each typeset indicates whether the
+ property is required, expected, or optional, using [qualifiers](#rtvref.qualifiers),
+ along with possible types.
 
-Describes the shape (i.e. interface) of an object as a map of expected or
- possible properties to [typesets](#rtvref.types.typeset).
+When a value is [checked](#rtv.check) or [verified](#rtv.verify) against
+ a given shape, properties that are not part of the shape are ignored. If
+ successfully checked/verified, the value is guaranteed to provide the properties
+ described in the shape, and each property is guaranteed to be assigned to a
+ value of at least one type described in each property's typeset.
 
 **Kind**: static typedef of [<code>rtvref</code>](#rtvref)  
 <a name="rtv"></a>
@@ -1043,9 +1047,12 @@ Runtime Verification Library for browsers and Node.js.
 * [rtv](#rtv) : <code>object</code>
     * [.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.q](#rtv.q) : [<code>Enumeration</code>](#rtvref.Enumeration)
+    * [.config](#rtv.config) : [<code>config_properties</code>](#rtv.config_properties)
     * [._version](#rtv._version) : <code>String</code>
     * [.check(value, shape)](#rtv.check) ⇒ <code>Boolean</code>
     * [.verify(value, shape)](#rtv.verify) ⇒ <code>Boolean</code>
+    * [.Context(context)](#rtv.Context)
+    * [.config_properties](#rtv.config_properties) : <code>Object</code>
 
 <a name="rtv.t"></a>
 
@@ -1057,6 +1064,12 @@ Enumeration of [types](#rtvref.types).
 
 ### rtv.q : [<code>Enumeration</code>](#rtvref.Enumeration)
 Enumeration of [qualifiers](#rtvref.qualifiers).
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
+<a name="rtv.config"></a>
+
+### rtv.config : [<code>config_properties</code>](#rtv.config_properties)
+RTV Library Configuration
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 <a name="rtv._version"></a>
@@ -1098,4 +1111,27 @@ __Requires__ a value to be compliant to a shape.
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | shape | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of the value. |
+
+<a name="rtv.Context"></a>
+
+### rtv.Context(context)
+Contextual RTV Generator // TODO[docs]
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+
+| Param | Type |
+| --- | --- |
+| context | <code>String</code> | 
+
+<a name="rtv.config_properties"></a>
+
+### rtv.config_properties : <code>Object</code>
+Configuration Properties
+
+**Kind**: static typedef of [<code>rtv</code>](#rtv)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| enabled | <code>Boolean</code> | // TODO[docs] |
 

@@ -16,12 +16,16 @@ import Enumeration from './lib/Enumeration';
 /**
  * <h2>Shape Descriptor</h2>
  *
- * // TODO: document rtvref.shape_descriptor (already referenced). The 'Object'
- * //  type here means an actual Object, NOT anything that could be an object
- * //  like Array, Function, etc.
+ * Describes the shape (i.e. interface) of an object as a map of properties to
+ *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
+ *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
+ *  along with possible types.
  *
- * Describes the shape (i.e. interface) of an object as a map of expected or
- *  possible properties to {@link rtvref.types.typeset typesets}.
+ * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
+ *  a given shape, properties that are not part of the shape are ignored. If
+ *  successfully checked/verified, the value is guaranteed to provide the properties
+ *  described in the shape, and each property is guaranteed to be assigned to a
+ *  value of at least one type described in each property's typeset.
  *
  * @typedef {Object} rtvref.shape_descriptor
  */
@@ -52,6 +56,7 @@ const rtv = {
 
   /**
    * Checks a value against a shape for compliance.
+   * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
    * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
@@ -65,6 +70,7 @@ const rtv = {
 
   /**
    * __Requires__ a value to be compliant to a shape.
+   * @function rtv.verify
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
    * @returns {Boolean} `true` if the `value` is compliant to the `shape`; otherwise,
@@ -81,8 +87,19 @@ const rtv = {
     }
   },
 
-  // TODO: docs
+  /**
+   * RTV Library Configuration
+   * @name rtv.config
+   * @type {rtv.config_properties}
+   */
   config: Object.defineProperties({}, {
+
+    /**
+     * Configuration Properties
+     * @typedef {Object} rtv.config_properties
+     * @property {Boolean} enabled // TODO[docs]
+     */
+
     enabled: (function() {
       let value = true;
       return {
@@ -99,7 +116,11 @@ const rtv = {
     })()
   }),
 
-  // TODO: docs
+  /**
+   * Contextual RTV Generator // TODO[docs]
+   * @function rtv.Context
+   * @param {String} context
+   */
   Context(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
   }
