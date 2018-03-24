@@ -35,7 +35,7 @@
     "build": "npm run clean && npm run build:lib && npm run build:docs",
     "lint": "eslint rollup.config.js \"src/**/*.js\"",
     "test:watch": "npm run test:unit -- -w",
-    "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js --recursive ./test",
+    "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
     "test:coverage": "nyc npm run test:unit",
     "test": "npm run lint && npm run test:coverage"
   },
