@@ -1,10 +1,7 @@
 //// Main entry point \\\\
 
-import isString from 'lodash/isString';
 import {version as VERSION} from '../package.json';
-import * as allTypes from './lib/types';
-import * as allQualifiers from './lib/qualiiers';
-import Enumeration from './lib/Enumeration';
+import * as impl from './lib/impl';
 
 /**
  * <h1>RTV.js Reference</h1>
@@ -30,9 +27,6 @@ import Enumeration from './lib/Enumeration';
  * @typedef {Object} rtvref.shape_descriptor
  */
 
-const types = new Enumeration(allTypes);
-const qualifiers = new Enumeration(allQualifiers);
-
 /**
  * <h1>RTV.js</h1>
  *
@@ -45,14 +39,14 @@ const rtv = {
    * @name rtv.t
    * @type {rtvref.Enumeration}
    */
-  t: types,
+  t: impl.types,
 
   /**
    * Enumeration of {@link rtvref.qualifiers qualifiers}.
    * @name rtv.q
    * @type {rtvref.Enumeration}
    */
-  q: qualifiers,
+  q: impl.qualifiers,
 
   /**
    * Checks a value against a shape for compliance.
@@ -65,7 +59,7 @@ const rtv = {
    */
   check(value, shape) {
     // TODO: testing 'check'
-    return isString(value) && !!value;
+    return impl.check(value, shape);
   },
 
   /**
@@ -73,16 +67,16 @@ const rtv = {
    * @function rtv.verify
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {Boolean} `true` if the `value` is compliant to the `shape`; otherwise,
-   *  an exception is thrown.
    * @throws {Error} If the `value` is not compliant to the `shape`.
    * @see rtv.verify
    */
   verify(value, shape) {
-    // TODO: testing 'verify'
     if (this.config.enabled) {
       if (!this.check(value, shape)) {
-        throw new Error('value must be a ' + types.STRING + ': ' + value);
+        // TODO: consider throwing a special RtvError object that contains extra
+        //  properties to indicate what didn't match, what was expected, the shape
+        //  that was checked, the value that was checked, etc.
+        throw new Error('value does not match specified shape');
       }
     }
   },
@@ -109,7 +103,7 @@ const rtv = {
           return value;
         },
         set(newValue) {
-          rtv.verify(newValue, types.BOOLEAN);
+          rtv.verify(newValue, rtv.t.BOOLEAN);
           value = newValue;
         }
       };

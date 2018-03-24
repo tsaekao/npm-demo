@@ -1050,7 +1050,7 @@ Runtime Verification Library for browsers and Node.js.
     * [.config](#rtv.config) : [<code>config_properties</code>](#rtv.config_properties)
     * [._version](#rtv._version) : <code>String</code>
     * [.check(value, shape)](#rtv.check) ⇒ <code>Boolean</code>
-    * [.verify(value, shape)](#rtv.verify) ⇒ <code>Boolean</code>
+    * [.verify(value, shape)](#rtv.verify)
     * [.Context(context)](#rtv.Context)
     * [.config_properties](#rtv.config_properties) : <code>Object</code>
 
@@ -1095,12 +1095,10 @@ Checks a value against a shape for compliance.
 
 <a name="rtv.verify"></a>
 
-### rtv.verify(value, shape) ⇒ <code>Boolean</code>
+### rtv.verify(value, shape)
 __Requires__ a value to be compliant to a shape.
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
-**Returns**: <code>Boolean</code> - `true` if the `value` is compliant to the `shape`; otherwise,
- an exception is thrown.  
 **Throws**:
 
 - <code>Error</code> If the `value` is not compliant to the `shape`.

@@ -3,6 +3,8 @@
 * @license MIT, https://gitlab.com/stefcameron/rtvjs/blob/master/LICENSE.md
 * Parts of Lodash used internally: https://github.com/lodash/lodash/
 */
+var version = "0.0.1";
+
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 /** Detect free variable `global` from Node.js. */
@@ -199,8 +201,6 @@ function isString(value) {
 }
 
 var isString_1 = isString;
-
-var version = "0.0.1";
 
 //// Type Definitions \\\\
 
@@ -1250,6 +1250,42 @@ var Enumeration = function () {
   return Enumeration;
 }();
 
+//// Main Implementation Module \\\\
+
+/**
+ * RTV Implementation
+ * @private
+ * @namespace rtv.impl
+ */
+
+/**
+ * Enumeration of {@link rtvref.types types}.
+ * @name rtv.impl.types
+ * @type {rtvref.Enumeration}
+ */
+var types = new Enumeration(allTypes);
+
+/**
+ * Enumeration of {@link rtvref.qualifiers qualifiers}.
+ * @name rtv.impl.qualifiers
+ * @type {rtvref.Enumeration}
+ */
+var qualifiers = new Enumeration(allQualifiers);
+
+/**
+ * Checks a value against a shape for compliance.
+ * @function rtv.impl.check
+ * @param {*} value Value to check.
+ * @param {rtvref.types.typeset} shape Expected shape of the value.
+ * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
+ *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+ * @see rtv.impl.verify
+ */
+var check = function check(value, shape) {
+  // TODO: testing 'check'
+  return isString_1(value) && !!value;
+};
+
 //// Main entry point \\\\
 
 /**
@@ -1275,9 +1311,6 @@ var Enumeration = function () {
  *
  * @typedef {Object} rtvref.shape_descriptor
  */
-
-var types = new Enumeration(allTypes);
-var qualifiers = new Enumeration(allQualifiers);
 
 /**
  * <h1>RTV.js</h1>
@@ -1309,9 +1342,9 @@ var rtv = {
    *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
    * @see rtv.verify
    */
-  check: function check(value, shape) {
+  check: function check$$1(value, shape) {
     // TODO: testing 'check'
-    return isString_1(value) && !!value;
+    return check(value, shape);
   },
 
 
@@ -1320,16 +1353,16 @@ var rtv = {
    * @function rtv.verify
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {Boolean} `true` if the `value` is compliant to the `shape`; otherwise,
-   *  an exception is thrown.
    * @throws {Error} If the `value` is not compliant to the `shape`.
    * @see rtv.verify
    */
   verify: function verify(value, shape) {
-    // TODO: testing 'verify'
     if (this.config.enabled) {
       if (!this.check(value, shape)) {
-        throw new Error('value must be a ' + types.STRING + ': ' + value);
+        // TODO: consider throwing a special RtvError object that contains extra
+        //  properties to indicate what didn't match, what was expected, the shape
+        //  that was checked, the value that was checked, etc.
+        throw new Error('value does not match specified shape');
       }
     }
   },
@@ -1357,7 +1390,7 @@ var rtv = {
           return value;
         },
         set: function set(newValue) {
-          rtv.verify(newValue, types.BOOLEAN);
+          rtv.verify(newValue, rtv.t.BOOLEAN);
           value = newValue;
         }
       };
