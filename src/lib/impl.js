@@ -3,7 +3,7 @@
 import isString from 'lodash/isString';
 
 import * as allTypes from './types';
-import * as allQualifiers from './qualiiers';
+import * as allQualifiers from './qualifiers';
 import Enumeration from './Enumeration';
 
 /**
