@@ -1,6 +1,7 @@
 //// Main Implementation Module \\\\
 
-import isString from 'lodash/isString';
+import {default as _isString} from 'lodash/isString';
+import {default as _isBoolean} from 'lodash/isBoolean';
 
 import * as allTypes from './types';
 import * as allQualifiers from './qualifiers';
@@ -31,11 +32,22 @@ export const qualifiers = new Enumeration(allQualifiers);
  * @function rtv.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} shape Expected shape of the value.
- * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
+ * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
  *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+ * @throws {Error} If `shape` is not a valid typeset.
  * @see rtv.impl.verify
  */
 export const check = function(value, shape) {
-  // TODO: testing 'check'
-  return isString(value) && !!value;
+  // TODO: on failure to check, consider returning a special RtvError object that
+  //  contains extra properties to indicate what didn't match, what was expected,
+  //  the shape that was checked, the value that was checked, etc.
+  //  If check succeeds, return boolean `true`. rtv.check/verify can then test
+  //  for the return type since impl shouldn't be exposed externally anyway.
+  if (shape === types.STRING) {
+    return _isString(value) && !!value;
+  } else if (shape === types.BOOLEAN) {
+    return _isBoolean(value);
+  }
+
+  throw new Error('cannot check value: shape is not a valid typeset');
 };

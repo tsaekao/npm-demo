@@ -47,7 +47,7 @@ class Enumeration {
    *  is not in this enumeration, unless `silent` is true.
    * @method rtvref.Enumeration#verify
    * @param {*} value Value to check. Cannot be undefined.
-   * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+   * @param {boolean} [silent=false] If truthy, returns `undefined` instead of throwing
    *  an exception if the specified value is not in this enumeration.
    * @returns {*} The specified value if it is in this enumeration, or `undefined` if
    *  `silent` is true and the value is not in this enumeration.

@@ -34,8 +34,9 @@
     "build:lib": "BABEL_ENV=build rollup -c",
     "build": "npm run clean && npm run build:lib && npm run build:docs",
     "lint": "eslint rollup.config.js \"src/**/*.js\"",
-    "test:watch": "npm run test:unit -- -w",
     "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
+    "test:unit:watch": "npm run test:unit -- -w",
+    "test:unit:debug": "npm run test:unit -- --inspect-brk",
     "test:coverage": "nyc npm run test:unit",
     "test": "npm run lint && npm run test:coverage"
   },
@@ -79,6 +80,7 @@
     "rollup-plugin-uglify": "^3.0.0"
   },
   "optionalDependencies": {
+    "babel-plugin-istanbul": "^4.1.5",
     "chai": "^4.1.2",
     "eslint": "^4.18.2",
     "mocha": "^5.0.4",

@@ -86,7 +86,7 @@
  * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
  *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
  *
- * @property {String} [keyExp] Optional. A string-based regular expression
+ * @property {string} [keyExp] Optional. A string-based regular expression
  *  describing the names of keys (own-enumerable properties) found in the
  *  collection.
  *
@@ -99,7 +99,7 @@
  * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
  *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
  *
- * @property {String} [keyExpFlags] Optional. A string specifying any flags to use
+ * @property {string} [keyExpFlags] Optional. A string specifying any flags to use
  *  with the regular expression specified in `keyExp`. If this property is _falsy_,
  *  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or
  *  does not apply per the `keys` typeset.
@@ -116,7 +116,7 @@
  * For example, to require arrays of non-empty string values, the following
  *  typeset could be used: `[[types.STRING]]`.
  *
- * @property {Number} [count=-1] Optional. The number of entries expected in
+ * @property {number} [count=-1] Optional. The number of entries expected in
  *  the collection. A negative value allows for any number of entries. Zero
  *  requires an empty collection.
  *
@@ -287,7 +287,7 @@
  *  special object with properties that would inform the deserialization process
  *  on how to reconstruct the validator dynamically.
  *
- * @typedef {Function} rtvref.types.property_validator
+ * @typedef {function} rtvref.types.property_validator
  * @param {*} value The value being verified.
  * @param {Array} match A __first-level__, {@link rtvref.types.fully_qualified_typeset fully-qualified}
  *  typeset describing the type that matched. This means the first level of this
@@ -323,7 +323,7 @@
  *   used to do customized verification.
  *
  * @name rtvref.types.ANY
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const ANY = 'any';
@@ -333,12 +333,12 @@ export const ANY = 'any';
 /**
  * {@link rtvref.types.STRING STRING} arguments.
  * @typedef {Object} rtvref.types.STRING_args
- * @property {String} [exact] An exact value to match.
- * @property {Number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
+ * @property {string} [exact] An exact value to match.
+ * @property {number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
  *  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified.
- * @property {Number} [max=-1] Maximum length. -1 means no maximum. Ignored if `exact`
+ * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if `exact`
  *  is specified.
- * @property {String} [partial] A partial value to match (must be somewhere within the string).
+ * @property {string} [partial] A partial value to match (must be somewhere within the string).
  *  Ignored if `exact` is specified.
  * @see {@link rtvref.qualifiers}
  */
@@ -352,7 +352,7 @@ export const ANY = 'any';
  * Arguments (optional): {@link rtvref.types.STRING_args}
  *
  * @name rtvref.types.STRING
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const STRING = 'string';
@@ -360,7 +360,7 @@ export const STRING = 'string';
 /**
  * Boolean rules per qualifiers: Must be a boolean.
  * @name rtvref.types.BOOLEAN
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const BOOLEAN = 'boolean';
@@ -368,7 +368,7 @@ export const BOOLEAN = 'boolean';
 /**
  * Symbol rules per qualifiers: Must be a symbol.
  * @name rtvref.types.SYMBOL
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const SYMBOL = 'symbol';
@@ -376,10 +376,10 @@ export const SYMBOL = 'symbol';
 /**
  * Numeric value arguments. Applies to all numeric types.
  * @typedef {Object} rtvref.types.numeric_args
- * @property {String} [exact] An exact value to match.
- * @property {Number} [min] Minimum inclusive value. Default varies per type.
+ * @property {string} [exact] An exact value to match.
+ * @property {number} [min] Minimum inclusive value. Default varies per type.
  *  Ignored if `exact` is specified.
- * @property {Number} [max] Maximum inclusive value. Default varies per type.
+ * @property {number} [max] Maximum inclusive value. Default varies per type.
  *  Ignored if `exact` is specified.
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.NUMBER}
@@ -397,7 +397,7 @@ export const SYMBOL = 'symbol';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.NUMBER
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.FINITE}
  */
@@ -410,7 +410,7 @@ export const NUMBER = 'number';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.FINITE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.NUMBER}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
@@ -424,7 +424,7 @@ export const FINITE = 'finite';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.INT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.FINITE}
  * @see {@link rtvref.types.FLOAT}
@@ -438,7 +438,7 @@ export const INT = 'int';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.FLOAT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.INT}
  */
@@ -489,7 +489,7 @@ export const FLOAT = 'float';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.ANY_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.OBJECT}
  * @see {@link rtvref.types.PLAIN_OBJECT}
@@ -548,7 +548,7 @@ export const ANY_OBJECT = 'anyObject';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.PLAIN_OBJECT}
@@ -598,7 +598,7 @@ export const OBJECT = 'object';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.PLAIN_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -610,7 +610,7 @@ export const PLAIN_OBJECT = 'plainObject';
 /**
  * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
  * @typedef {Object} rtvref.types.CLASS_OBJECT_args
- * @property {Function} [ctr] A reference to a constructor function. If specified,
+ * @property {function} [ctr] A reference to a constructor function. If specified,
  *  the class object (instance) must have this class function in its inheritance
  *  chain such that `<class_object> instanceof <function> === true`. Note that
  *  this property is not serializable to JSON.
@@ -662,7 +662,7 @@ export const PLAIN_OBJECT = 'plainObject';
  * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
  *
  * @name rtvref.types.CLASS_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -682,7 +682,7 @@ export const CLASS_OBJECT = 'classObject';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.MAP_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -702,7 +702,7 @@ export const MAP_OBJECT = 'mapObject';
 /**
  * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
  * @name rtvref.types.ARRAY
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const ARRAY = 'array';
@@ -724,7 +724,7 @@ export const ARRAY = 'array';
  *  qualifier.
  *
  * @name rtvref.types.JSON
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const JSON = 'json';
@@ -732,7 +732,7 @@ export const JSON = 'json';
 /**
  * Function rules per qualifiers: Must be a `function`.
  * @name rtvref.types.FUNCTION
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 export const FUNCTION = 'function';
@@ -740,7 +740,7 @@ export const FUNCTION = 'function';
 /**
  * RegExp rules per qualifiers: Must be a `RegExp` instance.
  * @name rtvref.types.REGEXP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
  */
@@ -749,7 +749,7 @@ export const REGEXP = 'regexp';
 /**
  * Date rules per qualifiers: Must be a `Date` instance.
  * @name rtvref.types.DATE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
  */
@@ -758,7 +758,7 @@ export const DATE = 'date';
 /**
  * Error rules per qualifiers: Must be an `Error` instance.
  * @name rtvref.types.ERROR
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
  */
@@ -767,7 +767,7 @@ export const ERROR = 'error';
 /**
  * Promise rules per qualifiers: Must be a `Promise` instance.
  * @name rtvref.types.PROMISE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
  */
@@ -784,7 +784,7 @@ export const PROMISE = 'promise';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.MAP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.MAP_OBJECT}
  * @see {@link rtvref.types.WEAK_MAP}
@@ -802,7 +802,7 @@ export const MAP = 'map';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.WEAK_MAP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.MAP_OBJECT}
  * @see {@link rtvref.types.MAP}
@@ -818,7 +818,7 @@ export const WEAK_MAP = 'weakMap';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.SET
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.WEAK_SET}
  */
@@ -833,7 +833,7 @@ export const SET = 'set';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.WEAK_SET
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.SET}
  */

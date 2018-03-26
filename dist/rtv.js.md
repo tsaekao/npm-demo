@@ -28,34 +28,34 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [._values](#rtvref.Enumeration+_values) : <code>Array.&lt;String&gt;</code>
         * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
-        * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>String</code>
-        * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>String</code>
-        * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>String</code>
+        * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
+        * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
+        * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
     * [.types](#rtvref.types) : <code>object</code>
-        * [.ANY](#rtvref.types.ANY) : <code>String</code>
-        * [.STRING](#rtvref.types.STRING) : <code>String</code>
-        * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>String</code>
-        * [.SYMBOL](#rtvref.types.SYMBOL) : <code>String</code>
-        * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
-        * [.FINITE](#rtvref.types.FINITE) : <code>String</code>
-        * [.INT](#rtvref.types.INT) : <code>String</code>
-        * [.FLOAT](#rtvref.types.FLOAT) : <code>String</code>
-        * [.ANY_OBJECT](#rtvref.types.ANY_OBJECT) : <code>String</code>
-        * [.OBJECT](#rtvref.types.OBJECT) : <code>String</code>
-        * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>String</code>
-        * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>String</code>
-        * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>String</code>
-        * [.ARRAY](#rtvref.types.ARRAY) : <code>String</code>
-        * [.JSON](#rtvref.types.JSON) : <code>String</code>
-        * [.FUNCTION](#rtvref.types.FUNCTION) : <code>String</code>
-        * [.REGEXP](#rtvref.types.REGEXP) : <code>String</code>
-        * [.DATE](#rtvref.types.DATE) : <code>String</code>
-        * [.ERROR](#rtvref.types.ERROR) : <code>String</code>
-        * [.PROMISE](#rtvref.types.PROMISE) : <code>String</code>
-        * [.MAP](#rtvref.types.MAP) : <code>String</code>
-        * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>String</code>
-        * [.SET](#rtvref.types.SET) : <code>String</code>
-        * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
+        * [.ANY](#rtvref.types.ANY) : <code>string</code>
+        * [.STRING](#rtvref.types.STRING) : <code>string</code>
+        * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
+        * [.SYMBOL](#rtvref.types.SYMBOL) : <code>string</code>
+        * [.NUMBER](#rtvref.types.NUMBER) : <code>string</code>
+        * [.FINITE](#rtvref.types.FINITE) : <code>string</code>
+        * [.INT](#rtvref.types.INT) : <code>string</code>
+        * [.FLOAT](#rtvref.types.FLOAT) : <code>string</code>
+        * [.ANY_OBJECT](#rtvref.types.ANY_OBJECT) : <code>string</code>
+        * [.OBJECT](#rtvref.types.OBJECT) : <code>string</code>
+        * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>string</code>
+        * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>string</code>
+        * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>string</code>
+        * [.ARRAY](#rtvref.types.ARRAY) : <code>string</code>
+        * [.JSON](#rtvref.types.JSON) : <code>string</code>
+        * [.FUNCTION](#rtvref.types.FUNCTION) : <code>string</code>
+        * [.REGEXP](#rtvref.types.REGEXP) : <code>string</code>
+        * [.DATE](#rtvref.types.DATE) : <code>string</code>
+        * [.ERROR](#rtvref.types.ERROR) : <code>string</code>
+        * [.PROMISE](#rtvref.types.PROMISE) : <code>string</code>
+        * [.MAP](#rtvref.types.MAP) : <code>string</code>
+        * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
+        * [.SET](#rtvref.types.SET) : <code>string</code>
+        * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
         * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
         * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
@@ -110,7 +110,7 @@ Validates a value as being in this enumeration. Throws an exception if the value
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | value | <code>\*</code> |  | Value to check. Cannot be undefined. |
-| [silent] | <code>Boolean</code> | <code>false</code> | If truthy, returns `undefined` instead of throwing  an exception if the specified value is not in this enumeration. |
+| [silent] | <code>boolean</code> | <code>false</code> | If truthy, returns `undefined` instead of throwing  an exception if the specified value is not in this enumeration. |
 
 <a name="rtvref.qualifiers"></a>
 
@@ -120,13 +120,13 @@ Validates a value as being in this enumeration. Throws an exception if the value
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
-    * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>String</code>
-    * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>String</code>
-    * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>String</code>
+    * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
+    * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
+    * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
 
 <a name="rtvref.qualifiers.REQUIRED"></a>
 
-#### qualifiers.REQUIRED : <code>String</code>
+#### qualifiers.REQUIRED : <code>string</code>
 Required qualifier: Property _must_ exist and be of the expected type.
  Depending on the type, additional requirements may be enforced.
 
@@ -140,7 +140,7 @@ See specific type for additional rules.
 **See**: [types](#rtvref.types)  
 <a name="rtvref.qualifiers.EXPECTED"></a>
 
-#### qualifiers.EXPECTED : <code>String</code>
+#### qualifiers.EXPECTED : <code>string</code>
 Expected qualifier: Property _should_ exist and be of the expected type.
  Depending on the type, some requirements may not be enforced.
 
@@ -154,7 +154,7 @@ See specific type for additional rules.
 **See**: [types](#rtvref.types)  
 <a name="rtvref.qualifiers.OPTIONAL"></a>
 
-#### qualifiers.OPTIONAL : <code>String</code>
+#### qualifiers.OPTIONAL : <code>string</code>
 Optional qualifier: Property _may_ exist and be of the expected type.
  Depending on the type, some requirements may not be enforced (i.e. less so
  than with the `EXPECTED` qualifier).
@@ -201,30 +201,30 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.types](#rtvref.types) : <code>object</code>
-    * [.ANY](#rtvref.types.ANY) : <code>String</code>
-    * [.STRING](#rtvref.types.STRING) : <code>String</code>
-    * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>String</code>
-    * [.SYMBOL](#rtvref.types.SYMBOL) : <code>String</code>
-    * [.NUMBER](#rtvref.types.NUMBER) : <code>String</code>
-    * [.FINITE](#rtvref.types.FINITE) : <code>String</code>
-    * [.INT](#rtvref.types.INT) : <code>String</code>
-    * [.FLOAT](#rtvref.types.FLOAT) : <code>String</code>
-    * [.ANY_OBJECT](#rtvref.types.ANY_OBJECT) : <code>String</code>
-    * [.OBJECT](#rtvref.types.OBJECT) : <code>String</code>
-    * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>String</code>
-    * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>String</code>
-    * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>String</code>
-    * [.ARRAY](#rtvref.types.ARRAY) : <code>String</code>
-    * [.JSON](#rtvref.types.JSON) : <code>String</code>
-    * [.FUNCTION](#rtvref.types.FUNCTION) : <code>String</code>
-    * [.REGEXP](#rtvref.types.REGEXP) : <code>String</code>
-    * [.DATE](#rtvref.types.DATE) : <code>String</code>
-    * [.ERROR](#rtvref.types.ERROR) : <code>String</code>
-    * [.PROMISE](#rtvref.types.PROMISE) : <code>String</code>
-    * [.MAP](#rtvref.types.MAP) : <code>String</code>
-    * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>String</code>
-    * [.SET](#rtvref.types.SET) : <code>String</code>
-    * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>String</code>
+    * [.ANY](#rtvref.types.ANY) : <code>string</code>
+    * [.STRING](#rtvref.types.STRING) : <code>string</code>
+    * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
+    * [.SYMBOL](#rtvref.types.SYMBOL) : <code>string</code>
+    * [.NUMBER](#rtvref.types.NUMBER) : <code>string</code>
+    * [.FINITE](#rtvref.types.FINITE) : <code>string</code>
+    * [.INT](#rtvref.types.INT) : <code>string</code>
+    * [.FLOAT](#rtvref.types.FLOAT) : <code>string</code>
+    * [.ANY_OBJECT](#rtvref.types.ANY_OBJECT) : <code>string</code>
+    * [.OBJECT](#rtvref.types.OBJECT) : <code>string</code>
+    * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>string</code>
+    * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>string</code>
+    * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>string</code>
+    * [.ARRAY](#rtvref.types.ARRAY) : <code>string</code>
+    * [.JSON](#rtvref.types.JSON) : <code>string</code>
+    * [.FUNCTION](#rtvref.types.FUNCTION) : <code>string</code>
+    * [.REGEXP](#rtvref.types.REGEXP) : <code>string</code>
+    * [.DATE](#rtvref.types.DATE) : <code>string</code>
+    * [.ERROR](#rtvref.types.ERROR) : <code>string</code>
+    * [.PROMISE](#rtvref.types.PROMISE) : <code>string</code>
+    * [.MAP](#rtvref.types.MAP) : <code>string</code>
+    * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
+    * [.SET](#rtvref.types.SET) : <code>string</code>
+    * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
     * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
     * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>String</code> \| <code>Array</code> \| <code>function</code>
@@ -236,7 +236,7 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
 
 <a name="rtvref.types.ANY"></a>
 
-#### types.ANY : <code>String</code>
+#### types.ANY : <code>string</code>
 The any type is special in that it allows _anything_, which includes `null`
  and `undefined` values. Because of this, it's the most liberal in terms of
  types as well as qualifiers. A more specific type should be used whenever
@@ -257,7 +257,7 @@ Any rules per qualifiers:
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.STRING"></a>
 
-#### types.STRING : <code>String</code>
+#### types.STRING : <code>string</code>
 String rules per qualifiers:
 
 - REQUIRED: Must be a non-empty string.
@@ -269,21 +269,21 @@ Arguments (optional): [STRING_args](#rtvref.types.STRING_args)
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.BOOLEAN"></a>
 
-#### types.BOOLEAN : <code>String</code>
+#### types.BOOLEAN : <code>string</code>
 Boolean rules per qualifiers: Must be a boolean.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.SYMBOL"></a>
 
-#### types.SYMBOL : <code>String</code>
+#### types.SYMBOL : <code>string</code>
 Symbol rules per qualifiers: Must be a symbol.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.NUMBER"></a>
 
-#### types.NUMBER : <code>String</code>
+#### types.NUMBER : <code>string</code>
 Number rules per qualifiers:
 
 - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
@@ -299,7 +299,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 <a name="rtvref.types.FINITE"></a>
 
-#### types.FINITE : <code>String</code>
+#### types.FINITE : <code>string</code>
 Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
  value can be either a safe integer or a [floating point number](#rtvref.types.FLOAT).
 
@@ -314,7 +314,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 <a name="rtvref.types.INT"></a>
 
-#### types.INT : <code>String</code>
+#### types.INT : <code>string</code>
 Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) integer,
  but is not necessarily _safe_.
 
@@ -330,7 +330,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 <a name="rtvref.types.FLOAT"></a>
 
-#### types.FLOAT : <code>String</code>
+#### types.FLOAT : <code>string</code>
 Float rules per qualifiers: Must be a finite floating point number.
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
@@ -343,7 +343,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 <a name="rtvref.types.ANY_OBJECT"></a>
 
-#### types.ANY_OBJECT : <code>String</code>
+#### types.ANY_OBJECT : <code>string</code>
 An _any_ object is anything that is not a [primitive](#rtvref.types), which
  means it includes the `Array` type, as well as functions and arguments. To
  test for an array, use the [ARRAY](#rtvref.types.ARRAY) type. To
@@ -398,7 +398,7 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 <a name="rtvref.types.OBJECT"></a>
 
-#### types.OBJECT : <code>String</code>
+#### types.OBJECT : <code>string</code>
 An object is one that extends from `JavaScript.Object` and is not
  a [function](#rtvref.types.FUNCTION), [array](#rtvref.types.ARRAY),
  [regular expression](#rtvref.types.REGEXP), function arguments object,
@@ -458,7 +458,7 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 <a name="rtvref.types.PLAIN_OBJECT"></a>
 
-#### types.PLAIN_OBJECT : <code>String</code>
+#### types.PLAIN_OBJECT : <code>string</code>
 A _plain_ object is one that is created directly from the `Object` constructor,
  whether using `new Object()` or the literal `{}`.
 
@@ -509,7 +509,7 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 
 <a name="rtvref.types.CLASS_OBJECT"></a>
 
-#### types.CLASS_OBJECT : <code>String</code>
+#### types.CLASS_OBJECT : <code>string</code>
 A _class_ object is one that is created by invoking the `new` operator on a
  function (other than a primitive type function), generating a new object,
  commonly referred to as a _class instance_. This object's prototype
@@ -563,7 +563,7 @@ Arguments (optional): [CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args)
 
 <a name="rtvref.types.MAP_OBJECT"></a>
 
-#### types.MAP_OBJECT : <code>String</code>
+#### types.MAP_OBJECT : <code>string</code>
 A _map_ object is an [OBJECT](#rtvref.types.OBJECT) that is treated as a
  hash map with an expected set of keys and values. Keys can be described
  using a regular expression, and values can be described using a
@@ -586,14 +586,14 @@ Arguments (optional): [collection_descriptor](#rtvref.types.collection_descripto
 
 <a name="rtvref.types.ARRAY"></a>
 
-#### types.ARRAY : <code>String</code>
+#### types.ARRAY : <code>string</code>
 Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.JSON"></a>
 
-#### types.JSON : <code>String</code>
+#### types.JSON : <code>string</code>
 JSON rules per qualifiers: Must be a JSON value:
 
 - [string](#rtvref.types.STRING), however __empty strings__ are permitted,
@@ -613,14 +613,14 @@ Since this type checks for _any_ valid JSON value, empty string and `null`
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.FUNCTION"></a>
 
-#### types.FUNCTION : <code>String</code>
+#### types.FUNCTION : <code>string</code>
 Function rules per qualifiers: Must be a `function`.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.REGEXP"></a>
 
-#### types.REGEXP : <code>String</code>
+#### types.REGEXP : <code>string</code>
 RegExp rules per qualifiers: Must be a `RegExp` instance.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -631,7 +631,7 @@ RegExp rules per qualifiers: Must be a `RegExp` instance.
 
 <a name="rtvref.types.DATE"></a>
 
-#### types.DATE : <code>String</code>
+#### types.DATE : <code>string</code>
 Date rules per qualifiers: Must be a `Date` instance.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -642,7 +642,7 @@ Date rules per qualifiers: Must be a `Date` instance.
 
 <a name="rtvref.types.ERROR"></a>
 
-#### types.ERROR : <code>String</code>
+#### types.ERROR : <code>string</code>
 Error rules per qualifiers: Must be an `Error` instance.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -653,7 +653,7 @@ Error rules per qualifiers: Must be an `Error` instance.
 
 <a name="rtvref.types.PROMISE"></a>
 
-#### types.PROMISE : <code>String</code>
+#### types.PROMISE : <code>string</code>
 Promise rules per qualifiers: Must be a `Promise` instance.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -664,7 +664,7 @@ Promise rules per qualifiers: Must be a `Promise` instance.
 
 <a name="rtvref.types.MAP"></a>
 
-#### types.MAP : <code>String</code>
+#### types.MAP : <code>string</code>
 An ES6 map supports any object as its keys, unlike a
  [MAP_OBJECT](#rtvref.types.MAP_OBJECT) that only supports strings. Keys can
  be described using a regular expression (if they are strings), and values can
@@ -683,7 +683,7 @@ Arguments (optional): [collection_descriptor](#rtvref.types.collection_descripto
 
 <a name="rtvref.types.WEAK_MAP"></a>
 
-#### types.WEAK_MAP : <code>String</code>
+#### types.WEAK_MAP : <code>string</code>
 An ES6 weak map supports any object as its keys, unlike a
  [MAP_OBJECT](#rtvref.types.MAP_OBJECT) that only supports strings. Keys can
  be described using a regular expression (if they are strings), and values can
@@ -702,7 +702,7 @@ Arguments (optional): [collection_descriptor](#rtvref.types.collection_descripto
 
 <a name="rtvref.types.SET"></a>
 
-#### types.SET : <code>String</code>
+#### types.SET : <code>string</code>
 An ES6 set is a collection of _unique_ values without associated keys. Values can
  be described using a [typeset](#rtvref.types.typeset). Empty sets are permitted.
 
@@ -718,7 +718,7 @@ Arguments (optional): [collection_descriptor](#rtvref.types.collection_descripto
 
 <a name="rtvref.types.WEAK_SET"></a>
 
-#### types.WEAK_SET : <code>String</code>
+#### types.WEAK_SET : <code>string</code>
 An ES6 weak set is a collection of _unique_ values without associated keys. Values can
  be described using a [typeset](#rtvref.types.typeset). Empty sets are permitted.
 
@@ -791,10 +791,10 @@ For example, the following descriptors both verify a collection of 3-letter
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | [keys] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each key  in the collection. The type of collection being described may restrict the types that this typeset  can include. For example, the [MAP_OBJECT](#rtvref.types.MAP_OBJECT) collection  only supports the [STRING](#rtvref.types.STRING) type due to the nature of  its JavaScript `Object`-based implementation. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
-| [keyExp] | <code>String</code> |  | Optional. A string-based regular expression  describing the names of keys (own-enumerable properties) found in the  collection. By default, there are no restrictions on key names. This expression is only  used if the `keys` typeset includes the [STRING](#rtvref.types.STRING) type. For example, to require numerical keys, the following expression could be  used: `'^\\d+$'`. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
-| [keyExpFlags] | <code>String</code> |  | Optional. A string specifying any flags to use  with the regular expression specified in `keyExp`. If this property is _falsy_,  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or  does not apply per the `keys` typeset. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [keyExp] | <code>string</code> |  | Optional. A string-based regular expression  describing the names of keys (own-enumerable properties) found in the  collection. By default, there are no restrictions on key names. This expression is only  used if the `keys` typeset includes the [STRING](#rtvref.types.STRING) type. For example, to require numerical keys, the following expression could be  used: `'^\\d+$'`. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
+| [keyExpFlags] | <code>string</code> |  | Optional. A string specifying any flags to use  with the regular expression specified in `keyExp`. If this property is _falsy_,  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or  does not apply per the `keys` typeset. NOTE: This property is ignored when the collection is a [SET](#rtvref.types.SET)  or a [WEAK_SET](#rtvref.types.WEAK_SET) because sets do not have keys. |
 | [values] | [<code>typeset</code>](#rtvref.types.typeset) |  | Optional. A typeset describing each value  in the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any entries/properties to be considered valid, unless  `count` is specified). For example, to require arrays of non-empty string values, the following  typeset could be used: `[[types.STRING]]`. |
-| [count] | <code>Number</code> | <code>-1</code> | Optional. The number of entries expected in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. |
+| [count] | <code>number</code> | <code>-1</code> | Optional. The number of entries expected in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. |
 
 <a name="rtvref.types.typeset"></a>
 
@@ -978,10 +978,10 @@ There is one disadvantage to using a property validator: It cannot be de/seriali
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| [exact] | <code>String</code> |  | An exact value to match. |
-| [min] | <code>Number</code> |  | Minimum length. Defaults to 1 for a `REQUIRED` string,  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified. |
-| [max] | <code>Number</code> | <code>-1</code> | Maximum length. -1 means no maximum. Ignored if `exact`  is specified. |
-| [partial] | <code>String</code> |  | A partial value to match (must be somewhere within the string).  Ignored if `exact` is specified. |
+| [exact] | <code>string</code> |  | An exact value to match. |
+| [min] | <code>number</code> |  | Minimum length. Defaults to 1 for a `REQUIRED` string,  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified. |
+| [max] | <code>number</code> | <code>-1</code> | Maximum length. -1 means no maximum. Ignored if `exact`  is specified. |
+| [partial] | <code>string</code> |  | A partial value to match (must be somewhere within the string).  Ignored if `exact` is specified. |
 
 <a name="rtvref.types.numeric_args"></a>
 
@@ -1001,9 +1001,9 @@ Numeric value arguments. Applies to all numeric types.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [exact] | <code>String</code> | An exact value to match. |
-| [min] | <code>Number</code> | Minimum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
-| [max] | <code>Number</code> | Maximum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
+| [exact] | <code>string</code> | An exact value to match. |
+| [min] | <code>number</code> | Minimum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
+| [max] | <code>number</code> | Maximum inclusive value. Default varies per type.  Ignored if `exact` is specified. |
 
 <a name="rtvref.types.CLASS_OBJECT_args"></a>
 
@@ -1047,12 +1047,14 @@ Runtime Verification Library for browsers and Node.js.
 * [rtv](#rtv) : <code>object</code>
     * [.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.q](#rtv.q) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.config](#rtv.config) : [<code>config_properties</code>](#rtv.config_properties)
-    * [._version](#rtv._version) : <code>String</code>
-    * [.check(value, shape)](#rtv.check) ⇒ <code>Boolean</code>
+    * [.e](#rtv.e) : <code>boolean</code>
+    * [._version](#rtv._version) : <code>string</code>
+    * [.config](#rtv.config) : <code>object</code>
+        * [.enabled](#rtv.config.enabled) : <code>boolean</code>
+    * [.check(value, shape)](#rtv.check) ⇒ <code>boolean</code>
     * [.verify(value, shape)](#rtv.verify)
+    * [.v(value, shape)](#rtv.v)
     * [.Context(context)](#rtv.Context)
-    * [.config_properties](#rtv.config_properties) : <code>Object</code>
 
 <a name="rtv.t"></a>
 
@@ -1066,26 +1068,62 @@ Enumeration of [types](#rtvref.types).
 Enumeration of [qualifiers](#rtvref.qualifiers).
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
-<a name="rtv.config"></a>
+<a name="rtv.e"></a>
 
-### rtv.config : [<code>config_properties</code>](#rtv.config_properties)
-RTV Library Configuration
+### rtv.e : <code>boolean</code>
+Shortcut proxy for reading [enabled](#rtv.config.enabled).
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
+**Read only**: true  
 <a name="rtv._version"></a>
 
-### rtv._version : <code>String</code>
+### rtv._version : <code>string</code>
 [internal] Library version.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
+<a name="rtv.config"></a>
+
+### rtv.config : <code>object</code>
+RTV Library Configuration
+
+**Kind**: static namespace of [<code>rtv</code>](#rtv)  
+<a name="rtv.config.enabled"></a>
+
+#### config.enabled : <code>boolean</code>
+Globally enables or disables [verify](#rtv.verify) and [check](#rtv.check).
+
+Use this, or the shortcut [e](#rtv.e), to enable code optimization
+ when building source with a bundler that supports _tree shaking_ like
+ [Rollup](https://rollupjs.org/) or [Webpack](https://webpack.js.org/).
+
+<h4>Example</h4>
+
+By conditionally calling [verify](#rtv.verify) based on the state of
+ [enabled](#rtv.config.enabled), a bundler can be configured to completely
+ remove the code from a production build.
+
+// TODO: Add Rollup and Webpack examples.
+
+<pre><code>if (rtv.config.enabled) {
+ rtv.verify(jsonResult, expectedShape);
+}
+
+rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
+</code></pre>
+
+**Kind**: static property of [<code>config</code>](#rtv.config)  
+**See**: [rtv.enabled](rtv.enabled)  
 <a name="rtv.check"></a>
 
-### rtv.check(value, shape) ⇒ <code>Boolean</code>
+### rtv.check(value, shape) ⇒ <code>boolean</code>
 Checks a value against a shape for compliance.
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
-**Returns**: <code>Boolean</code> - `true` if the `value` is compliant to the `shape`; `false`
- otherwise. An exception is __not__ thrown if the `value` is non-compliant.  
+**Returns**: <code>boolean</code> - `true` if the `value` is compliant to the `shape`; `false`
+ otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+
+__NOTE:__ This method always returns `true` if RTV.js is currently
+ [disabled](#rtv.config.enabled).  
 **See**: rtv.verify  
 
 | Param | Type | Description |
@@ -1098,12 +1136,35 @@ Checks a value against a shape for compliance.
 ### rtv.verify(value, shape)
 __Requires__ a value to be compliant to a shape.
 
+NOTE: This method does nothing if RTV.js is currently
+ [disabled](#rtv.config.enabled).
+
 **Kind**: static method of [<code>rtv</code>](#rtv)  
 **Throws**:
 
 - <code>Error</code> If the `value` is not compliant to the `shape`.
 
-**See**: rtv.verify  
+**See**
+
+- rtv.verify
+- rtv.config.enabled
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | Value to check. |
+| shape | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of the value. Normally,  this is a [shape descriptor](#rtvref.shape_descriptor). |
+
+<a name="rtv.v"></a>
+
+### rtv.v(value, shape)
+Shortcut proxy to [verify](#rtv.verify).
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+**Throws**:
+
+- <code>Error</code> If the `value` is not compliant to the `shape`.
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1119,17 +1180,5 @@ Contextual RTV Generator // TODO[docs]
 
 | Param | Type |
 | --- | --- |
-| context | <code>String</code> | 
-
-<a name="rtv.config_properties"></a>
-
-### rtv.config_properties : <code>Object</code>
-Configuration Properties
-
-**Kind**: static typedef of [<code>rtv</code>](#rtv)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| enabled | <code>Boolean</code> | // TODO[docs] |
+| context | <code>string</code> | 
 

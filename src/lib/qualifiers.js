@@ -16,7 +16,7 @@
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.REQUIRED
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 export const REQUIRED = '!';
@@ -32,7 +32,7 @@ export const REQUIRED = '!';
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.EXPECTED
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 export const EXPECTED = '+';
@@ -50,7 +50,7 @@ export const EXPECTED = '+';
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.OPTIONAL
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 export const OPTIONAL = '?';

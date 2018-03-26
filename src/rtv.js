@@ -53,22 +53,35 @@ const rtv = {
    * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
+   * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
    *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+   *
+   * __NOTE:__ This method always returns `true` if RTV.js is currently
+   *  {@link rtv.config.enabled disabled}.
+   *
    * @see rtv.verify
    */
   check(value, shape) {
-    // TODO: testing 'check'
-    return impl.check(value, shape);
+    if (this.config.enabled) {
+      return impl.check(value, shape);
+    }
+
+    return true;
   },
 
   /**
    * __Requires__ a value to be compliant to a shape.
+   *
+   * NOTE: This method does nothing if RTV.js is currently
+   *  {@link rtv.config.enabled disabled}.
+   *
    * @function rtv.verify
    * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} shape Expected shape of the value.
+   * @param {rtvref.types.typeset} shape Expected shape of the value. Normally,
+   *  this is a {@link rtvref.shape_descriptor shape descriptor}.
    * @throws {Error} If the `value` is not compliant to the `shape`.
    * @see rtv.verify
+   * @see rtv.config.enabled
    */
   verify(value, shape) {
     if (this.config.enabled) {
@@ -82,18 +95,46 @@ const rtv = {
   },
 
   /**
+   * Shortcut proxy to {@link rtv.verify}.
+   * @param {*} value Value to check.
+   * @param {rtvref.types.typeset} shape Expected shape of the value.
+   * @throws {Error} If the `value` is not compliant to the `shape`.
+   */
+  v(value, shape) {
+    this.verify(value, shape);
+  },
+
+  /**
    * RTV Library Configuration
-   * @name rtv.config
-   * @type {rtv.config_properties}
+   * @namespace rtv.config
    */
   config: Object.defineProperties({}, {
-
     /**
-     * Configuration Properties
-     * @typedef {Object} rtv.config_properties
-     * @property {Boolean} enabled // TODO[docs]
+     * Globally enables or disables {@link rtv.verify} and {@link rtv.check}.
+     *
+     * Use this, or the shortcut {@link rtv.e}, to enable code optimization
+     *  when building source with a bundler that supports _tree shaking_ like
+     *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
+     *
+     * <h4>Example</h4>
+     *
+     * By conditionally calling {@link rtv.verify} based on the state of
+     *  {@link rtv.config.enabled}, a bundler can be configured to completely
+     *  remove the code from a production build.
+     *
+     * // TODO: Add Rollup and Webpack examples.
+     *
+     * <pre><code>if (rtv.config.enabled) {
+     *  rtv.verify(jsonResult, expectedShape);
+     * }
+     *
+     * rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
+     * </code></pre>
+     *
+     * @name rtv.config.enabled
+     * @type {boolean}
+     * @see {@link rtv.enabled}
      */
-
     enabled: (function() {
       let value = true;
       return {
@@ -111,9 +152,19 @@ const rtv = {
   }),
 
   /**
+   * Shortcut proxy for reading {@link rtv.config.enabled}.
+   * @readonly
+   * @name rtv.e
+   * @type {boolean}
+   */
+  get e() {
+    return this.config.enabled;
+  },
+
+  /**
    * Contextual RTV Generator // TODO[docs]
    * @function rtv.Context
-   * @param {String} context
+   * @param {string} context
    */
   Context(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
@@ -123,7 +174,7 @@ const rtv = {
 /**
  * [internal] Library version.
  * @name rtv._version
- * @type {String}
+ * @type {string}
  */
 Object.defineProperty(rtv, '_version', {
   enumerable: false, // internal

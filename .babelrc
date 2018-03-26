@@ -23,6 +23,8 @@
       "plugins": [
         // NOTE: do not externalize helpers ('external-helpers') because each
         //  module is individually compiled by Babel when loaded by Mocha
+
+        "istanbul"
       ]
     }
   }

@@ -213,6 +213,33 @@ function isString(value) {
 
 var isString_1 = isString;
 
+/** `Object#toString` result references. */
+var boolTag = '[object Boolean]';
+
+/**
+ * Checks if `value` is classified as a boolean primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
+ * @example
+ *
+ * _.isBoolean(false);
+ * // => true
+ *
+ * _.isBoolean(null);
+ * // => false
+ */
+function isBoolean(value) {
+  return value === true || value === false ||
+    (isObjectLike_1(value) && _baseGetTag(value) == boolTag);
+}
+
+var isBoolean_1 = isBoolean;
+
 //// Type Definitions \\\\
 
 /**
@@ -301,7 +328,7 @@ var isString_1 = isString;
  * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
  *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
  *
- * @property {String} [keyExp] Optional. A string-based regular expression
+ * @property {string} [keyExp] Optional. A string-based regular expression
  *  describing the names of keys (own-enumerable properties) found in the
  *  collection.
  *
@@ -314,7 +341,7 @@ var isString_1 = isString;
  * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
  *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
  *
- * @property {String} [keyExpFlags] Optional. A string specifying any flags to use
+ * @property {string} [keyExpFlags] Optional. A string specifying any flags to use
  *  with the regular expression specified in `keyExp`. If this property is _falsy_,
  *  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or
  *  does not apply per the `keys` typeset.
@@ -331,7 +358,7 @@ var isString_1 = isString;
  * For example, to require arrays of non-empty string values, the following
  *  typeset could be used: `[[types.STRING]]`.
  *
- * @property {Number} [count=-1] Optional. The number of entries expected in
+ * @property {number} [count=-1] Optional. The number of entries expected in
  *  the collection. A negative value allows for any number of entries. Zero
  *  requires an empty collection.
  *
@@ -502,7 +529,7 @@ var isString_1 = isString;
  *  special object with properties that would inform the deserialization process
  *  on how to reconstruct the validator dynamically.
  *
- * @typedef {Function} rtvref.types.property_validator
+ * @typedef {function} rtvref.types.property_validator
  * @param {*} value The value being verified.
  * @param {Array} match A __first-level__, {@link rtvref.types.fully_qualified_typeset fully-qualified}
  *  typeset describing the type that matched. This means the first level of this
@@ -538,7 +565,7 @@ var isString_1 = isString;
  *   used to do customized verification.
  *
  * @name rtvref.types.ANY
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var ANY = 'any';
@@ -548,12 +575,12 @@ var ANY = 'any';
 /**
  * {@link rtvref.types.STRING STRING} arguments.
  * @typedef {Object} rtvref.types.STRING_args
- * @property {String} [exact] An exact value to match.
- * @property {Number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
+ * @property {string} [exact] An exact value to match.
+ * @property {number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
  *  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified.
- * @property {Number} [max=-1] Maximum length. -1 means no maximum. Ignored if `exact`
+ * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if `exact`
  *  is specified.
- * @property {String} [partial] A partial value to match (must be somewhere within the string).
+ * @property {string} [partial] A partial value to match (must be somewhere within the string).
  *  Ignored if `exact` is specified.
  * @see {@link rtvref.qualifiers}
  */
@@ -567,7 +594,7 @@ var ANY = 'any';
  * Arguments (optional): {@link rtvref.types.STRING_args}
  *
  * @name rtvref.types.STRING
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var STRING = 'string';
@@ -575,7 +602,7 @@ var STRING = 'string';
 /**
  * Boolean rules per qualifiers: Must be a boolean.
  * @name rtvref.types.BOOLEAN
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var BOOLEAN = 'boolean';
@@ -583,7 +610,7 @@ var BOOLEAN = 'boolean';
 /**
  * Symbol rules per qualifiers: Must be a symbol.
  * @name rtvref.types.SYMBOL
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var SYMBOL = 'symbol';
@@ -591,10 +618,10 @@ var SYMBOL = 'symbol';
 /**
  * Numeric value arguments. Applies to all numeric types.
  * @typedef {Object} rtvref.types.numeric_args
- * @property {String} [exact] An exact value to match.
- * @property {Number} [min] Minimum inclusive value. Default varies per type.
+ * @property {string} [exact] An exact value to match.
+ * @property {number} [min] Minimum inclusive value. Default varies per type.
  *  Ignored if `exact` is specified.
- * @property {Number} [max] Maximum inclusive value. Default varies per type.
+ * @property {number} [max] Maximum inclusive value. Default varies per type.
  *  Ignored if `exact` is specified.
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.NUMBER}
@@ -612,7 +639,7 @@ var SYMBOL = 'symbol';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.NUMBER
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.FINITE}
  */
@@ -625,7 +652,7 @@ var NUMBER = 'number';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.FINITE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.NUMBER}
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
@@ -639,7 +666,7 @@ var FINITE = 'finite';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.INT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.FINITE}
  * @see {@link rtvref.types.FLOAT}
@@ -653,7 +680,7 @@ var INT = 'int';
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.FLOAT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.INT}
  */
@@ -704,7 +731,7 @@ var FLOAT = 'float';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.ANY_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.OBJECT}
  * @see {@link rtvref.types.PLAIN_OBJECT}
@@ -763,7 +790,7 @@ var ANY_OBJECT = 'anyObject';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.PLAIN_OBJECT}
@@ -813,7 +840,7 @@ var OBJECT = 'object';
  * Arguments (optional): {@link rtvref.shape_descriptor}
  *
  * @name rtvref.types.PLAIN_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -825,7 +852,7 @@ var PLAIN_OBJECT = 'plainObject';
 /**
  * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
  * @typedef {Object} rtvref.types.CLASS_OBJECT_args
- * @property {Function} [ctr] A reference to a constructor function. If specified,
+ * @property {function} [ctr] A reference to a constructor function. If specified,
  *  the class object (instance) must have this class function in its inheritance
  *  chain such that `<class_object> instanceof <function> === true`. Note that
  *  this property is not serializable to JSON.
@@ -877,7 +904,7 @@ var PLAIN_OBJECT = 'plainObject';
  * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
  *
  * @name rtvref.types.CLASS_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -897,7 +924,7 @@ var CLASS_OBJECT = 'classObject';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.MAP_OBJECT
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -917,7 +944,7 @@ var MAP_OBJECT = 'mapObject';
 /**
  * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
  * @name rtvref.types.ARRAY
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var ARRAY = 'array';
@@ -939,7 +966,7 @@ var ARRAY = 'array';
  *  qualifier.
  *
  * @name rtvref.types.JSON
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var JSON = 'json';
@@ -947,7 +974,7 @@ var JSON = 'json';
 /**
  * Function rules per qualifiers: Must be a `function`.
  * @name rtvref.types.FUNCTION
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  */
 var FUNCTION = 'function';
@@ -955,7 +982,7 @@ var FUNCTION = 'function';
 /**
  * RegExp rules per qualifiers: Must be a `RegExp` instance.
  * @name rtvref.types.REGEXP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
  */
@@ -964,7 +991,7 @@ var REGEXP = 'regexp';
 /**
  * Date rules per qualifiers: Must be a `Date` instance.
  * @name rtvref.types.DATE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
  */
@@ -973,7 +1000,7 @@ var DATE = 'date';
 /**
  * Error rules per qualifiers: Must be an `Error` instance.
  * @name rtvref.types.ERROR
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
  */
@@ -982,7 +1009,7 @@ var ERROR = 'error';
 /**
  * Promise rules per qualifiers: Must be a `Promise` instance.
  * @name rtvref.types.PROMISE
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
  */
@@ -999,7 +1026,7 @@ var PROMISE = 'promise';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.MAP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.MAP_OBJECT}
  * @see {@link rtvref.types.WEAK_MAP}
@@ -1017,7 +1044,7 @@ var MAP = 'map';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.WEAK_MAP
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.MAP_OBJECT}
  * @see {@link rtvref.types.MAP}
@@ -1033,7 +1060,7 @@ var WEAK_MAP = 'weakMap';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.SET
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.WEAK_SET}
  */
@@ -1048,7 +1075,7 @@ var SET = 'set';
  * Arguments (optional): {@link rtvref.types.collection_descriptor}
  *
  * @name rtvref.types.WEAK_SET
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.qualifiers}
  * @see {@link rtvref.types.SET}
  */
@@ -1099,7 +1126,7 @@ var allTypes = Object.freeze({
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.REQUIRED
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 var REQUIRED = '!';
@@ -1115,7 +1142,7 @@ var REQUIRED = '!';
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.EXPECTED
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 var EXPECTED = '+';
@@ -1133,7 +1160,7 @@ var EXPECTED = '+';
  * See specific type for additional rules.
  *
  * @name rtvref.qualifiers.OPTIONAL
- * @const {String}
+ * @const {string}
  * @see {@link rtvref.types}
  */
 var OPTIONAL = '?';
@@ -1221,7 +1248,7 @@ var Enumeration = function () {
    *  is not in this enumeration, unless `silent` is true.
    * @method rtvref.Enumeration#verify
    * @param {*} value Value to check. Cannot be undefined.
-   * @param {Boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+   * @param {boolean} [silent=false] If truthy, returns `undefined` instead of throwing
    *  an exception if the specified value is not in this enumeration.
    * @returns {*} The specified value if it is in this enumeration, or `undefined` if
    *  `silent` is true and the value is not in this enumeration.
@@ -1288,13 +1315,24 @@ var qualifiers = new Enumeration(allQualifiers);
  * @function rtv.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} shape Expected shape of the value.
- * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
+ * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
  *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+ * @throws {Error} If `shape` is not a valid typeset.
  * @see rtv.impl.verify
  */
 var check = function check(value, shape) {
-  // TODO: testing 'check'
-  return isString_1(value) && !!value;
+  // TODO: on failure to check, consider returning a special RtvError object that
+  //  contains extra properties to indicate what didn't match, what was expected,
+  //  the shape that was checked, the value that was checked, etc.
+  //  If check succeeds, return boolean `true`. rtv.check/verify can then test
+  //  for the return type since impl shouldn't be exposed externally anyway.
+  if (shape === types.STRING) {
+    return isString_1(value) && !!value;
+  } else if (shape === types.BOOLEAN) {
+    return isBoolean_1(value);
+  }
+
+  throw new Error('cannot check value: shape is not a valid typeset');
 };
 
 //// Main entry point \\\\
@@ -1349,23 +1387,36 @@ var rtv = {
    * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {Boolean} `true` if the `value` is compliant to the `shape`; `false`
+   * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
    *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+   *
+   * __NOTE:__ This method always returns `true` if RTV.js is currently
+   *  {@link rtv.config.enabled disabled}.
+   *
    * @see rtv.verify
    */
   check: function check$$1(value, shape) {
-    // TODO: testing 'check'
-    return check(value, shape);
+    if (this.config.enabled) {
+      return check(value, shape);
+    }
+
+    return true;
   },
 
 
   /**
    * __Requires__ a value to be compliant to a shape.
+   *
+   * NOTE: This method does nothing if RTV.js is currently
+   *  {@link rtv.config.enabled disabled}.
+   *
    * @function rtv.verify
    * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} shape Expected shape of the value.
+   * @param {rtvref.types.typeset} shape Expected shape of the value. Normally,
+   *  this is a {@link rtvref.shape_descriptor shape descriptor}.
    * @throws {Error} If the `value` is not compliant to the `shape`.
    * @see rtv.verify
+   * @see rtv.config.enabled
    */
   verify: function verify(value, shape) {
     if (this.config.enabled) {
@@ -1380,18 +1431,47 @@ var rtv = {
 
 
   /**
+   * Shortcut proxy to {@link rtv.verify}.
+   * @param {*} value Value to check.
+   * @param {rtvref.types.typeset} shape Expected shape of the value.
+   * @throws {Error} If the `value` is not compliant to the `shape`.
+   */
+  v: function v(value, shape) {
+    this.verify(value, shape);
+  },
+
+
+  /**
    * RTV Library Configuration
-   * @name rtv.config
-   * @type {rtv.config_properties}
+   * @namespace rtv.config
    */
   config: Object.defineProperties({}, {
-
     /**
-     * Configuration Properties
-     * @typedef {Object} rtv.config_properties
-     * @property {Boolean} enabled // TODO[docs]
+     * Globally enables or disables {@link rtv.verify} and {@link rtv.check}.
+     *
+     * Use this, or the shortcut {@link rtv.e}, to enable code optimization
+     *  when building source with a bundler that supports _tree shaking_ like
+     *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
+     *
+     * <h4>Example</h4>
+     *
+     * By conditionally calling {@link rtv.verify} based on the state of
+     *  {@link rtv.config.enabled}, a bundler can be configured to completely
+     *  remove the code from a production build.
+     *
+     * // TODO: Add Rollup and Webpack examples.
+     *
+     * <pre><code>if (rtv.config.enabled) {
+     *  rtv.verify(jsonResult, expectedShape);
+     * }
+     *
+     * rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
+     * </code></pre>
+     *
+     * @name rtv.config.enabled
+     * @type {boolean}
+     * @see {@link rtv.enabled}
      */
-
     enabled: function () {
       var value = true;
       return {
@@ -1409,9 +1489,19 @@ var rtv = {
   }),
 
   /**
+   * Shortcut proxy for reading {@link rtv.config.enabled}.
+   * @readonly
+   * @name rtv.e
+   * @type {boolean}
+   */
+  get e() {
+    return this.config.enabled;
+  },
+
+  /**
    * Contextual RTV Generator // TODO[docs]
    * @function rtv.Context
-   * @param {String} context
+   * @param {string} context
    */
   Context: function Context(context) {
     // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
@@ -1421,7 +1511,7 @@ var rtv = {
 /**
  * [internal] Library version.
  * @name rtv._version
- * @type {String}
+ * @type {string}
  */
 Object.defineProperty(rtv, '_version', {
   enumerable: false, // internal
