@@ -1,22 +1,32 @@
 //// Type Definitions \\\\
 
+import Enumeration from './Enumeration';
+
 /**
  * <h2>Types</h2>
- *
+ * @namespace rtvref.types
+ */
+
+/**
  * <h3>Primitives</h3>
  *
- * In RTV.js, a primitive is considered to be one of the following types:
+ * In RTV.js (as in {@link https://developer.mozilla.org/en-US/docs/Glossary/Primitive ECMAScript 2015}),
+ *  a _primitive_ is considered one of the following types:
  *
- * - `string` (note that `new String('s')` does not produce a _primitive_, it
- *   produces an _object_, and should generally be avoided).
- * - `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
- *   it produces an _object_, and should generally be avoided).
- * - `number` (note that `new Number(1)` does not produce a _primitive_,
- *   it produces an _object_, and should generally be avoided).
- * - `Symbol`
- * - `null`
  * - `undefined`
+ * - `null`
+ * - `string` (note that `new String('s')` does not produce a _primitive_, it
+ *   produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
+ *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `number` (note that `new Number(1)` does not produce a _primitive_,
+ *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `Symbol`
  *
+ * @namespace rtvref.types.primitives
+ */
+
+/**
  * <h3>Rules Per Qualifiers</h3>
  *
  * {@link rtvref.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
@@ -28,7 +38,7 @@
  *  the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * @namespace rtvref.types
+ * @namespace rtvref.types.rules
  */
 
 /**
@@ -42,7 +52,10 @@
  *
  * If a type does not accept any arguments, but an arguments object is provided,
  *  it will simply be ignored (i.e. it will __not__ be treated as a nested
- *  {@link rtvref.shape_descriptor shape descriptor}).
+ *  {@link rtvref.shape_descriptor shape descriptor}). This means that, in an
+ *  `Array`-style {@link rtvref.types.typeset typeset}, a shape descriptor
+ *  __must__ always be qualified by a type, even if it's the default type
+ *  attributed to a shape descriptor.
  *
  * An arguments object immediately follows its type in a typeset, such as
  *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
@@ -67,6 +80,7 @@
  *
  * Note that an {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
  *  because the array type has special syntax for describing the type of its items.
+ *  See {@link rtvref.types.ARRAY_args ARRAY_args} instead.
  *
  * For example, the following descriptors both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
@@ -136,9 +150,10 @@
  * - `Object`: For the root or a nested {@link rtvref.shape_descriptor shape descriptor}
  *   of _implied_ {@link rtvref.types.OBJECT OBJECT} type (unless qualified with a specific
  *   object type like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when
- *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`).
+ *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty
+ *   (has no properties), nothing will be verified (anything will pass).
  * - `String`: For a single type, such as {@link rtvref.types.FINITE 'FINITE'}
- *   for a finite number.
+ *   for a finite number. Must be one of the types defined in {@link rtvref.types}.
  * - `Function`: For a {@link rtvref.types.property_validator property validator}
  *   that will verify the value of the property using custom code. Only one validator
  *   can be specified for a given typeset, and it will only be called if the value
@@ -151,7 +166,8 @@
  *   be at _least one_ of the types listed, but not all. Matching is done in a short-circuit
  *   fashion, from the first to the last element in the typeset. If a simpler type is
  *   likely, it's more performant to specify those first in the typeset to avoid a match
- *   attempt on a nested shape or array.
+ *   attempt on a nested shape or Array.
+ *   - Cannot be an empty Array.
  *   - An Array is necessary to {@link rtvref.qualifiers qualify} the typeset as not
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is also necessary if a type needs or requires
@@ -250,7 +266,7 @@
  * rtv.verify({name: 'Steve', age: null}, person); // OK
  * </code></pre>
  *
- * @typedef {(Object|String|Array|Function)} rtvref.types.typeset
+ * @typedef {(Object|string|Array|Function)} rtvref.types.typeset
  */
 
 /**
@@ -328,7 +344,7 @@
  */
 export const ANY = 'any';
 
-// TODO: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
+// TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
 //  for a regular expression test. Similar prop names to collection_descriptor.
 /**
  * {@link rtvref.types.STRING STRING} arguments.
@@ -349,6 +365,9 @@ export const ANY = 'any';
  * - REQUIRED: Must be a non-empty string.
  * - EXPECTED | OPTIONAL: Can be an empty string.
  *
+ * In all cases, the value must be a string {@link rtvref.types.primitives primitive}.
+ *  `new String('hello') !== 'hello'` because the former is an _object_, not a string.
+ *
  * Arguments (optional): {@link rtvref.types.STRING_args}
  *
  * @name rtvref.types.STRING
@@ -358,7 +377,9 @@ export const ANY = 'any';
 export const STRING = 'string';
 
 /**
- * Boolean rules per qualifiers: Must be a boolean.
+ * Boolean rules per qualifiers: Must be a boolean {@link rtvref.types.primitives primitive}.
+ *  `new Boolean(true) !== true` because the former is an _object_, not a boolean.
+ *
  * @name rtvref.types.BOOLEAN
  * @const {string}
  * @see {@link rtvref.qualifiers}
@@ -366,7 +387,7 @@ export const STRING = 'string';
 export const BOOLEAN = 'boolean';
 
 /**
- * Symbol rules per qualifiers: Must be a symbol.
+ * Symbol rules per qualifiers: Must be a symbol {@link rtvref.types.primitives primitive}.
  * @name rtvref.types.SYMBOL
  * @const {string}
  * @see {@link rtvref.qualifiers}
@@ -394,6 +415,9 @@ export const SYMBOL = 'symbol';
  * - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
  * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
  *
+ * In all cases, the value must be a number {@link rtvref.types.primitives primitive}.
+ *  `new Number(1) !== 1` because the former is an _object_, not a number.
+ *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.NUMBER
@@ -406,6 +430,7 @@ export const NUMBER = 'number';
 /**
  * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
  *  value can be either a safe integer or a {@link rtvref.types.FLOAT floating point number}.
+ *  It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -419,7 +444,7 @@ export const FINITE = 'finite';
 
 /**
  * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} integer,
- *  but is not necessarily _safe_.
+ *  but is not necessarily _safe_. It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -434,6 +459,7 @@ export const INT = 'int';
 
 /**
  * Float rules per qualifiers: Must be a finite floating point number.
+ *  It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -443,291 +469,6 @@ export const INT = 'int';
  * @see {@link rtvref.types.INT}
  */
 export const FLOAT = 'float';
-
-/**
- * An _any_ object is anything that is not a {@link rtvref.types primitive}, which
- *  means it includes the `Array` type, as well as functions and arguments. To
- *  test for an array, use the {@link rtvref.types.ARRAY ARRAY} type. To
- *  test for a function, use the {@link rtvref.types.FUNCTION FUNCTION} type.
- *
- * The following values are considered any objects:
- *
- * - `{}`
- * - `new Object()`
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new function() {}` (class instance)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- *
- * The following values __are not__ considered any objects (because they are
- *  considered to be {@link rtvref.types primitives}):
- *
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null` (NOTE: `typeof null === 'object'` in JavaScript; the `ANY_OBJECT`
- *   type allows testing for this undesirable fact)
- * - `undefined`
- *
- * Any object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.ANY_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-export const ANY_OBJECT = 'anyObject';
-
-/**
- * An object is one that extends from `JavaScript.Object` and is not
- *  a {@link rtvref.types.FUNCTION function}, {@link rtvref.types.ARRAY array},
- *  {@link rtvref.types.REGEXP regular expression}, function arguments object,
- *  {@link rtvref.types.MAP map}, {@link rtvref.types.WEAK_MAP weak map},
- *  {@link rtvref.types.SET set}, {@link rtvref.types.WEAK_SET weak set}, nor a
- *  {@link rtvref.types primitive}.
- *
- * This is the __default__ (imputed) type for
- *  {@link rtvref.shape_descriptor shape descriptors}, which means the object itself
- *  (the value being tested), prior to being checked against its shape, will be
- *  tested according to this type.
- *
- * The following values are considered objects:
- *
- * - `{}`
- * - `new Object()`
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `new function() {}` (class instance)
- *
- * The following values __are not__ considered objects:
- *
- * - `[]`
- * - `new Array()`
- * - `/re/`
- * - `new RegExp('re')`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-export const OBJECT = 'object';
-
-/**
- * A _plain_ object is one that is created directly from the `Object` constructor,
- *  whether using `new Object()` or the literal `{}`.
- *
- * The following values are considered plain objects:
- *
- * - `{}`
- * - `new Object()`
- *
- * The following values __are not__ considered plain objects:
- *
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new function() {}` (class instance)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Plain object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.PLAIN_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-export const PLAIN_OBJECT = 'plainObject';
-
-/**
- * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
- * @typedef {Object} rtvref.types.CLASS_OBJECT_args
- * @property {function} [ctr] A reference to a constructor function. If specified,
- *  the class object (instance) must have this class function in its inheritance
- *  chain such that `<class_object> instanceof <function> === true`. Note that
- *  this property is not serializable to JSON.
- * @property {rtvref.shape_descriptor} [shape] A description of the class object's
- *  shape.
- */
-
-/**
- * A _class_ object is one that is created by invoking the `new` operator on a
- *  function (other than a primitive type function), generating a new object,
- *  commonly referred to as a _class instance_. This object's prototype
- *  (`__proto__`) is a reference to that function's `prototype` and has a
- *  `constructor` property that is `===` to the function.
- *
- * The following values are considered class objects:
- *
- * - `new function() {}`
- *
- * The following values __are not__ considered class objects:
- *
- * - `{}`
- * - `new Object()`
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Class object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
- *
- * @name rtvref.types.CLASS_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-export const CLASS_OBJECT = 'classObject';
-
-/**
- * A _map_ object is an {@link rtvref.types.OBJECT OBJECT} that is treated as a
- *  hash map with an expected set of keys and values. Keys can be described
- *  using a regular expression, and values can be described using a
- *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
- *
- * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.
- *
- * Arguments (optional): {@link rtvref.types.collection_descriptor}
- *
- * @name rtvref.types.MAP_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP}
- * @see {@link rtvref.types.WEAK_MAP}
- */
-export const MAP_OBJECT = 'mapObject';
-
-// TODO: Is there a way that ARRAY could take a parameter, that being the
-//  required length of the array, defaulting to -1 for any length? Perhaps
-//  only when using the full form as `[ARRAY, 2, [STRING]]` instead of the
-//  short form as `[[STRING]]`? Maybe `[2, [STRING]]` would even work for short
-//  hand. If so, then this would be up to par with the MAP_OBJECT where a count
-//  can be specified...
-/**
- * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
- * @name rtvref.types.ARRAY
- * @const {string}
- * @see {@link rtvref.qualifiers}
- */
-export const ARRAY = 'array';
-
-/**
- * JSON rules per qualifiers: Must be a JSON value:
- *
- * - {@link rtvref.types.STRING string}, however __empty strings__ are permitted,
- *   even if the qualifier is `REQUIRED`;
- * - {@link rtvref.types.BOOLEAN boolean};
- * - {@link rtvref.types.FINITE finite number};
- * - {@link rtvref.types.PLAIN_OBJECT plain object};
- * - {@link rtvref.types.ARRAY array};
- * - `null`
- *
- * Since this type checks for _any_ valid JSON value, empty string and `null`
- *  values are permitted, even when the typeset is qualified as `REQUIRED`.
- *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
- *  qualifier.
- *
- * @name rtvref.types.JSON
- * @const {string}
- * @see {@link rtvref.qualifiers}
- */
-export const JSON = 'json';
 
 /**
  * Function rules per qualifiers: Must be a `function`.
@@ -773,11 +514,286 @@ export const ERROR = 'error';
  */
 export const PROMISE = 'promise';
 
+// TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
+/**
+ * {@link rtvref.types.ARRAY ARRAY} arguments.
+ * @typedef {Object} rtvref.types.ARRAY_args
+ * @property {number} [exact] Exact length.
+ * @property {number} [min=0] Minimum length. Ignored if `exact` is specified.
+ * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if
+ *  `exact` is specified.
+ */
+
+/**
+ * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted by
+ *  default.
+ *
+ * Arguments (optional): {@link rtvref.types.ARRAY_args}
+ *
+ * @name rtvref.types.ARRAY
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ */
+export const ARRAY = 'array';
+
+/**
+ * An _any_ object is anything that is __not__ a {@link rtvref.types primitive}, which
+ *  means it includes the `Array` type, as well as functions and arguments, and
+ *  other JavaScript _object_ types. To test for an array, use the
+ *  {@link rtvref.types.ARRAY ARRAY} type. To test for a function, use the
+ *  {@link rtvref.types.FUNCTION FUNCTION} type.
+ *
+ * The following values are considered any objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ *
+ * {@link rtvref.types.primitives Primitive} values __are not__ considered any objects,
+ *  especially when the qualifier is {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ *  Note that `typeof null === 'object'` in JavaScript; the `ANY_OBJECT` type
+ *  allows testing for this undesirable fact.
+ *
+ * Any object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.ANY_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+export const ANY_OBJECT = 'anyObject';
+
+/**
+ * An object is one that extends from `JavaScript.Object` (i.e. an _instance_
+ *  of _something_ that extends from Object) and is not a
+ *  {@link rtvref.types.FUNCTION function}, {@link rtvref.types.ARRAY array},
+ *  {@link rtvref.types.REGEXP regular expression}, function arguments object,
+ *  {@link rtvref.types.MAP map}, {@link rtvref.types.WEAK_MAP weak map},
+ *  {@link rtvref.types.SET set}, {@link rtvref.types.WEAK_SET weak set}, nor a
+ *  {@link rtvref.types primitive}.
+ *
+ * This is the __default__ (imputed) type for
+ *  {@link rtvref.shape_descriptor shape descriptors}, which means the object itself
+ *  (the value being tested), prior to being checked against its shape, will be
+ *  tested according to this type.
+ *
+ * The following values are considered objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ *
+ * The following values __are not__ considered objects:
+ *
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+export const OBJECT = 'object';
+
+/**
+ * A _plain_ object is one that is created directly from the `Object` constructor,
+ *  whether using `new Object()` or the literal `{}`.
+ *
+ * The following values are considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Plain object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.PLAIN_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+export const PLAIN_OBJECT = 'plainObject';
+
+/**
+ * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
+ * @typedef {Object} rtvref.types.CLASS_OBJECT_args
+ * @property {function} [ctr] A reference to a constructor function. If specified,
+ *  the class object (instance) must have this class function in its inheritance
+ *  chain such that `<class_object> instanceof <function> === true`. Note that
+ *  this property is not serializable to JSON.
+ * @property {rtvref.shape_descriptor} [shape] A description of the class object's
+ *  shape.
+ */
+
+/**
+ * A _class_ object is one that is created by invoking the `new` operator on a
+ *  function (other than a primitive type function), generating a new object,
+ *  commonly referred to as a _class instance_. This object's prototype
+ *  (`__proto__`) is a reference to that function's `prototype` and has a
+ *  `constructor` property that is `===` to the function.
+ *
+ * The following values are considered class objects:
+ *
+ * - `new function() {}`
+ *
+ * The following values __are not__ considered class objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Class object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
+ *
+ * @name rtvref.types.CLASS_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+export const CLASS_OBJECT = 'classObject';
+
+/**
+ * A _map_ object is an {@link rtvref.types.OBJECT OBJECT} that is treated as a
+ *  hash map with an expected set of keys and values. Keys can be described
+ *  using a regular expression, and values can be described using a
+ *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *
+ * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.
+ *
+ * Arguments (optional): {@link rtvref.types.collection_descriptor}
+ *
+ * @name rtvref.types.MAP_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP}
+ * @see {@link rtvref.types.WEAK_MAP}
+ */
+export const MAP_OBJECT = 'mapObject';
+
+/**
+ * JSON rules per qualifiers: Must be a JSON value:
+ *
+ * - {@link rtvref.types.STRING string}, however __empty strings are permitted__,
+ *   even if the qualifier is `REQUIRED`;
+ * - {@link rtvref.types.BOOLEAN boolean};
+ * - {@link rtvref.types.FINITE finite number};
+ * - {@link rtvref.types.PLAIN_OBJECT plain object};
+ * - {@link rtvref.types.ARRAY array};
+ * - `null`
+ *
+ * Since this type checks for _any_ valid JSON value, empty string and `null`
+ *  values are permitted, even when the typeset is qualified as `REQUIRED`.
+ *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
+ *  qualifier.
+ *
+ * @name rtvref.types.JSON
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ */
+export const JSON = 'json';
+
 /**
  * An ES6 map supports any object as its keys, unlike a
  *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
  *  be described using a regular expression (if they are strings), and values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
+ *  by default.
  *
  * Map rules per qualifiers: Must be a `Map` instance.
  *
@@ -795,7 +811,8 @@ export const MAP = 'map';
  * An ES6 weak map supports any object as its keys, unlike a
  *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
  *  be described using a regular expression (if they are strings), and values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
+ *  by default.
  *
  * Weak map rules per qualifiers: Must be a `WeakMap` instance.
  *
@@ -811,7 +828,8 @@ export const WEAK_MAP = 'weakMap';
 
 /**
  * An ES6 set is a collection of _unique_ values without associated keys. Values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
+ *  by default.
  *
  * Set rules per qualifiers: Must be a `Set` instance.
  *
@@ -826,7 +844,8 @@ export const SET = 'set';
 
 /**
  * An ES6 weak set is a collection of _unique_ values without associated keys. Values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
+ *  by default.
  *
  * Weak set rules per qualifiers: Must be a `WeakSet` instance.
  *
@@ -838,3 +857,39 @@ export const SET = 'set';
  * @see {@link rtvref.types.SET}
  */
 export const WEAK_SET = 'weakSet';
+
+//
+// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+//
+
+/**
+ * Enumeration (`string -> string`) of {@link rtvref.types types}.
+ * @name rtvref.types.types
+ * @type {rtvref.Enumeration}
+ */
+export default new Enumeration({
+  ANY,
+  STRING,
+  BOOLEAN,
+  SYMBOL,
+  NUMBER,
+  FINITE,
+  INT,
+  FLOAT,
+  FUNCTION,
+  REGEXP,
+  DATE,
+  ERROR,
+  PROMISE,
+  ARRAY,
+  ANY_OBJECT,
+  OBJECT,
+  PLAIN_OBJECT,
+  CLASS_OBJECT,
+  MAP_OBJECT,
+  JSON,
+  MAP,
+  WEAK_MAP,
+  SET,
+  WEAK_SET
+});

@@ -2,6 +2,8 @@
 
 import {version as VERSION} from '../package.json';
 import * as impl from './lib/impl';
+import types from './lib/types';
+import qualifiers from './lib/qualifiers';
 
 /**
  * <h1>RTV.js Reference</h1>
@@ -37,29 +39,31 @@ const rtv = {
   /**
    * Enumeration of {@link rtvref.types types}.
    * @name rtv.t
-   * @type {rtvref.Enumeration}
+   * @type {rtvref.Enumeration.<String,String>}
    */
-  t: impl.types,
+  t: types,
 
   /**
    * Enumeration of {@link rtvref.qualifiers qualifiers}.
    * @name rtv.q
-   * @type {rtvref.Enumeration}
+   * @type {rtvref.Enumeration.<String,String>}
    */
-  q: impl.qualifiers,
+  q: qualifiers,
 
   /**
    * Checks a value against a shape for compliance.
    * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
-   *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+   * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to
+   *  the `shape`; `RtvError` if not. An exception is __not__ thrown if the
+   *  `value` is non-compliant. Test for `rtv.check(...) !== true`.
    *
    * __NOTE:__ This method always returns `true` if RTV.js is currently
    *  {@link rtv.config.enabled disabled}.
    *
-   * @see rtv.verify
+   * @throws {Error} If `shape` is not a valid typeset.
+   * @see {@link rtv.verify}
    */
   check(value, shape) {
     if (this.config.enabled) {
@@ -79,17 +83,16 @@ const rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value. Normally,
    *  this is a {@link rtvref.shape_descriptor shape descriptor}.
-   * @throws {Error} If the `value` is not compliant to the `shape`.
-   * @see rtv.verify
-   * @see rtv.config.enabled
+   * @throws {RtvError} If the `value` is not compliant to the `shape`.
+   * @throws {Error} If `shape` is not a valid typeset.
+   * @see {@link rtv.check}
+   * @see {@link rtv.config.enabled}
    */
   verify(value, shape) {
     if (this.config.enabled) {
-      if (!this.check(value, shape)) {
-        // TODO: consider throwing a special RtvError object that contains extra
-        //  properties to indicate what didn't match, what was expected, the shape
-        //  that was checked, the value that was checked, etc.
-        throw new Error('value does not match specified shape');
+      const result = this.check(value, shape);
+      if (result !== true) {
+        throw result; // expected to be an RtvError
       }
     }
   },

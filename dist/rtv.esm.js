@@ -5,7 +5,35 @@
 */
 var version = "0.0.1";
 
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
 
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
@@ -119,33 +147,6 @@ function baseGetTag(value) {
 var _baseGetTag = baseGetTag;
 
 /**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-var isArray_1 = isArray;
-
-/**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
  *
@@ -169,85 +170,609 @@ var isArray_1 = isArray;
  * _.isObjectLike(null);
  * // => false
  */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-var isObjectLike_1 = isObjectLike;
-
-/** `Object#toString` result references. */
-var stringTag = '[object String]';
 
 /**
- * Checks if `value` is classified as a `String` primitive or object.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a string, else `false`.
- * @example
- *
- * _.isString('abc');
- * // => true
- *
- * _.isString(1);
- * // => false
- */
-function isString(value) {
-  return typeof value == 'string' ||
-    (!isArray_1(value) && isObjectLike_1(value) && _baseGetTag(value) == stringTag);
-}
-
-var isString_1 = isString;
-
-/** `Object#toString` result references. */
-var boolTag = '[object Boolean]';
-
-/**
- * Checks if `value` is classified as a boolean primitive or object.
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
  * @example
  *
- * _.isBoolean(false);
+ * _.isObject({});
  * // => true
  *
- * _.isBoolean(null);
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
  * // => false
  */
-function isBoolean(value) {
-  return value === true || value === false ||
-    (isObjectLike_1(value) && _baseGetTag(value) == boolTag);
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
 }
 
-var isBoolean_1 = isBoolean;
+var isObject_1 = isObject;
+
+/** `Object#toString` result references. */
+var asyncTag = '[object AsyncFunction]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    proxyTag = '[object Proxy]';
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  if (!isObject_1(value)) {
+    return false;
+  }
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 9 which returns 'object' for typed arrays and other constructors.
+  var tag = _baseGetTag(value);
+  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+}
+
+var isFunction_1 = isFunction;
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = _root['__core-js_shared__'];
+
+var _coreJsData = coreJsData;
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(_coreJsData && _coreJsData.keys && _coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+var _isMasked = isMasked;
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to convert.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+var _toSource = toSource;
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used for built-in method references. */
+var funcProto$1 = Function.prototype,
+    objectProto$2 = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString$1 = funcProto$1.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty$1 = objectProto$2.hasOwnProperty;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString$1.call(hasOwnProperty$1).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject_1(value) || _isMasked(value)) {
+    return false;
+  }
+  var pattern = isFunction_1(value) ? reIsNative : reIsHostCtor;
+  return pattern.test(_toSource(value));
+}
+
+var _baseIsNative = baseIsNative;
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+var _getValue = getValue;
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = _getValue(object, key);
+  return _baseIsNative(value) ? value : undefined;
+}
+
+var _getNative = getNative;
+
+/* Built-in method references that are verified to be native. */
+var DataView = _getNative(_root, 'DataView');
+
+var _DataView = DataView;
+
+/* Built-in method references that are verified to be native. */
+var Map = _getNative(_root, 'Map');
+
+var _Map = Map;
+
+/* Built-in method references that are verified to be native. */
+var Promise$1 = _getNative(_root, 'Promise');
+
+var _Promise = Promise$1;
+
+/* Built-in method references that are verified to be native. */
+var Set = _getNative(_root, 'Set');
+
+var _Set = Set;
+
+/* Built-in method references that are verified to be native. */
+var WeakMap = _getNative(_root, 'WeakMap');
+
+var _WeakMap = WeakMap;
+
+/** `Object#toString` result references. */
+var mapTag = '[object Map]',
+    objectTag = '[object Object]',
+    promiseTag = '[object Promise]',
+    setTag = '[object Set]',
+    weakMapTag = '[object WeakMap]';
+
+var dataViewTag = '[object DataView]';
+
+/** Used to detect maps, sets, and weakmaps. */
+var dataViewCtorString = _toSource(_DataView),
+    mapCtorString = _toSource(_Map),
+    promiseCtorString = _toSource(_Promise),
+    setCtorString = _toSource(_Set),
+    weakMapCtorString = _toSource(_WeakMap);
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+var getTag = _baseGetTag;
+
+// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
+if ((_DataView && getTag(new _DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (_Map && getTag(new _Map) != mapTag) ||
+    (_Promise && getTag(_Promise.resolve()) != promiseTag) ||
+    (_Set && getTag(new _Set) != setTag) ||
+    (_WeakMap && getTag(new _WeakMap) != weakMapTag)) {
+  getTag = function(value) {
+    var result = _baseGetTag(value),
+        Ctor = result == objectTag ? value.constructor : undefined,
+        ctorString = Ctor ? _toSource(Ctor) : '';
+
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString: return dataViewTag;
+        case mapCtorString: return mapTag;
+        case promiseCtorString: return promiseTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
+      }
+    }
+    return result;
+  };
+}
+
+/**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+
+var _nodeUtil = createCommonjsModule(function (module, exports) {
+/** Detect free variable `exports`. */
+var freeExports = 'object' == 'object' && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Detect free variable `process` from Node.js. */
+var freeProcess = moduleExports && _freeGlobal.process;
+
+/** Used to access faster Node.js helpers. */
+var nodeUtil = (function() {
+  try {
+    return freeProcess && freeProcess.binding && freeProcess.binding('util');
+  } catch (e) {}
+}());
+
+module.exports = nodeUtil;
+});
+
+/* Node.js helper references. */
+var nodeIsMap = _nodeUtil && _nodeUtil.isMap;
+
+/* Node.js helper references. */
+var nodeIsSet = _nodeUtil && _nodeUtil.isSet;
+
+/* Node.js helper references. */
+var nodeIsRegExp = _nodeUtil && _nodeUtil.isRegExp;
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+//// Enumeration \\\\
+
+/**
+ * Simple enumeration type. Own-properties on an instance are the keys in the
+ *  specified `map`, with their associated values.
+ *
+ * <pre><code>const state = new Enumeration({
+ *   READY: 1,
+ *   RUNNING: 2,
+ *   STOPPED: 3,
+ *   COMPLETE: 4
+ * });
+ *
+ * state.RUNNING; // 2
+ * state.verify(3); // 3 (returns the value since found in enumeration)
+ * state.verify(5); // ERROR thrown
+ * state.check(3); // 3 (same as verify(3) since found in enumeration)
+ * state.check(5); // undefined (silent failure)
+ * state.$values; // [1, 2, 3, 4] (special non-enumerable own-property)
+ * </code></pre>
+ *
+ * @class rtvref.Enumeration
+ * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
+ *  be `undefined`.
+ * @throws {Error} If `map` is falsy or empty.
+ * @throws {Error} If `map` has a key that maps to `undefined`.
+ * @throws {Error} If `map` contains a duplicate value.
+ */
+var Enumeration = function () {
+  // JSDoc is provided at the @class level
+  function Enumeration(map) {
+    var _this = this;
+
+    classCallCheck(this, Enumeration);
+
+    map = map || {};
+
+    var keys = Object.keys(map);
+    var values = [];
+
+    if (keys.length === 0) {
+      throw new Error('map must contain at least one key');
+    }
+
+    // shallow-clone each key in the map into this
+    keys.forEach(function (key) {
+      if (map[key] === undefined) {
+        throw new Error('map[' + key + '] cannot be undefined');
+      }
+
+      var value = map[key];
+      if (values.indexOf(value) >= 0) {
+        throw new Error('map[' + key + '] is a duplicate value: ' + value);
+      }
+
+      values.push(value);
+      _this[key] = value;
+    });
+
+    /**
+     * List of enumeration values. Values are _references_ to values in this
+     *  enumeration.
+     *
+     * Note that this own-property is non-enumerable on purpose. Enumerable
+     *  properties on this instance are the keys in this enumeration.
+     *
+     * @readonly
+     * @name rtvref.Enumeration#$values
+     * @type Array.<String>
+     */
+    Object.defineProperty(this, '$values', {
+      enumerable: false,
+      configurable: true,
+      get: function get$$1() {
+        return values.concat(); // shallow clone
+      }
+    });
+  }
+
+  /**
+   * Checks if a value is in this enumeration.
+   * @method rtvref.Enumeration#check
+   * @param {*} value Value to check. Cannot be undefined.
+   * @returns {*} The specified value if it is in this enumeration, or `undefined`
+   *  if not. An exception is __not__ thrown if the value is not in this enumeration.
+   * @see {@link rtvref.Enumeration#verify}
+   */
+
+
+  createClass(Enumeration, [{
+    key: 'check',
+    value: function check(value) {
+      if (this.$values.indexOf(value) >= 0) {
+        return value;
+      }
+
+      return undefined;
+    }
+
+    /**
+     * Validates a value as being in this enumeration. Throws an exception if the value
+     *  is not in this enumeration, unless `silent` is true.
+     * @method rtvref.Enumeration#verify
+     * @param {*} value Value to check. Cannot be undefined.
+     * @param {boolean} [silent=false] If truthy, returns `undefined` instead of throwing
+     *  an exception if the specified value is not in this enumeration.
+     * @returns {*} The specified value if it is in this enumeration, or `undefined` if
+     *  `silent` is true and the value is not in this enumeration.
+     * @throws {Error} If not `silent` and the value is not in this enumeration.
+     * @see {@link rtvref.Enumeration#check}
+     */
+
+  }, {
+    key: 'verify',
+    value: function verify(value, silent) {
+      var result = this.check(value);
+
+      if (result === undefined && !silent) {
+        throw new Error('Invalid value for enum[' + this.$values.join(', ') + ']: ' + value);
+      }
+
+      return result;
+    }
+
+    /**
+     * A string representation of this Enumeration.
+     * @method rtvref.Enumeration#toString
+     * @returns {string} String representation.
+     */
+
+  }, {
+    key: 'toString',
+    value: function toString() {
+      var _this2 = this;
+
+      var pairs = Object.keys(this).map(function (k) {
+        return [k, _this2[k]];
+      });
+      return '{rtvref.Enumeration pairs=[' + pairs.map(function (p) {
+        return '[' + p + ']';
+      }).join(', ') + ']}';
+    }
+  }]);
+  return Enumeration;
+}();
+
+//// Qualifier Definitions \\\\
+
+/**
+ * <h2>Qualifiers</h2>
+ * @namespace rtvref.qualifiers
+ */
+
+/**
+ * Required qualifier: Property _must_ exist and be of the expected type.
+ *  Depending on the type, additional requirements may be enforced.
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, and does not
+ *  allow its value to be `null` or `undefined`.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.REQUIRED
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var REQUIRED = '!';
+
+/**
+ * Expected qualifier: Property _should_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced.
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, does not allow
+ *  its value to be `undefined`, but does _allow_ its value to be `null`.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.EXPECTED
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var EXPECTED = '+';
+
+/**
+ * Optional qualifier: Property _may_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced (i.e. less so
+ *  than with the `EXPECTED` qualifier).
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
+ *  property value to be `null` as well as `undefined`, and does _not_ require
+ *  the property to be defined anywhere in the prototype chain. If the property
+ *  is defined, then it is treated as an `EXPECTED` value.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.OPTIONAL
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var OPTIONAL = '?';
+
+//
+// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+//
+
+/**
+ * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
+ * @name rtvref.qualifiers.qualifiers
+ * @type {rtvref.Enumeration}
+ */
+var qualifiers = new Enumeration({
+  REQUIRED: REQUIRED,
+  EXPECTED: EXPECTED,
+  OPTIONAL: OPTIONAL
+});
+
+//// Validation Module \\\\
+
+/**
+ * Determines if a value is a string literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new String('value')`, which is an object that is a string.
+ * @function rtv.validation.isString
+ * @param {*} v Value to validate.
+ * @param {boolean} [emptyOK=false] If truthy, an empty string is allowed.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ * @see {@link rtvref.types.STRING}
+ */
+var isString = function isString(v, emptyOK) {
+  return !!(typeof v === 'string' && (emptyOK || v));
+};
+
+/**
+ * Determines if a value is a boolean literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new Boolean(true)`, which is an object that is a boolean.
+ * @function rtv.validation.isBoolean
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ * @see {@link rtvref.types.BOOLEAN}
+ */
+var isBoolean = function isBoolean(v) {
+  return v === true || v === false;
+};
 
 //// Type Definitions \\\\
 
 /**
  * <h2>Types</h2>
- *
+ * @namespace rtvref.types
+ */
+
+/**
  * <h3>Primitives</h3>
  *
- * In RTV.js, a primitive is considered to be one of the following types:
+ * In RTV.js (as in {@link https://developer.mozilla.org/en-US/docs/Glossary/Primitive ECMAScript 2015}),
+ *  a _primitive_ is considered one of the following types:
  *
- * - `string` (note that `new String('s')` does not produce a _primitive_, it
- *   produces an _object_, and should generally be avoided).
- * - `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
- *   it produces an _object_, and should generally be avoided).
- * - `number` (note that `new Number(1)` does not produce a _primitive_,
- *   it produces an _object_, and should generally be avoided).
- * - `Symbol`
- * - `null`
  * - `undefined`
+ * - `null`
+ * - `string` (note that `new String('s')` does not produce a _primitive_, it
+ *   produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
+ *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `number` (note that `new Number(1)` does not produce a _primitive_,
+ *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
+ * - `Symbol`
  *
+ * @namespace rtvref.types.primitives
+ */
+
+/**
  * <h3>Rules Per Qualifiers</h3>
  *
  * {@link rtvref.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
@@ -259,7 +784,7 @@ var isBoolean_1 = isBoolean;
  *  the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * @namespace rtvref.types
+ * @namespace rtvref.types.rules
  */
 
 /**
@@ -273,7 +798,10 @@ var isBoolean_1 = isBoolean;
  *
  * If a type does not accept any arguments, but an arguments object is provided,
  *  it will simply be ignored (i.e. it will __not__ be treated as a nested
- *  {@link rtvref.shape_descriptor shape descriptor}).
+ *  {@link rtvref.shape_descriptor shape descriptor}). This means that, in an
+ *  `Array`-style {@link rtvref.types.typeset typeset}, a shape descriptor
+ *  __must__ always be qualified by a type, even if it's the default type
+ *  attributed to a shape descriptor.
  *
  * An arguments object immediately follows its type in a typeset, such as
  *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
@@ -298,6 +826,7 @@ var isBoolean_1 = isBoolean;
  *
  * Note that an {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
  *  because the array type has special syntax for describing the type of its items.
+ *  See {@link rtvref.types.ARRAY_args ARRAY_args} instead.
  *
  * For example, the following descriptors both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
@@ -367,9 +896,10 @@ var isBoolean_1 = isBoolean;
  * - `Object`: For the root or a nested {@link rtvref.shape_descriptor shape descriptor}
  *   of _implied_ {@link rtvref.types.OBJECT OBJECT} type (unless qualified with a specific
  *   object type like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when
- *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`).
+ *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty
+ *   (has no properties), nothing will be verified (anything will pass).
  * - `String`: For a single type, such as {@link rtvref.types.FINITE 'FINITE'}
- *   for a finite number.
+ *   for a finite number. Must be one of the types defined in {@link rtvref.types}.
  * - `Function`: For a {@link rtvref.types.property_validator property validator}
  *   that will verify the value of the property using custom code. Only one validator
  *   can be specified for a given typeset, and it will only be called if the value
@@ -382,7 +912,8 @@ var isBoolean_1 = isBoolean;
  *   be at _least one_ of the types listed, but not all. Matching is done in a short-circuit
  *   fashion, from the first to the last element in the typeset. If a simpler type is
  *   likely, it's more performant to specify those first in the typeset to avoid a match
- *   attempt on a nested shape or array.
+ *   attempt on a nested shape or Array.
+ *   - Cannot be an empty Array.
  *   - An Array is necessary to {@link rtvref.qualifiers qualify} the typeset as not
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is also necessary if a type needs or requires
@@ -481,7 +1012,7 @@ var isBoolean_1 = isBoolean;
  * rtv.verify({name: 'Steve', age: null}, person); // OK
  * </code></pre>
  *
- * @typedef {(Object|String|Array|Function)} rtvref.types.typeset
+ * @typedef {(Object|string|Array|Function)} rtvref.types.typeset
  */
 
 /**
@@ -559,7 +1090,7 @@ var isBoolean_1 = isBoolean;
  */
 var ANY = 'any';
 
-// TODO: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
+// TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
 //  for a regular expression test. Similar prop names to collection_descriptor.
 /**
  * {@link rtvref.types.STRING STRING} arguments.
@@ -580,6 +1111,9 @@ var ANY = 'any';
  * - REQUIRED: Must be a non-empty string.
  * - EXPECTED | OPTIONAL: Can be an empty string.
  *
+ * In all cases, the value must be a string {@link rtvref.types.primitives primitive}.
+ *  `new String('hello') !== 'hello'` because the former is an _object_, not a string.
+ *
  * Arguments (optional): {@link rtvref.types.STRING_args}
  *
  * @name rtvref.types.STRING
@@ -589,7 +1123,9 @@ var ANY = 'any';
 var STRING = 'string';
 
 /**
- * Boolean rules per qualifiers: Must be a boolean.
+ * Boolean rules per qualifiers: Must be a boolean {@link rtvref.types.primitives primitive}.
+ *  `new Boolean(true) !== true` because the former is an _object_, not a boolean.
+ *
  * @name rtvref.types.BOOLEAN
  * @const {string}
  * @see {@link rtvref.qualifiers}
@@ -597,7 +1133,7 @@ var STRING = 'string';
 var BOOLEAN = 'boolean';
 
 /**
- * Symbol rules per qualifiers: Must be a symbol.
+ * Symbol rules per qualifiers: Must be a symbol {@link rtvref.types.primitives primitive}.
  * @name rtvref.types.SYMBOL
  * @const {string}
  * @see {@link rtvref.qualifiers}
@@ -625,6 +1161,9 @@ var SYMBOL = 'symbol';
  * - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
  * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
  *
+ * In all cases, the value must be a number {@link rtvref.types.primitives primitive}.
+ *  `new Number(1) !== 1` because the former is an _object_, not a number.
+ *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
  * @name rtvref.types.NUMBER
@@ -637,6 +1176,7 @@ var NUMBER = 'number';
 /**
  * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
  *  value can be either a safe integer or a {@link rtvref.types.FLOAT floating point number}.
+ *  It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -650,7 +1190,7 @@ var FINITE = 'finite';
 
 /**
  * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} integer,
- *  but is not necessarily _safe_.
+ *  but is not necessarily _safe_. It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -665,6 +1205,7 @@ var INT = 'int';
 
 /**
  * Float rules per qualifiers: Must be a finite floating point number.
+ *  It must also be a number {@link rtvref.types.primitives primitive}.
  *
  * Arguments (optional): {@link rtvref.types.numeric_args}
  *
@@ -674,291 +1215,6 @@ var INT = 'int';
  * @see {@link rtvref.types.INT}
  */
 var FLOAT = 'float';
-
-/**
- * An _any_ object is anything that is not a {@link rtvref.types primitive}, which
- *  means it includes the `Array` type, as well as functions and arguments. To
- *  test for an array, use the {@link rtvref.types.ARRAY ARRAY} type. To
- *  test for a function, use the {@link rtvref.types.FUNCTION FUNCTION} type.
- *
- * The following values are considered any objects:
- *
- * - `{}`
- * - `new Object()`
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new function() {}` (class instance)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- *
- * The following values __are not__ considered any objects (because they are
- *  considered to be {@link rtvref.types primitives}):
- *
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null` (NOTE: `typeof null === 'object'` in JavaScript; the `ANY_OBJECT`
- *   type allows testing for this undesirable fact)
- * - `undefined`
- *
- * Any object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.ANY_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-var ANY_OBJECT = 'anyObject';
-
-/**
- * An object is one that extends from `JavaScript.Object` and is not
- *  a {@link rtvref.types.FUNCTION function}, {@link rtvref.types.ARRAY array},
- *  {@link rtvref.types.REGEXP regular expression}, function arguments object,
- *  {@link rtvref.types.MAP map}, {@link rtvref.types.WEAK_MAP weak map},
- *  {@link rtvref.types.SET set}, {@link rtvref.types.WEAK_SET weak set}, nor a
- *  {@link rtvref.types primitive}.
- *
- * This is the __default__ (imputed) type for
- *  {@link rtvref.shape_descriptor shape descriptors}, which means the object itself
- *  (the value being tested), prior to being checked against its shape, will be
- *  tested according to this type.
- *
- * The following values are considered objects:
- *
- * - `{}`
- * - `new Object()`
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `new function() {}` (class instance)
- *
- * The following values __are not__ considered objects:
- *
- * - `[]`
- * - `new Array()`
- * - `/re/`
- * - `new RegExp('re')`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-var OBJECT = 'object';
-
-/**
- * A _plain_ object is one that is created directly from the `Object` constructor,
- *  whether using `new Object()` or the literal `{}`.
- *
- * The following values are considered plain objects:
- *
- * - `{}`
- * - `new Object()`
- *
- * The following values __are not__ considered plain objects:
- *
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new function() {}` (class instance)
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Plain object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.shape_descriptor}
- *
- * @name rtvref.types.PLAIN_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-var PLAIN_OBJECT = 'plainObject';
-
-/**
- * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
- * @typedef {Object} rtvref.types.CLASS_OBJECT_args
- * @property {function} [ctr] A reference to a constructor function. If specified,
- *  the class object (instance) must have this class function in its inheritance
- *  chain such that `<class_object> instanceof <function> === true`. Note that
- *  this property is not serializable to JSON.
- * @property {rtvref.shape_descriptor} [shape] A description of the class object's
- *  shape.
- */
-
-/**
- * A _class_ object is one that is created by invoking the `new` operator on a
- *  function (other than a primitive type function), generating a new object,
- *  commonly referred to as a _class instance_. This object's prototype
- *  (`__proto__`) is a reference to that function's `prototype` and has a
- *  `constructor` property that is `===` to the function.
- *
- * The following values are considered class objects:
- *
- * - `new function() {}`
- *
- * The following values __are not__ considered class objects:
- *
- * - `{}`
- * - `new Object()`
- * - `[]`
- * - `new Array()`
- * - `function(){}`
- * - `arguments` (function arguments)
- * - `new String('')`
- * - `new Boolean(true)`
- * - `new Number(1)`
- * - `/re/`
- * - `new RegExp('re')`
- * - `new Set()`
- * - `new WeakSet()`
- * - `new Map()`
- * - `new WeakMap()`
- * - `Symbol('s')`
- * - `true`
- * - `1`
- * - `''`
- * - `null`
- * - `undefined`
- *
- * Class object rules per qualifiers:
- *
- * - REQUIRED: Per the lists above.
- * - EXPECTED: `null` is allowed.
- * - OPTIONAL: `undefined` is allowed.
- *
- * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
- *
- * @name rtvref.types.CLASS_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.MAP_OBJECT}
- */
-var CLASS_OBJECT = 'classObject';
-
-/**
- * A _map_ object is an {@link rtvref.types.OBJECT OBJECT} that is treated as a
- *  hash map with an expected set of keys and values. Keys can be described
- *  using a regular expression, and values can be described using a
- *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
- *
- * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.
- *
- * Arguments (optional): {@link rtvref.types.collection_descriptor}
- *
- * @name rtvref.types.MAP_OBJECT
- * @const {string}
- * @see {@link rtvref.qualifiers}
- * @see {@link rtvref.types.ANY_OBJECT}
- * @see {@link rtvref.types.OBJECT}
- * @see {@link rtvref.types.PLAIN_OBJECT}
- * @see {@link rtvref.types.CLASS_OBJECT}
- * @see {@link rtvref.types.MAP}
- * @see {@link rtvref.types.WEAK_MAP}
- */
-var MAP_OBJECT = 'mapObject';
-
-// TODO: Is there a way that ARRAY could take a parameter, that being the
-//  required length of the array, defaulting to -1 for any length? Perhaps
-//  only when using the full form as `[ARRAY, 2, [STRING]]` instead of the
-//  short form as `[[STRING]]`? Maybe `[2, [STRING]]` would even work for short
-//  hand. If so, then this would be up to par with the MAP_OBJECT where a count
-//  can be specified...
-/**
- * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted.
- * @name rtvref.types.ARRAY
- * @const {string}
- * @see {@link rtvref.qualifiers}
- */
-var ARRAY = 'array';
-
-/**
- * JSON rules per qualifiers: Must be a JSON value:
- *
- * - {@link rtvref.types.STRING string}, however __empty strings__ are permitted,
- *   even if the qualifier is `REQUIRED`;
- * - {@link rtvref.types.BOOLEAN boolean};
- * - {@link rtvref.types.FINITE finite number};
- * - {@link rtvref.types.PLAIN_OBJECT plain object};
- * - {@link rtvref.types.ARRAY array};
- * - `null`
- *
- * Since this type checks for _any_ valid JSON value, empty string and `null`
- *  values are permitted, even when the typeset is qualified as `REQUIRED`.
- *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
- *  qualifier.
- *
- * @name rtvref.types.JSON
- * @const {string}
- * @see {@link rtvref.qualifiers}
- */
-var JSON = 'json';
 
 /**
  * Function rules per qualifiers: Must be a `function`.
@@ -1004,11 +1260,286 @@ var ERROR = 'error';
  */
 var PROMISE = 'promise';
 
+// TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
+/**
+ * {@link rtvref.types.ARRAY ARRAY} arguments.
+ * @typedef {Object} rtvref.types.ARRAY_args
+ * @property {number} [exact] Exact length.
+ * @property {number} [min=0] Minimum length. Ignored if `exact` is specified.
+ * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if
+ *  `exact` is specified.
+ */
+
+/**
+ * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted by
+ *  default.
+ *
+ * Arguments (optional): {@link rtvref.types.ARRAY_args}
+ *
+ * @name rtvref.types.ARRAY
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ */
+var ARRAY = 'array';
+
+/**
+ * An _any_ object is anything that is __not__ a {@link rtvref.types primitive}, which
+ *  means it includes the `Array` type, as well as functions and arguments, and
+ *  other JavaScript _object_ types. To test for an array, use the
+ *  {@link rtvref.types.ARRAY ARRAY} type. To test for a function, use the
+ *  {@link rtvref.types.FUNCTION FUNCTION} type.
+ *
+ * The following values are considered any objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ *
+ * {@link rtvref.types.primitives Primitive} values __are not__ considered any objects,
+ *  especially when the qualifier is {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ *  Note that `typeof null === 'object'` in JavaScript; the `ANY_OBJECT` type
+ *  allows testing for this undesirable fact.
+ *
+ * Any object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.ANY_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+var ANY_OBJECT = 'anyObject';
+
+/**
+ * An object is one that extends from `JavaScript.Object` (i.e. an _instance_
+ *  of _something_ that extends from Object) and is not a
+ *  {@link rtvref.types.FUNCTION function}, {@link rtvref.types.ARRAY array},
+ *  {@link rtvref.types.REGEXP regular expression}, function arguments object,
+ *  {@link rtvref.types.MAP map}, {@link rtvref.types.WEAK_MAP weak map},
+ *  {@link rtvref.types.SET set}, {@link rtvref.types.WEAK_SET weak set}, nor a
+ *  {@link rtvref.types primitive}.
+ *
+ * This is the __default__ (imputed) type for
+ *  {@link rtvref.shape_descriptor shape descriptors}, which means the object itself
+ *  (the value being tested), prior to being checked against its shape, will be
+ *  tested according to this type.
+ *
+ * The following values are considered objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ *
+ * The following values __are not__ considered objects:
+ *
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+var OBJECT = 'object';
+
+/**
+ * A _plain_ object is one that is created directly from the `Object` constructor,
+ *  whether using `new Object()` or the literal `{}`.
+ *
+ * The following values are considered plain objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ *
+ * The following values __are not__ considered plain objects:
+ *
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `new function() {}` (class instance)
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Plain object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.shape_descriptor}
+ *
+ * @name rtvref.types.PLAIN_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+var PLAIN_OBJECT = 'plainObject';
+
+/**
+ * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
+ * @typedef {Object} rtvref.types.CLASS_OBJECT_args
+ * @property {function} [ctr] A reference to a constructor function. If specified,
+ *  the class object (instance) must have this class function in its inheritance
+ *  chain such that `<class_object> instanceof <function> === true`. Note that
+ *  this property is not serializable to JSON.
+ * @property {rtvref.shape_descriptor} [shape] A description of the class object's
+ *  shape.
+ */
+
+/**
+ * A _class_ object is one that is created by invoking the `new` operator on a
+ *  function (other than a primitive type function), generating a new object,
+ *  commonly referred to as a _class instance_. This object's prototype
+ *  (`__proto__`) is a reference to that function's `prototype` and has a
+ *  `constructor` property that is `===` to the function.
+ *
+ * The following values are considered class objects:
+ *
+ * - `new function() {}`
+ *
+ * The following values __are not__ considered class objects:
+ *
+ * - `{}`
+ * - `new Object()`
+ * - `new String('')`
+ * - `new Boolean(true)`
+ * - `new Number(1)`
+ * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+ * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+ * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
+ * - `arguments` (function arguments)
+ * - `new Map()` (also see {@link rtvref.types.MAP MAP})
+ * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
+ * - `new Set()` (also see {@link rtvref.types.SET SET})
+ * - `new WeakSet()` (also see {@link rtvref.types.WEAK_SET WEAK_SET})
+ * - all {@link rtvref.types.primitives primitives}
+ *
+ * Class object rules per qualifiers:
+ *
+ * - REQUIRED: Per the lists above.
+ * - EXPECTED: `null` is allowed.
+ * - OPTIONAL: `undefined` is allowed.
+ *
+ * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
+ *
+ * @name rtvref.types.CLASS_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.MAP_OBJECT}
+ */
+var CLASS_OBJECT = 'classObject';
+
+/**
+ * A _map_ object is an {@link rtvref.types.OBJECT OBJECT} that is treated as a
+ *  hash map with an expected set of keys and values. Keys can be described
+ *  using a regular expression, and values can be described using a
+ *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *
+ * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.
+ *
+ * Arguments (optional): {@link rtvref.types.collection_descriptor}
+ *
+ * @name rtvref.types.MAP_OBJECT
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ * @see {@link rtvref.types.MAP}
+ * @see {@link rtvref.types.WEAK_MAP}
+ */
+var MAP_OBJECT = 'mapObject';
+
+/**
+ * JSON rules per qualifiers: Must be a JSON value:
+ *
+ * - {@link rtvref.types.STRING string}, however __empty strings are permitted__,
+ *   even if the qualifier is `REQUIRED`;
+ * - {@link rtvref.types.BOOLEAN boolean};
+ * - {@link rtvref.types.FINITE finite number};
+ * - {@link rtvref.types.PLAIN_OBJECT plain object};
+ * - {@link rtvref.types.ARRAY array};
+ * - `null`
+ *
+ * Since this type checks for _any_ valid JSON value, empty string and `null`
+ *  values are permitted, even when the typeset is qualified as `REQUIRED`.
+ *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
+ *  qualifier.
+ *
+ * @name rtvref.types.JSON
+ * @const {string}
+ * @see {@link rtvref.qualifiers}
+ */
+var JSON = 'json';
+
 /**
  * An ES6 map supports any object as its keys, unlike a
  *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
  *  be described using a regular expression (if they are strings), and values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
+ *  by default.
  *
  * Map rules per qualifiers: Must be a `Map` instance.
  *
@@ -1026,7 +1557,8 @@ var MAP = 'map';
  * An ES6 weak map supports any object as its keys, unlike a
  *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
  *  be described using a regular expression (if they are strings), and values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
+ *  by default.
  *
  * Weak map rules per qualifiers: Must be a `WeakMap` instance.
  *
@@ -1042,7 +1574,8 @@ var WEAK_MAP = 'weakMap';
 
 /**
  * An ES6 set is a collection of _unique_ values without associated keys. Values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
+ *  by default.
  *
  * Set rules per qualifiers: Must be a `Set` instance.
  *
@@ -1057,7 +1590,8 @@ var SET = 'set';
 
 /**
  * An ES6 weak set is a collection of _unique_ values without associated keys. Values can
- *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted.
+ *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
+ *  by default.
  *
  * Weak set rules per qualifiers: Must be a `WeakSet` instance.
  *
@@ -1070,258 +1604,115 @@ var SET = 'set';
  */
 var WEAK_SET = 'weakSet';
 
-var allTypes = Object.freeze({
-	ANY: ANY,
-	STRING: STRING,
-	BOOLEAN: BOOLEAN,
-	SYMBOL: SYMBOL,
-	NUMBER: NUMBER,
-	FINITE: FINITE,
-	INT: INT,
-	FLOAT: FLOAT,
-	ANY_OBJECT: ANY_OBJECT,
-	OBJECT: OBJECT,
-	PLAIN_OBJECT: PLAIN_OBJECT,
-	CLASS_OBJECT: CLASS_OBJECT,
-	MAP_OBJECT: MAP_OBJECT,
-	ARRAY: ARRAY,
-	JSON: JSON,
-	FUNCTION: FUNCTION,
-	REGEXP: REGEXP,
-	DATE: DATE,
-	ERROR: ERROR,
-	PROMISE: PROMISE,
-	MAP: MAP,
-	WEAK_MAP: WEAK_MAP,
-	SET: SET,
-	WEAK_SET: WEAK_SET
+//
+// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+//
+
+/**
+ * Enumeration (`string -> string`) of {@link rtvref.types types}.
+ * @name rtvref.types.types
+ * @type {rtvref.Enumeration}
+ */
+var types = new Enumeration({
+  ANY: ANY,
+  STRING: STRING,
+  BOOLEAN: BOOLEAN,
+  SYMBOL: SYMBOL,
+  NUMBER: NUMBER,
+  FINITE: FINITE,
+  INT: INT,
+  FLOAT: FLOAT,
+  FUNCTION: FUNCTION,
+  REGEXP: REGEXP,
+  DATE: DATE,
+  ERROR: ERROR,
+  PROMISE: PROMISE,
+  ARRAY: ARRAY,
+  ANY_OBJECT: ANY_OBJECT,
+  OBJECT: OBJECT,
+  PLAIN_OBJECT: PLAIN_OBJECT,
+  CLASS_OBJECT: CLASS_OBJECT,
+  MAP_OBJECT: MAP_OBJECT,
+  JSON: JSON,
+  MAP: MAP,
+  WEAK_MAP: WEAK_MAP,
+  SET: SET,
+  WEAK_SET: WEAK_SET
 });
-
-//// Qualifier Definitions \\\\
-
-/**
- * <h2>Qualifiers</h2>
- * @namespace rtvref.qualifiers
- */
-
-/**
- * Required qualifier: Property _must_ exist and be of the expected type.
- *  Depending on the type, additional requirements may be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- *  property to be defined _somewhere_ within the prototype chain, and does not
- *  allow its value to be `null` or `undefined`.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.REQUIRED
- * @const {string}
- * @see {@link rtvref.types}
- */
-var REQUIRED = '!';
-
-/**
- * Expected qualifier: Property _should_ exist and be of the expected type.
- *  Depending on the type, some requirements may not be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- *  property to be defined _somewhere_ within the prototype chain, does not allow
- *  its value to be `undefined`, but does _allow_ its value to be `null`.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.EXPECTED
- * @const {string}
- * @see {@link rtvref.types}
- */
-var EXPECTED = '+';
-
-/**
- * Optional qualifier: Property _may_ exist and be of the expected type.
- *  Depending on the type, some requirements may not be enforced (i.e. less so
- *  than with the `EXPECTED` qualifier).
- *
- * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
- *  property value to be `null` as well as `undefined`, and does _not_ require
- *  the property to be defined anywhere in the prototype chain. If the property
- *  is defined, then it is treated as an `EXPECTED` value.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.OPTIONAL
- * @const {string}
- * @see {@link rtvref.types}
- */
-var OPTIONAL = '?';
-
-var allQualifiers = Object.freeze({
-	REQUIRED: REQUIRED,
-	EXPECTED: EXPECTED,
-	OPTIONAL: OPTIONAL
-});
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-//// Enumeration \\\\
-
-/**
- * Simple enumeration type.
- * @class rtvref.Enumeration
- * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
- *  be `undefined`.
- * @throws {Error} If `map` is falsy or empty.
- * @throws {Error} If `map` has a key that maps to `undefined`.
- */
-var Enumeration = function () {
-  function Enumeration(map) {
-    var _this = this;
-
-    classCallCheck(this, Enumeration);
-
-    map = map || {};
-
-    var keys = Object.keys(map);
-    var values = [];
-
-    if (keys.length === 0) {
-      throw new Error('map must contain at least one key');
-    }
-
-    // shallow-clone each key in the map into this
-    keys.forEach(function (key) {
-      if (map[key] === undefined) {
-        throw new Error('map[' + key + '] cannot be undefined');
-      }
-
-      var value = map[key];
-      values.push(value);
-      _this[key] = value;
-    });
-
-    /**
-     * [internal] List of enumeration values.
-     * @name rtvref.Enumeration#_values
-     * @type Array.<String>
-     */
-    Object.defineProperty(this, '_values', {
-      enumerable: false, // internal
-      configurable: true,
-      value: values
-    });
-  }
-
-  /**
-   * Validates a value as being in this enumeration. Throws an exception if the value
-   *  is not in this enumeration, unless `silent` is true.
-   * @method rtvref.Enumeration#verify
-   * @param {*} value Value to check. Cannot be undefined.
-   * @param {boolean} [silent=false] If truthy, returns `undefined` instead of throwing
-   *  an exception if the specified value is not in this enumeration.
-   * @returns {*} The specified value if it is in this enumeration, or `undefined` if
-   *  `silent` is true and the value is not in this enumeration.
-   */
-
-
-  createClass(Enumeration, [{
-    key: 'verify',
-    value: function verify(value, silent) {
-      if (this._values.indexOf(value) >= 0) {
-        return value;
-      } else if (silent) {
-        return undefined;
-      }
-
-      throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
-    }
-
-    /**
-     * A string representation of this Enumeration.
-     * @returns {string} String representation.
-     */
-
-  }, {
-    key: 'toString',
-    value: function toString() {
-      var _this2 = this;
-
-      var pairs = Object.keys(this).map(function (k) {
-        return [k, _this2[k]];
-      });
-      return '{Enumeration pairs=[' + pairs.map(function (p) {
-        return '[' + p + ']';
-      }).join(', ') + ']}';
-    }
-  }]);
-  return Enumeration;
-}();
 
 //// Main Implementation Module \\\\
 
 /**
- * RTV Implementation
+ * RTV Implementation Module
  * @private
  * @namespace rtv.impl
  */
 
-/**
- * Enumeration of {@link rtvref.types types}.
- * @name rtv.impl.types
- * @type {rtvref.Enumeration}
- */
-var types = new Enumeration(allTypes);
+// TODO
+// const fullyQualify = function(typeset) {
+//   if (!isTypeset(typeset)) {
+//     throw new Error(`Invalid typeset=${typeset}`);
+//   }
+
+//   const fqts = [];
+
+//   if (isArray(typeset)) {
+//     if (!qualifiers.check(typeset[0])) {
+//       fqts.push(qualifiers.REQUIRED, ...typeset); // TODO this needs serious TLC...
+//     }
+//   } else {
+//     fqts.push(qualifiers.REQUIRED, typeset); // TODO this needs serious TLC...
+//   }
+
+//   return fqts;
+// };
 
 /**
- * Enumeration of {@link rtvref.qualifiers qualifiers}.
- * @name rtv.impl.qualifiers
- * @type {rtvref.Enumeration}
+ * Checks a value against a simple type.
+ * @function rtv.impl.checkSimple
+ * @param {*} value Value to check.
+ * @param {string} typeset Simple typeset name, must be one of {@link rtvref.types.types}.
+ * @returns {(boolean|rtvref.RtvError)}
+ * @throws {Error} If `typeset` is not a valid type name.
  */
-var qualifiers = new Enumeration(allQualifiers);
+var checkSimple = function checkSimple(value, typeset) {
+  types.verify(typeset);
+
+  if (typeset === types.STRING) {
+    return isString(value); // TODO return RtvError if fails
+  } else if (typeset === types.BOOLEAN) {
+    return isBoolean(value); // TODO return RtvError if fails
+  }
+
+  throw new Error('Missing handler for \'' + typeset + '\' type');
+};
 
 /**
- * Checks a value against a shape for compliance.
+ * Checks a value against a shape.
  * @function rtv.impl.check
  * @param {*} value Value to check.
- * @param {rtvref.types.typeset} shape Expected shape of the value.
- * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
- *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
- * @throws {Error} If `shape` is not a valid typeset.
- * @see rtv.impl.verify
+ * @param {rtvref.types.typeset} typeset Expected shape/type of the value.
+ * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to the
+ *  `typeset`; `RtvError` otherwise. An exception is __not__ thrown if the `value`
+ *  is non-compliant.
+ * @throws {Error} If `typeset` is not a valid typeset.
+ * @see {@link rtv.impl.verify}
  */
-var check = function check(value, shape) {
-  // TODO: on failure to check, consider returning a special RtvError object that
+var check = function check(value, typeset) {
+  // TODO: on check failure (with a valid typeset), return a special RtvError object that
   //  contains extra properties to indicate what didn't match, what was expected,
   //  the shape that was checked, the value that was checked, etc.
   //  If check succeeds, return boolean `true`. rtv.check/verify can then test
   //  for the return type since impl shouldn't be exposed externally anyway.
-  if (shape === types.STRING) {
-    return isString_1(value) && !!value;
-  } else if (shape === types.BOOLEAN) {
-    return isBoolean_1(value);
+  try {
+    if (isString(typeset)) {
+      return checkSimple(value, typeset);
+    }
+  } catch (checkErr) {
+    var err = new Error('Cannot check value: shape is not a valid typeset -- rootCause: ' + checkErr.message);
+    err.rootCause = checkErr;
+    throw err;
   }
-
-  throw new Error('cannot check value: shape is not a valid typeset');
 };
 
 //// Main entry point \\\\
@@ -1360,14 +1751,14 @@ var rtv = {
   /**
    * Enumeration of {@link rtvref.types types}.
    * @name rtv.t
-   * @type {rtvref.Enumeration}
+   * @type {rtvref.Enumeration.<String,String>}
    */
   t: types,
 
   /**
    * Enumeration of {@link rtvref.qualifiers qualifiers}.
    * @name rtv.q
-   * @type {rtvref.Enumeration}
+   * @type {rtvref.Enumeration.<String,String>}
    */
   q: qualifiers,
 
@@ -1376,13 +1767,15 @@ var rtv = {
    * @function rtv.check
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {boolean} `true` if the `value` is compliant to the `shape`; `false`
-   *  otherwise. An exception is __not__ thrown if the `value` is non-compliant.
+   * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to
+   *  the `shape`; `RtvError` if not. An exception is __not__ thrown if the
+   *  `value` is non-compliant. Test for `rtv.check(...) !== true`.
    *
    * __NOTE:__ This method always returns `true` if RTV.js is currently
    *  {@link rtv.config.enabled disabled}.
    *
-   * @see rtv.verify
+   * @throws {Error} If `shape` is not a valid typeset.
+   * @see {@link rtv.verify}
    */
   check: function check$$1(value, shape) {
     if (this.config.enabled) {
@@ -1403,17 +1796,16 @@ var rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} shape Expected shape of the value. Normally,
    *  this is a {@link rtvref.shape_descriptor shape descriptor}.
-   * @throws {Error} If the `value` is not compliant to the `shape`.
-   * @see rtv.verify
-   * @see rtv.config.enabled
+   * @throws {RtvError} If the `value` is not compliant to the `shape`.
+   * @throws {Error} If `shape` is not a valid typeset.
+   * @see {@link rtv.check}
+   * @see {@link rtv.config.enabled}
    */
   verify: function verify(value, shape) {
     if (this.config.enabled) {
-      if (!this.check(value, shape)) {
-        // TODO: consider throwing a special RtvError object that contains extra
-        //  properties to indicate what didn't match, what was expected, the shape
-        //  that was checked, the value that was checked, etc.
-        throw new Error('value does not match specified shape');
+      var result = this.check(value, shape);
+      if (result !== true) {
+        throw result; // expected to be an RtvError
       }
     }
   },

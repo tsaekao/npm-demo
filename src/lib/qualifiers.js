@@ -1,5 +1,7 @@
 //// Qualifier Definitions \\\\
 
+import Enumeration from './Enumeration';
+
 /**
  * <h2>Qualifiers</h2>
  * @namespace rtvref.qualifiers
@@ -54,3 +56,18 @@ export const EXPECTED = '+';
  * @see {@link rtvref.types}
  */
 export const OPTIONAL = '?';
+
+//
+// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+//
+
+/**
+ * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
+ * @name rtvref.qualifiers.qualifiers
+ * @type {rtvref.Enumeration}
+ */
+export default new Enumeration({
+  REQUIRED,
+  EXPECTED,
+  OPTIONAL
+});

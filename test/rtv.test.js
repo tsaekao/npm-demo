@@ -1,22 +1,24 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
+
 import rtv from '../src/rtv';
-import * as allTypes from '../src/lib/types';
-import * as allQualifiers from '../src/lib/qualifiers';
+import types from '../src/lib/types';
+import qualifiers from '../src/lib/qualifiers';
 import * as impl from '../src/lib/impl';
 import Enumeration from '../src/lib/Enumeration';
+import RtvError from '../src/lib/RtvError';
 import pkg from '../package.json';
 
 describe('module: rtv', function() {
   it('should provide all types', function() {
+    expect(rtv.t).to.equal(types);
     expect(rtv.t instanceof Enumeration).to.equal(true);
-    expect(_.difference(Object.keys(rtv.t), Object.keys(allTypes))).to.eql([]);
   });
 
   it('should provide all qualifiers', function() {
+    expect(rtv.q).to.equal(qualifiers);
     expect(rtv.q instanceof Enumeration).to.equal(true);
-    expect(_.difference(Object.keys(rtv.q), Object.keys(allQualifiers))).to.eql([]);
   });
 
   it('should check a value', function() {
@@ -27,9 +29,14 @@ describe('module: rtv', function() {
     expect(rtv.verify.bind(rtv, 'foo', rtv.t.STRING)).not.to.throw();
   });
 
-  it('should throw if verify fails', function() {
-    expect(rtv.verify.bind(rtv, 'foo', rtv.t.BOOLEAN))
-        .to.throw('value does not match specified shape');
+  xit('should throw an RtvError if verify fails', function() { // TODO enable this test once verify() throws RtvError
+    try {
+      rtv.verify('foo', rtv.t.BOOLEAN);
+      expect('statement above should have thrown').to.be.true; // fail this test
+    } catch (err) {
+      expect(err instanceof RtvError).to.be.true;
+      expect(err.message).to.contain('verification failed');
+    }
   });
 
   it('should provide version as internal property', function() {

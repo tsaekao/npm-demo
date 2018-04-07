@@ -1,14 +1,33 @@
 //// Enumeration \\\\
 
 /**
- * Simple enumeration type.
+ * Simple enumeration type. Own-properties on an instance are the keys in the
+ *  specified `map`, with their associated values.
+ *
+ * <pre><code>const state = new Enumeration({
+ *   READY: 1,
+ *   RUNNING: 2,
+ *   STOPPED: 3,
+ *   COMPLETE: 4
+ * });
+ *
+ * state.RUNNING; // 2
+ * state.verify(3); // 3 (returns the value since found in enumeration)
+ * state.verify(5); // ERROR thrown
+ * state.check(3); // 3 (same as verify(3) since found in enumeration)
+ * state.check(5); // undefined (silent failure)
+ * state.$values; // [1, 2, 3, 4] (special non-enumerable own-property)
+ * </code></pre>
+ *
  * @class rtvref.Enumeration
  * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
  *  be `undefined`.
  * @throws {Error} If `map` is falsy or empty.
  * @throws {Error} If `map` has a key that maps to `undefined`.
+ * @throws {Error} If `map` contains a duplicate value.
  */
-class Enumeration {
+export default class Enumeration {
+  // JSDoc is provided at the @class level
   constructor(map) {
     map = map || {};
 
@@ -26,20 +45,48 @@ class Enumeration {
       }
 
       const value = map[key];
+      if (values.indexOf(value) >= 0) {
+        throw new Error('map[' + key + '] is a duplicate value: ' + value);
+      }
+
       values.push(value);
       this[key] = value;
     });
 
     /**
-     * [internal] List of enumeration values.
-     * @name rtvref.Enumeration#_values
+     * List of enumeration values. Values are _references_ to values in this
+     *  enumeration.
+     *
+     * Note that this own-property is non-enumerable on purpose. Enumerable
+     *  properties on this instance are the keys in this enumeration.
+     *
+     * @readonly
+     * @name rtvref.Enumeration#$values
      * @type Array.<String>
      */
-    Object.defineProperty(this, '_values', {
-      enumerable: false, // internal
+    Object.defineProperty(this, '$values', {
+      enumerable: false,
       configurable: true,
-      value: values
+      get() {
+        return values.concat(); // shallow clone
+      }
     });
+  }
+
+  /**
+   * Checks if a value is in this enumeration.
+   * @method rtvref.Enumeration#check
+   * @param {*} value Value to check. Cannot be undefined.
+   * @returns {*} The specified value if it is in this enumeration, or `undefined`
+   *  if not. An exception is __not__ thrown if the value is not in this enumeration.
+   * @see {@link rtvref.Enumeration#verify}
+   */
+  check(value) {
+    if (this.$values.indexOf(value) >= 0) {
+      return value;
+    }
+
+    return undefined;
   }
 
   /**
@@ -51,25 +98,26 @@ class Enumeration {
    *  an exception if the specified value is not in this enumeration.
    * @returns {*} The specified value if it is in this enumeration, or `undefined` if
    *  `silent` is true and the value is not in this enumeration.
+   * @throws {Error} If not `silent` and the value is not in this enumeration.
+   * @see {@link rtvref.Enumeration#check}
    */
   verify(value, silent) {
-    if (this._values.indexOf(value) >= 0) {
-      return value;
-    } else if (silent) {
-      return undefined;
+    const result = this.check(value);
+
+    if (result === undefined && !silent) {
+      throw new Error('Invalid value for enum[' + this.$values.join(', ') + ']: ' + value);
     }
 
-    throw new Error('invalid value for enum[' + this._values.join(', ') + ']: ' + value);
+    return result;
   }
 
   /**
    * A string representation of this Enumeration.
+   * @method rtvref.Enumeration#toString
    * @returns {string} String representation.
    */
   toString() {
     const pairs = Object.keys(this).map((k) => [k, this[k]]);
-    return `{Enumeration pairs=[${pairs.map((p) => `[${p}]`).join(', ')}]}`;
+    return `{rtvref.Enumeration pairs=[${pairs.map((p) => `[${p}]`).join(', ')}]}`;
   }
 }
-
-export default Enumeration;

@@ -29,7 +29,8 @@
   },
   "scripts": {
     "clean": "rm -rf ./build",
-    "start": "npm run build:lib && node -r ./tools/node.js",
+    "start": "npm run build:lib && npm run node",
+    "node": "node -r ./tools/node.js",
     "build:docs": "jsdoc2md \"src/**/*.js\" > dist/rtv.js.md",
     "build:lib": "BABEL_ENV=build rollup -c",
     "build": "npm run clean && npm run build:lib && npm run build:docs",
