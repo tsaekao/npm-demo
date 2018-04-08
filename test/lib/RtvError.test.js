@@ -140,11 +140,10 @@ describe('module: lib/RtvError', function() {
     expect(err.cause).to.equal(cause);
   });
 
-  xit('should have custom string serialization', function() { // TODO fix this test
+  it('should have custom string serialization', function() { // TODO fix this test
     const value = null;
     const path = 'the.path';
     const err = new RtvError(value, types.STRING, path, [qualifiers.REQUIRED, types.STRING]);
-    expect(Object.getPrototypeOf(err).toString).to.equal(RtvError.prototype.toString); // TODO WHY!!?!?!?!?!? is this failing? somehow the prototype isn't setup correctly. Bable??
     const str = err + '';
     expect(str.match(/^Error\: /)).to.equal(null); // not the default serialization
     expect(str).to.contain('RtvError');
