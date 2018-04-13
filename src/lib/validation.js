@@ -11,6 +11,7 @@ import {default as _isSet} from 'lodash/isSet';
 import {default as _isWeakSet} from 'lodash/isWeakSet';
 import {default as _isRegExp} from 'lodash/isRegExp';
 
+import types from './types';
 import qualifiers from './qualifiers';
 
 /**
@@ -190,11 +191,13 @@ export const isObject = function(v) {
  * @see {@link rtvref.types.typeset}
  */
 export const isTypeset = function(v, fullyQualified, deep) {
-  let valid = isObject(v) || isString(v) || isFunction(v) || (isArray(v) && v.length > 0);
+  let valid = !!(isObject(v) || (isString(v) && types.check(v)) || isFunction(v) ||
+      (isArray(v) && v.length > 0));
 
   if (valid && fullyQualified) {
     // TODO this needs MUCH more work/refinement...
-    valid = isArray(v) && v.length > 1 && !!qualifiers.check(v[0]);
+    // - require at most one property validator function
+    valid = isArray(v) && !!qualifiers.check(v[0]);
   }
 
   return valid;

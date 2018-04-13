@@ -1,7 +1,9 @@
 //// Main Implementation Module \\\\
 
-import {isString, isBoolean} from './validation';
+import {isString, isBoolean, isArray, isFunction, isObject, isTypeset} from './validation';
 import types from './types';
+import qualifiers from './qualifiers';
+import * as util from './util';
 
 /**
  * RTV Implementation Module
@@ -9,24 +11,90 @@ import types from './types';
  * @namespace rtv.impl
  */
 
-// TODO
-// const fullyQualify = function(typeset) {
-//   if (!isTypeset(typeset)) {
-//     throw new Error(`Invalid typeset=${typeset}`);
-//   }
+/**
+ * Default qualifier: {@link rtvref.qualifiers.REQUIRED}
+ * @const {string} rtv.impl.DEFAULT_QUALIFIER
+ */
+export const DEFAULT_QUALIFIER = qualifiers.REQUIRED;
 
-//   const fqts = [];
+/**
+ * Default object type: {@link rtvref.types.OBJECT}
+ * @const {string} rtv.impl.DEFAULT_OBJ_TYPE
+ */
+export const DEFAULT_OBJ_TYPE = types.OBJECT;
 
-//   if (isArray(typeset)) {
-//     if (!qualifiers.check(typeset[0])) {
-//       fqts.push(qualifiers.REQUIRED, ...typeset); // TODO this needs serious TLC...
-//     }
-//   } else {
-//     fqts.push(qualifiers.REQUIRED, typeset); // TODO this needs serious TLC...
-//   }
+/**
+ * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
+ *  are not fully-qualified).
+ *
+ * This function does not modify the input `typeset`.
+ *
+ * @function rtv.impl.fullyQualify
+ * @param {rtvref.types.typeset} typeset Typeset to fully-qualify.
+ * @returns {rtvref.types.fully_qualified_typeset} A new, fully-qualified typeset
+ *  representing the input `typeset`. Only the first/immediate level of the
+ *  input typeset is fully-qualified. The new array returned contains references
+ *  to elements within the input typeset.
+ * @throws {Error} If `typeset` is not a valid typeset.
+ */
+export const fullyQualify = function(typeset) {
+  if (!isTypeset(typeset)) { // start by validating so we can be confident later
+    throw new Error(`Invalid typeset=${util.print(typeset)}`);
+  }
 
-//   return fqts;
-// };
+  // NOTE: from this point on, we ASSUME that the typeset is valid, which lets
+  //  us make assumptions about what we find within it; without this knowledge,
+  //  the algorithm below would not work
+
+  if (!isArray(typeset)) {
+    // must be either a string, object, or function with an implied qualifier
+    if (isObject(typeset)) {
+      // must be a nested shape descriptor with default object type
+      return [DEFAULT_QUALIFIER, DEFAULT_OBJ_TYPE, typeset];
+    }
+
+    // either a string (type) or a function, neither of which have an implied type
+    return [DEFAULT_QUALIFIER, typeset];
+  }
+
+  const fqts = []; // ALWAYS a new array
+  let curType; // @type {(string|undefined)} current type in scope or undefined if none
+
+  // typeset is an array: iterate its elements and build fqts iteratively
+  typeset.forEach(function(rule, i) {
+    if (i === 0 && !qualifiers.check(rule)) {
+      fqts.push(DEFAULT_QUALIFIER); // add implied qualifier
+    }
+
+    if (isString(rule)) {
+      // must be a type
+      curType = rule;
+      fqts.push(curType);
+    } else if (isObject(rule)) {
+      if (i === 0) {
+        // must be a nested shape descriptor using default object type
+        curType = DEFAULT_OBJ_TYPE;
+        fqts.push(curType, rule);
+      } else {
+        // must be args for curType since typeset is an array and object is not
+        //  in first position
+        fqts.push(rule);
+      }
+    } else if (isFunction(rule)) { // must be a validator, no implied type
+      fqts.push(rule);
+    } else { // must be an array
+      if (curType !== types.ARRAY) {
+        // add implied ARRAY type
+        curType = types.ARRAY;
+        fqts.push(curType);
+      }
+
+      fqts.push(rule);
+    }
+  });
+
+  return fqts;
+};
 
 /**
  * Checks a value against a simple type.
@@ -36,7 +104,7 @@ import types from './types';
  * @returns {(boolean|rtvref.RtvError)}
  * @throws {Error} If `typeset` is not a valid type name.
  */
-const checkSimple = function(value, typeset) {
+export const checkSimple = function(value, typeset) {
   types.verify(typeset);
 
   if (typeset === types.STRING) {

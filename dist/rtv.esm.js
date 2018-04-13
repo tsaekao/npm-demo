@@ -645,107 +645,6 @@ var Enumeration = function () {
   return Enumeration;
 }();
 
-//// Qualifier Definitions \\\\
-
-/**
- * <h2>Qualifiers</h2>
- * @namespace rtvref.qualifiers
- */
-
-/**
- * Required qualifier: Property _must_ exist and be of the expected type.
- *  Depending on the type, additional requirements may be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- *  property to be defined _somewhere_ within the prototype chain, and does not
- *  allow its value to be `null` or `undefined`.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.REQUIRED
- * @const {string}
- * @see {@link rtvref.types}
- */
-var REQUIRED = '!';
-
-/**
- * Expected qualifier: Property _should_ exist and be of the expected type.
- *  Depending on the type, some requirements may not be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- *  property to be defined _somewhere_ within the prototype chain, does not allow
- *  its value to be `undefined`, but does _allow_ its value to be `null`.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.EXPECTED
- * @const {string}
- * @see {@link rtvref.types}
- */
-var EXPECTED = '+';
-
-/**
- * Optional qualifier: Property _may_ exist and be of the expected type.
- *  Depending on the type, some requirements may not be enforced (i.e. less so
- *  than with the `EXPECTED` qualifier).
- *
- * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
- *  property value to be `null` as well as `undefined`, and does _not_ require
- *  the property to be defined anywhere in the prototype chain. If the property
- *  is defined, then it is treated as an `EXPECTED` value.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.OPTIONAL
- * @const {string}
- * @see {@link rtvref.types}
- */
-var OPTIONAL = '?';
-
-//
-// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
-//
-
-/**
- * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
- * @name rtvref.qualifiers.qualifiers
- * @type {rtvref.Enumeration}
- */
-var qualifiers = new Enumeration({
-  REQUIRED: REQUIRED,
-  EXPECTED: EXPECTED,
-  OPTIONAL: OPTIONAL
-});
-
-//// Validation Module \\\\
-
-/**
- * Determines if a value is a string literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new String('value')`, which is an object that is a string.
- * @function rtv.validation.isString
- * @param {*} v Value to validate.
- * @param {boolean} [emptyOK=false] If truthy, an empty string is allowed.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.STRING}
- */
-var isString = function isString(v, emptyOK) {
-  return !!(typeof v === 'string' && (emptyOK || v));
-};
-
-/**
- * Determines if a value is a boolean literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new Boolean(true)`, which is an object that is a boolean.
- * @function rtv.validation.isBoolean
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.BOOLEAN}
- */
-var isBoolean = function isBoolean(v) {
-  return v === true || v === false;
-};
-
 //// Type Definitions \\\\
 
 /**
@@ -799,7 +698,7 @@ var isBoolean = function isBoolean(v) {
  * If a type does not accept any arguments, but an arguments object is provided,
  *  it will simply be ignored (i.e. it will __not__ be treated as a nested
  *  {@link rtvref.shape_descriptor shape descriptor}). This means that, in an
- *  `Array`-style {@link rtvref.types.typeset typeset}, a shape descriptor
+ *  Array-style {@link rtvref.types.typeset typeset}, a shape descriptor
  *  __must__ always be qualified by a type, even if it's the default type
  *  attributed to a shape descriptor.
  *
@@ -831,8 +730,8 @@ var isBoolean = function isBoolean(v) {
  * For example, the following descriptors both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
  *
- * - `{keyExp: '[a-z]{3}', keyExpFlags: 'i', values: rtv.t.FINITE}`
- * - `{keyExp: '[a-zA-Z]{3}', values: rtv.t.FINITE}`
+ * - `{keyExp: '[a-z]{3}', keyExpFlags: 'i', values: FINITE}`
+ * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
  *
  * @typedef {Object} rtvref.types.collection_descriptor
  * @property {rtvref.types.typeset} [keys] Optional. A typeset describing each key
@@ -898,7 +797,7 @@ var isBoolean = function isBoolean(v) {
  *   object type like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when
  *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty
  *   (has no properties), nothing will be verified (anything will pass).
- * - `String`: For a single type, such as {@link rtvref.types.FINITE 'FINITE'}
+ * - `String`: For a single type, such as {@link rtvref.types.FINITE FINITE}
  *   for a finite number. Must be one of the types defined in {@link rtvref.types}.
  * - `Function`: For a {@link rtvref.types.property_validator property validator}
  *   that will verify the value of the property using custom code. Only one validator
@@ -918,20 +817,25 @@ var isBoolean = function isBoolean(v) {
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is also necessary if a type needs or requires
  *     {@link rtvref.types.type_arguments arguments}.
- *   - If the first element is an `Object`, it's treated as a nested
+ *   - If the __first__ element is an `Object`, it's treated as a nested
  *     {@link rtvref.shape_descriptor shape descriptor} describing an object of the
- *     default `OBJECT` type. To include a shape descriptor at any other position
- *     within the array, it __must__ be preceded by a type, even if the default
- *     `OBJECT` type is being used (i.e. `OBJECT` must be specified as the type).
- *   - If the first element is an `Array`, it's treated as a nested list with an
- *     implied `ARRAY` type, e.g. `[BOOLEAN, [STRING, FINITE]]` would describe a
- *     property that should be a boolean, or an array of non-empty strings or finite
- *     numbers.
- *   - If the first element is a `Function`, it's treated as a property validator.
+ *     default {@link rtvref.types.OBJECT OBJECT} type. To include a shape descriptor
+ *     at any other position within the array, it __must__ be preceded by a type,
+ *     even if the default `OBJECT` type is being used (i.e. `OBJECT` must be
+ *     specified as the type).
+ *   - If an element is an `Array` (any position), it's treated as a __nested list__
+ *     with an implied {@link rtvref.types.ARRAY ARRAY} type, e.g.
+ *     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
+ *     or an array of non-empty strings or finite numbers. See the `ARRAY` type
+ *     reference for more information on _shorthand_ and _full_ notations.
+ *   - If an element is a `Function` (any position, though normally at the last
+ *     position, since only one is permitted per typeset, and it's always executed
+ *     after at least one type matches, regardless of it's position in the typeset),
+ *     it's treated as a property validator.
  *
  * <h4>Typeset Qualifiers</h4>
  *
- * All typesets use an _implied_ {@link rtvref.qualifiers.REQUIRED required}
+ * All typesets use an _implied_ {@link rtvref.qualifiers.REQUIRED REQUIRED}
  *  qualifier unless otherwise specified. To qualify a typeset, a
  *  {@link rtvref.qualifiers qualifier} may be specified as the __first__ element
  *  in the `Array` form (if specified, it must be the first element). For example,
@@ -947,7 +851,7 @@ var isBoolean = function isBoolean(v) {
  *   name: rtv.t.STRING, // required, non-empty, string
  *   tags: [rtv.t.ARRAY, [rtv.t.STRING]], // required array of non-empty strings
  *   // tags: [[rtv.t.STRING]], // same as above, but using shortcut array format
- *   details: { // required nested object of type `rtv.t.OBJECT` (default)
+ *   details: { // required nested object of type `OBJECT` (default)
  *     birthday: [rtv.q.EXPECTED, rtv.t.DATE] // Date (could be null)
  *   },
  *   notes: [rtv.q.OPTIONAL, rtv.t.STRING, function(value) { // optional string...
@@ -1274,7 +1178,48 @@ var PROMISE = 'promise';
  * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted by
  *  default.
  *
- * Arguments (optional): {@link rtvref.types.ARRAY_args}
+ * Arguments (optional): {@link rtvref.types.ARRAY_args}. Note that the `ARRAY`
+ *  type must be specified when using arguments (i.e. the shorthand notation
+ *  cannot be used).
+ *
+ * <h4>Example: Shorthand notation</h4>
+ *
+ * The 'value' property must be an array (possibly empty) of finite numbers of
+ *  any value.
+ *
+ * <pre><code>{
+ *   value: [[FINITE]]
+ * }
+ * </code></pre>
+ *
+ * <h4>Example: Shorthand, mixed types</h4>
+ *
+ * The 'value' property must be either a boolean, or a non-empty array of finite
+ *  numbers of any value.
+ *
+ * <pre><code>{
+ *   value: [BOOLEAN, [FINITE]]
+ * }
+ * </code></pre>
+ *
+ * <h4>Example: Full notation</h4>
+ *
+ * The 'value' property must be a non-empty array of finite numbers of any value.
+ *
+ * <pre><code>{
+ *   value: [ARRAY, {min: 1}, [FINITE]]
+ * }
+ * </code></pre>
+ *
+ * <h4>Example: Full, mixed types</h4>
+ *
+ * The 'value' property must be either a boolean, or a non-empty array of finite
+ *  numbers of any value.
+ *
+ * <pre><code>{
+ *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE]]
+ * }
+ * </code></pre>
  *
  * @name rtvref.types.ARRAY
  * @const {string}
@@ -1532,7 +1477,7 @@ var MAP_OBJECT = 'mapObject';
  * @const {string}
  * @see {@link rtvref.qualifiers}
  */
-var JSON = 'json';
+var JSON$1 = 'json';
 
 /**
  * An ES6 map supports any object as its keys, unlike a
@@ -1633,39 +1578,117 @@ var types = new Enumeration({
   PLAIN_OBJECT: PLAIN_OBJECT,
   CLASS_OBJECT: CLASS_OBJECT,
   MAP_OBJECT: MAP_OBJECT,
-  JSON: JSON,
+  JSON: JSON$1,
   MAP: MAP,
   WEAK_MAP: WEAK_MAP,
   SET: SET,
   WEAK_SET: WEAK_SET
 });
 
-//// Main Implementation Module \\\\
+//// Qualifier Definitions \\\\
 
 /**
- * RTV Implementation Module
- * @private
- * @namespace rtv.impl
+ * <h2>Qualifiers</h2>
+ * @namespace rtvref.qualifiers
  */
 
-// TODO
-// const fullyQualify = function(typeset) {
-//   if (!isTypeset(typeset)) {
-//     throw new Error(`Invalid typeset=${typeset}`);
-//   }
+/**
+ * Required qualifier: Property _must_ exist and be of the expected type.
+ *  Depending on the type, additional requirements may be enforced.
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, and does not
+ *  allow its value to be `null` or `undefined`.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.REQUIRED
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var REQUIRED = '!';
 
-//   const fqts = [];
+/**
+ * Expected qualifier: Property _should_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced.
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
+ *  property to be defined _somewhere_ within the prototype chain, does not allow
+ *  its value to be `undefined`, but does _allow_ its value to be `null`.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.EXPECTED
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var EXPECTED = '+';
 
-//   if (isArray(typeset)) {
-//     if (!qualifiers.check(typeset[0])) {
-//       fqts.push(qualifiers.REQUIRED, ...typeset); // TODO this needs serious TLC...
-//     }
-//   } else {
-//     fqts.push(qualifiers.REQUIRED, typeset); // TODO this needs serious TLC...
-//   }
+/**
+ * Optional qualifier: Property _may_ exist and be of the expected type.
+ *  Depending on the type, some requirements may not be enforced (i.e. less so
+ *  than with the `EXPECTED` qualifier).
+ *
+ * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
+ *  property value to be `null` as well as `undefined`, and does _not_ require
+ *  the property to be defined anywhere in the prototype chain. If the property
+ *  is defined, then it is treated as an `EXPECTED` value.
+ *
+ * See specific type for additional rules.
+ *
+ * @name rtvref.qualifiers.OPTIONAL
+ * @const {string}
+ * @see {@link rtvref.types}
+ */
+var OPTIONAL = '?';
 
-//   return fqts;
-// };
+//
+// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+//
+
+/**
+ * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
+ * @name rtvref.qualifiers.qualifiers
+ * @type {rtvref.Enumeration}
+ */
+var qualifiers = new Enumeration({
+  REQUIRED: REQUIRED,
+  EXPECTED: EXPECTED,
+  OPTIONAL: OPTIONAL
+});
+
+//// Validation Module \\\\
+
+/**
+ * Determines if a value is a string literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new String('value')`, which is an object that is a string.
+ * @function rtv.validation.isString
+ * @param {*} v Value to validate.
+ * @param {boolean} [emptyOK=false] If truthy, an empty string is allowed.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ * @see {@link rtvref.types.STRING}
+ */
+var isString = function isString(v, emptyOK) {
+  return !!(typeof v === 'string' && (emptyOK || v));
+};
+
+/**
+ * Determines if a value is a boolean literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new Boolean(true)`, which is an object that is a boolean.
+ * @function rtv.validation.isBoolean
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ * @see {@link rtvref.types.BOOLEAN}
+ */
+var isBoolean = function isBoolean(v) {
+  return v === true || v === false;
+};
+
+//// Utilities \\\\
+
+//// Main Implementation Module \\\\
 
 /**
  * Checks a value against a simple type.
