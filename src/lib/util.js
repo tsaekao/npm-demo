@@ -8,6 +8,7 @@
 
 /**
  * Pretty-print a value.
+ * @function rtv.util.print
  * @param {*} value Value to print.
  * @returns {string} Pretty-printed value. It's not perfect and may not catch
  *  all types, but attempts to be good enough.

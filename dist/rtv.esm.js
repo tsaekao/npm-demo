@@ -582,7 +582,7 @@ var Enumeration = function () {
    * Checks if a value is in this enumeration.
    * @method rtvref.Enumeration#check
    * @param {*} value Value to check. Cannot be undefined.
-   * @returns {*} The specified value if it is in this enumeration, or `undefined`
+   * @returns {(*|undefined)} The specified value if it is in this enumeration, or `undefined`
    *  if not. An exception is __not__ thrown if the value is not in this enumeration.
    * @see {@link rtvref.Enumeration#verify}
    */

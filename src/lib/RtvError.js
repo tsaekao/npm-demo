@@ -6,15 +6,19 @@ import {isString, isTypeset} from './validation';
 const extendsFrom = Error;
 
 /**
+ * @external JS_Error
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+ */
+
+/**
  * Runtime Verification Error Indicator
- *
- * Extends `JavaScript.Error`.
  *
  * Describes a failed runtime verification of a value against a given
  *  {@link rtvref.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
  *  (note that a shape is a type of typeset).
  *
  * @class rtvref.RtvError
+ * @extends {external:JS_Error}
  * @param {*} value The value being verified.
  * @param {rtvref.types.typeset} typeset The typeset used for verification.
  * @param {string} path The path deep into `value` where the failure occurred.
