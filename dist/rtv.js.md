@@ -39,11 +39,16 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.toString()](#rtvref.Enumeration+toString) ⇒ <code>string</code>
     * [.RtvError](#rtvref.RtvError)
         * [new RtvError(value, typeset, path, cause)](#new_rtvref.RtvError_new)
+        * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
         * [.value](#rtvref.RtvError+value) : <code>\*</code>
         * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
         * [.path](#rtvref.RtvError+path) : <code>string</code>
         * [.cause](#rtvref.RtvError+cause) : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
+    * [.RtvSuccess](#rtvref.RtvSuccess)
+        * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
+        * [.valid](#rtvref.RtvSuccess+valid) : <code>boolean</code>
+        * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
         * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
@@ -191,6 +196,7 @@ A string representation of this Enumeration.
 
 * [.RtvError](#rtvref.RtvError)
     * [new RtvError(value, typeset, path, cause)](#new_rtvref.RtvError_new)
+    * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
     * [.value](#rtvref.RtvError+value) : <code>\*</code>
     * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
     * [.path](#rtvref.RtvError+path) : <code>string</code>
@@ -200,7 +206,9 @@ A string representation of this Enumeration.
 <a name="new_rtvref.RtvError_new"></a>
 
 #### new RtvError(value, typeset, path, cause)
-Runtime Verification Error (extends `JavaScript.Error`)
+Runtime Verification Error Indicator
+
+Extends `JavaScript.Error`.
 
 Describes a failed runtime verification of a value against a given
  [shape](#rtvref.shape_descriptor) or [typeset](#rtvref.types.typeset)
@@ -216,8 +224,15 @@ Describes a failed runtime verification of a value against a given
 | value | <code>\*</code> | The value being verified. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>string</code> | The path deep into `value` where the failure occurred. |
-| cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The actual cause of  the failure. |
+| cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. |
 
+<a name="rtvref.RtvError+valid"></a>
+
+#### rtvError.valid : <code>boolean</code>
+Flag indicating the validation failed. Always `false`.
+
+**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
+**Read only**: true  
 <a name="rtvref.RtvError+value"></a>
 
 #### rtvError.value : <code>\*</code>
@@ -261,6 +276,39 @@ If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
 A string representation of this instance.
 
 **Kind**: instance method of [<code>RtvError</code>](#rtvref.RtvError)  
+**Returns**: <code>string</code> - String representation.  
+<a name="rtvref.RtvSuccess"></a>
+
+### rtvref.RtvSuccess
+**Kind**: static class of [<code>rtvref</code>](#rtvref)  
+
+* [.RtvSuccess](#rtvref.RtvSuccess)
+    * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
+    * [.valid](#rtvref.RtvSuccess+valid) : <code>boolean</code>
+    * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
+
+<a name="new_rtvref.RtvSuccess_new"></a>
+
+#### new RtvSuccess()
+Runtime Verification Success Indicator
+
+Describes a successful runtime verification of a value against a given
+ [shape](#rtvref.shape_descriptor) or [typeset](#rtvref.types.typeset)
+ (note that a shape is a type of typeset).
+
+<a name="rtvref.RtvSuccess+valid"></a>
+
+#### rtvSuccess.valid : <code>boolean</code>
+Flag indicating the validation succeeded. Always `true`.
+
+**Kind**: instance property of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
+**Read only**: true  
+<a name="rtvref.RtvSuccess+toString"></a>
+
+#### rtvSuccess.toString() ⇒ <code>string</code>
+A string representation of this instance.
+
+**Kind**: instance method of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
 **Returns**: <code>string</code> - String representation.  
 <a name="rtvref.qualifiers"></a>
 
@@ -1290,9 +1338,10 @@ Runtime Verification Library for browsers and Node.js.
     * [._version](#rtv._version) : <code>string</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
-    * [.check(value, shape)](#rtv.check) ⇒ <code>boolean</code> \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.verify(value, shape)](#rtv.verify)
-    * [.v(value, shape)](#rtv.v)
+    * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.c(value, typeset)](#rtv.c) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.verify(value, typeset)](#rtv.verify) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
+    * [.v(value, typeset)](#rtv.v) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
     * [.Context(context)](#rtv.Context)
 
 <a name="rtv.t"></a>
@@ -1354,67 +1403,108 @@ rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
 **See**: [rtv.enabled](rtv.enabled)  
 <a name="rtv.check"></a>
 
-### rtv.check(value, shape) ⇒ <code>boolean</code> \| [<code>RtvError</code>](#rtvref.RtvError)
-Checks a value against a shape for compliance.
+### rtv.check(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+Checks a value against a typeset for compliance.
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
-**Returns**: <code>boolean</code> \| [<code>RtvError</code>](#rtvref.RtvError) - `true` if the `value` is compliant to
- the `shape`; `RtvError` if not. An exception is __not__ thrown if the
- `value` is non-compliant. Test for `rtv.check(...) !== true`.
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - Success indicator if the
+ `value` is compliant to the `shape`; `RtvError` if not. __Unlike
+ [verify()](#rtv.verify), an exception is not thrown__ if the
+ `value` is non-compliant.
 
-__NOTE:__ This method always returns `true` if RTV.js is currently
- [disabled](#rtv.config.enabled).  
+ Since both [RtvSuccess](#rtvref.RtvSuccess), returned when
+  the check succeeds, as well as [RtvError](#rtvref.RtvError), returned
+  when the check fails, have a `valid: boolean` property in common, it's
+  easy to test for success/failure like this:
+  `if (rtv.check(2, rtv.t.FINITE).valid) {...}`.
+
+ __NOTE:__ This method always returns a success indicator if RTV.js is currently
+  [disabled](#rtv.config.enabled).  
 **Throws**:
 
-- <code>Error</code> If `shape` is not a valid typeset.
+- <code>Error</code> If `typeset` is not a valid typeset.
 
-**See**: [verify](#rtv.verify)  
+**See**
+
+- [verify](#rtv.verify)
+- [enabled](#rtv.config.enabled)
+- [types](#rtvref.types)
+- [shape_descriptor](#rtvref.shape_descriptor)
+
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| shape | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of the value. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
+
+<a name="rtv.c"></a>
+
+### rtv.c(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+Shortcut proxy to [check](#rtv.check).
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - Success indicator if the
+ `value` is compliant to the `shape`; `RtvError` if not. __Unlike
+ [verify()](#rtv.verify), an exception is not thrown__ if the
+ `value` is non-compliant.  
+**Throws**:
+
+- <code>Error</code> If `typeset` is not a valid typeset.
+
+**See**: [check](#rtv.check)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | Value to check. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
 
 <a name="rtv.verify"></a>
 
-### rtv.verify(value, shape)
+### rtv.verify(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
 __Requires__ a value to be compliant to a shape.
 
 NOTE: This method does nothing if RTV.js is currently
  [disabled](#rtv.config.enabled).
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) - Success indicator IIF the `value` is compliant
+ to the `shape`. Otherwise, an [RtvError](#rtvref.RtvError) __is thrown__.  
 **Throws**:
 
 - <code>RtvError</code> If the `value` is not compliant to the `shape`.
-- <code>Error</code> If `shape` is not a valid typeset.
+- <code>Error</code> If `typeset` is not a valid typeset.
 
 **See**
 
 - [check](#rtv.check)
 - [enabled](#rtv.config.enabled)
+- [types](#rtvref.types)
+- [shape_descriptor](#rtvref.shape_descriptor)
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| shape | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of the value. Normally,  this is a [shape descriptor](#rtvref.shape_descriptor). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
 
 <a name="rtv.v"></a>
 
-### rtv.v(value, shape)
+### rtv.v(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
 Shortcut proxy to [verify](#rtv.verify).
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) - Success indicator IIF the `value` is compliant
+ to the `shape`. Otherwise, an [RtvError](#rtvref.RtvError) __is thrown__.  
 **Throws**:
 
-- <code>Error</code> If the `value` is not compliant to the `shape`.
+- <code>RtvError</code> If the `value` is not compliant to the `shape`.
 
+**See**: [verify](#rtv.verify)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| shape | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of the value. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
 
 <a name="rtv.Context"></a>
 

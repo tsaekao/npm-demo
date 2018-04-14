@@ -7,6 +7,7 @@ import types from '../src/lib/types';
 import qualifiers from '../src/lib/qualifiers';
 import * as impl from '../src/lib/impl';
 import Enumeration from '../src/lib/Enumeration';
+import RtvSuccess from '../src/lib/RtvSuccess';
 import RtvError from '../src/lib/RtvError';
 import pkg from '../package.json';
 
@@ -22,11 +23,13 @@ describe('module: rtv', function() {
   });
 
   it('should check a value', function() {
-    expect(rtv.check('foo', rtv.t.STRING)).to.equal(true);
+    expect(rtv.check('foo', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
   });
 
   it('should verify a value', function() {
-    expect(rtv.verify.bind(rtv, 'foo', rtv.t.STRING)).not.to.throw();
+    const params = ['foo', rtv.t.STRING];
+    expect(rtv.verify.bind(rtv, ...params)).not.to.throw();
+    expect(rtv.verify(...params)).to.be.an.instanceof(RtvSuccess);
   });
 
   xit('should throw an RtvError if verify fails', function() { // TODO enable this test once verify() throws RtvError
@@ -34,7 +37,7 @@ describe('module: rtv', function() {
       rtv.verify('foo', rtv.t.BOOLEAN);
       expect('statement above should have thrown').to.be.true; // fail this test
     } catch (err) {
-      expect(err instanceof RtvError).to.be.true;
+      expect(err).to.be.an.instanceof(RtvError);
       expect(err.message).to.contain('verification failed');
     }
   });
@@ -60,6 +63,25 @@ describe('module: rtv', function() {
       expect('v' in rtv).to.equal(true);
       expect(_.isFunction(rtv.v)).to.equal(true);
       rtv.v('foo', rtv.t.STRING);
+      expect(spy.called).to.equal(true);
+    });
+  });
+
+  describe('.c() proxy', function() {
+    let spy;
+
+    beforeEach(function() {
+      spy = sinon.spy(rtv, 'check');
+    });
+
+    afterEach(function() {
+      spy.restore();
+    });
+
+    it('should have a shortcut proxy rtv.c()', function() {
+      expect('c' in rtv).to.equal(true);
+      expect(_.isFunction(rtv.c)).to.equal(true);
+      rtv.c('foo', rtv.t.STRING);
       expect(spy.called).to.equal(true);
     });
   });
@@ -100,7 +122,7 @@ describe('module: rtv', function() {
     it('should not check when disabled', function() {
       rtv.config.enabled = false;
       implCheckSpy.resetHistory(); // call above would have called spy
-      rtv.check('foobar', rtv.t.STRING);
+      expect(rtv.check('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
       expect(implCheckSpy.called).to.equal(false);
     });
 
@@ -108,7 +130,7 @@ describe('module: rtv', function() {
       rtvVerifySpy.restore(); // disable spy
       rtv.config.enabled = false;
       implCheckSpy.resetHistory(); // call above would have called spy
-      rtv.verify('foobar', rtv.t.STRING);
+      expect(rtv.verify('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
       expect(implCheckSpy.called).to.equal(false);
     });
   });

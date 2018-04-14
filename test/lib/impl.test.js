@@ -1,8 +1,11 @@
 import {expect} from 'chai';
+import sinon from 'sinon';
 
 import * as impl from '../../src/lib/impl';
 import types from '../../src/lib/types';
 import qualifiers from '../../src/lib/qualifiers';
+import RtvSuccess from '../../src/lib/RtvSuccess';
+import RtvError from '../../src/lib/RtvError';
 
 describe('module: lib/impl', function() {
   it('should export a default qualifier', function() {
@@ -15,11 +18,11 @@ describe('module: lib/impl', function() {
 
   describe('#check()', function() {
     it('should check a string value as a string', function() {
-      expect(impl.check('foo', types.STRING)).to.equal(true);
+      expect(impl.check('foo', types.STRING)).to.be.an.instanceof(RtvSuccess);
     });
 
-    it('should not check a string value as a boolean', function() {
-      expect(impl.check('foo', types.BOOLEAN)).to.equal(false);
+    xit('should not check a string value as a boolean', function() { // TODO needs to return RtvError...
+      expect(impl.check('foo', types.BOOLEAN)).to.be.an.instanceof(RtvError);
     });
 
     it('should throw if shape is not a valid typeset', function() {
@@ -30,6 +33,20 @@ describe('module: lib/impl', function() {
   describe('#checkSimple()', function() {
     it('should check simple types against values', function() {
       // TODO
+    });
+
+    it('should throw if type is not valid', function() {
+      expect(function() {
+        impl.checkSimple('value', 'foo');
+      }).to.throw(/Invalid value for enum/);
+    });
+
+    it('should throw if type is not handled', function() {
+      const typesVerifyStub = sinon.stub(types, 'verify'); // prevent verification of unknown/invalid type
+      expect(function() {
+        impl.checkSimple(2, 'foo');
+      }).to.throw(/Missing handler for 'foo' type/);
+      typesVerifyStub.restore();
     });
   });
 

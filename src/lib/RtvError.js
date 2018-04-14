@@ -6,7 +6,9 @@ import {isString, isTypeset} from './validation';
 const extendsFrom = Error;
 
 /**
- * Runtime Verification Error (extends `JavaScript.Error`)
+ * Runtime Verification Error Indicator
+ *
+ * Extends `JavaScript.Error`.
  *
  * Describes a failed runtime verification of a value against a given
  *  {@link rtvref.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
@@ -16,8 +18,8 @@ const extendsFrom = Error;
  * @param {*} value The value being verified.
  * @param {rtvref.types.typeset} typeset The typeset used for verification.
  * @param {string} path The path deep into `value` where the failure occurred.
- * @param {rtvref.types.fully_qualified_typeset} cause The actual cause of
- *  the failure.
+ * @param {rtvref.types.fully_qualified_typeset} cause The fully qualified typeset
+ *  that caused the failure.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.
  */
 const RtvError = function(value, typeset, path, cause) {
@@ -50,6 +52,18 @@ const RtvError = function(value, typeset, path, cause) {
   this.name = 'RtvError';
 
   Object.defineProperties(this, {
+    /**
+     * Flag indicating the validation failed. Always `false`.
+     * @readonly
+     * @name rtvref.RtvError#valid
+     * @type {boolean}
+     */
+    valid: {
+      enumerable: true,
+      configurable: true,
+      value: false
+    },
+
     /**
      * Value that failed verification.
      * @readonly

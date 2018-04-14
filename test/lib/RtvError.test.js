@@ -128,12 +128,45 @@ describe('module: lib/RtvError', function() {
     expect(err.name).to.equal('RtvError');
   });
 
-  it('should provide a value, typeset, path, and cause', function() {
+  it('should have a readonly valid=false property', function() {
+    const err = new RtvError('', types.STRING, 'path', [qualifiers.REQUIRED, types.STRING]);
+    expect(err.hasOwnProperty('valid')).to.equal(true);
+    expect(err.valid).to.equal(false);
+
+    expect(function() {
+      err.valid = true;
+    }).to.throw(/Cannot assign to read only property 'valid'/);
+
+    // not changed since readonly
+    expect(err.valid).to.equal(false);
+  });
+
+  it('should provide a readonly value, typeset, path, and cause property', function() {
     const value = null;
     const typeset = [types.STRING];
     const path = 'the.path';
     const cause = [qualifiers.REQUIRED, types.STRING];
     const err = new RtvError(value, typeset, path, cause);
+
+    expect(err.value).to.equal(value);
+    expect(err.typeset).to.equal(typeset);
+    expect(err.path).to.equal(path);
+    expect(err.cause).to.equal(cause);
+
+    expect(function() {
+      err.value = true;
+    }).to.throw(/Cannot set property value of .+ which has only a getter/);
+    expect(function() {
+      err.typeset = {};
+    }).to.throw(/Cannot set property typeset of .+ which has only a getter/);
+    expect(function() {
+      err.path = 'other.path';
+    }).to.throw(/Cannot set property path of .+ which has only a getter/);
+    expect(function() {
+      err.cause = [];
+    }).to.throw(/Cannot set property cause of .+ which has only a getter/);
+
+    // nothing changed all are readonly
     expect(err.value).to.equal(value);
     expect(err.typeset).to.equal(typeset);
     expect(err.path).to.equal(path);

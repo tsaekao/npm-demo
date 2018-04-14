@@ -1688,6 +1688,53 @@ var isBoolean = function isBoolean(v) {
 
 //// Utilities \\\\
 
+//// RtvSuccess Class \\\\
+
+/**
+ * Runtime Verification Success Indicator
+ *
+ * Describes a successful runtime verification of a value against a given
+ *  {@link rtvref.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
+ *  (note that a shape is a type of typeset).
+ *
+ * @class rtvref.RtvSuccess
+ */
+var RtvSuccess = function () {
+  // JSDoc is provided at the @class level
+  function RtvSuccess() {
+    classCallCheck(this, RtvSuccess);
+
+    Object.defineProperties(this, {
+      /**
+       * Flag indicating the validation succeeded. Always `true`.
+       * @readonly
+       * @name rtvref.RtvSuccess#valid
+       * @type {boolean}
+       */
+      valid: {
+        enumerable: true,
+        configurable: true,
+        value: true
+      }
+    });
+  }
+
+  /**
+   * A string representation of this instance.
+   * @method rtvref.RtvSuccess#toString
+   * @returns {string} String representation.
+   */
+
+
+  createClass(RtvSuccess, [{
+    key: 'toString',
+    value: function toString() {
+      return '{rtvref.RtvSuccess}';
+    }
+  }]);
+  return RtvSuccess;
+}();
+
 //// Main Implementation Module \\\\
 
 /**
@@ -1695,31 +1742,41 @@ var isBoolean = function isBoolean(v) {
  * @function rtv.impl.checkSimple
  * @param {*} value Value to check.
  * @param {string} typeset Simple typeset name, must be one of {@link rtvref.types.types}.
- * @returns {(boolean|rtvref.RtvError)}
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
+ *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `typeset` is not a valid type name.
+ * @see {@link rtvref.types}
  */
 var checkSimple = function checkSimple(value, typeset) {
   types.verify(typeset);
 
+  var valid = false;
   if (typeset === types.STRING) {
-    return isString(value); // TODO return RtvError if fails
+    valid = isString(value);
   } else if (typeset === types.BOOLEAN) {
-    return isBoolean(value); // TODO return RtvError if fails
+    valid = isBoolean(value);
+  } else {
+    throw new Error('Missing handler for \'' + typeset + '\' type');
   }
 
-  throw new Error('Missing handler for \'' + typeset + '\' type');
+  if (valid) {
+    return new RtvSuccess();
+  }
+
+  // TODO return RtvError if fails
 };
 
 /**
- * Checks a value against a shape.
+ * Checks a value against a shape/typeset.
  * @function rtv.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset Expected shape/type of the value.
- * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to the
- *  `typeset`; `RtvError` otherwise. An exception is __not__ thrown if the `value`
- *  is non-compliant.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
+ *  is compliant to the `typeset`; error indicator otherwise. An exception is
+ *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid typeset.
- * @see {@link rtv.impl.verify}
+ * @see {@link rtvref.types.typeset}
+ * @see {@link rtvref.shape_descriptor}
  */
 var check = function check(value, typeset) {
   // TODO: on check failure (with a valid typeset), return a special RtvError object that
@@ -1786,26 +1843,57 @@ var rtv = {
   q: qualifiers,
 
   /**
-   * Checks a value against a shape for compliance.
+   * Checks a value against a typeset for compliance.
    * @function rtv.check
    * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to
-   *  the `shape`; `RtvError` if not. An exception is __not__ thrown if the
-   *  `value` is non-compliant. Test for `rtv.check(...) !== true`.
+   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
+   *  the `value`. A shape is a kind of typeset. Normally, this is a
+   *  {@link rtvref.shape_descriptor shape descriptor}.
+   * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
+   *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
+   *  {@link rtv.verify verify()}, an exception is not thrown__ if the
+   *  `value` is non-compliant.
    *
-   * __NOTE:__ This method always returns `true` if RTV.js is currently
-   *  {@link rtv.config.enabled disabled}.
+   *  Since both {@link rtvref.RtvSuccess RtvSuccess}, returned when
+   *   the check succeeds, as well as {@link rtvref.RtvError RtvError}, returned
+   *   when the check fails, have a `valid: boolean` property in common, it's
+   *   easy to test for success/failure like this:
+   *   `if (rtv.check(2, rtv.t.FINITE).valid) {...}`.
    *
-   * @throws {Error} If `shape` is not a valid typeset.
+   *  __NOTE:__ This method always returns a success indicator if RTV.js is currently
+   *   {@link rtv.config.enabled disabled}.
+   *
+   * @throws {Error} If `typeset` is not a valid typeset.
    * @see {@link rtv.verify}
+   * @see {@link rtv.config.enabled}
+   * @see {@link rtvref.types}
+   * @see {@link rtvref.shape_descriptor}
    */
-  check: function check$$1(value, shape) {
+  check: function check$$1(value, typeset) {
     if (this.config.enabled) {
-      return check(value, shape);
+      return check(value, typeset);
     }
 
-    return true;
+    return new RtvSuccess();
+  },
+
+
+  /**
+   * Shortcut proxy to {@link rtv.check}.
+   * @function rtv.c
+   * @param {*} value Value to check.
+   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
+   *  the `value`. A shape is a kind of typeset. Normally, this is a
+   *  {@link rtvref.shape_descriptor shape descriptor}.
+   * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
+   *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
+   *  {@link rtv.verify verify()}, an exception is not thrown__ if the
+   *  `value` is non-compliant.
+   * @throws {Error} If `typeset` is not a valid typeset.
+   * @see {@link rtv.check}
+   */
+  c: function c(value, typeset) {
+    return this.check(value, typeset);
   },
 
 
@@ -1817,31 +1905,45 @@ var rtv = {
    *
    * @function rtv.verify
    * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} shape Expected shape of the value. Normally,
-   *  this is a {@link rtvref.shape_descriptor shape descriptor}.
+   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
+   *  the `value`. A shape is a kind of typeset. Normally, this is a
+   *  {@link rtvref.shape_descriptor shape descriptor}.
+   * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
+   *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
    * @throws {RtvError} If the `value` is not compliant to the `shape`.
-   * @throws {Error} If `shape` is not a valid typeset.
+   * @throws {Error} If `typeset` is not a valid typeset.
    * @see {@link rtv.check}
    * @see {@link rtv.config.enabled}
+   * @see {@link rtvref.types}
+   * @see {@link rtvref.shape_descriptor}
    */
-  verify: function verify(value, shape) {
+  verify: function verify(value, typeset) {
     if (this.config.enabled) {
-      var result = this.check(value, shape);
-      if (result !== true) {
-        throw result; // expected to be an RtvError
+      var result = this.check(value, typeset);
+      if (result instanceof RtvSuccess) {
+        return result;
       }
+
+      throw result; // expected to be an RtvError
     }
+
+    return new RtvSuccess();
   },
 
 
   /**
    * Shortcut proxy to {@link rtv.verify}.
    * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} shape Expected shape of the value.
-   * @throws {Error} If the `value` is not compliant to the `shape`.
+   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
+   *  the `value`. A shape is a kind of typeset. Normally, this is a
+   *  {@link rtvref.shape_descriptor shape descriptor}.
+   * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
+   *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
+   * @throws {RtvError} If the `value` is not compliant to the `shape`.
+   * @see {@link rtv.verify}
    */
-  v: function v(value, shape) {
-    this.verify(value, shape);
+  v: function v(value, typeset) {
+    return this.verify(value, typeset);
   },
 
 

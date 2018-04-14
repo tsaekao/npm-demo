@@ -4,6 +4,7 @@ import {isString, isBoolean, isArray, isFunction, isObject, isTypeset} from './v
 import types from './types';
 import qualifiers from './qualifiers';
 import * as util from './util';
+import RtvSuccess from './RtvSuccess';
 
 /**
  * RTV Implementation Module
@@ -101,31 +102,41 @@ export const fullyQualify = function(typeset) {
  * @function rtv.impl.checkSimple
  * @param {*} value Value to check.
  * @param {string} typeset Simple typeset name, must be one of {@link rtvref.types.types}.
- * @returns {(boolean|rtvref.RtvError)}
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
+ *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `typeset` is not a valid type name.
+ * @see {@link rtvref.types}
  */
 export const checkSimple = function(value, typeset) {
   types.verify(typeset);
 
+  let valid = false;
   if (typeset === types.STRING) {
-    return isString(value); // TODO return RtvError if fails
+    valid = isString(value);
   } else if (typeset === types.BOOLEAN) {
-    return isBoolean(value); // TODO return RtvError if fails
+    valid = isBoolean(value);
+  } else {
+    throw new Error(`Missing handler for '${typeset}' type`);
   }
 
-  throw new Error(`Missing handler for '${typeset}' type`);
+  if (valid) {
+    return new RtvSuccess();
+  }
+
+  // TODO return RtvError if fails
 };
 
 /**
- * Checks a value against a shape.
+ * Checks a value against a shape/typeset.
  * @function rtv.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset Expected shape/type of the value.
- * @returns {(boolean|rtvref.RtvError)} `true` if the `value` is compliant to the
- *  `typeset`; `RtvError` otherwise. An exception is __not__ thrown if the `value`
- *  is non-compliant.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
+ *  is compliant to the `typeset`; error indicator otherwise. An exception is
+ *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid typeset.
- * @see {@link rtv.impl.verify}
+ * @see {@link rtvref.types.typeset}
+ * @see {@link rtvref.shape_descriptor}
  */
 export const check = function(value, typeset) {
   // TODO: on check failure (with a valid typeset), return a special RtvError object that
