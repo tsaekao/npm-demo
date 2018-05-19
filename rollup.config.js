@@ -49,7 +49,7 @@ const config = {
   ],
   watch: {
     include: 'src/**',
-    exclude: ['node_modules/**', 'dist/**']
+    exclude: ['node_modules/**', 'dist/**', 'dist_tools/**']
   }
 };
 
