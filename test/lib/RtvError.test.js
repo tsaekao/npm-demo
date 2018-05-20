@@ -106,6 +106,10 @@ describe('module: lib/RtvError', function() {
     expect(function() {
       new RtvError(null, types.STRING, 'path', types.STRING); // must be FQ'ed
     }).to.throw(/invalid cause/i);
+
+    expect(function() {
+      new RtvError(null, types.STRING, 'path', [types.STRING]); // must be FQ'ed
+    }).to.throw(/invalid cause/i);
   });
 
   it('should have a message including the value and path', function() {

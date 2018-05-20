@@ -11,7 +11,9 @@ describe('module: lib/util', function() {
     expect(util.print([true])).to.equal('[true]');
     expect(util.print({})).to.equal('{}');
     expect(util.print({foo: 1})).to.equal('{"foo":1}');
-    expect(util.print('')).to.equal('""');
+    expect(util.print('')).to.equal('');
+    expect(util.print('foo')).to.equal('foo');
     expect(util.print(123)).to.equal('123');
+    expect(util.print(false)).to.equal('false');
   });
 });

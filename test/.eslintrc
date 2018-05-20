@@ -1,0 +1,9 @@
+//// test ESLint Configuration \\\\
+
+{
+  // extend source settings to add test-specific settings
+  "extends": ["../src/.eslintrc"],
+  "env": {
+    "mocha": true
+  }
+}

@@ -46,7 +46,10 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
         * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
         * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
+        * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
     * [.types](#rtvref.types) : <code>object</code>
+        * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
+        * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.primitives](#rtvref.types.primitives) : <code>object</code>
         * [.rules](#rtvref.types.rules) : <code>object</code>
@@ -74,6 +77,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
         * [.SET](#rtvref.types.SET) : <code>string</code>
         * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
+        * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
         * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
         * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
@@ -370,6 +374,7 @@ A string representation of this instance.
     * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
     * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
     * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
+    * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
 
 
 * * *
@@ -436,6 +441,15 @@ See specific type for additional rules.
 
 * * *
 
+<a name="rtvref.qualifiers.DEFAULT_QUALIFIER"></a>
+
+#### qualifiers.DEFAULT_QUALIFIER : <code>string</code>
+Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
+
+**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+
+* * *
+
 <a name="rtvref.types"></a>
 
 ### rtvref.types : <code>object</code>
@@ -444,6 +458,8 @@ See specific type for additional rules.
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.types](#rtvref.types) : <code>object</code>
+    * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
+    * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.primitives](#rtvref.types.primitives) : <code>object</code>
     * [.rules](#rtvref.types.rules) : <code>object</code>
@@ -471,6 +487,7 @@ See specific type for additional rules.
     * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
     * [.SET](#rtvref.types.SET) : <code>string</code>
     * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
+    * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
     * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
     * [.collection_descriptor](#rtvref.types.collection_descriptor) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
@@ -484,10 +501,31 @@ See specific type for additional rules.
 
 * * *
 
+<a name="rtvref.types.objTypes"></a>
+
+#### types.objTypes : [<code>Enumeration</code>](#rtvref.Enumeration)
+Enumeration (`string -> string`) of __object__ [types](#rtvref.types). These
+ are all the types that describe values which are essentially maps of various
+ keys to values.
+
+**Kind**: static property of [<code>types</code>](#rtvref.types)  
+
+* * *
+
+<a name="rtvref.types.argTypes"></a>
+
+#### types.argTypes : [<code>Enumeration</code>](#rtvref.Enumeration)
+Enumeration (`string -> string`) of [types](#rtvref.types) that accept
+ arguments.
+
+**Kind**: static property of [<code>types</code>](#rtvref.types)  
+
+* * *
+
 <a name="rtvref.types.types"></a>
 
 #### types.types : [<code>Enumeration</code>](#rtvref.Enumeration)
-Enumeration (`string -> string`) of [types](#rtvref.types).
+Enumeration (`string -> string`) of all [types](#rtvref.types).
 
 **Kind**: static property of [<code>types</code>](#rtvref.types)  
 
@@ -749,6 +787,12 @@ Arguments (optional): [ARRAY_args](#rtvref.types.ARRAY_args). Note that the `ARR
  type must be specified when using arguments (i.e. the shorthand notation
  cannot be used).
 
+When describing arrays, either _shorthand_ or _full_ notation may be used.
+ In the shorthand notation, the `ARRAY` type isn't necessary, but
+ [arguments](#rtvref.types.ARRAY_args) can't be specified. In the full
+ notation, the `ARRAY` type is required, but arguments can optionally be
+ specified.
+
 <h4>Example: Shorthand notation</h4>
 
 The 'value' property must be an array (possibly empty) of finite numbers of
@@ -761,8 +805,8 @@ The 'value' property must be an array (possibly empty) of finite numbers of
 
 <h4>Example: Shorthand, mixed types</h4>
 
-The 'value' property must be either a boolean, or a non-empty array of finite
- numbers of any value.
+The 'value' property must be either a boolean, or an array (possibly empty) of
+ finite numbers of any value.
 
 <pre><code>{
   value: [BOOLEAN, [FINITE]]
@@ -771,14 +815,15 @@ The 'value' property must be either a boolean, or a non-empty array of finite
 
 <h4>Example: Full notation</h4>
 
-The 'value' property must be a non-empty array of finite numbers of any value.
+The 'value' property must be an array (possibly empty) of finite numbers of
+ any value.
 
 <pre><code>{
-  value: [ARRAY, {min: 1}, [FINITE]]
+  value: [ARRAY, [FINITE]]
 }
 </code></pre>
 
-<h4>Example: Full, mixed types</h4>
+<h4>Example: Full, mixed types, arguments</h4>
 
 The 'value' property must be either a boolean, or a non-empty array of finite
  numbers of any value.
@@ -1141,6 +1186,15 @@ Arguments (optional): [collection_descriptor](#rtvref.types.collection_descripto
 
 * * *
 
+<a name="rtvref.types.DEFAULT_OBJECT_TYPE"></a>
+
+#### types.DEFAULT_OBJECT_TYPE : <code>string</code>
+Default object type: [OBJECT](#rtvref.types.OBJECT)
+
+**Kind**: static constant of [<code>types</code>](#rtvref.types)  
+
+* * *
+
 <a name="rtvref.types.type_arguments"></a>
 
 #### types.type_arguments : <code>Object</code>
@@ -1224,45 +1278,48 @@ Describes the possible types for a given value. It can be any one of the followi
  JavaScript types:
 
 - `Object`: For the root or a nested [shape descriptor](#rtvref.shape_descriptor)
-  of _implied_ [OBJECT](#rtvref.types.OBJECT) type (unless qualified with a specific
+  of _implied_ [OBJECT](#rtvref.types.OBJECT) type (unless paired with a specific
   object type like [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), for example, when
   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty
   (has no properties), nothing will be verified (anything will pass).
 - `String`: For a single type, such as [FINITE](#rtvref.types.FINITE)
   for a finite number. Must be one of the types defined in [types](#rtvref.types).
 - `Function`: For a [property validator](#rtvref.types.property_validator)
-  that will verify the value of the property using custom code. Only one validator
-  can be specified for a given typeset, and it will only be called if the value
-  was verified against at least one of the other types listed (regardless of the
-  validator function's position when specified in a typeset array). If no other types
-  were listed (i.e. using the `Array` form, as described above), then the validator
-  is called immediately.
+  that will verify the value of the property using custom code. Since the Array
+  form is not being used (only the validator is being provided), it's always
+  invoked immediately. Since a type is not provided, the [ANY](#rtvref.types.ANY)
+  type is implied.
 - `Array`: For multiple type possibilities, optionally [qualified](#rtvref.qualifiers),
   using an __OR__ conjunction, which means the value of the property being described must
-  be at _least one_ of the types listed, but not all. Matching is done in a short-circuit
-  fashion, from the first to the last element in the typeset. If a simpler type is
-  likely, it's more performant to specify those first in the typeset to avoid a match
-  attempt on a nested shape or Array.
+  match at _least one_ of the types listed, but not all. Matching is done in a short-circuit
+  fashion, from the first to the last element in the typeset. If a simpler type is likely,
+  it's more performant to specify it first/earlier in the typeset to avoid a match attempt
+  on a nested shape or Array.
   - Cannot be an empty Array.
+  - A given type may not be included more than once in the typeset, but may appear
+    again in a nested typeset (when a parent typeset describes an
+    [Array](rtfref.types.ARRAY) or type of [Object](rtfref.types.OBJECT)).
   - An Array is necessary to [qualify](#rtvref.qualifiers) the typeset as not
     required (see _Typeset Qualifiers_ below).
-  - An Array is also necessary if a type needs or requires
+  - An Array is necessary if a type needs or requires
     [arguments](#rtvref.types.type_arguments).
-  - If the __first__ element is an `Object`, it's treated as a nested
-    [shape descriptor](#rtvref.shape_descriptor) describing an object of the
-    default [OBJECT](#rtvref.types.OBJECT) type. To include a shape descriptor
-    at any other position within the array, it __must__ be preceded by a type,
-    even if the default `OBJECT` type is being used (i.e. `OBJECT` must be
-    specified as the type).
+  - If the __first__ element (or second, if a [qualifier](rtvref.types.qualifiers)
+    is provided, but the typeset is not
+    [fully-qualified](#rtvref.types.fully_qualified_typeset)), is an `Object`,
+    it's treated as a nested [shape descriptor](#rtvref.shape_descriptor)
+    describing an object of the default [OBJECT](#rtvref.types.OBJECT) type.
+    To include a shape descriptor at any other position within the array, it
+    __must__ be preceded by a type, even if the default `OBJECT` type is being
+    used (i.e. `OBJECT` must be specified as the type).
   - If an element is an `Array` (any position), it's treated as a __nested list__
     with an implied [ARRAY](#rtvref.types.ARRAY) type, e.g.
     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
     or an array of non-empty strings or finite numbers. See the `ARRAY` type
     reference for more information on _shorthand_ and _full_ notations.
-  - If an element is a `Function` (any position, though normally at the last
-    position, since only one is permitted per typeset, and it's always executed
-    after at least one type matches, regardless of it's position in the typeset),
-    it's treated as a property validator.
+  - If an element is a `Function`, it must be the __last__ element in the Array
+    and will be treated as a [property validator](#rtvref.types.property_validator).
+    Only one validator can be specified for a given typeset (additional validators
+    may appear in nested typesets).
 
 <h4>Typeset Qualifiers</h4>
 
@@ -1357,14 +1414,18 @@ rtv.verify({name: 'Steve', age: null}, person); // OK
 <h3>Fully-Qualified Typeset</h3>
 
 A [typeset](#rtvref.types.typeset) expressed without any shortcut notations
- to make it easier to parse, especially as the `match` parameter given to a
- [property validator](#rtvref.types.property_validator).
+ or implied/default types to make it easier to parse, especially as the `match`
+ parameter given to a [property validator](#rtvref.types.property_validator).
+ A fully-qualified typeset always uses the array notation, and has a single
+ [qualifier](#rtvref.qualifiers) as its first element, followed by
+ at least one type, and at most one validator.
 
 For example:
 
 - `STRING` -> `[REQUIRED, STRING]`
 - `{note: STRING}` -> `[REQUIRED, OBJECT, {note: [REQUIRED, STRING]}]`
 - `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
+- `(v) => !!v` -> `[REQUIRED, ANY, (v) => !!v]`
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 
@@ -1380,9 +1441,13 @@ A function used as a [typeset](#rtvref.types.typeset), or as a subset to
 
 A typeset may only have one validator, and the validator is only called if
  the value being verified was verified by at least one type in the typeset.
- The position of the validator within the typeset (if the typeset is an array),
- does not change when the validator is invoked (i.e. before one type or after
- another; it's always called last, if called at all).
+ The validator must be the __last__ element within the typeset (if the typeset
+ is an array, and a validator is needed). The validator must also be
+ specified _after_ the [qualifier](#rtvref.qualifiers) in a typeset Array.
+ The validator is invoked immediately after the first type match, but only if
+ a type match is made. If the typeset is not
+ [fully-qualified](#rtvref.types.fully_qualified_typeset) and does not
+ explicitly specify a type, the [ANY](#rtvref.types.ANY) type is implied.
 
 There is one disadvantage to using a property validator: It cannot be de/serialized
  via JSON, which means it cannot be transmitted or persisted. One option would be
@@ -1473,7 +1538,7 @@ Numeric value arguments. Applies to all numeric types.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof <function> === true`. Note that  this property is not serializable to JSON. |
+| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof <function> === true`. Note that  this property is not serializable to JSON. If not specified, then the object  must be an [OBJECT](#rtvref.types.OBJECT) that is not a  [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) among the other values that  are not considered class objects. |
 | [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. |
 
 
@@ -1487,13 +1552,14 @@ Numeric value arguments. Applies to all numeric types.
 Describes the shape (i.e. interface) of an object as a map of properties to
  [typesets](#rtvref.types.typeset). Each typeset indicates whether the
  property is required, expected, or optional, using [qualifiers](#rtvref.qualifiers),
- along with possible types.
+ along with possible types. Only enumerable, own-properties of the shape are
+ considered part of the shape.
 
 When a value is [checked](#rtv.check) or [verified](#rtv.verify) against
- a given shape, properties that are not part of the shape are ignored. If
- successfully checked/verified, the value is guaranteed to provide the properties
- described in the shape, and each property is guaranteed to be assigned to a
- value of at least one type described in each property's typeset.
+ a given shape, _properties on the value that are not part of the shape are
+ ignored_. If successfully checked/verified, the value is guaranteed to provide
+ the properties described in the shape, and each property is guaranteed to be
+ assigned to a value of at least one type described in each property's typeset.
 
 **Kind**: static typedef of [<code>rtvref</code>](#rtvref)  
 
@@ -1513,6 +1579,23 @@ Runtime Verification Library for browsers and Node.js.
     * [.q](#rtv.q) : <code>rtvref.Enumeration.&lt;String, String&gt;</code>
     * [.e](#rtv.e) : <code>boolean</code>
     * [._version](#rtv._version) : <code>string</code>
+    * [.validation](#rtv.validation) : <code>object</code>
+        * [.isAny(v)](#rtv.validation.isAny) ⇒ <code>boolean</code>
+        * [.isString(v, [options])](#rtv.validation.isString) ⇒ <code>boolean</code>
+        * [.isBoolean(v)](#rtv.validation.isBoolean) ⇒ <code>boolean</code>
+        * [.isNumber(v)](#rtv.validation.isNumber) ⇒ <code>boolean</code>
+        * [.isSymbol(v)](#rtv.validation.isSymbol) ⇒ <code>boolean</code>
+        * [.isFunction(v)](#rtv.validation.isFunction) ⇒ <code>boolean</code>
+        * [.isArray(v)](#rtv.validation.isArray) ⇒ <code>boolean</code>
+        * [.isMap(v)](#rtv.validation.isMap) ⇒ <code>boolean</code>
+        * [.isWeakMap(v)](#rtv.validation.isWeakMap) ⇒ <code>boolean</code>
+        * [.isSet(v)](#rtv.validation.isSet) ⇒ <code>boolean</code>
+        * [.isWeakSet(v)](#rtv.validation.isWeakSet) ⇒ <code>boolean</code>
+        * [.isRegExp(v)](#rtv.validation.isRegExp) ⇒ <code>boolean</code>
+        * [.isPrimitive(v)](#rtv.validation.isPrimitive) ⇒ <code>boolean</code>
+        * [.isAnyObject(v)](#rtv.validation.isAnyObject) ⇒ <code>boolean</code>
+        * [.isObject(v)](#rtv.validation.isObject) ⇒ <code>boolean</code>
+        * [.isValidTypeset(v, [options])](#rtv.validation.isValidTypeset) ⇒ <code>boolean</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
     * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -1558,6 +1641,299 @@ Shortcut proxy for reading [enabled](#rtv.config.enabled).
 [internal] Library version.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
+
+* * *
+
+<a name="rtv.validation"></a>
+
+### rtv.validation : <code>object</code>
+RTV Validation Module
+
+**Kind**: static namespace of [<code>rtv</code>](#rtv)  
+
+* [.validation](#rtv.validation) : <code>object</code>
+    * [.isAny(v)](#rtv.validation.isAny) ⇒ <code>boolean</code>
+    * [.isString(v, [options])](#rtv.validation.isString) ⇒ <code>boolean</code>
+    * [.isBoolean(v)](#rtv.validation.isBoolean) ⇒ <code>boolean</code>
+    * [.isNumber(v)](#rtv.validation.isNumber) ⇒ <code>boolean</code>
+    * [.isSymbol(v)](#rtv.validation.isSymbol) ⇒ <code>boolean</code>
+    * [.isFunction(v)](#rtv.validation.isFunction) ⇒ <code>boolean</code>
+    * [.isArray(v)](#rtv.validation.isArray) ⇒ <code>boolean</code>
+    * [.isMap(v)](#rtv.validation.isMap) ⇒ <code>boolean</code>
+    * [.isWeakMap(v)](#rtv.validation.isWeakMap) ⇒ <code>boolean</code>
+    * [.isSet(v)](#rtv.validation.isSet) ⇒ <code>boolean</code>
+    * [.isWeakSet(v)](#rtv.validation.isWeakSet) ⇒ <code>boolean</code>
+    * [.isRegExp(v)](#rtv.validation.isRegExp) ⇒ <code>boolean</code>
+    * [.isPrimitive(v)](#rtv.validation.isPrimitive) ⇒ <code>boolean</code>
+    * [.isAnyObject(v)](#rtv.validation.isAnyObject) ⇒ <code>boolean</code>
+    * [.isObject(v)](#rtv.validation.isObject) ⇒ <code>boolean</code>
+    * [.isValidTypeset(v, [options])](#rtv.validation.isValidTypeset) ⇒ <code>boolean</code>
+
+
+* * *
+
+<a name="rtv.validation.isAny"></a>
+
+#### validation.isAny(v) ⇒ <code>boolean</code>
+Determines if a value is _anything_.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [ANY](#rtvref.types.ANY)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isString"></a>
+
+#### validation.isString(v, [options]) ⇒ <code>boolean</code>
+Determines if a value is a string literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new String('value')`, which is an object that is a string.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [STRING](#rtvref.types.STRING)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| v | <code>\*</code> |  | Value to validate. |
+| [options] | <code>Object</code> |  | Validation options. |
+| [options.emptyOk] | <code>boolean</code> | <code>false</code> | If truthy, an empty string is allowed. |
+
+
+* * *
+
+<a name="rtv.validation.isBoolean"></a>
+
+#### validation.isBoolean(v) ⇒ <code>boolean</code>
+Determines if a value is a boolean literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new Boolean(true)`, which is an object that is a boolean.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [BOOLEAN](#rtvref.types.BOOLEAN)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isNumber"></a>
+
+#### validation.isNumber(v) ⇒ <code>boolean</code>
+Determines if a value is a number literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new Number(1)`, which is an object that is a number.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [NUMBER](#rtvref.types.NUMBER)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isSymbol"></a>
+
+#### validation.isSymbol(v) ⇒ <code>boolean</code>
+Determines if a value is a symbol.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [SYMBOL](#rtvref.types.SYMBOL)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isFunction"></a>
+
+#### validation.isFunction(v) ⇒ <code>boolean</code>
+Determines if a value is a function.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [SYMBOL](#rtvref.types.SYMBOL)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isArray"></a>
+
+#### validation.isArray(v) ⇒ <code>boolean</code>
+Determines if a value is an array.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [ARRAY](#rtvref.types.ARRAY)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isMap"></a>
+
+#### validation.isMap(v) ⇒ <code>boolean</code>
+Determines if a value is a map.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [MAP](#rtvref.types.MAP)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isWeakMap"></a>
+
+#### validation.isWeakMap(v) ⇒ <code>boolean</code>
+Determines if a value is a weak map.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [WEAK_MAP](#rtvref.types.WEAK_MAP)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isSet"></a>
+
+#### validation.isSet(v) ⇒ <code>boolean</code>
+Determines if a value is a set.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [SET](#rtvref.types.SET)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isWeakSet"></a>
+
+#### validation.isWeakSet(v) ⇒ <code>boolean</code>
+Determines if a value is a weak set.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [WEAK_SET](#rtvref.types.WEAK_SET)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isRegExp"></a>
+
+#### validation.isRegExp(v) ⇒ <code>boolean</code>
+Determines if a value is a regular expression object.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [REGEXP](#rtvref.types.REGEXP)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isPrimitive"></a>
+
+#### validation.isPrimitive(v) ⇒ <code>boolean</code>
+Determines if a value is a JavaScript [primitive](#rtvref.types.primitives).
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isAnyObject"></a>
+
+#### validation.isAnyObject(v) ⇒ <code>boolean</code>
+Determines if a value is _any_ type of object except a primitive.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isObject"></a>
+
+#### validation.isObject(v) ⇒ <code>boolean</code>
+Determines if a value is an object that extends from `JavaScript.Object` and
+ is not a function, array, regex, map, weak map, set, weak set, or primitive.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtv.validation.isValidTypeset"></a>
+
+#### validation.isValidTypeset(v, [options]) ⇒ <code>boolean</code>
+Determines if a value is a typeset.
+
+**Kind**: static method of [<code>validation</code>](#rtv.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+**See**: [typeset](#rtvref.types.typeset)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| v | <code>\*</code> |  | Value to validate. |
+| [options] | <code>Object</code> |  | Validation options. |
+| [options.deep] | <code>boolean</code> | <code>false</code> | If truthy, deeply-validates any nested typesets. Note  that typesets in nested shapes are also deeply-validated. |
+| [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be fully-qualified. |
+
 
 * * *
 

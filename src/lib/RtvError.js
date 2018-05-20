@@ -43,7 +43,7 @@ const RtvError = function(value, typeset, path, cause) {
     throw new Error('Invalid path: ' + path);
   }
 
-  if (!isTypeset(cause, true)) {
+  if (!isTypeset(cause, {fullyQualified: true})) {
     throw new Error('Invalid cause (expecting a fully-qualified typeset): ' + cause);
   }
 

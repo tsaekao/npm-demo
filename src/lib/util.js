@@ -1,5 +1,7 @@
 //// Utilities \\\\
 
+// NOTE: Ideally, this module has no dependencies.
+
 /**
  * RTV Utilities Module
  * @private
@@ -14,11 +16,26 @@
  *  all types, but attempts to be good enough.
  */
 export const print = function(value) {
-  if (typeof value === 'function') {
-    return '<function>';
-  } else if (value === null || value === undefined) {
-    return value + '';
+  const replacer = function replacer(key, val) {
+    if (typeof val === 'function') {
+      return '<function>';
+    } else if (typeof val === 'symbol') {
+      return `<<${val.toString()}>>`;
+    } else if (val === null || val === undefined) {
+      return val + '';
+    }
+
+    return val;
+  };
+
+  // do an initial pass to see if we have a string
+  const result = replacer(undefined, value);
+
+  // if it's just a string, return it
+  if (typeof result === 'string') {
+    return result;
   }
 
-  return JSON.stringify(value);
+  // otherwise, stringify it
+  return JSON.stringify(value, replacer);
 };

@@ -32,6 +32,7 @@
     "guard-for-in": "error",
     "no-alert": "error",
     "no-caller": "error",
+    "no-console": "error",
     "no-else-return": "error",
     "no-eq-null": "error",
     "no-eval": "error",
@@ -83,6 +84,12 @@
       "SwitchCase": 1, // indent case/default by 1x indent WRT switch statement
       "CallExpression": {
         "arguments": 2 // indent 'continuation lines' within statements by 2x indent
+      },
+      "FunctionDeclaration": {
+        "parameters": 2 // indent 'continuation lines' within statements by 2x indent
+      },
+      "FunctionExpression": {
+        "parameters": 2 // indent 'continuation lines' within statements by 2x indent
       }
     }],
     "key-spacing": ["error", {"beforeColon": false, "afterColon": true, "mode": "strict"}],

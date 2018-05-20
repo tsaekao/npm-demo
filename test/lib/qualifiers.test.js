@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import * as mod from '../../src/lib/qualifiers';
 import Enumeration from '../../src/lib/Enumeration';
+import * as val from '../../src/lib/validation';
 
 describe('module: lib/qualifiers', function() {
   const qualifiers = mod.default;
@@ -11,24 +12,17 @@ describe('module: lib/qualifiers', function() {
     expect(qualifiers instanceof Enumeration).to.equal(true);
   });
 
-  it('should export an enumeration of all qualifiers (keys)', function() {
-    // keys the module exports, less 'qualifiers'
-    const modKeys = _.pull(Object.keys(mod), 'qualifiers');
-    // keys in the qualifiers enum
-    const qualifiersKeys = Object.keys(qualifiers);
-
-    // anything in modKeys that is not in qualifiersKeys?
-    // this will break if a new type was added to the module, but wasn't added
-    //  to the module's 'qualifiers' enum
-    expect(_.difference(qualifiersKeys, modKeys)).to.eql([]);
+  it('should export a default qualifier', function() {
+    expect(qualifiers.check(mod.DEFAULT_QUALIFIER)).to.equal(mod.DEFAULT_QUALIFIER);
   });
 
-  it('should export an enumeration of all qualifiers (values)', function() {
-    // values the module exports, less 'qualifiers' enum
-    const modValues = _.pull(_.values(mod), qualifiers);
-    // values in the qualifiers enum
-    const qualifiersValues = qualifiers.$values;
-
-    expect(_.difference(qualifiersValues, modValues)).to.eql([]);
+  it('should have non-empty strings as qualifiers', function() {
+    // the library's implementation assumes a qualifier is always a non-empty
+    //  (and therefore truthy) string, especially when checking with
+    //  Enumeration#check() which returns the falsy `undefined` value if a
+    //  given string is not in the enumeration
+    qualifiers.$values.forEach(function(q) {
+      expect(val.isString(q)).to.equal(true);
+    });
   });
 });

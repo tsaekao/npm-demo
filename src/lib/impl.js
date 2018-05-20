@@ -1,9 +1,9 @@
 //// Main Implementation Module \\\\
 
 import {isString, isBoolean, isArray, isFunction, isObject, isTypeset} from './validation';
-import types from './types';
-import qualifiers from './qualifiers';
-import * as util from './util';
+import {DEFAULT_OBJECT_TYPE, default as types} from './types';
+import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
+import {print} from './util';
 import RtvSuccess from './RtvSuccess';
 
 /**
@@ -11,18 +11,6 @@ import RtvSuccess from './RtvSuccess';
  * @private
  * @namespace rtv.impl
  */
-
-/**
- * Default qualifier: {@link rtvref.qualifiers.REQUIRED}
- * @const {string} rtv.impl.DEFAULT_QUALIFIER
- */
-export const DEFAULT_QUALIFIER = qualifiers.REQUIRED;
-
-/**
- * Default object type: {@link rtvref.types.OBJECT}
- * @const {string} rtv.impl.DEFAULT_OBJ_TYPE
- */
-export const DEFAULT_OBJ_TYPE = types.OBJECT;
 
 /**
  * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
@@ -40,7 +28,7 @@ export const DEFAULT_OBJ_TYPE = types.OBJECT;
  */
 export const fullyQualify = function(typeset) {
   if (!isTypeset(typeset)) { // start by validating so we can be confident later
-    throw new Error(`Invalid typeset=${util.print(typeset)}`);
+    throw new Error(`Invalid typeset='${print(typeset)}'`);
   }
 
   // NOTE: from this point on, we ASSUME that the typeset is valid, which lets
@@ -51,10 +39,15 @@ export const fullyQualify = function(typeset) {
     // must be either a string, object, or function with an implied qualifier
     if (isObject(typeset)) {
       // must be a nested shape descriptor with default object type
-      return [DEFAULT_QUALIFIER, DEFAULT_OBJ_TYPE, typeset];
+      return [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, typeset];
     }
 
-    // either a string (type) or a function, neither of which have an implied type
+    // if a function, it has an implied type of ANY
+    if (isFunction(typeset)) {
+      return [DEFAULT_QUALIFIER, types.ANY, typeset];
+    }
+
+    // string (basic type)
     return [DEFAULT_QUALIFIER, typeset];
   }
 
@@ -63,7 +56,7 @@ export const fullyQualify = function(typeset) {
 
   // typeset is an array: iterate its elements and build fqts iteratively
   typeset.forEach(function(rule, i) {
-    if (i === 0 && !qualifiers.check(rule)) {
+    if (i === 0 && (!isString(rule) || !qualifiers.check(rule))) { // qualifiers are non-empty strs
       fqts.push(DEFAULT_QUALIFIER); // add implied qualifier
     }
 
@@ -74,14 +67,19 @@ export const fullyQualify = function(typeset) {
     } else if (isObject(rule)) {
       if (i === 0) {
         // must be a nested shape descriptor using default object type
-        curType = DEFAULT_OBJ_TYPE;
+        curType = DEFAULT_OBJECT_TYPE;
         fqts.push(curType, rule);
       } else {
         // must be args for curType since typeset is an array and object is not
         //  in first position
         fqts.push(rule);
       }
-    } else if (isFunction(rule)) { // must be a validator, no implied type
+    } else if (isFunction(rule)) { // must be a validator, ANY is implied type if none specified
+      if (!curType) {
+        curType = types.ANY;
+        fqts.push(curType);
+      }
+
       fqts.push(rule);
     } else { // must be an array
       if (curType !== types.ARRAY) {
@@ -116,7 +114,7 @@ export const checkSimple = function(value, typeset) {
   } else if (typeset === types.BOOLEAN) {
     valid = isBoolean(value);
   } else {
-    throw new Error(`Missing handler for '${typeset}' type`);
+    throw new Error(`Missing handler for '${print(typeset)}' type`);
   }
 
   if (valid) {
@@ -145,12 +143,19 @@ export const check = function(value, typeset) {
   //  If check succeeds, return boolean `true`. rtv.check/verify can then test
   //  for the return type since impl shouldn't be exposed externally anyway.
   try {
-    if (isString(typeset)) {
-      return checkSimple(value, typeset);
+    if (isTypeset(typeset)) {
+      if (isString(typeset)) {
+        return checkSimple(value, typeset);
+      }
+
+      // TODO other typeset types
+
+      throw new Error(`Missing handler for typeset='${print(typeset)}' type specified`);
+    } else {
+      throw new Error(`Invalid typeset='${print(typeset)}' specified`);
     }
   } catch (checkErr) {
-    const err = new Error(
-        `Cannot check value: shape is not a valid typeset -- rootCause: ${checkErr.message}`);
+    const err = new Error(`Cannot check value: ${checkErr.message}`);
     err.rootCause = checkErr;
     throw err;
   }

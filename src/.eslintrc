@@ -9,6 +9,8 @@
   },
   "globals": {
     // safe assumptions
+
+    // console is a valid global, but no-console in base settings will check against it
     "console": true
   }
 }

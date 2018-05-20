@@ -19,13 +19,14 @@ import RtvSuccess from './lib/RtvSuccess';
  * Describes the shape (i.e. interface) of an object as a map of properties to
  *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
  *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
- *  along with possible types.
+ *  along with possible types. Only enumerable, own-properties of the shape are
+ *  considered part of the shape.
  *
  * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
- *  a given shape, properties that are not part of the shape are ignored. If
- *  successfully checked/verified, the value is guaranteed to provide the properties
- *  described in the shape, and each property is guaranteed to be assigned to a
- *  value of at least one type described in each property's typeset.
+ *  a given shape, _properties on the value that are not part of the shape are
+ *  ignored_. If successfully checked/verified, the value is guaranteed to provide
+ *  the properties described in the shape, and each property is guaranteed to be
+ *  assigned to a value of at least one type described in each property's typeset.
  *
  * @typedef {Object} rtvref.shape_descriptor
  */

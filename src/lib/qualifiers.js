@@ -21,7 +21,7 @@ import Enumeration from './Enumeration';
  * @const {string}
  * @see {@link rtvref.types}
  */
-export const REQUIRED = '!';
+const REQUIRED = '!';
 
 /**
  * Expected qualifier: Property _should_ exist and be of the expected type.
@@ -37,7 +37,7 @@ export const REQUIRED = '!';
  * @const {string}
  * @see {@link rtvref.types}
  */
-export const EXPECTED = '+';
+const EXPECTED = '+';
 
 /**
  * Optional qualifier: Property _may_ exist and be of the expected type.
@@ -55,11 +55,17 @@ export const EXPECTED = '+';
  * @const {string}
  * @see {@link rtvref.types}
  */
-export const OPTIONAL = '?';
+const OPTIONAL = '?';
 
 //
 // ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
 //
+
+/**
+ * Default qualifier: {@link rtvref.qualifiers.REQUIRED}
+ * @const {string} rtvref.qualifiers.DEFAULT_QUALIFIER
+ */
+export const DEFAULT_QUALIFIER = REQUIRED;
 
 /**
  * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
