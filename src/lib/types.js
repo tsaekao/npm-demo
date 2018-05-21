@@ -1,4 +1,4 @@
-//// Type Definitions \\\\
+////// Type Definitions
 
 import Enumeration from './Enumeration';
 

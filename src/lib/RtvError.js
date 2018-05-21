@@ -1,4 +1,4 @@
-//// RtvError Class \\\\
+////// RtvError Class
 
 import {isString, isTypeset} from './validation';
 

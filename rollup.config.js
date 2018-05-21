@@ -1,4 +1,4 @@
-//// Rollup Configuration \\\\
+////// Rollup Configuration
 
 const jsonPlugin = require('rollup-plugin-json');
 const resolvePlugin = require('rollup-plugin-node-resolve');

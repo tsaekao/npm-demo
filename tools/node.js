@@ -1,4 +1,4 @@
-//// Manual Node.js Testing \\\\
+////// Manual Node.js Testing
 
 global.rtv = require('../dist/rtv.umd');
 global.ld = require('lodash');

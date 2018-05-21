@@ -1,4 +1,4 @@
-//// Qualifier Definitions \\\\
+////// Qualifier Definitions
 
 import Enumeration from './Enumeration';
 

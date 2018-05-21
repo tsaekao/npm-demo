@@ -1,4 +1,4 @@
-//// Mocha Env Setup \\\\
+////// Mocha Env Setup
 
 // auto-compile files on-the-fly as they are require()'d in Node by Mocha; this
 //  way, we can write our test files as ES6 modules instead of CJS modules

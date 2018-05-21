@@ -1,4 +1,4 @@
-//// Rollup Configuration for internals.js module \\\\
+////// Rollup Configuration for internals.js module
 
 const jsonPlugin = require('rollup-plugin-json');
 const resolvePlugin = require('rollup-plugin-node-resolve');

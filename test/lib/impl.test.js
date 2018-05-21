@@ -23,9 +23,7 @@ describe('module: lib/impl', function() {
   });
 
   describe('#checkSimple()', function() {
-    it('should check simple types against values', function() {
-      // TODO
-    });
+    it('should check simple types against values'); // TODO
 
     it('should throw if type is not valid', function() {
       expect(function() {

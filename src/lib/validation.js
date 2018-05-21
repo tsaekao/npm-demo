@@ -1,4 +1,4 @@
-//// Validation Module \\\\
+////// Validation Module
 
 import {default as _isArray} from 'lodash/isArray';
 import {default as _isSymbol} from 'lodash/isSymbol';

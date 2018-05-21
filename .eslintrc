@@ -1,4 +1,4 @@
-//// Root ESLint Configuration \\\\
+////// Root ESLint Configuration
 
 {
   "root": true,

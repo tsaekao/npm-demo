@@ -1,4 +1,4 @@
-//// RtvSuccess Class \\\\
+////// RtvSuccess Class
 
 /**
  * Runtime Verification Success Indicator

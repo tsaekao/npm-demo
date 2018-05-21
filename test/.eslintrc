@@ -1,4 +1,4 @@
-//// test ESLint Configuration \\\\
+////// test ESLint Configuration
 
 {
   // extend source settings to add test-specific settings

@@ -1,4 +1,4 @@
-//// src ESLint Configuration \\\\
+////// src ESLint Configuration
 
 {
   "extends": ["../.eslintrc"],

@@ -1,4 +1,4 @@
-//// Main entry point \\\\
+////// Main entry point
 
 import {version as VERSION} from '../package.json';
 import * as impl from './lib/impl';

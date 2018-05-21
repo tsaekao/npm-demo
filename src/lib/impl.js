@@ -1,10 +1,11 @@
-//// Main Implementation Module \\\\
+////// Main Implementation Module
 
 import {isString, isBoolean, isArray, isFunction, isObject, isTypeset} from './validation';
 import {DEFAULT_OBJECT_TYPE, default as types} from './types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
 import {print} from './util';
 import RtvSuccess from './RtvSuccess';
+import RtvError from './RtvError';
 
 /**
  * RTV Implementation Module
@@ -121,7 +122,7 @@ export const checkSimple = function(value, typeset) {
     return new RtvSuccess();
   }
 
-  // TODO return RtvError if fails
+  return new RtvError(); // TODO: add right params... (will throw until params given)
 };
 
 /**

@@ -1,4 +1,4 @@
-//// Enumeration \\\\
+////// Enumeration
 
 /**
  * Simple enumeration type. Own-properties on an instance are the keys in the
