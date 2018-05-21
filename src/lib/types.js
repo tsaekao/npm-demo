@@ -382,9 +382,10 @@ const defs = {
    * @typedef {Object} rtvref.types.STRING_args
    * @property {string} [exact] An exact value to match.
    * @property {number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
-   *  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` is specified.
-   * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if `exact`
+   *  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` or `partial`
    *  is specified.
+   * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if
+   *  `exact` or `partial` is specified.
    * @property {string} [partial] A partial value to match (must be somewhere within the string).
    *  Ignored if `exact` is specified.
    * @see {@link rtvref.qualifiers}
@@ -394,10 +395,10 @@ const defs = {
    * String rules per qualifiers:
    *
    * - REQUIRED: Must be a non-empty string.
-   * - EXPECTED | OPTIONAL: Can be an empty string.
+   * - EXPECTED | OPTIONAL: May be an empty string.
    *
    * In all cases, the value must be a string {@link rtvref.types.primitives primitive}.
-   *  `new String('hello') !== 'hello'` because the former is an _object_, not a string.
+   *  Note that `new String('hello') !== 'hello'` because the former is an _object_, not a string.
    *
    * Arguments (optional): {@link rtvref.types.STRING_args}
    *
@@ -409,7 +410,7 @@ const defs = {
 
   /**
    * Boolean rules per qualifiers: Must be a boolean {@link rtvref.types.primitives primitive}.
-   *  `new Boolean(true) !== true` because the former is an _object_, not a boolean.
+   *  Note that `new Boolean(true) !== true` because the former is an _object_, not a boolean.
    *
    * @name rtvref.types.BOOLEAN
    * @const {string}
@@ -447,7 +448,7 @@ const defs = {
    * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
    *
    * In all cases, the value must be a number {@link rtvref.types.primitives primitive}.
-   *  `new Number(1) !== 1` because the former is an _object_, not a number.
+   *  Note that `new Number(1) !== 1` because the former is an _object_, not a number.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *

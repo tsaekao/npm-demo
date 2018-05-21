@@ -16,14 +16,44 @@ import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from './types
 import qualifiers from './qualifiers';
 
 /**
- * RTV Validation Module
+ * RTV Validation Namespace
  *
- * @namespace rtv.validation
+ * This namespace provides a validator method for each type, capable of validating
+ *  a value against that type, considering any optional arguments provided.
+ *
+ * The default export for all modules is a
+ *  {@link rtvref.validation.validator validator function}.
+ *
+ * @namespace rtvref.validation
  */
+
+// NOTE: Modules in this namespace are the only ones where third-party validation
+//  code (i.e. lodash methods) should be referenced. The rest of the library should
+//  use these methods for any type validation needed.
+
+/**
+ * Type Validator Function
+ * @function rtvref.validation.validator
+ * @param {*} value The value to validate.
+ * @param {string} qualifier The validation qualifier from the
+ *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
+ *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {Object} [args] The arguments object, if any/applicable, for the type
+ *  being validated. For example, {@link rtvref.types.STRING_args string args} in
+ *  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least
+ *  5 characters in length).
+ * @returns {boolean} `true` if the value is verified according to the qualifier
+ *  and args; `false` otherwise.
+ */
+
+// DEBUG but what happens if just normal validation is needed? Is it easy for the library
+//  to call one of those modules to just validate a string?
+
+
 
 /**
  * Determines if a value is _anything_.
- * @function rtv.validation.isAny
+ * @function rtvref.validation.isAny
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.ANY}
@@ -36,7 +66,7 @@ export const isAny = function(v) {
  * Determines if a value is a string literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new String('value')`, which is an object that is a string.
- * @function rtv.validation.isString
+ * @function rtvref.validation.isString
  * @param {*} v Value to validate.
  * @param {Object} [options] Validation options.
  * @param {boolean} [options.emptyOk=false] If truthy, an empty string is allowed.
@@ -51,7 +81,7 @@ export const isString = function(v, {emptyOk} = {}) {
  * Determines if a value is a boolean literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Boolean(true)`, which is an object that is a boolean.
- * @function rtv.validation.isBoolean
+ * @function rtvref.validation.isBoolean
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.BOOLEAN}
@@ -64,7 +94,7 @@ export const isBoolean = function(v) {
  * Determines if a value is a number literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
- * @function rtv.validation.isNumber
+ * @function rtvref.validation.isNumber
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.NUMBER}
@@ -75,7 +105,7 @@ export const isNumber = function(v) {
 
 /**
  * Determines if a value is a symbol.
- * @function rtv.validation.isSymbol
+ * @function rtvref.validation.isSymbol
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.SYMBOL}
@@ -84,7 +114,7 @@ export const isSymbol = _isSymbol;
 
 /**
  * Determines if a value is a function.
- * @function rtv.validation.isFunction
+ * @function rtvref.validation.isFunction
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.SYMBOL}
@@ -93,7 +123,7 @@ export const isFunction = _isFunction;
 
 /**
  * Determines if a value is an array.
- * @function rtv.validation.isArray
+ * @function rtvref.validation.isArray
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.ARRAY}
@@ -102,7 +132,7 @@ export const isArray = _isArray;
 
 /**
  * Determines if a value is a map.
- * @function rtv.validation.isMap
+ * @function rtvref.validation.isMap
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.MAP}
@@ -111,7 +141,7 @@ export const isMap = _isMap;
 
 /**
  * Determines if a value is a weak map.
- * @function rtv.validation.isWeakMap
+ * @function rtvref.validation.isWeakMap
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.WEAK_MAP}
@@ -120,7 +150,7 @@ export const isWeakMap = _isWeakMap;
 
 /**
  * Determines if a value is a set.
- * @function rtv.validation.isSet
+ * @function rtvref.validation.isSet
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.SET}
@@ -129,7 +159,7 @@ export const isSet = _isSet;
 
 /**
  * Determines if a value is a weak set.
- * @function rtv.validation.isWeakSet
+ * @function rtvref.validation.isWeakSet
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.WEAK_SET}
@@ -138,7 +168,7 @@ export const isWeakSet = _isWeakSet;
 
 /**
  * Determines if a value is a regular expression object.
- * @function rtv.validation.isRegExp
+ * @function rtvref.validation.isRegExp
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.REGEXP}
@@ -147,7 +177,7 @@ export const isRegExp = _isRegExp;
 
 /**
  * Determines if a value is a JavaScript {@link rtvref.types.primitives primitive}.
- * @function rtv.validation.isPrimitive
+ * @function rtvref.validation.isPrimitive
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
@@ -162,7 +192,7 @@ export const isPrimitive = function(v) {
 
 /**
  * Determines if a value is _any_ type of object except a primitive.
- * @function rtv.validation.isAnyObject
+ * @function rtvref.validation.isAnyObject
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
@@ -171,7 +201,7 @@ export const isAnyObject = _isObject;
 /**
  * Determines if a value is an object that extends from `JavaScript.Object` and
  *  is not a function, array, regex, map, weak map, set, weak set, or primitive.
- * @function rtv.validation.isObject
+ * @function rtvref.validation.isObject
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
@@ -185,7 +215,7 @@ export const isObject = function(v) {
 
 /**
  * Determines if a value is a typeset.
- * @function rtv.validation.isValidTypeset
+ * @function rtvref.validation.isValidTypeset
  * @param {*} v Value to validate.
  * @param {Object} [options] Validation options.
  * @param {boolean} [options.deep=false] If truthy, deeply-validates any nested typesets. Note

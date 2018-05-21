@@ -58,7 +58,7 @@ const EXPECTED = '+';
 const OPTIONAL = '?';
 
 //
-// ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
+// ^^^^^^^ INSERT NEW QUALIFIERS ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
 //
 
 /**
