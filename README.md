@@ -53,3 +53,7 @@ Shapes must be:
     - [ ] Add `.npmignore`
 - [ ] Make sure 'Goals' section is complete and accurate, add some links
 - [ ] Collect `// TODO[future]` comments as new items in this list
+
+# Future
+
+*   Support a formal plugin architecture allowing third-parties to register custom types?

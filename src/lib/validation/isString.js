@@ -1,21 +1,26 @@
 ////// isString validator
 
 import {default as _isFinite} from 'lodash/isFinite';
+
+import types from '../types';
 import qualifiers from '../qualifiers';
 
 /**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.STRING STRING} type.
+ *
  * Determines if a value is a string literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new String('value')`, which is an object that is a string.
+ *
  * @function rtvref.validation.isString
  * @param {*} v Value to validate.
- * @param {string}[q=rtvref.qualifiers.REQUIRED] Validation qualifier.
+ * @param {string} [q] Validation qualifier. Defaults to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.STRING_args} [args] Type arguments.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.STRING}
- * @see {@link rtvref.qualifiers.REQUIRED}
+ * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isString(v, q, args) {
+export const validator = function isString(v, q = qualifiers.REQUIRED, args) {
   let valid = (typeof v === 'string');
 
   if (valid) {
@@ -38,3 +43,5 @@ export default function isString(v, q, args) {
 
   return valid;
 }
+
+export const type = types.STRING;

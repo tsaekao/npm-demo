@@ -18,8 +18,9 @@ import qualifiers from './qualifiers';
 /**
  * RTV Validation Namespace
  *
- * This namespace provides a validator method for each type, capable of validating
- *  a value against that type, considering any optional arguments provided.
+ * This namespace provides a {@link rtvref.validation.validator validator function}
+ *  for each type, capable of validating a value against that type, considering any
+ *  optional arguments provided.
  *
  * The default export for all modules is a
  *  {@link rtvref.validation.validator validator function}.
@@ -31,13 +32,29 @@ import qualifiers from './qualifiers';
 //  code (i.e. lodash methods) should be referenced. The rest of the library should
 //  use these methods for any type validation needed.
 
+// NOTE: Validator modules are essentially precursors to plugins. For the time being,
+//  the expected interface for a validator module is:
+//  - 'validator: function': has the rtvref.validation.validator signature
+//  - 'type: string': The type the validator validates (e.g. rtvref.types.STRING
+//    for the STRING type validator)
+//
+// There can only be one validator for any given type.
+//
+// Later, if we ever expose a plugin architecture, we might change this to pass
+//  some type of registration function into the plugin, or the plugin calls a
+//  registration method on rtv, or maybe something else. Whatever we do, the basics
+//  would be to register a new type and provide the function for rtv to call to
+//  validate values for that type. Perhaps we might even allow overriding the
+//  default validator for an existing type.
+
 /**
- * Type Validator Function
+ * Type Validator Function.
  * @function rtvref.validation.validator
  * @param {*} value The value to validate.
- * @param {string} qualifier The validation qualifier from the
+ * @param {string} [qualifier] The validation qualifier from the
  *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
- *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}
+ *  to maintain consistent behavior.
  * @param {Object} [args] The arguments object, if any/applicable, for the type
  *  being validated. For example, {@link rtvref.types.STRING_args string args} in
  *  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least
@@ -47,9 +64,8 @@ import qualifiers from './qualifiers';
  */
 
 // DEBUG but what happens if just normal validation is needed? Is it easy for the library
-//  to call one of those modules to just validate a string?
-
-
+//  to call one of those modules to just validate a string so we continue to avoid
+//  having third-party imports everywhere?
 
 /**
  * Determines if a value is _anything_.
