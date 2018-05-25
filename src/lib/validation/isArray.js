@@ -21,8 +21,8 @@ export const validator = function isArray(v, q = qualifiers.REQUIRED, args) {
 
   if (valid) {
     if (valid && args) { // then check args
-      if (_isFinite(args.exact) && args.exact >= 0) {
-        valid = (v.length === args.exact);
+      if (_isFinite(args.length) && args.length >= 0) {
+        valid = (v.length === args.length);
       } else {
         if (valid && _isFinite(args.min) && args.min >= 0) {
           valid = (v.length >= args.min);

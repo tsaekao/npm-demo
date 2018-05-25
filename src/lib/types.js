@@ -72,67 +72,71 @@ import Enumeration from './Enumeration';
  * Describes the keys and values in a collection-based object, which is one of
  *  the following types:
  *
- * - {@link rtvref.types.MAP_OBJECT MAP_OBJECT}
+ * - {@link rtvref.types.MAP_OBJECT MAP_OBJECT} (NOTE: only __own-enumerable
+ *   properties__ are considered part of this type of collection)
  * - {@link rtvref.types.MAP MAP}
  * - {@link rtvref.types.WEAK_MAP WEAK_MAP}
  * - {@link rtvref.types.SET SET} (with some exceptions)
  * - {@link rtvref.types.WEAK_SET WEAK_SET} (with some exceptions)
  *
- * Note that an {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
+ * For example, the following arguments both verify a collection of 3-letter
+ *  string keys (upper- or lowercase) to finite numbers:
+ *
+ * - `{keyExp: '[a-z]{3}', keyFlagSpec: 'i', values: FINITE}`
+ * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
+ *
+ * Note that {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
  *  because the array type has special syntax for describing the type of its items.
  *  See {@link rtvref.types.ARRAY_args ARRAY_args} instead.
  *
- * For example, the following descriptors both verify a collection of 3-letter
- *  string keys (upper- or lowercase) to finite numbers:
- *
- * - `{keyExp: '[a-z]{3}', keyExpFlags: 'i', values: FINITE}`
- * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
- *
  * @typedef {Object} rtvref.types.collection_args
- * @property {rtvref.types.typeset} [keys] Optional. A typeset describing each key
+ * @property {rtvref.types.typeset} [keys] A typeset describing each key
  *  in the collection.
  *
- * The type of collection being described may restrict the types that this typeset
- *  can include. For example, the {@link rtvref.types.MAP_OBJECT MAP_OBJECT} collection
- *  only supports the {@link rtvref.types.STRING STRING} type due to the nature of
- *  its JavaScript `Object`-based implementation.
+ *  If the type is {@link rtvref.types.MAP_OBJECT MAP_OBJECT}, this argument is
+ *   hard set to the {@link rtvref.types.STRING STRING} type due to the nature of
+ *   its JavaScript `Object`-based implementation and does not need to be specified.
  *
- * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
- *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
+ *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT} (with restrictions),
+ *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
- * @property {string} [keyExp] Optional. A string-based regular expression
- *  describing the names of keys (own-enumerable properties) found in the
- *  collection.
+ * @property {string} [keyExp] A string-based regular expression describing the
+ *  names of keys found in the collection. By default, there are no restrictions
+ *  on key names. Ignored if the key type is not {@link rtvref.types.STRING STRING},
+ *  as specified in `keys`.
  *
- * By default, there are no restrictions on key names. This expression is only
- *  used if the `keys` typeset includes the {@link rtvref.types.STRING STRING} type.
+ *  For example, to require numerical keys, the following expression could be
+ *   used: `"^\\d+$"`.
  *
- * For example, to require numerical keys, the following expression could be
- *  used: `'^\\d+$'`.
+ *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT},
+ *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
- * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
- *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
+ * @property {string} [keyFlagSpec] A string specifying any flags to use with
+ *  the regular expression specified in `keyExp`. Ignored if _falsy_ or if
+ *  `keyExp` is not specified. See the
+ *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp RegExp#flags}
+ *  parameter for more information.
  *
- * @property {string} [keyExpFlags] Optional. A string specifying any flags to use
- *  with the regular expression specified in `keyExp`. If this property is _falsy_,
- *  default `RegExp` flags will be used. Ignored if `keyExp` is not specified, or
- *  does not apply per the `keys` typeset.
+ *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT},
+ *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
- * NOTE: This property is ignored when the collection is a {@link rtvref.types.SET SET}
- *  or a {@link rtvref.types.WEAK_SET WEAK_SET} because sets do not have keys.
- *
- * @property {rtvref.types.typeset} [values] Optional. A typeset describing each value
- *  in the collection. Defaults to the {@link rtvref.types.ANY ANY} type which allows
+ * @property {rtvref.types.typeset} [values] A typeset describing each value in
+ *  the collection. Defaults to the {@link rtvref.types.ANY ANY} type which allows
  *  _anything_. All values must match this typeset (but the collection is not
  *  required to have any entries/properties to be considered valid, unless
- *  `count` is specified).
+ *  `length` is specified).
  *
- * For example, to require arrays of non-empty string values, the following
- *  typeset could be used: `[[types.STRING]]`.
+ *  For example, to require arrays of non-empty string values as values in the
+ *   collection, the following typeset could be used: `[[types.STRING]]`.
  *
- * @property {number} [count=-1] Optional. The number of entries expected in
+ *  Applies to: All collection types.
+ *
+ * @property {number} [length=-1] The number of elements required in
  *  the collection. A negative value allows for any number of entries. Zero
- *  requires an empty collection.
+ *  requires an empty collection. Ignored if not a
+ *  {@link rtvref.types.FINITE FINITE} number.
+ *
+ *  Applies to: All collection types.
  *
  * @see {@link rtvref.types.MAP_OBJECT}
  * @see {@link rtvref.types.MAP}
@@ -380,7 +384,7 @@ const defs = {
   /**
    * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
-   * @property {string} [exact] An exact value to match.
+   * @property {string} [exact] An exact string to match.
    * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
    *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
    *  `exact` or `partial` is specified, or not a {@link rtvref.types.FINITE FINITE}
@@ -434,7 +438,7 @@ const defs = {
    * Applicable to all numeric types.
    *
    * @typedef {Object} rtvref.types.numeric_args
-   * @property {string} [exact] An exact value to match. Ignored if not
+   * @property {string} [exact] An exact number to match. Ignored if not
    *  within normal range of the type (e.g. for `NUMBER`, could be `+Infinity`,
    *  but this value would be ignored by `FINITE` since it is not part of the
    *  `FINITE` range).
@@ -558,7 +562,7 @@ const defs = {
   /**
    * <h3>Array Arguments</h3>
    * @typedef {Object} rtvref.types.ARRAY_args
-   * @property {number} [exact] Exact length. Ignored if not a
+   * @property {number} [length] Exact length. Ignored if not a
    *  {@link rtvref.types.FINITE FINITE} number >= 0.
    * @property {number} [min=0] Minimum inclusive length. Ignored if `exact` is
    *  specified, or is not a {@link rtvref.types.FINITE FINITE} number >= 0.

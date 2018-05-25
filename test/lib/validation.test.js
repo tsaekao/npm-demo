@@ -204,9 +204,6 @@ describe('module: lib/validation', function() {
       let goodValues; // @type {Array}
       let badValues; // @type {Array}
 
-      // DEBUG add tests here and in other block to ensure that only own-properties of
-      //  shapes are considered part of shapes (so have shape with proto invalid TS that
-      //  should be ignored)
       beforeEach(function() {
         goodValues = [
           {foo: null}, // null is invalid, but we aren't checking deep
