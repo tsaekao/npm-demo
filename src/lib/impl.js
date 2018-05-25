@@ -1,6 +1,11 @@
 ////// Main Implementation Module
 
-import {isString, isBoolean, isArray, isFunction, isObject, isTypeset} from './validation';
+import {validator as isString} from './validation/isString';
+import {validator as isBoolean} from './validation/isBoolean';
+import {validator as isArray} from './validation/isArray';
+import {validator as isFunction} from './validation/isFunction';
+import {validator as isObject} from './validation/isObject';
+import {isTypeset} from './validation';
 import {DEFAULT_OBJECT_TYPE, default as types} from './types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
 import {print} from './util';
@@ -57,7 +62,7 @@ export const fullyQualify = function(typeset) {
 
   // typeset is an array: iterate its elements and build fqts iteratively
   typeset.forEach(function(rule, i) {
-    if (i === 0 && (!isString(rule) || !qualifiers.check(rule))) { // qualifiers are non-empty strs
+    if (i === 0 && (!isString(rule) || !qualifiers.check(rule))) { // qualifiers are non-empty strings
       fqts.push(DEFAULT_QUALIFIER); // add implied qualifier
     }
 
@@ -97,7 +102,8 @@ export const fullyQualify = function(typeset) {
 };
 
 /**
- * Checks a value against a simple type.
+ * Checks a value against a simple type using the
+ *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @function rtv.impl.checkSimple
  * @param {*} value Value to check.
  * @param {string} typeset Simple typeset name, must be one of {@link rtvref.types.types}.
@@ -111,9 +117,9 @@ export const checkSimple = function(value, typeset) {
 
   let valid = false;
   if (typeset === types.STRING) {
-    valid = isString(value);
+    valid = isString(value, DEFAULT_QUALIFIER);
   } else if (typeset === types.BOOLEAN) {
-    valid = isBoolean(value);
+    valid = isBoolean(value, DEFAULT_QUALIFIER);
   } else {
     throw new Error(`Missing handler for '${print(typeset)}' type`);
   }

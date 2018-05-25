@@ -67,7 +67,7 @@ import Enumeration from './Enumeration';
  */
 
 /**
- * <h3>Collection Descriptor</h3>
+ * <h3>Collection Arguments</h3>
  *
  * Describes the keys and values in a collection-based object, which is one of
  *  the following types:
@@ -88,7 +88,7 @@ import Enumeration from './Enumeration';
  * - `{keyExp: '[a-z]{3}', keyExpFlags: 'i', values: FINITE}`
  * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
  *
- * @typedef {Object} rtvref.types.collection_descriptor
+ * @typedef {Object} rtvref.types.collection_args
  * @property {rtvref.types.typeset} [keys] Optional. A typeset describing each key
  *  in the collection.
  *
@@ -376,18 +376,21 @@ const defs = {
   ANY: def('any'),
 
   // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
-  //  for a regular expression test. Similar prop names to collection_descriptor.
+  //  for a regular expression test. Similar prop names to collection_args.
   /**
-   * {@link rtvref.types.STRING STRING} arguments.
+   * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
    * @property {string} [exact] An exact value to match.
-   * @property {number} [min] Minimum length. Defaults to 1 for a `REQUIRED` string,
-   *  and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if `exact` or `partial`
-   *  is specified.
-   * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if
-   *  `exact` or `partial` is specified.
-   * @property {string} [partial] A partial value to match (must be somewhere within the string).
-   *  Ignored if `exact` is specified.
+   * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
+   *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
+   *  `exact` or `partial` is specified, or not a {@link rtvref.types.FINITE FINITE}
+   *  number >= 0.
+   * @property {number} [max=-1] Maximum inclusive length. Negative means no maximum.
+   *  Ignored if `exact` or `partial` is specified, or not a
+   *  {@link rtvref.types.FINITE FINITE} number.
+   * @property {string} [partial] A partial value to match (must be somewhere
+   *  within the string). Ignored if `exact` is specified.
+   * @see {@link rtvref.types.STRING}
    * @see {@link rtvref.qualifiers}
    */
 
@@ -411,7 +414,6 @@ const defs = {
   /**
    * Boolean rules per qualifiers: Must be a boolean {@link rtvref.types.primitives primitive}.
    *  Note that `new Boolean(true) !== true` because the former is an _object_, not a boolean.
-   *
    * @name rtvref.types.BOOLEAN
    * @const {string}
    * @see {@link rtvref.qualifiers}
@@ -427,18 +429,24 @@ const defs = {
   SYMBOL: def('symbol'),
 
   /**
-   * Numeric value arguments. Applies to all numeric types.
+   * <h3>Numeric Value Arguments</h3>
+   *
+   * Applicable to all numeric types.
+   *
    * @typedef {Object} rtvref.types.numeric_args
-   * @property {string} [exact] An exact value to match.
-   * @property {number} [min] Minimum inclusive value. Default varies per type.
-   *  Ignored if `exact` is specified.
-   * @property {number} [max] Maximum inclusive value. Default varies per type.
-   *  Ignored if `exact` is specified.
-   * @see {@link rtvref.qualifiers}
+   * @property {string} [exact] An exact value to match. Ignored if not
+   *  within normal range of the type (e.g. for `NUMBER`, could be `+Infinity`,
+   *  but this value would be ignored by `FINITE` since it is not part of the
+   *  `FINITE` range).
+   * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
+   *  specified, or is not within normal range of the type.
+   * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
+   *  specified, or is not within normal range of the type.
    * @see {@link rtvref.types.NUMBER}
    * @see {@link rtvref.types.FINITE}
    * @see {@link rtvref.types.INT}
    * @see {@link rtvref.types.FLOAT}
+   * @see {@link rtvref.qualifiers}
    */
 
   /**
@@ -548,12 +556,16 @@ const defs = {
 
   // TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
   /**
-   * {@link rtvref.types.ARRAY ARRAY} arguments.
+   * <h3>Array Arguments</h3>
    * @typedef {Object} rtvref.types.ARRAY_args
-   * @property {number} [exact] Exact length.
-   * @property {number} [min=0] Minimum length. Ignored if `exact` is specified.
-   * @property {number} [max=-1] Maximum length. -1 means no maximum. Ignored if
-   *  `exact` is specified.
+   * @property {number} [exact] Exact length. Ignored if not a
+   *  {@link rtvref.types.FINITE FINITE} number >= 0.
+   * @property {number} [min=0] Minimum inclusive length. Ignored if `exact` is
+   *  specified, or is not a {@link rtvref.types.FINITE FINITE} number >= 0.
+   * @property {number} [max=-1] Maximum inclusive length. Negative means no maximum.
+   *  Ignored if `exact` is specified, or is not a {@link rtvref.types.FINITE FINITE}
+   *  number.
+   * @see {@link rtvref.types.ARRAY}
    */
 
   /**
@@ -835,7 +847,7 @@ const defs = {
    *
    * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.
    *
-   * Arguments (optional): {@link rtvref.types.collection_descriptor}
+   * Arguments (optional): {@link rtvref.types.collection_args}
    *
    * @name rtvref.types.MAP_OBJECT
    * @const {string}
@@ -880,7 +892,7 @@ const defs = {
    *
    * Map rules per qualifiers: Must be a `Map` instance.
    *
-   * Arguments (optional): {@link rtvref.types.collection_descriptor}
+   * Arguments (optional): {@link rtvref.types.collection_args}
    *
    * @name rtvref.types.MAP
    * @const {string}
@@ -899,7 +911,7 @@ const defs = {
    *
    * Weak map rules per qualifiers: Must be a `WeakMap` instance.
    *
-   * Arguments (optional): {@link rtvref.types.collection_descriptor}
+   * Arguments (optional): {@link rtvref.types.collection_args}
    *
    * @name rtvref.types.WEAK_MAP
    * @const {string}
@@ -916,7 +928,7 @@ const defs = {
    *
    * Set rules per qualifiers: Must be a `Set` instance.
    *
-   * Arguments (optional): {@link rtvref.types.collection_descriptor}
+   * Arguments (optional): {@link rtvref.types.collection_args}
    *
    * @name rtvref.types.SET
    * @const {string}
@@ -932,7 +944,7 @@ const defs = {
    *
    * Weak set rules per qualifiers: Must be a `WeakSet` instance.
    *
-   * Arguments (optional): {@link rtvref.types.collection_descriptor}
+   * Arguments (optional): {@link rtvref.types.collection_args}
    *
    * @name rtvref.types.WEAK_SET
    * @const {string}

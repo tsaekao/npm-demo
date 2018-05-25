@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import * as mod from '../../src/lib/qualifiers';
 import Enumeration from '../../src/lib/Enumeration';
-import * as val from '../../src/lib/validation';
+import {validator as isString} from '../../src/lib/validation/isString';
 
 describe('module: lib/qualifiers', function() {
   const qualifiers = mod.default;
@@ -22,7 +22,7 @@ describe('module: lib/qualifiers', function() {
     //  Enumeration#check() which returns the falsy `undefined` value if a
     //  given string is not in the enumeration
     qualifiers.$values.forEach(function(q) {
-      expect(val.isString(q)).to.equal(true);
+      expect(isString(q)).to.equal(true);
     });
   });
 });

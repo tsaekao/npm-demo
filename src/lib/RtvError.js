@@ -1,6 +1,7 @@
 ////// RtvError Class
 
-import {isString, isTypeset} from './validation';
+import {isTypeset} from './validation';
+import {validator as isString} from './validation/isString';
 
 // @type {function} The super class.
 const extendsFrom = Error;

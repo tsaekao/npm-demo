@@ -1,15 +1,12 @@
 ////// Validation Module
 
 import {default as _isArray} from 'lodash/isArray';
-import {default as _isSymbol} from 'lodash/isSymbol';
-import {default as _isFunction} from 'lodash/isFunction';
 import {default as _isObject} from 'lodash/isObject';
 import {default as _isObjectLike} from 'lodash/isObjectLike';
 import {default as _isMap} from 'lodash/isMap';
 import {default as _isWeakMap} from 'lodash/isWeakMap';
 import {default as _isSet} from 'lodash/isSet';
 import {default as _isWeakSet} from 'lodash/isWeakSet';
-import {default as _isRegExp} from 'lodash/isRegExp';
 import {default as _forEach} from 'lodash/forEach';
 
 import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from './types';
@@ -31,6 +28,11 @@ import qualifiers from './qualifiers';
 // NOTE: Modules in this namespace are the only ones where third-party validation
 //  code (i.e. lodash methods) should be referenced. The rest of the library should
 //  use these methods for any type validation needed.
+//
+// The only functions that should be defined directly in this module are those
+//  that don't map to a type, such as `isTypeset()` or `isPrimitive()`. Where
+//  possible, these functions should use the type validators rather than third-party
+//  code.
 
 // NOTE: Validator modules are essentially precursors to plugins. For the time being,
 //  the expected interface for a validator module is:
@@ -51,7 +53,7 @@ import qualifiers from './qualifiers';
  * Type Validator Function.
  * @function rtvref.validation.validator
  * @param {*} value The value to validate.
- * @param {string} [qualifier] The validation qualifier from the
+ * @param {string} [qualifier] The validation qualifier from the immediate
  *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
  *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}
  *  to maintain consistent behavior.
@@ -62,89 +64,6 @@ import qualifiers from './qualifiers';
  * @returns {boolean} `true` if the value is verified according to the qualifier
  *  and args; `false` otherwise.
  */
-
-// DEBUG but what happens if just normal validation is needed? Is it easy for the library
-//  to call one of those modules to just validate a string so we continue to avoid
-//  having third-party imports everywhere?
-
-/**
- * Determines if a value is _anything_.
- * @function rtvref.validation.isAny
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.ANY}
- */
-export const isAny = function(v) {
-  return true; // anything goes, even undefined and null
-};
-
-/**
- * Determines if a value is a string literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new String('value')`, which is an object that is a string.
- * @function rtvref.validation.isString
- * @param {*} v Value to validate.
- * @param {Object} [options] Validation options.
- * @param {boolean} [options.emptyOk=false] If truthy, an empty string is allowed.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.STRING}
- */
-export const isString = function(v, {emptyOk} = {}) {
-  return !!((typeof v === 'string') && (emptyOk || v));
-};
-
-/**
- * Determines if a value is a boolean literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new Boolean(true)`, which is an object that is a boolean.
- * @function rtvref.validation.isBoolean
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.BOOLEAN}
- */
-export const isBoolean = function(v) {
-  return (v === true || v === false);
-};
-
-/**
- * Determines if a value is a number literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new Number(1)`, which is an object that is a number.
- * @function rtvref.validation.isNumber
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.NUMBER}
- */
-export const isNumber = function(v) {
-  return (typeof v === 'number');
-};
-
-/**
- * Determines if a value is a symbol.
- * @function rtvref.validation.isSymbol
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.SYMBOL}
- */
-export const isSymbol = _isSymbol;
-
-/**
- * Determines if a value is a function.
- * @function rtvref.validation.isFunction
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.SYMBOL}
- */
-export const isFunction = _isFunction;
-
-/**
- * Determines if a value is an array.
- * @function rtvref.validation.isArray
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.ARRAY}
- */
-export const isArray = _isArray;
 
 /**
  * Determines if a value is a map.
@@ -181,15 +100,6 @@ export const isSet = _isSet;
  * @see {@link rtvref.types.WEAK_SET}
  */
 export const isWeakSet = _isWeakSet;
-
-/**
- * Determines if a value is a regular expression object.
- * @function rtvref.validation.isRegExp
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.REGEXP}
- */
-export const isRegExp = _isRegExp;
 
 /**
  * Determines if a value is a JavaScript {@link rtvref.types.primitives primitive}.

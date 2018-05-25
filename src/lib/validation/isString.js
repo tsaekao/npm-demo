@@ -34,14 +34,18 @@ export const validator = function isString(v, q = qualifiers.REQUIRED, args) {
       } else if (args.partial) {
         valid = v.includes(args.partial);
       } else {
-        const min = _isFinite(args.min) ? args.min : (q === qualifiers.REQUIRED ? 1 : 0);
-        const max = _isFinite(args.max) ? args.max : -1;
-        valid = (v.length >= min) && (max < 0 || v.length <= max);
+        if (valid && _isFinite(args.min) && args.min >= 0) {
+          valid = (v.length >= args.min);
+        }
+
+        if (valid && _isFinite(args.max) && args.max >= 0) {
+          valid = (v.length <= args.max);
+        }
       }
     }
   }
 
   return valid;
-}
+};
 
 export const type = types.STRING;
