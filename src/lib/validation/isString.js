@@ -1,6 +1,6 @@
 ////// isString validator
 
-import {default as _isFinite} from 'lodash/isFinite';
+import {validator as isFinite} from './isFinite';
 
 import types from '../types';
 import qualifiers from '../qualifiers';
@@ -29,17 +29,23 @@ export const validator = function isString(v, q = qualifiers.REQUIRED, args) {
     }
 
     if (valid && args) { // then check args
-      if (args.exact) {
+      if (isString(args.exact, qualifiers.EXPECTED)) {
         valid = (v === args.exact);
-      } else if (args.partial) {
-        valid = v.includes(args.partial);
       } else {
-        if (valid && _isFinite(args.min) && args.min >= 0) {
+        let min;
+        if (valid && isFinite(args.min) && args.min >= 0) {
+          min = args.min;
           valid = (v.length >= args.min);
         }
 
-        if (valid && _isFinite(args.max) && args.max >= 0) {
-          valid = (v.length <= args.max);
+        if (valid && isFinite(args.max) && args.max >= 0) {
+          if (min === undefined || args.max >= min) {
+            valid = (v.length <= args.max);
+          } // else, ignore
+        }
+
+        if (valid && args.partial) {
+          valid = v.includes(args.partial);
         }
       }
     }

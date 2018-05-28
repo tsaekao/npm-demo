@@ -50,18 +50,20 @@ import Enumeration from './Enumeration';
  *  __Array__ {@link rtvref.types.typeset typeset} (i.e. an Array must be used as
  *  the typeset in order to provide arguments for a type).
  *
- * If a type does not accept any arguments, but an arguments object is provided,
- *  it will simply be ignored (i.e. it will __not__ be treated as a nested
- *  {@link rtvref.shape_descriptor shape descriptor}). This means that, in an
- *  Array-style {@link rtvref.types.typeset typeset}, a shape descriptor
- *  __must__ always be qualified by a type, even if it's the default type
- *  attributed to a shape descriptor.
- *
  * An arguments object immediately follows its type in a typeset, such as
  *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
  *  {@link rtvref.types.PLAIN_OBJECT plain object} with a shape that includes a
  *  property named 'hello', that property being a
  *  {@link rtvref.qualifiers.REQUIRED required} {@link rtvref.types.STRING string}.
+ *  Another example would be `[STRING, {min: 5}]`, which would require a string
+ *  of at least 5 characters in length.
+ *
+ * Since {@link rtvref.qualifiers qualifiers} may affect how a value is validated
+ *  against a type, {@link rtvref.types.rules qualifier rules} always take
+ *  __precedence__ over any argument specified. For example, `[STRING, {min: 0}]`
+ *  would fail to validate an empty string because the _implied_ qualifier
+ *  is `REQUIRED`, and per {@link rtvref.types.STRING STRING} qualifier rules,
+ *  required strings cannot be empty.
  *
  * @typedef {Object} rtvref.types.type_arguments
  */
@@ -75,9 +77,7 @@ import Enumeration from './Enumeration';
  * - {@link rtvref.types.MAP_OBJECT MAP_OBJECT} (NOTE: only __own-enumerable
  *   properties__ are considered part of this type of collection)
  * - {@link rtvref.types.MAP MAP}
- * - {@link rtvref.types.WEAK_MAP WEAK_MAP}
  * - {@link rtvref.types.SET SET} (with some exceptions)
- * - {@link rtvref.types.WEAK_SET WEAK_SET} (with some exceptions)
  *
  * For example, the following arguments both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
@@ -89,7 +89,18 @@ import Enumeration from './Enumeration';
  *  because the array type has special syntax for describing the type of its items.
  *  See {@link rtvref.types.ARRAY_args ARRAY_args} instead.
  *
+ * The {@link rtvref.types.WEAK_MAP WEAK_MAP} and {@link rtvref.types.WEAK_SET WEAK_SET}
+ *  types do not apply because, due to their nature, their elements cannot be
+ *  iterated.
+ *
  * @typedef {Object} rtvref.types.collection_args
+ * @property {number} [length] The number of elements required in
+ *  the collection. A negative value allows for any number of entries. Zero
+ *  requires an empty collection. Ignored if not a
+ *  {@link rtvref.types.FINITE FINITE} number.
+ *
+ *  Applies to: All collection types.
+ *
  * @property {rtvref.types.typeset} [keys] A typeset describing each key
  *  in the collection.
  *
@@ -123,18 +134,11 @@ import Enumeration from './Enumeration';
  * @property {rtvref.types.typeset} [values] A typeset describing each value in
  *  the collection. Defaults to the {@link rtvref.types.ANY ANY} type which allows
  *  _anything_. All values must match this typeset (but the collection is not
- *  required to have any entries/properties to be considered valid, unless
- *  `length` is specified).
+ *  required to have any elements to be considered valid, unless `length` is
+ *  specified).
  *
  *  For example, to require arrays of non-empty string values as values in the
  *   collection, the following typeset could be used: `[[types.STRING]]`.
- *
- *  Applies to: All collection types.
- *
- * @property {number} [length=-1] The number of elements required in
- *  the collection. A negative value allows for any number of entries. Zero
- *  requires an empty collection. Ignored if not a
- *  {@link rtvref.types.FINITE FINITE} number.
  *
  *  Applies to: All collection types.
  *
@@ -385,17 +389,18 @@ const defs = {
    * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
    * @property {string} [exact] An exact string to match.
+   * @property {string} [partial] A partial value to match (must be somewhere
+   *  within the string). Ignored if empty string, or `exact` is specified. `min`
+   *  and `max` take __precedence__ over this argument (the length will be
+   *  validated first, then a partial match will be attempted).
    * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
    *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
-   *  `exact` or `partial` is specified, or not a {@link rtvref.types.FINITE FINITE}
+   *  `exact` is specified, or `min` is not a {@link rtvref.types.FINITE FINITE}
    *  number >= 0.
-   * @property {number} [max=-1] Maximum inclusive length. Negative means no maximum.
-   *  Ignored if `exact` or `partial` is specified, or not a
-   *  {@link rtvref.types.FINITE FINITE} number.
-   * @property {string} [partial] A partial value to match (must be somewhere
-   *  within the string). Ignored if `exact` is specified.
+   * @property {number} [max] Maximum inclusive length. Negative means no maximum.
+   *  Ignored if `exact` is specified, `max` is not a
+   *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
    * @see {@link rtvref.types.STRING}
-   * @see {@link rtvref.qualifiers}
    */
 
   /**
@@ -440,12 +445,13 @@ const defs = {
    * @typedef {Object} rtvref.types.numeric_args
    * @property {string} [exact] An exact number to match. Ignored if not
    *  within normal range of the type (e.g. for `NUMBER`, could be `+Infinity`,
-   *  but this value would be ignored by `FINITE` since it is not part of the
-   *  `FINITE` range).
+   *  or even `NaN` if the qualifier is not `REQUIRED`; but these values would be
+   *  ignored by `FINITE` since they aren't part of the `FINITE` range).
    * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
-   *  specified, or is not within normal range of the type.
+   *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
    * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
-   *  specified, or is not within normal range of the type.
+   *  specified, `max` is `NaN`, `max` is not within normal range of the type,
+   *  or `max` is less than `min`.
    * @see {@link rtvref.types.NUMBER}
    * @see {@link rtvref.types.FINITE}
    * @see {@link rtvref.types.INT}
@@ -488,7 +494,8 @@ const defs = {
 
   /**
    * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} integer,
-   *  but is not necessarily _safe_. It must also be a number {@link rtvref.types.primitives primitive}.
+   *  but is not necessarily _safe_. It must also be a number
+   *  {@link rtvref.types.primitives primitive}.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
@@ -502,8 +509,9 @@ const defs = {
   INT: def('int', true),
 
   /**
-   * Float rules per qualifiers: Must be a finite floating point number.
-   *  It must also be a number {@link rtvref.types.primitives primitive}.
+   * Float rules per qualifiers: Must be a {@link rtvref.types.FINITE finite}
+   *  floating point number. It must also be a number
+   *  {@link rtvref.types.primitives primitive}.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
@@ -564,17 +572,17 @@ const defs = {
    * @typedef {Object} rtvref.types.ARRAY_args
    * @property {number} [length] Exact length. Ignored if not a
    *  {@link rtvref.types.FINITE FINITE} number >= 0.
-   * @property {number} [min=0] Minimum inclusive length. Ignored if `exact` is
-   *  specified, or is not a {@link rtvref.types.FINITE FINITE} number >= 0.
-   * @property {number} [max=-1] Maximum inclusive length. Negative means no maximum.
-   *  Ignored if `exact` is specified, or is not a {@link rtvref.types.FINITE FINITE}
-   *  number.
+   * @property {number} [min] Minimum inclusive length. Ignored if `exact` is
+   *  specified, or `min` is not a {@link rtvref.types.FINITE FINITE} number >= 0.
+   * @property {number} [max] Maximum inclusive length. Negative means no maximum.
+   *  Ignored if `exact` is specified, `max` is not a
+   *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
    * @see {@link rtvref.types.ARRAY}
    */
 
   /**
-   * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted by
-   *  default.
+   * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
+   *  unless arguments prevent them.
    *
    * Arguments (optional): {@link rtvref.types.ARRAY_args}. Note that the `ARRAY`
    *  type must be specified when using arguments (i.e. the shorthand notation
@@ -866,6 +874,69 @@ const defs = {
   MAP_OBJECT: def('mapObject', true, true),
 
   /**
+   * An ES6 map supports any value as its keys, unlike a
+   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
+   *  be described using a regular expression (if they are strings), and values can
+   *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
+   *  by default.
+   *
+   * Map rules per qualifiers: Must be a `Map` instance.
+   *
+   * Arguments (optional): {@link rtvref.types.collection_args}
+   *
+   * @name rtvref.types.MAP
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.MAP_OBJECT}
+   * @see {@link rtvref.types.WEAK_MAP}
+   */
+  MAP: def('map', true),
+
+  /**
+   * An ES6 weak map supports any _object_ as its keys, unlike a
+   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings,
+   *  and a {@link rtvref.types.MAP MAP} that supports any type of value.
+   *
+   * Weak map rules per qualifiers: Must be a `WeakMap` instance.
+   *
+   * @name rtvref.types.WEAK_MAP
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.MAP_OBJECT}
+   * @see {@link rtvref.types.MAP}
+   */
+  WEAK_MAP: def('weakMap'), // not iterable, so does not accept any collection args
+
+  /**
+   * An ES6 set is a collection of _unique_ values without associated keys. Values can
+   *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
+   *  by default.
+   *
+   * Set rules per qualifiers: Must be a `Set` instance.
+   *
+   * Arguments (optional): {@link rtvref.types.collection_args}
+   *
+   * @name rtvref.types.SET
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.WEAK_SET}
+   */
+  SET: def('set', true),
+
+  /**
+   * An ES6 weak set is a collection of weakly held _unique_ _objects_ without
+   *  associated keys.
+   *
+   * Weak set rules per qualifiers: Must be a `WeakSet` instance.
+   *
+   * @name rtvref.types.WEAK_SET
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.SET}
+   */
+  WEAK_SET: def('weakSet'), // not iterable, so does not accept any collection args
+
+  /**
    * JSON rules per qualifiers: Must be a JSON value:
    *
    * - {@link rtvref.types.STRING string}, however __empty strings are permitted__,
@@ -885,77 +956,7 @@ const defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  JSON: def('json'),
-
-  /**
-   * An ES6 map supports any object as its keys, unlike a
-   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
-   *  be described using a regular expression (if they are strings), and values can
-   *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
-   *  by default.
-   *
-   * Map rules per qualifiers: Must be a `Map` instance.
-   *
-   * Arguments (optional): {@link rtvref.types.collection_args}
-   *
-   * @name rtvref.types.MAP
-   * @const {string}
-   * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.MAP_OBJECT}
-   * @see {@link rtvref.types.WEAK_MAP}
-   */
-  MAP: def('map', true),
-
-  /**
-   * An ES6 weak map supports any object as its keys, unlike a
-   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
-   *  be described using a regular expression (if they are strings), and values can
-   *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
-   *  by default.
-   *
-   * Weak map rules per qualifiers: Must be a `WeakMap` instance.
-   *
-   * Arguments (optional): {@link rtvref.types.collection_args}
-   *
-   * @name rtvref.types.WEAK_MAP
-   * @const {string}
-   * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.MAP_OBJECT}
-   * @see {@link rtvref.types.MAP}
-   */
-  WEAK_MAP: def('weakMap', true),
-
-  /**
-   * An ES6 set is a collection of _unique_ values without associated keys. Values can
-   *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
-   *  by default.
-   *
-   * Set rules per qualifiers: Must be a `Set` instance.
-   *
-   * Arguments (optional): {@link rtvref.types.collection_args}
-   *
-   * @name rtvref.types.SET
-   * @const {string}
-   * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.WEAK_SET}
-   */
-  SET: def('set', true),
-
-  /**
-   * An ES6 weak set is a collection of _unique_ values without associated keys. Values can
-   *  be described using a {@link rtvref.types.typeset typeset}. Empty sets are permitted
-   *  by default.
-   *
-   * Weak set rules per qualifiers: Must be a `WeakSet` instance.
-   *
-   * Arguments (optional): {@link rtvref.types.collection_args}
-   *
-   * @name rtvref.types.WEAK_SET
-   * @const {string}
-   * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.SET}
-   */
-  WEAK_SET: def('weakSet', true)
+  JSON: def('json')
 };
 
 //

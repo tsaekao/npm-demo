@@ -1,7 +1,8 @@
 ////// isArray validator
 
 import {default as _isArray} from 'lodash/isArray';
-import {default as _isFinite} from 'lodash/isFinite';
+
+import {validator as isFinite} from './isFinite';
 
 import types from '../types';
 import qualifiers from '../qualifiers';
@@ -21,15 +22,19 @@ export const validator = function isArray(v, q = qualifiers.REQUIRED, args) {
 
   if (valid) {
     if (valid && args) { // then check args
-      if (_isFinite(args.length) && args.length >= 0) {
+      if (isFinite(args.length) && args.length >= 0) {
         valid = (v.length === args.length);
       } else {
-        if (valid && _isFinite(args.min) && args.min >= 0) {
+        let min;
+        if (valid && isFinite(args.min) && args.min >= 0) {
+          min = args.min;
           valid = (v.length >= args.min);
         }
 
-        if (valid && _isFinite(args.max) && args.max >= 0) {
-          valid = (v.length <= args.max);
+        if (valid && isFinite(args.max) && args.max >= 0) {
+          if (min === undefined || args.max >= min) {
+            valid = (v.length <= args.max);
+          } // else, ignore
         }
       }
     }

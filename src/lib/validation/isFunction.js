@@ -1,18 +1,18 @@
-////// isSymbol validator
+////// isFunction validator
 
-import {default as _isSymbol} from 'lodash/isSymbol';
+import {default as _isFunction} from 'lodash/isFunction';
 
 import types from '../types';
 
 /**
  * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.SYMBOL SYMBOL} type.
- * @function rtvref.validation.isSymbol
+ *  {@link rtvref.types.FUNCTION FUNCTION} type.
+ * @function rtvref.validation.isFunction
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export const validator = function isSymbol(v) {
-  return _isSymbol(v);
+export const validator = function isFunction(v) {
+  return _isFunction(v);
 };
 
-export const type = types.SYMBOL;
+export const type = types.FUNCTION;

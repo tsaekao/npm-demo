@@ -1,46 +1,40 @@
-////// isNumber validator
+////// isFinite validator
 
-import {default as _isNumber} from 'lodash/isNumber';
-import {default as _isNaN} from 'lodash/isNaN';
+import {default as _isFinite} from 'lodash/isFinite';
 
 import types from '../types';
 import qualifiers from '../qualifiers';
 
 /**
  * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.NUMBER NUMBER} type.
+ *  {@link rtvref.types.FINITE FINITE} type.
  *
  * Determines if a value is a number literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
- * @function rtvref.validation.isNumber
+ * @function rtvref.validation.isFinite
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export const validator = function isNumber(v, q = qualifiers.REQUIRED, args) {
-  let valid = (typeof v === 'number');
+export const validator = function isFinite(v, q = qualifiers.REQUIRED, args) {
+  let valid = _isFinite(v); // eliminates NaN, +/-Infinity
 
   if (valid) {
-    if (q === qualifiers.REQUIRED) {
-      // cannot be NaN
-      valid = !_isNaN(v);
-    }
-
     if (valid && args) { // then check args
-      if (_isNumber(args.exact)) { // NaN OK for this arg (careful: NaN !== NaN...)
-        valid = (v === args.exact) || (_isNaN(v) && _isNaN(args.exact));
+      if (_isFinite(args.exact)) { // ignore if NaN, +/-Infinity
+        valid = (v === args.exact);
       } else {
         let min;
-        if (valid && _isNumber(args.min) && !_isNaN(args.min)) {
+        if (valid && _isFinite(args.min)) { // ignore if NaN, +/-Infinity
           min = args.min;
           valid = (v >= args.min);
         }
 
-        if (valid && _isNumber(args.max) && !_isNaN(args.max)) {
+        if (valid && _isFinite(args.max)) { // ignore if NaN, +/-Infinity
           if (min === undefined || args.max >= min) {
             valid = (v <= args.max);
           } // else, ignore
@@ -52,4 +46,4 @@ export const validator = function isNumber(v, q = qualifiers.REQUIRED, args) {
   return valid;
 };
 
-export const type = types.NUMBER;
+export const type = types.FINITE;

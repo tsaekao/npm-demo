@@ -1,16 +1,18 @@
 ////// Validation Module
 
-import {default as _isArray} from 'lodash/isArray';
-import {default as _isObject} from 'lodash/isObject';
-import {default as _isObjectLike} from 'lodash/isObjectLike';
-import {default as _isMap} from 'lodash/isMap';
-import {default as _isWeakMap} from 'lodash/isWeakMap';
-import {default as _isSet} from 'lodash/isSet';
-import {default as _isWeakSet} from 'lodash/isWeakSet';
 import {default as _forEach} from 'lodash/forEach';
+import {default as _isSet} from 'lodash/isSet';
 
-import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from './types';
-import qualifiers from './qualifiers';
+import {validator as isArray} from './isArray';
+import {validator as isObject} from './isObject';
+import {validator as isString} from './isString';
+import {validator as isBoolean} from './isBoolean';
+import {validator as isNumber} from './isNumber';
+import {validator as isSymbol} from './isSymbol';
+import {validator as isFunction} from './isFunction';
+
+import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from '../types';
+import qualifiers from '../qualifiers';
 
 /**
  * RTV Validation Namespace
@@ -30,20 +32,27 @@ import qualifiers from './qualifiers';
 //  use these methods for any type validation needed.
 //
 // The only functions that should be defined directly in this module are those
-//  that don't map to a type, such as `isTypeset()` or `isPrimitive()`. Where
-//  possible, these functions should use the type validators rather than third-party
-//  code.
+//  that don't map to a type as defined in ../types.js, such as `isTypeset()` or
+//  `isPrimitive()`.
+//
+// Where possible, these functions should use the other type validators rather
+//  than third-party code (e.g. isArray.js needs to validate some of its arguments
+//  as finite numbers, so it should use isFinite.js to do that validation rather
+//  than 'lodash/isFinite', and let isFinite.js decide whether 'lodash/isFinite'
+//  is the right way to validate a finite number). This way, it makes it much
+//  easier later on to change third-party libraries, or add additional logic to
+//  how a type is validated.
 
-// NOTE: Validator modules are essentially precursors to plugins. For the time being,
-//  the expected interface for a validator module is:
+// NOTE: Validator modules are essentially precursors to plugins. For the time
+//  being, the expected interface for a validator module is:
 //  - 'validator: function': has the rtvref.validation.validator signature
 //  - 'type: string': The type the validator validates (e.g. rtvref.types.STRING
 //    for the STRING type validator)
 //
 // There can only be one validator for any given type.
 //
-// Later, if we ever expose a plugin architecture, we might change this to pass
-//  some type of registration function into the plugin, or the plugin calls a
+// TODO: Later, if we ever expose a plugin architecture, we might change this to
+//  pass some type of registration function into the plugin, or the plugin calls a
 //  registration method on rtv, or maybe something else. Whatever we do, the basics
 //  would be to register a new type and provide the function for rtv to call to
 //  validate values for that type. Perhaps we might even allow overriding the
@@ -51,6 +60,20 @@ import qualifiers from './qualifiers';
 
 /**
  * Type Validator Function.
+ *
+ * NOTE: A validator must always give __precedence__ to
+ *  {@link rtvref.types.rules qualifier rules} for the type it's validating over
+ *  any arguments specified.
+ *
+ * NOTE: A validator __must not__ attempt to validate values considering basic
+ *  {@link rtvref.qualifiers qualifier} rules like allowing `null` when EXPECTED
+ *  vs not when REQUIRED, unless the type itself allows or disallows these
+ *  special values. A validator should focus on checking for its type. For example,
+ *  the {@link rtvref.validation.isString isString validator} requires the value
+ *  to be a string, excluding `null` and `undefined` regardless of the qualifier.
+ *  It does, however, allow an empty string if the qualifier is not REQUIRED because
+ *  that is one of its {@link rtvref.types.STRING type-specific qualifier rules}.
+ *
  * @function rtvref.validation.validator
  * @param {*} value The value to validate.
  * @param {string} [qualifier] The validation qualifier from the immediate
@@ -66,40 +89,13 @@ import qualifiers from './qualifiers';
  */
 
 /**
- * Determines if a value is a map.
- * @function rtvref.validation.isMap
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.MAP}
- */
-export const isMap = _isMap;
-
-/**
- * Determines if a value is a weak map.
- * @function rtvref.validation.isWeakMap
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.WEAK_MAP}
- */
-export const isWeakMap = _isWeakMap;
-
-/**
  * Determines if a value is a set.
  * @function rtvref.validation.isSet
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.SET}
  */
-export const isSet = _isSet;
-
-/**
- * Determines if a value is a weak set.
- * @function rtvref.validation.isWeakSet
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.WEAK_SET}
- */
-export const isWeakSet = _isWeakSet;
+export const isSet = _isSet; // DEBUG TODO move to validator after impl isMap
 
 /**
  * Determines if a value is a JavaScript {@link rtvref.types.primitives primitive}.
@@ -108,35 +104,11 @@ export const isWeakSet = _isWeakSet;
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
 export const isPrimitive = function(v) {
-  return v === undefined ||
-      v === null ||
-      isString(v, {emptyOk: true}) || // empty strings are still strings in this case
+  return v === undefined || v === null ||
+      isString(v, qualifiers.EXPECTED) || // empty strings are OK in this case
       isBoolean(v) ||
       isNumber(v) ||
       isSymbol(v);
-};
-
-/**
- * Determines if a value is _any_ type of object except a primitive.
- * @function rtvref.validation.isAnyObject
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- */
-export const isAnyObject = _isObject;
-
-/**
- * Determines if a value is an object that extends from `JavaScript.Object` and
- *  is not a function, array, regex, map, weak map, set, weak set, or primitive.
- * @function rtvref.validation.isObject
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- */
-export const isObject = function(v) {
-  return _isObjectLike(v) && // excludes primitives and functions
-      !isArray(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
-      !isMap(v) && !isWeakMap(v) && // excludes weak/maps
-      !isSet(v) && !isWeakSet(v) && // excludes weak/sets
-      !isRegExp(v); // excludes regex
 };
 
 /**
