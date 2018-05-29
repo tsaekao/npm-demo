@@ -89,15 +89,6 @@ import qualifiers from '../qualifiers';
  */
 
 /**
- * Determines if a value is a set.
- * @function rtvref.validation.isSet
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if it is; `false` otherwise.
- * @see {@link rtvref.types.SET}
- */
-export const isSet = _isSet; // DEBUG TODO move to validator after impl isMap
-
-/**
  * Determines if a value is a JavaScript {@link rtvref.types.primitives primitive}.
  * @function rtvref.validation.isPrimitive
  * @param {*} v Value to validate.

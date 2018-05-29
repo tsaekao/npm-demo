@@ -1,6 +1,6 @@
-////// isMap validator
+////// isSet validator
 
-import {default as _isMap} from 'lodash/isMap';
+import {default as _isSet} from 'lodash/isSet';
 
 import {validator as isFinite} from './isFinite';
 import {validator as isString} from './isString';
@@ -25,16 +25,16 @@ const isStringTypeset = function(ts) {
 
 /**
  * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.MAP MAP} type.
- * @function rtvref.validation.isMap
+ *  {@link rtvref.types.SET SET} type.
+ * @function rtvref.validation.isSet
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export const validator = function isMap(v, q = qualifiers.REQUIRED, args) {
-  let valid = _isMap(v);
+export const validator = function isSet(v, q = qualifiers.REQUIRED, args) {
+  let valid = _isSet(v);
 
   if (valid) {
     if (valid && args) { // then check args
@@ -43,38 +43,17 @@ export const validator = function isMap(v, q = qualifiers.REQUIRED, args) {
         valid = (v.size >= args.length);
       }
 
-      // remaining args, if specified, require iterating potentially the entire map
+      // remaining args, if specified, require iterating potentially the entire set
       if (valid) {
-        // get the typeset for keys
-        const tsKeys = isTypeset(args.keys) ? args.keys : undefined;
-        // get the key expression only if the keys are expected to be strings
-        const tsKeysIsString = isStringTypeset(tsKeys);
-        const keyExp = (tsKeysIsString && isString(args.keyExp)) ?
-          args.keyExp : undefined;
-        // get the key expression flags only if we have a key expression
-        const keyFlagSpec = (keyExp && isString(args.keyFlagSpec)) ?
-          args.keyFlagSpec : undefined;
         // get the typeset for values
         const tsValues = isTypeset(args.values) ? args.values : undefined;
 
-        if (tsKeys || tsValues) {
-          const reKeys = keyExp ? new RegExp(keyExp, keyFlagSpec) : undefined;
+        if (tsValues) {
           const it = v.entries(); // iterator
 
           for (let elem of it) {
-            const [key, value] = elem.value;
-
-            if (tsKeys) {
-              valid = impl.check(key, tsKeys); // check key against typeset
-              if (valid && tsKeysIsString && reKeys) {
-                valid = reKeys.test(key); // check key against regex since it's a string
-              }
-            }
-
-            if (valid && tsValues) {
-              valid = impl.check(value, tsValues); // check value against typeset
-            }
-
+            const value = elem.value[1];
+            valid = impl.check(value, tsValues); // check value against typeset
             if (!valid) {
               break;
             }
@@ -87,4 +66,4 @@ export const validator = function isMap(v, q = qualifiers.REQUIRED, args) {
   return valid;
 };
 
-export const type = types.MAP;
+export const type = types.SET;
