@@ -14,7 +14,10 @@ describe('module: lib/validation/isAnyObject', function() {
     it('should validate any object', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
-      _.pull(validTypes, types.ANY, types.STRING, types.BOOLEAN, types.NUMBER, types.SYMBOL); // remove primitives
+
+      // remove primitives
+      _.pull(validTypes, types.ANY, types.STRING, types.BOOLEAN, types.NUMBER,
+          types.FINITE, types.INT, types.FLOAT, types.SYMBOL);
 
       let values = [];
       _.forEach(validTypes, function(type) {

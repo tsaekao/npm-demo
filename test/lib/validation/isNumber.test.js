@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import * as vtu from './validationTestUtil';
 import types from '../../../src/lib/types';
+import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validation/isNumber';
 
 describe('module: lib/validation/isNumber', function() {
@@ -22,8 +23,8 @@ describe('module: lib/validation/isNumber', function() {
       // remove subset types
       _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.FLOAT);
 
-      // build a list of all remaining invalid values
-      let invalidValues = [];
+      // build a list of all remaining invalid values, along with NaN
+      let invalidValues = [NaN];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);
       });
@@ -54,7 +55,7 @@ describe('module: lib/validation/isNumber', function() {
       expect(val.validator(NaN, undefined, {exact: NaN})).to.be.false; // qualifier takes precedence
       expect(val.validator(NaN, qualifiers.EXPECTED, {exact: NaN})).to.be.true;
 
-      expect(val.validator(7, undefined, {exact: '7'})).to.be.false; // ignored
+      expect(val.validator(7, undefined, {exact: '6'})).to.be.true; // ignored
       expect(val.validator(Infinity, undefined, {exact: Infinity})).to.be.true; // ignored
       expect(val.validator(-Infinity, undefined, {exact: -Infinity})).to.be.true; // ignored
       expect(val.validator(Number.POSITIVE_INFINITY, undefined, {exact: Number.POSITIVE_INFINITY})).to.be.true; // ignored
@@ -70,10 +71,10 @@ describe('module: lib/validation/isNumber', function() {
     it('checks for a minimum number', function() {
       expect(val.validator(7, undefined, {min: 7})).to.be.true;
       expect(val.validator(7, undefined, {min: 0})).to.be.true;
-      expect(val.validator(7, undefined, {min: '7'})).to.be.true; // ignored
+      expect(val.validator(7, undefined, {min: '8'})).to.be.true; // ignored
       expect(val.validator(7, undefined, {min: NaN})).to.be.true; // ignored
       expect(val.validator(-8, undefined, {min: -7})).to.be.false;
-      expect(val.validator(7, undefined, {min: 6})).to.be.false;
+      expect(val.validator(7, undefined, {min: 6})).to.be.true;
       expect(val.validator(7, undefined, {min: Infinity})).to.be.false;
       expect(val.validator(7, undefined, {min: -Infinity})).to.be.true;
       expect(val.validator(7, undefined, {min: Number.POSITIVE_INFINITY})).to.be.false;
@@ -94,7 +95,7 @@ describe('module: lib/validation/isNumber', function() {
     });
 
     it('max ignored if less than min', function() {
-      expect(val.validator(7, undefined, {min: 8, max: 6})).to.be.true;
+      expect(val.validator(7, undefined, {min: 7, max: 6})).to.be.true;
     });
   });
 });

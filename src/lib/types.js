@@ -94,7 +94,7 @@ import Enumeration from './Enumeration';
  *  iterated.
  *
  * @typedef {Object} rtvref.types.collection_args
- * @property {number} [length] The number of elements required in
+ * @property {number} [length] The exact number of elements required in
  *  the collection. A negative value allows for any number of entries. Zero
  *  requires an empty collection. Ignored if not a
  *  {@link rtvref.types.FINITE FINITE} number.

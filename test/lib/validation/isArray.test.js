@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import * as vtu from './validationTestUtil';
 import types from '../../../src/lib/types';
+import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validation/isArray';
 
 describe('module: lib/validation/isArray', function() {
@@ -33,12 +34,12 @@ describe('module: lib/validation/isArray', function() {
       const arr = [7];
 
       expect(val.validator([], undefined, {length: 0})).to.be.true;
+      expect(val.validator([], undefined, {length: -0})).to.be.true;
       expect(val.validator(arr, undefined, {length: 1})).to.be.true;
       expect(val.validator(arr, undefined, {length: 2})).to.be.false;
       expect(val.validator(arr, undefined, {length: 1.1})).to.be.false;
 
       expect(val.validator(arr, undefined, {length: '1'})).to.be.true; // ignored
-      expect(val.validator(arr, undefined, {length: -0})).to.be.true; // ignored
       expect(val.validator(arr, undefined, {length: -1})).to.be.true; // ignored
       expect(val.validator(arr, undefined, {length: NaN})).to.be.true; // ignored
       expect(val.validator(arr, undefined, {length: Infinity})).to.be.true; // ignored

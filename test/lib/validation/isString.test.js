@@ -6,7 +6,7 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validation/isString';
 
-describe.only('module: lib/validation/isString', function() {
+describe('module: lib/validation/isString', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.STRING);
@@ -46,7 +46,7 @@ describe.only('module: lib/validation/isString', function() {
 
     it('checks for min length if "exact" is not specified', function() {
       expect(val.validator('minimum', undefined, {min: 7})).to.be.true;
-      expect(val.validator('minimum', undefined, {min: 6})).to.be.false;
+      expect(val.validator('minimum', undefined, {min: 8})).to.be.false;
       expect(val.validator('minimum', undefined, {min: -100})).to.be.true;
       expect(val.validator('minimum', undefined, {min: '100'})).to.be.true; // ignored: not finite
       expect(val.validator('minimum', undefined, {min: NaN})).to.be.true; // ignored: not finite
@@ -58,7 +58,7 @@ describe.only('module: lib/validation/isString', function() {
 
     it('min takes precedence over partial', function() {
       expect(val.validator('minimum', undefined, {min: 7, partial: 'nim'})).to.be.true;
-      expect(val.validator('minimum', undefined, {min: 6, partial: 'nim'})).to.be.false;
+      expect(val.validator('minimum', undefined, {min: 8, partial: 'nim'})).to.be.false;
       expect(val.validator('minimum', undefined, {min: -100, partial: 'foo'})).to.be.false;
       expect(val.validator('minimum', undefined, {min: -1, partial: 'nim'})).to.be.true;
       expect(val.validator('', undefined, {min: 0, partial: ''})).to.be.false; // default qualifier requires non-empty

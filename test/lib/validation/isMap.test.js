@@ -4,7 +4,7 @@ import * as vtu from './validationTestUtil';
 import types from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isMap';
 
-describe('module: lib/validation/isMap', function() {
+describe.only('module: lib/validation/isMap', function() { // DEBUG remove 'only'
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.MAP);
@@ -27,9 +27,9 @@ describe('module: lib/validation/isMap', function() {
       expect(val.validator(map, undefined, {length: 3})).to.be.true;
       expect(val.validator(map, undefined, {length: 2})).to.be.false;
       expect(val.validator(map, undefined, {length: 1.1})).to.be.false;
+      expect(val.validator(map, undefined, {length: -0})).to.be.false;
 
       expect(val.validator(map, undefined, {length: '1'})).to.be.true; // ignored
-      expect(val.validator(map, undefined, {length: -0})).to.be.true; // ignored
       expect(val.validator(map, undefined, {length: -1})).to.be.true; // ignored
       expect(val.validator(map, undefined, {length: NaN})).to.be.true; // ignored
       expect(val.validator(map, undefined, {length: Infinity})).to.be.true; // ignored
@@ -54,7 +54,7 @@ describe('module: lib/validation/isMap', function() {
     });
 
     it('checks for strings keys that match a pattern', function() {
-      let map = new Map([1, 'one'], [2, 'two']);
+      let map = new Map([[1, 'one'], [2, 'two']]);
 
       expect(val.validator(map, undefined, {
         keys: types.FINITE,
@@ -120,9 +120,9 @@ describe('module: lib/validation/isMap', function() {
 
     it('checks for keys and values with specified typeset', function() {
       const map = new Map([
-        [1, new Map(['1', true])],
-        [2, new Map(['2', false])],
-        [3, new Map(['3', true])]
+        [1, new Map([['1', true]])],
+        [2, new Map([['2', false]])],
+        [3, new Map([['3', true]])]
       ]);
 
       expect(val.validator(map, undefined, {

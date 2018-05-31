@@ -37,7 +37,7 @@ export const validator = function isNumber(v, q = qualifiers.REQUIRED, args) {
         let min;
         if (valid && _isNumber(args.min) && !_isNaN(args.min)) {
           min = args.min;
-          valid = (v >= args.min);
+          valid = (v >= min);
         }
 
         if (valid && _isNumber(args.max) && !_isNaN(args.max)) {

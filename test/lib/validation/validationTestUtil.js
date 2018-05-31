@@ -27,7 +27,7 @@ export const getValidValues = function(type) {
 
     [types.NUMBER]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,
       Number.MAX_VALUE, Number.MAX_SAFE_INTEGER, Number.EPSILON,
-      7.7, -7.7, NaN, Infinity, -Infinity, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY],
+      7.7, -7.7, Infinity, -Infinity, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY],
     [types.FINITE]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,
       Number.MAX_VALUE, Number.MAX_SAFE_INTEGER, Number.EPSILON, 7.7, -7.7],
     [types.INT]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,

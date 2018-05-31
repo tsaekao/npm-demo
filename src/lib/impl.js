@@ -5,7 +5,7 @@ import {validator as isBoolean} from './validation/isBoolean';
 import {validator as isArray} from './validation/isArray';
 import {validator as isFunction} from './validation/isFunction';
 import {validator as isObject} from './validation/isObject';
-import {isTypeset} from './validation';
+import {isTypeset} from './validation/validation';
 import {DEFAULT_OBJECT_TYPE, default as types} from './types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
 import {print} from './util';

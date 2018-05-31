@@ -23,22 +23,20 @@ import qualifiers from '../qualifiers';
 export const validator = function isFinite(v, q = qualifiers.REQUIRED, args) {
   let valid = _isFinite(v); // eliminates NaN, +/-Infinity
 
-  if (valid) {
-    if (valid && args) { // then check args
-      if (_isFinite(args.exact)) { // ignore if NaN, +/-Infinity
-        valid = (v === args.exact);
-      } else {
-        let min;
-        if (valid && _isFinite(args.min)) { // ignore if NaN, +/-Infinity
-          min = args.min;
-          valid = (v >= args.min);
-        }
+  if (valid && args) { // then check args
+    if (_isFinite(args.exact)) { // ignore if NaN, +/-Infinity
+      valid = (v === args.exact);
+    } else {
+      let min;
+      if (valid && _isFinite(args.min)) { // ignore if NaN, +/-Infinity
+        min = args.min;
+        valid = (v >= min);
+      }
 
-        if (valid && _isFinite(args.max)) { // ignore if NaN, +/-Infinity
-          if (min === undefined || args.max >= min) {
-            valid = (v <= args.max);
-          } // else, ignore
-        }
+      if (valid && _isFinite(args.max)) { // ignore if NaN, +/-Infinity
+        if (min === undefined || args.max >= min) {
+          valid = (v <= args.max);
+        } // else, ignore
       }
     }
   }

@@ -114,8 +114,8 @@ export const isPrimitive = function(v) {
  * @see {@link rtvref.types.typeset}
  */
 export const isTypeset = function(v, {deep = false, fullyQualified = false} = {}) {
-  let valid = !!(isObject(v) || (isString(v) && types.check(v)) || isFunction(v) ||
-      (isArray(v) && v.length > 0));
+  let valid = !!(v && (isObject(v) || (isString(v) && types.check(v)) || isFunction(v) ||
+      (isArray(v) && v.length > 0)));
 
   // FIRST: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {

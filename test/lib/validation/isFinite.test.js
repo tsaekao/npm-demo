@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import * as vtu from './validationTestUtil';
 import types from '../../../src/lib/types';
+import qualifiers from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isFinite';
 
 describe('module: lib/validation/isFinite', function() {
@@ -52,7 +53,7 @@ describe('module: lib/validation/isFinite', function() {
       expect(val.validator(7, undefined, {exact: 8})).to.be.false;
       expect(val.validator(7.7, undefined, {exact: 7.6 + Number.EPSILON})).to.be.false;
 
-      expect(val.validator(7, undefined, {exact: '7'})).to.be.false; // ignored
+      expect(val.validator(7, undefined, {exact: '6'})).to.be.true; // ignored
       expect(val.validator(NaN, undefined, {exact: NaN})).to.be.false; // ignored
       expect(val.validator(NaN, qualifiers.EXPECTED, {exact: NaN})).to.be.false; // ignored
       expect(val.validator(Infinity, undefined, {exact: Infinity})).to.be.false; // ignored
@@ -73,7 +74,7 @@ describe('module: lib/validation/isFinite', function() {
       expect(val.validator(7, undefined, {min: '7'})).to.be.true; // ignored
       expect(val.validator(7, undefined, {min: NaN})).to.be.true; // ignored
       expect(val.validator(-8, undefined, {min: -7})).to.be.false;
-      expect(val.validator(7, undefined, {min: 6})).to.be.false;
+      expect(val.validator(7, undefined, {min: 8})).to.be.false;
       expect(val.validator(7, undefined, {min: Infinity})).to.be.true; // ignored
       expect(val.validator(7, undefined, {min: -Infinity})).to.be.true; // ignored
       expect(val.validator(7, undefined, {min: Number.POSITIVE_INFINITY})).to.be.true; // ignored
@@ -94,7 +95,7 @@ describe('module: lib/validation/isFinite', function() {
     });
 
     it('max ignored if less than min', function() {
-      expect(val.validator(7, undefined, {min: 8, max: 6})).to.be.true;
+      expect(val.validator(7, undefined, {min: 7, max: 6})).to.be.true;
     });
   });
 });

@@ -5,7 +5,7 @@ import * as vtu from './validationTestUtil';
 import types, {DEFAULT_OBJECT_TYPE} from '../../../src/lib/types';
 import qualifiers, {DEFAULT_QUALIFIER} from '../../../src/lib/qualifiers';
 import * as util from '../../../src/lib/util';
-import * as val from '../../../src/lib/validation';
+import * as val from '../../../src/lib/validation/validation';
 
 describe('module: lib/validation/validation', function() {
   let validValues;
@@ -108,10 +108,10 @@ describe('module: lib/validation/validation', function() {
       });
 
       it('should validate shallow typesets', function() {
-        let results = vtu.vtu.testValues('isTypeset', val.isTypeset, goodValues);
+        let results = vtu.testValues('isTypeset', val.isTypeset, goodValues);
         expect(results.failures).to.eql([]);
 
-        results = vtu.vtu.testValues('isTypeset', val.isTypeset, badValues);
+        results = vtu.testValues('isTypeset', val.isTypeset, badValues);
         expect(results.passes).to.eql([]);
       });
 

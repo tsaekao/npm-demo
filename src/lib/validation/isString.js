@@ -35,7 +35,7 @@ export const validator = function isString(v, q = qualifiers.REQUIRED, args) {
         let min;
         if (valid && isFinite(args.min) && args.min >= 0) {
           min = args.min;
-          valid = (v.length >= args.min);
+          valid = (v.length >= min);
         }
 
         if (valid && isFinite(args.max) && args.max >= 0) {
