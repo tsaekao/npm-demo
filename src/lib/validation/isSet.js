@@ -27,7 +27,7 @@ export const validator = function isSet(v, q = qualifiers.REQUIRED, args) {
   if (valid && args) { // then check args
     // start with the easiest/most efficient test: length
     if (valid && isFinite(args.length) && args.length >= 0) {
-      valid = (v.size >= args.length);
+      valid = (v.size === args.length);
     }
 
     // remaining args, if specified, require iterating potentially the entire set

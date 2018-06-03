@@ -62,6 +62,7 @@ const RtvError = function(value, typeset, path, cause) {
      * @readonly
      * @name rtvref.RtvError#valid
      * @type {boolean}
+     * @see {@link rtvref.RtvSuccess#valid}
      */
     valid: {
       enumerable: true,

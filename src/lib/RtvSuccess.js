@@ -18,6 +18,7 @@ export default class RtvSuccess {
        * @readonly
        * @name rtvref.RtvSuccess#valid
        * @type {boolean}
+       * @see {@link rtvref.RtvError#valid}
        */
       valid: {
         enumerable: true,

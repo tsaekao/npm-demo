@@ -5,60 +5,6 @@
 */
 var version = "0.0.1";
 
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
-
-var _freeGlobal = freeGlobal;
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = _freeGlobal || freeSelf || Function('return this')();
-
-var _root = root;
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = _root.isFinite;
-
-/**
- * Checks if `value` is a finite primitive number.
- *
- * **Note:** This method is based on
- * [`Number.isFinite`](https://mdn.io/Number/isFinite).
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
- * @example
- *
- * _.isFinite(3);
- * // => true
- *
- * _.isFinite(Number.MIN_VALUE);
- * // => true
- *
- * _.isFinite(Infinity);
- * // => false
- *
- * _.isFinite('3');
- * // => false
- */
-function isFinite(value) {
-  return typeof value == 'number' && nativeIsFinite(value);
-}
-
-var _isFinite = isFinite;
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -86,6 +32,59 @@ var createClass = function () {
     if (protoProps) defineProperties(Constructor.prototype, protoProps);
     if (staticProps) defineProperties(Constructor, staticProps);
     return Constructor;
+  };
+}();
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
   };
 }();
 
@@ -1250,6 +1249,95 @@ var types = new Enumeration(function () {
   return types;
 }());
 
+////// isAny validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.ANY ANY} type.
+ * @function rtvref.validation.isAny
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator = function isAny(v) {
+  return true; // anything goes, even undefined and null
+};
+
+var type = types.ANY;
+
+////// isBoolean validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
+ *
+ * Determines if a value is a boolean literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new Boolean(true)`, which is an object that is a boolean.
+ *
+ * @function rtvref.validation.isBoolean
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$1 = function isBoolean(v) {
+  return v === true || v === false;
+};
+
+var type$1 = types.BOOLEAN;
+
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+
+var _freeGlobal = freeGlobal;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = _freeGlobal || freeSelf || Function('return this')();
+
+var _root = root;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeIsFinite = _root.isFinite;
+
+/**
+ * Checks if `value` is a finite primitive number.
+ *
+ * **Note:** This method is based on
+ * [`Number.isFinite`](https://mdn.io/Number/isFinite).
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
+ * @example
+ *
+ * _.isFinite(3);
+ * // => true
+ *
+ * _.isFinite(Number.MIN_VALUE);
+ * // => true
+ *
+ * _.isFinite(Infinity);
+ * // => false
+ *
+ * _.isFinite('3');
+ * // => false
+ */
+function isFinite(value) {
+  return typeof value == 'number' && nativeIsFinite(value);
+}
+
+var _isFinite = isFinite;
+
 ////// Qualifier Definitions
 
 /**
@@ -1345,7 +1433,7 @@ var qualifiers = new Enumeration({
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-var validator = function isFinite(v) {
+var validator$2 = function isFinite(v) {
   var args = arguments[2];
 
   var valid = _isFinite(v); // eliminates NaN, +/-Infinity
@@ -1375,6 +1463,8 @@ var validator = function isFinite(v) {
   return valid;
 };
 
+var type$2 = types.FINITE;
+
 ////// isString validator
 
 /**
@@ -1392,7 +1482,7 @@ var validator = function isFinite(v) {
  * @param {rtvref.types.STRING_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-var validator$1 = function isString(v) {
+var validator$3 = function isString(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : qualifiers.REQUIRED;
   var args = arguments[2];
 
@@ -1409,12 +1499,12 @@ var validator$1 = function isString(v) {
         valid = v === args.exact;
       } else {
         var min = void 0;
-        if (valid && validator(args.min) && args.min >= 0) {
+        if (valid && validator$2(args.min) && args.min >= 0) {
           min = args.min;
           valid = v.length >= min;
         }
 
-        if (valid && validator(args.max) && args.max >= 0) {
+        if (valid && validator$2(args.max) && args.max >= 0) {
           if (min === undefined || args.max >= min) {
             valid = v.length <= args.max;
           } // else, ignore
@@ -1430,89 +1520,7 @@ var validator$1 = function isString(v) {
   return valid;
 };
 
-////// isBoolean validator
-
-/**
- * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
- *
- * Determines if a value is a boolean literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new Boolean(true)`, which is an object that is a boolean.
- *
- * @function rtvref.validation.isBoolean
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if validated; `false` otherwise.
- */
-var validator$2 = function isBoolean(v) {
-  return v === true || v === false;
-};
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-var isArray_1 = isArray;
-
-////// isArray validator
-
-/**
- * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.ARRAY ARRAY} type.
- * @function rtvref.validation.isArray
- * @param {*} v Value to validate.
- * @param {string} [q] Validation qualifier. Defaults to
- *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
- * @param {rtvref.types.ARRAY_args} [args] Type arguments.
- * @returns {boolean} `true` if validated; `false` otherwise.
- */
-var validator$3 = function isArray(v) {
-  var args = arguments[2];
-
-  var valid = isArray_1(v);
-
-  if (valid && args) {
-    // then check args
-    if (validator(args.length) && args.length >= 0) {
-      valid = v.length === args.length;
-    } else {
-      var min = void 0;
-      if (valid && validator(args.min) && args.min >= 0) {
-        min = args.min;
-        valid = v.length >= min;
-      }
-
-      if (valid && validator(args.max) && args.max >= 0) {
-        if (min === undefined || args.max >= min) {
-          valid = v.length <= args.max;
-        } // else, ignore
-      }
-    }
-  }
-
-  return valid;
-};
+var type$3 = types.STRING;
 
 /** Built-in value references. */
 var Symbol$1 = _root.Symbol;
@@ -1692,6 +1700,8 @@ var validator$4 = function isFunction(v) {
   return isFunction_1(v);
 };
 
+var type$4 = types.FUNCTION;
+
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -1721,6 +1731,355 @@ function isObjectLike(value) {
 }
 
 var isObjectLike_1 = isObjectLike;
+
+/** `Object#toString` result references. */
+var regexpTag = '[object RegExp]';
+
+/**
+ * The base implementation of `_.isRegExp` without Node.js optimizations.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
+ */
+function baseIsRegExp(value) {
+  return isObjectLike_1(value) && _baseGetTag(value) == regexpTag;
+}
+
+var _baseIsRegExp = baseIsRegExp;
+
+/**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
+var _baseUnary = baseUnary;
+
+var _nodeUtil = createCommonjsModule(function (module, exports) {
+/** Detect free variable `exports`. */
+var freeExports = 'object' == 'object' && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Detect free variable `process` from Node.js. */
+var freeProcess = moduleExports && _freeGlobal.process;
+
+/** Used to access faster Node.js helpers. */
+var nodeUtil = (function() {
+  try {
+    return freeProcess && freeProcess.binding && freeProcess.binding('util');
+  } catch (e) {}
+}());
+
+module.exports = nodeUtil;
+});
+
+/* Node.js helper references. */
+var nodeIsRegExp = _nodeUtil && _nodeUtil.isRegExp;
+
+/**
+ * Checks if `value` is classified as a `RegExp` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
+ * @example
+ *
+ * _.isRegExp(/abc/);
+ * // => true
+ *
+ * _.isRegExp('/abc/');
+ * // => false
+ */
+var isRegExp = nodeIsRegExp ? _baseUnary(nodeIsRegExp) : _baseIsRegExp;
+
+var isRegExp_1 = isRegExp;
+
+////// isRegExp validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.REGEXP REGEXP} type.
+ * @function rtvref.validation.isRegExp
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$5 = function isRegExp(v) {
+  return isRegExp_1(v);
+};
+
+var type$5 = types.REGEXP;
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike_1(value) && _baseGetTag(value) == symbolTag);
+}
+
+var isSymbol_1 = isSymbol;
+
+////// isSymbol validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.SYMBOL SYMBOL} type.
+ * @function rtvref.validation.isSymbol
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$6 = function isSymbol(v) {
+  return isSymbol_1(v);
+};
+
+var type$6 = types.SYMBOL;
+
+/** `Object#toString` result references. */
+var numberTag = '[object Number]';
+
+/**
+ * Checks if `value` is classified as a `Number` primitive or object.
+ *
+ * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are
+ * classified as numbers, use the `_.isFinite` method.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a number, else `false`.
+ * @example
+ *
+ * _.isNumber(3);
+ * // => true
+ *
+ * _.isNumber(Number.MIN_VALUE);
+ * // => true
+ *
+ * _.isNumber(Infinity);
+ * // => true
+ *
+ * _.isNumber('3');
+ * // => false
+ */
+function isNumber(value) {
+  return typeof value == 'number' ||
+    (isObjectLike_1(value) && _baseGetTag(value) == numberTag);
+}
+
+var isNumber_1 = isNumber;
+
+/**
+ * Checks if `value` is `NaN`.
+ *
+ * **Note:** This method is based on
+ * [`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as
+ * global [`isNaN`](https://mdn.io/isNaN) which returns `true` for
+ * `undefined` and other non-number values.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
+ * @example
+ *
+ * _.isNaN(NaN);
+ * // => true
+ *
+ * _.isNaN(new Number(NaN));
+ * // => true
+ *
+ * isNaN(undefined);
+ * // => true
+ *
+ * _.isNaN(undefined);
+ * // => false
+ */
+function isNaN(value) {
+  // An `NaN` primitive is the only value that is not equal to itself.
+  // Perform the `toStringTag` check first to avoid errors with some
+  // ActiveX objects in IE.
+  return isNumber_1(value) && value != +value;
+}
+
+var _isNaN = isNaN;
+
+////// isNumber validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.NUMBER NUMBER} type.
+ *
+ * Determines if a value is a number literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new Number(1)`, which is an object that is a number.
+ *
+ * @function rtvref.validation.isNumber
+ * @param {*} v Value to validate.
+ * @param {string} [q] Validation qualifier. Defaults to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {rtvref.types.numeric_args} [args] Type arguments.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$7 = function isNumber(v) {
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : qualifiers.REQUIRED;
+  var args = arguments[2];
+
+  var valid = typeof v === 'number';
+
+  if (valid) {
+    if (q === qualifiers.REQUIRED) {
+      // cannot be NaN
+      valid = !_isNaN(v);
+    }
+
+    if (valid && args) {
+      // then check args
+      if (isNumber_1(args.exact)) {
+        // NaN OK for this arg (careful: NaN !== NaN...)
+        valid = v === args.exact || _isNaN(v) && _isNaN(args.exact);
+      } else {
+        var min = void 0;
+        if (valid && isNumber_1(args.min) && !_isNaN(args.min)) {
+          min = args.min;
+          valid = v >= min;
+        }
+
+        if (valid && isNumber_1(args.max) && !_isNaN(args.max)) {
+          if (min === undefined || args.max >= min) {
+            valid = v <= args.max;
+          } // else, ignore
+        }
+      }
+    }
+  }
+
+  return valid;
+};
+
+var type$7 = types.NUMBER;
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+var isArray_1 = isArray;
+
+////// isArray validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.ARRAY ARRAY} type.
+ * @function rtvref.validation.isArray
+ * @param {*} v Value to validate.
+ * @param {string} [q] Validation qualifier. Defaults to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {rtvref.types.ARRAY_args} [args] Type arguments.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$8 = function isArray(v) {
+  var args = arguments[2];
+
+  var valid = isArray_1(v);
+
+  if (valid && args) {
+    // then check args
+    if (validator$2(args.length) && args.length >= 0) {
+      valid = v.length === args.length;
+    } else {
+      var min = void 0;
+      if (valid && validator$2(args.min) && args.min >= 0) {
+        min = args.min;
+        valid = v.length >= min;
+      }
+
+      if (valid && validator$2(args.max) && args.max >= 0) {
+        if (min === undefined || args.max >= min) {
+          valid = v.length <= args.max;
+        } // else, ignore
+      }
+    }
+  }
+
+  return valid;
+};
+
+var type$8 = types.ARRAY;
+
+////// isAnyObject validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.ANY_OBJECT ANY_OBJECT} type.
+ *
+ * Determines if a value is _any_ type of object except a primitive.
+ *
+ * @function rtvref.validation.isAnyObject
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$9 = function isAnyObject(v) {
+  return isObject_1(v);
+};
+
+var type$9 = types.ANY_OBJECT;
 
 /** Used to detect overreaching core-js shims. */
 var coreJsData = _root['__core-js_shared__'];
@@ -1937,44 +2296,6 @@ function baseIsMap(value) {
 
 var _baseIsMap = baseIsMap;
 
-/**
- * The base implementation of `_.unary` without support for storing metadata.
- *
- * @private
- * @param {Function} func The function to cap arguments for.
- * @returns {Function} Returns the new capped function.
- */
-function baseUnary(func) {
-  return function(value) {
-    return func(value);
-  };
-}
-
-var _baseUnary = baseUnary;
-
-var _nodeUtil = createCommonjsModule(function (module, exports) {
-/** Detect free variable `exports`. */
-var freeExports = 'object' == 'object' && exports && !exports.nodeType && exports;
-
-/** Detect free variable `module`. */
-var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
-
-/** Detect the popular CommonJS extension `module.exports`. */
-var moduleExports = freeModule && freeModule.exports === freeExports;
-
-/** Detect free variable `process` from Node.js. */
-var freeProcess = moduleExports && _freeGlobal.process;
-
-/** Used to access faster Node.js helpers. */
-var nodeUtil = (function() {
-  try {
-    return freeProcess && freeProcess.binding && freeProcess.binding('util');
-  } catch (e) {}
-}());
-
-module.exports = nodeUtil;
-});
-
 /* Node.js helper references. */
 var nodeIsMap = _nodeUtil && _nodeUtil.isMap;
 
@@ -2074,9 +2395,11 @@ var isWeakMap_1 = isWeakMap;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-var validator$5 = function isWeakMap(v) {
+var validator$10 = function isWeakMap(v) {
   return isWeakMap_1(v);
 };
+
+var type$10 = types.WEAK_MAP;
 
 /** `Object#toString` result references. */
 var weakSetTag = '[object WeakSet]';
@@ -2113,62 +2436,11 @@ var isWeakSet_1 = isWeakSet;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-var validator$6 = function isWeakSet(v) {
+var validator$11 = function isWeakSet(v) {
   return isWeakSet_1(v);
 };
 
-/** `Object#toString` result references. */
-var regexpTag = '[object RegExp]';
-
-/**
- * The base implementation of `_.isRegExp` without Node.js optimizations.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
- */
-function baseIsRegExp(value) {
-  return isObjectLike_1(value) && _baseGetTag(value) == regexpTag;
-}
-
-var _baseIsRegExp = baseIsRegExp;
-
-/* Node.js helper references. */
-var nodeIsRegExp = _nodeUtil && _nodeUtil.isRegExp;
-
-/**
- * Checks if `value` is classified as a `RegExp` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
- * @example
- *
- * _.isRegExp(/abc/);
- * // => true
- *
- * _.isRegExp('/abc/');
- * // => false
- */
-var isRegExp = nodeIsRegExp ? _baseUnary(nodeIsRegExp) : _baseIsRegExp;
-
-var isRegExp_1 = isRegExp;
-
-////// isRegExp validator
-
-/**
- * {@link rtvref.validation.validator Validator} function for the
- *  {@link rtvref.types.REGEXP REGEXP} type.
- * @function rtvref.validation.isRegExp
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if validated; `false` otherwise.
- */
-var validator$7 = function isRegExp(v) {
-  return isRegExp_1(v);
-};
+var type$11 = types.WEAK_SET;
 
 ////// isObject validator
 
@@ -2183,14 +2455,16 @@ var validator$7 = function isRegExp(v) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-var validator$8 = function isObject(v) {
+var validator$12 = function isObject(v) {
   // no qualifier rules, no args
   return isObjectLike_1(v) && // excludes primitives and functions
-  !validator$3(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
-  !isMap_1(v) && !validator$5(v) && // excludes weak/maps
-  !isSet_1(v) && !validator$6(v) && // excludes weak/sets
-  !validator$7(v); // excludes regex
+  !validator$8(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
+  !isMap_1(v) && !validator$10(v) && // excludes weak/maps
+  !isSet_1(v) && !validator$11(v) && // excludes weak/sets
+  !validator$5(v); // excludes regex
 };
+
+var type$12 = types.OBJECT;
 
 /**
  * A specialized version of `_.forEach` for arrays without support for
@@ -2454,7 +2728,7 @@ var argsTag$1 = '[object Arguments]',
     errorTag = '[object Error]',
     funcTag$1 = '[object Function]',
     mapTag$2 = '[object Map]',
-    numberTag = '[object Number]',
+    numberTag$1 = '[object Number]',
     objectTag$1 = '[object Object]',
     regexpTag$1 = '[object RegExp]',
     setTag$2 = '[object Set]',
@@ -2484,7 +2758,7 @@ typedArrayTags[argsTag$1] = typedArrayTags[arrayTag] =
 typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
 typedArrayTags[dataViewTag$1] = typedArrayTags[dateTag] =
 typedArrayTags[errorTag] = typedArrayTags[funcTag$1] =
-typedArrayTags[mapTag$2] = typedArrayTags[numberTag] =
+typedArrayTags[mapTag$2] = typedArrayTags[numberTag$1] =
 typedArrayTags[objectTag$1] = typedArrayTags[regexpTag$1] =
 typedArrayTags[setTag$2] = typedArrayTags[stringTag] =
 typedArrayTags[weakMapTag$2] = false;
@@ -2832,10 +3106,6 @@ function forEach(collection, iteratee) {
 
 var forEach_1 = forEach;
 
-////// isNumber validator
-
-////// isSymbol validator
-
 ////// Validation Module
 
 /**
@@ -2856,12 +3126,12 @@ var isTypeset = function isTypeset(v) {
       _ref$fullyQualified = _ref.fullyQualified,
       fullyQualified = _ref$fullyQualified === undefined ? false : _ref$fullyQualified;
 
-  var valid = !!(v && (validator$8(v) || validator$1(v) && types.check(v) || validator$4(v) || validator$3(v) && v.length > 0));
+  var valid = !!(v && (validator$12(v) || validator$3(v) && types.check(v) || validator$4(v) || validator$8(v) && v.length > 0));
 
   // FIRST: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
     // must now be an array with at least 2 elements: [qualifier, type]
-    if (validator$3(v) && v.length >= 2) {
+    if (validator$8(v) && v.length >= 2) {
       var usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
       var curType = void 0; // @type {string} current in-scope type
       var argType = void 0; // @type {(string|undefined)} current in-scope type IIF it accepts args
@@ -2888,8 +3158,8 @@ var isTypeset = function isTypeset(v) {
           // more efficient to check for a string first than to always iterate
           //  all qualifiers (or all types, below) when it isn't since we know
           //  they're always strings
-          valid = validator$1(rule) && !!qualifiers.check(rule);
-        } else if (validator$1(rule)) {
+          valid = validator$3(rule) && !!qualifiers.check(rule);
+        } else if (validator$3(rule)) {
           // additional qualifier, or simple type
           if (qualifiers.check(rule)) {
             // cannot have more than one qualifier and qualifier must be in first position
@@ -2913,7 +3183,7 @@ var isTypeset = function isTypeset(v) {
           //  in the last position (and always after the qualifier), and since
           //  the typeset must be FQ'd, we must have an in-scope type
           valid = !!(curType && i + 1 === v.length);
-        } else if (validator$8(rule)) {
+        } else if (validator$12(rule)) {
           // could be a shape, or type args (either way, it's a single object)
           // since the typeset must be fully-qualified, argType must already be
           //  a type that takes arguments, since arguments are always provided
@@ -2943,7 +3213,7 @@ var isTypeset = function isTypeset(v) {
               return valid; // break on first invalid
             });
           }
-        } else if (validator$3(rule)) {
+        } else if (validator$8(rule)) {
           // nested typeset for an array type: in-scope type must be ARRAY
           if (curType === types.ARRAY) {
             // go deep if requested; otherwise, assume it's valid
@@ -2969,7 +3239,7 @@ var isTypeset = function isTypeset(v) {
 
     // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
     //  definition, and deep (if requested)
-  } else if (valid && !fullyQualified && validator$3(v)) {
+  } else if (valid && !fullyQualified && validator$8(v)) {
     var _usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
     var _curType = void 0; // @type {string} current in-scope type
     var _argType = void 0; // @type {(string|undefined)} current in-scope type IIF it accepts args
@@ -2992,7 +3262,7 @@ var isTypeset = function isTypeset(v) {
     // iterate through each element in the typeset array to make sure all required
     //  rules/properties of a typeset are specified
     forEach_1(v, function (rule, i) {
-      if (validator$1(rule)) {
+      if (validator$3(rule)) {
         if (qualifiers.check(rule)) {
           hasQualifier = true;
           valid = i === 0; // must be in the first position
@@ -3016,7 +3286,7 @@ var isTypeset = function isTypeset(v) {
           // if we have a validator but no in-scope type, ANY is implied
           _updateCurType(types.ANY);
         }
-      } else if (validator$8(rule)) {
+      } else if (validator$12(rule)) {
         // could be a shape, or type args (either way, it's just one object)
         // NOTE: for object types, the args are the shapes themselves, except
         //  for CLASS_OBJECT where the shape is specified within the args; still,
@@ -3051,7 +3321,7 @@ var isTypeset = function isTypeset(v) {
             return valid; // break on first invalid
           });
         }
-      } else if (validator$3(rule)) {
+      } else if (validator$8(rule)) {
         // if the current in-scope type is not ARRAY, set it since a nested array
         //  implies the ARRAY type
         if (_curType !== types.ARRAY) {
@@ -3082,7 +3352,7 @@ var isTypeset = function isTypeset(v) {
     // NEXT: if it's a shape descriptor, check if deep is requested as long as it's
     //  valid and does not need to be FQ'd (otherwise, 'v' must be an array and
     //  would be invalid as a FQ'd typeset)
-  } else if (valid && deep && !fullyQualified && validator$8(v)) {
+  } else if (valid && deep && !fullyQualified && validator$12(v)) {
     // we need to deep-validate a shape descriptor, which means each one of its
     //  own-properties must be a valid typeset
     var props = Object.keys(v);
@@ -3096,6 +3366,177 @@ var isTypeset = function isTypeset(v) {
 
   return valid;
 };
+
+////// isMap validator
+
+/**
+ * Determines if a typeset represents a string, and only a string.
+ * @param {rtvref.types.typeset} ts Typeset to check.
+ * @return {boolean} `true` if so; `false` otherwise.
+ */
+var isStringTypeset = function isStringTypeset(ts) {
+  var fqts = fullyQualify(ts);
+
+  // must be `[qualifier, STRING]`, otherwise no
+  return fqts.length === 2 && fqts[1] === types.STRING;
+};
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.MAP MAP} type.
+ * @function rtvref.validation.isMap
+ * @param {*} v Value to validate.
+ * @param {string} [q] Validation qualifier. Defaults to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {rtvref.types.collection_args} [args] Type arguments.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$13 = function isMap(v) {
+  var args = arguments[2];
+
+  var valid = isMap_1(v);
+
+  if (valid && args) {
+    // then check args
+    // start with the easiest/most efficient test: length
+    if (valid && validator$2(args.length) && args.length >= 0) {
+      valid = v.size === args.length;
+    }
+
+    // remaining args, if specified, require iterating potentially the entire map
+    if (valid) {
+      // get the typeset for keys
+      var tsKeys = isTypeset(args.keys) ? args.keys : undefined;
+      // get the key expression only if the keys are expected to be strings
+      var tsKeysIsString = !!(tsKeys && isStringTypeset(tsKeys));
+      var keyExp = tsKeysIsString && validator$3(args.keyExp) ? args.keyExp : undefined;
+      // get the key expression flags only if we have a key expression
+      var keyFlagSpec = keyExp && validator$3(args.keyFlagSpec) ? args.keyFlagSpec : undefined;
+      // get the typeset for values
+      var tsValues = isTypeset(args.values) ? args.values : undefined;
+
+      if (tsKeys || tsValues) {
+        var reKeys = keyExp ? new RegExp(keyExp, keyFlagSpec) : undefined;
+        var it = v.entries(); // iterator
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = it[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var elem = _step.value;
+
+            var _elem = slicedToArray(elem, 2),
+                key = _elem[0],
+                value = _elem[1];
+
+            if (tsKeys) {
+              valid = check(key, tsKeys).valid; // check key against typeset
+              if (valid && tsKeysIsString && reKeys) {
+                valid = reKeys.test(key); // check key against regex since it's a string
+              }
+            }
+
+            if (valid && tsValues) {
+              valid = check(value, tsValues).valid; // check value against typeset
+            }
+
+            if (!valid) {
+              break;
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return valid;
+};
+
+var type$13 = types.MAP;
+
+////// isSet validator
+
+/**
+ * {@link rtvref.validation.validator Validator} function for the
+ *  {@link rtvref.types.SET SET} type.
+ * @function rtvref.validation.isSet
+ * @param {*} v Value to validate.
+ * @param {string} [q] Validation qualifier. Defaults to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {rtvref.types.collection_args} [args] Type arguments.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+var validator$14 = function isSet(v) {
+  var args = arguments[2];
+
+  var valid = isSet_1(v);
+
+  if (valid && args) {
+    // then check args
+    // start with the easiest/most efficient test: length
+    if (valid && validator$2(args.length) && args.length >= 0) {
+      valid = v.size === args.length;
+    }
+
+    // remaining args, if specified, require iterating potentially the entire set
+    if (valid) {
+      // get the typeset for values
+      var tsValues = isTypeset(args.values) ? args.values : undefined;
+
+      if (tsValues) {
+        var it = v.entries(); // iterator
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = it[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var elem = _step.value;
+
+            var value = elem.value[1];
+            valid = check(value, tsValues); // check value against typeset
+            if (!valid) {
+              break;
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return valid;
+};
+
+var type$14 = types.SET;
 
 ////// Utilities
 
@@ -3161,6 +3602,7 @@ var RtvSuccess = function () {
        * @readonly
        * @name rtvref.RtvSuccess#valid
        * @type {boolean}
+       * @see {@link rtvref.RtvError#valid}
        */
       valid: {
         enumerable: true,
@@ -3225,7 +3667,7 @@ var RtvError = function RtvError(value, typeset, path, cause) {
     throw new Error('Invalid typeset: ' + typeset);
   }
 
-  if (!validator$1(path)) {
+  if (!validator$3(path)) {
     throw new Error('Invalid path: ' + path);
   }
 
@@ -3247,6 +3689,7 @@ var RtvError = function RtvError(value, typeset, path, cause) {
      * @readonly
      * @name rtvref.RtvError#valid
      * @type {boolean}
+     * @see {@link rtvref.RtvSuccess#valid}
      */
     valid: {
       enumerable: true,
@@ -3334,14 +3777,112 @@ RtvError.prototype.toString = function () {
   return '{rtvref.RtvError value=' + this.value + ', path=' + this.path + '}';
 };
 
-////// Main Implementation Module
+var _validatorMap;
+
+// @type {Object.<string,function>} Map of validator type (string) to validator
+//  function.
+// TODO: In the future, with plugins, this should be dynamically-generated somehow.
+var validatorMap = (_validatorMap = {}, defineProperty(_validatorMap, type, validator), defineProperty(_validatorMap, type$1, validator$1), defineProperty(_validatorMap, type$3, validator$3), defineProperty(_validatorMap, type$4, validator$4), defineProperty(_validatorMap, type$5, validator$5), defineProperty(_validatorMap, type$6, validator$6), defineProperty(_validatorMap, type$2, validator$2), defineProperty(_validatorMap, type$7, validator$7), defineProperty(_validatorMap, type$8, validator$8), defineProperty(_validatorMap, type$9, validator$9), defineProperty(_validatorMap, type$12, validator$12), defineProperty(_validatorMap, type$13, validator$13), defineProperty(_validatorMap, type$10, validator$10), defineProperty(_validatorMap, type$14, validator$14), defineProperty(_validatorMap, type$11, validator$11), _validatorMap);
+
+/**
+ * RTV Implementation Module
+ * @private
+ * @namespace rtv.impl
+ */
+
+/**
+ * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
+ *  are not fully-qualified).
+ *
+ * This function does not modify the input `typeset`.
+ *
+ * @function rtv.impl.fullyQualify
+ * @param {rtvref.types.typeset} typeset Typeset to fully-qualify.
+ * @returns {rtvref.types.fully_qualified_typeset} A new, fully-qualified typeset
+ *  representing the input `typeset`. Only the first/immediate level of the
+ *  input typeset is fully-qualified. The new array returned contains references
+ *  to elements within the input typeset.
+ * @throws {Error} If `typeset` is not a valid typeset.
+ */
+var fullyQualify = function fullyQualify(typeset) {
+  if (!isTypeset(typeset)) {
+    // start by validating so we can be confident later
+    throw new Error('Invalid typeset="' + print(typeset) + '"');
+  }
+
+  // NOTE: from this point on, we ASSUME that the typeset is valid, which lets
+  //  us make assumptions about what we find within it; without this knowledge,
+  //  the algorithm below would not work
+
+  if (!validator$8(typeset)) {
+    // must be either a string, object, or function with an implied qualifier
+    if (validator$12(typeset)) {
+      // must be a nested shape descriptor with default object type
+      return [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, typeset];
+    }
+
+    // if a function, it has an implied type of ANY
+    if (validator$4(typeset)) {
+      return [DEFAULT_QUALIFIER, types.ANY, typeset];
+    }
+
+    // string (basic type)
+    return [DEFAULT_QUALIFIER, typeset];
+  }
+
+  var fqts = []; // ALWAYS a new array
+  var curType = void 0; // @type {(string|undefined)} current type in scope or undefined if none
+
+  // typeset is an array: iterate its elements and build fqts iteratively
+  typeset.forEach(function (rule, i) {
+    // qualifiers are non-empty strings
+    if (i === 0 && (!validator$3(rule) || !qualifiers.check(rule))) {
+      fqts.push(DEFAULT_QUALIFIER); // add implied qualifier
+    }
+
+    if (validator$3(rule)) {
+      // must be a type
+      curType = rule;
+      fqts.push(curType);
+    } else if (validator$12(rule)) {
+      if (i === 0) {
+        // must be a nested shape descriptor using default object type
+        curType = DEFAULT_OBJECT_TYPE;
+        fqts.push(curType, rule);
+      } else {
+        // must be args for curType since typeset is an array and object is not
+        //  in first position
+        fqts.push(rule);
+      }
+      // must be a validator, ANY is implied type if none specified
+    } else if (validator$4(rule)) {
+      if (!curType) {
+        curType = types.ANY;
+        fqts.push(curType);
+      }
+
+      fqts.push(rule);
+    } else {
+      // must be an array
+      if (curType !== types.ARRAY) {
+        // add implied ARRAY type
+        curType = types.ARRAY;
+        fqts.push(curType);
+      }
+
+      fqts.push(rule);
+    }
+  });
+
+  return fqts;
+};
 
 /**
  * Checks a value against a simple type using the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @function rtv.impl.checkSimple
  * @param {*} value Value to check.
- * @param {string} typeset Simple typeset name, must be one of {@link rtvref.types.types}.
+ * @param {string} typeset Simple type name, must be one of {@link rtvref.types.types}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `typeset` is not a valid type name.
@@ -3350,20 +3891,18 @@ RtvError.prototype.toString = function () {
 var checkSimple = function checkSimple(value, typeset) {
   types.verify(typeset);
 
-  var valid = false;
-  if (typeset === types.STRING) {
-    valid = validator$1(value, DEFAULT_QUALIFIER);
-  } else if (typeset === types.BOOLEAN) {
-    valid = validator$2(value, DEFAULT_QUALIFIER);
-  } else {
-    throw new Error('Missing handler for \'' + print(typeset) + '\' type');
+  if (validatorMap[typeset]) {
+    // call the validator for the specified type
+    var valid = validatorMap[typeset](value, DEFAULT_QUALIFIER);
+
+    if (valid) {
+      return new RtvSuccess();
+    }
+
+    return new RtvError(value, typeset, 'unknown.path', fullyQualify(typeset)); // TODO: add right params...
   }
 
-  if (valid) {
-    return new RtvSuccess();
-  }
-
-  return new RtvError(); // TODO: add right params... (will throw until params given)
+  throw new Error('Missing validator for "' + print(typeset) + '" type');
 };
 
 /**
@@ -3386,15 +3925,15 @@ var check = function check(value, typeset) {
   //  for the return type since impl shouldn't be exposed externally anyway.
   try {
     if (isTypeset(typeset)) {
-      if (validator$1(typeset)) {
+      if (validator$3(typeset)) {
         return checkSimple(value, typeset);
       }
 
       // TODO other typeset types
 
-      throw new Error('Missing handler for typeset=\'' + print(typeset) + '\' type specified');
+      throw new Error('Missing handler for typeset="' + print(typeset) + '" type specified');
     } else {
-      throw new Error('Invalid typeset=\'' + print(typeset) + '\' specified');
+      throw new Error('Invalid typeset="' + print(typeset) + '" specified');
     }
   } catch (checkErr) {
     var err = new Error('Cannot check value: ' + checkErr.message);

@@ -282,6 +282,7 @@ Flag indicating the validation failed. Always `false`.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
+**See**: [valid](#rtvref.RtvSuccess+valid)  
 
 * * *
 
@@ -376,6 +377,7 @@ Flag indicating the validation succeeded. Always `true`.
 
 **Kind**: instance property of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
 **Read only**: true  
+**See**: [valid](#rtvref.RtvError+valid)  
 
 * * *
 

@@ -9,6 +9,9 @@ import RtvError from '../../src/lib/RtvError';
 
 describe('module: lib/impl', function() {
   describe('#check()', function() {
+    it('should return an RtvSuccess on successful validation'); // TODO
+    it('should return an RtvError on failed validation'); // TODO
+
     it('should check a string value as a string', function() {
       expect(impl.check('foo', types.STRING)).to.be.an.instanceof(RtvSuccess);
     });
@@ -35,7 +38,7 @@ describe('module: lib/impl', function() {
       const typesVerifyStub = sinon.stub(types, 'verify'); // prevent verification of unknown/invalid type
       expect(function() {
         impl.checkSimple(2, 'foo');
-      }).to.throw(/Missing handler for 'foo' type/);
+      }).to.throw(/Missing validator for "foo" type/);
       typesVerifyStub.restore();
     });
   });

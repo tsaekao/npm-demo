@@ -23,13 +23,13 @@ describe('module: lib/validation/isSet', function() {
     it('checks for an exact length', function() {
       const set = new Set([1, 2, 3]);
 
-      expect(val.validator(new Map(), undefined, {length: 0})).to.be.true;
+      expect(val.validator(new Set(), undefined, {length: 0})).to.be.true;
       expect(val.validator(set, undefined, {length: 3})).to.be.true;
       expect(val.validator(set, undefined, {length: 2})).to.be.false;
       expect(val.validator(set, undefined, {length: 1.1})).to.be.false;
+      expect(val.validator(set, undefined, {length: 0})).to.be.false;
 
       expect(val.validator(set, undefined, {length: '1'})).to.be.true; // ignored
-      expect(val.validator(set, undefined, {length: -0})).to.be.true; // ignored
       expect(val.validator(set, undefined, {length: -1})).to.be.true; // ignored
       expect(val.validator(set, undefined, {length: NaN})).to.be.true; // ignored
       expect(val.validator(set, undefined, {length: Infinity})).to.be.true; // ignored
@@ -38,7 +38,7 @@ describe('module: lib/validation/isSet', function() {
       expect(val.validator(set, undefined, {length: Number.NEGATIVE_INFINITY})).to.be.true; // ignored
     });
 
-    it('checks for values with specified typeset', function() {
+    xit('checks for values with specified typeset', function() { // TODO need to finish implement impl.check before this spec can be run
       let set = new Set(['one', 'two', 'three']);
 
       expect(val.validator(set, undefined, {

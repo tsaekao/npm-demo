@@ -61,17 +61,17 @@ export const validator = function isMap(v, q = qualifiers.REQUIRED, args) {
         const it = v.entries(); // iterator
 
         for (let elem of it) {
-          const [key, value] = elem.value;
+          const [key, value] = elem;
 
           if (tsKeys) {
-            valid = impl.check(key, tsKeys); // check key against typeset
+            valid = impl.check(key, tsKeys).valid; // check key against typeset
             if (valid && tsKeysIsString && reKeys) {
               valid = reKeys.test(key); // check key against regex since it's a string
             }
           }
 
           if (valid && tsValues) {
-            valid = impl.check(value, tsValues); // check value against typeset
+            valid = impl.check(value, tsValues).valid; // check value against typeset
           }
 
           if (!valid) {
