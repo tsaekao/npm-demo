@@ -1,10 +1,28 @@
 ////// Main entry point
 
 import {version as VERSION} from '../package.json';
-import * as impl from './lib/impl';
+import impl from './lib/impl';
 import types from './lib/types';
 import qualifiers from './lib/qualifiers';
 import RtvSuccess from './lib/RtvSuccess';
+
+// all known types
+// TODO: In the future, with plugins, this should be dynamically-generated somehow.
+import * as isAny from './lib/validator/isAny';
+import * as isBoolean from './lib/validator/isBoolean';
+import * as isString from './lib/validator/isString';
+import * as isFunction from './lib/validator/isFunction';
+import * as isRegExp from './lib/validator/isRegExp';
+import * as isSymbol from './lib/validator/isSymbol';
+import * as isFinite from './lib/validator/isFinite';
+import * as isNumber from './lib/validator/isNumber';
+import * as isArray from './lib/validator/isArray';
+import * as isAnyObject from './lib/validator/isAnyObject';
+import * as isObject from './lib/validator/isObject';
+import * as isMap from './lib/validator/isMap';
+import * as isWeakMap from './lib/validator/isWeakMap';
+import * as isSet from './lib/validator/isSet';
+import * as isWeakSet from './lib/validator/isWeakSet';
 
 /**
  * <h1>RTV.js Reference</h1>
@@ -221,14 +239,50 @@ const rtv = {
 };
 
 /**
- * [internal] Library version.
+ * [Internal] Library version.
+ * @private
  * @name rtv._version
  * @type {string}
  */
 Object.defineProperty(rtv, '_version', {
   enumerable: false, // internal
   configurable: true,
+  writable: true,
   value: VERSION
 });
 
 export default rtv;
+
+////////////////////////////////////////////////////////////////////////////////
+// Register all known types with impl
+
+(function() { // put in an IIFE so there's nothing unnecessarily retained in any closures
+  // TODO: In the future, with plugins, this should be dynamically-generated somehow.
+  const validators = [
+    isAny,
+    isBoolean,
+    isString,
+    isFunction,
+    isRegExp,
+    isSymbol,
+    isFinite,
+    isNumber,
+    isArray,
+    isAnyObject,
+    isObject,
+    isMap,
+    isWeakMap,
+    isSet,
+    isWeakSet
+  ];
+
+  const publicImpl = {}; // impl for validators, excluding any internal parts
+
+  Object.keys(impl).forEach(function(k) { // only enumerable methods/properties
+    publicImpl[k] = impl[k];
+  });
+
+  validators.forEach(function(val) {
+    val.config({impl: publicImpl});
+  });
+})();

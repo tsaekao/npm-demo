@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import * as mod from '../../src/lib/types';
 import Enumeration from '../../src/lib/Enumeration';
-import {validator as isString} from '../../src/lib/validation/isString';
+import isString from '../../src/lib/validation/isString';
 
 describe('module: lib/types', function() {
   const types = mod.default;

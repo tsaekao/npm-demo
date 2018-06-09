@@ -5,7 +5,7 @@ import _ from 'lodash';
 import rtv from '../src/rtv';
 import types from '../src/lib/types';
 import qualifiers from '../src/lib/qualifiers';
-import * as impl from '../src/lib/impl';
+import impl from '../src/lib/impl';
 import Enumeration from '../src/lib/Enumeration';
 import RtvSuccess from '../src/lib/RtvSuccess';
 import RtvError from '../src/lib/RtvError';
@@ -45,10 +45,15 @@ describe('module: rtv', function() {
   it('should provide version as internal property', function() {
     expect(rtv.hasOwnProperty('_version')).to.equal(true);
     expect(Object.keys(rtv).indexOf('_version')).to.equal(-1); // not enumerable
-    expect(rtv._version).to.equal(pkg.version);
+    expect(Object.getOwnPropertyDescriptor(rtv, '_version')).to.eql({
+      value: pkg.version,
+      enumerable: false,
+      configurable: true,
+      writable: true
+    });
   });
 
-  describe('.v() proxy', function() {
+  describe('#v() proxy', function() {
     let spy;
 
     beforeEach(function() {
@@ -67,7 +72,7 @@ describe('module: rtv', function() {
     });
   });
 
-  describe('.c() proxy', function() {
+  describe('#c() proxy', function() {
     let spy;
 
     beforeEach(function() {
@@ -133,5 +138,9 @@ describe('module: rtv', function() {
       expect(rtv.verify('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
       expect(implCheckSpy.called).to.equal(false);
     });
+  });
+
+  describe('#Context()', function() {
+    it('should create contextual rtv verifiers'); // TODO
   });
 });

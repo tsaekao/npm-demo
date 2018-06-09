@@ -1,13 +1,37 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
 
-import * as impl from '../../src/lib/impl';
+import impl from '../../src/lib/impl';
 import {DEFAULT_OBJECT_TYPE, default as types} from '../../src/lib/types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from '../../src/lib/qualifiers';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
+import isObject from '../../src/lib/validator/isObject';
 
 describe('module: lib/impl', function() {
+  describe('._validatorMap', function() {
+    it('should be an internal property', function() {
+      expect(Object.getOwnPropertyDescriptor(impl, '_validatorMap')).to.eql({
+        enumerable: false,
+        configurable: true,
+        writable: true
+      });
+      expect(isObject(impl._validatorMap)).to.be.true;
+      expect(Object.keys(impl._validatorMap).length).to.equal(15); // # of known types
+    });
+  });
+
+  describe('#_registerType()', function() {
+    it('should be an internal method', function() {
+      expect(Object.getOwnPropertyDescriptor(impl, '_registerType')).to.eql({
+        value: pkg.version,
+        enumerable: false,
+        configurable: true,
+        writable: true
+      });
+    });
+  });
+
   describe('#check()', function() {
     it('should return an RtvSuccess on successful validation'); // TODO
     it('should return an RtvError on failed validation'); // TODO
@@ -25,19 +49,19 @@ describe('module: lib/impl', function() {
     });
   });
 
-  describe('#checkSimple()', function() {
+  describe('#checkType()', function() {
     it('should check simple types against values'); // TODO
 
     it('should throw if type is not valid', function() {
       expect(function() {
-        impl.checkSimple('value', 'foo');
+        impl.checkType('value', 'foo');
       }).to.throw(/Invalid value for enum/);
     });
 
     it('should throw if type is not handled', function() {
       const typesVerifyStub = sinon.stub(types, 'verify'); // prevent verification of unknown/invalid type
       expect(function() {
-        impl.checkSimple(2, 'foo');
+        impl.checkType(2, 'foo');
       }).to.throw(/Missing validator for "foo" type/);
       typesVerifyStub.restore();
     });

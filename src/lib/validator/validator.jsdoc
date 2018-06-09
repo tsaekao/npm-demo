@@ -1,0 +1,101 @@
+////// Validation Module
+
+/**
+ * <h2>RTV Type Validators</h2>
+ *
+ * This namespace provides validators for each supported {@link rtvref.types type},
+ *  capable of validating a value against that type. Validators differ from
+ *  _validation helpers_ provided by the {@link rtvref.validation validation}
+ *  module in that validators verify a value against a single, specific type,
+ *  whereas the validation helpers do not.
+ *
+ * The default export for a validator module is a
+ *  .
+ *
+ * __Every validator module must provide the following interface:__
+ *
+ * - `{function} default` (the default export): The
+ *   {@link rtvref.validator.type_validator type validator} itself.
+ * - `{string} type`: The {@link rtvref.types type} verified.
+ * - `{function} config`: The
+ *   {@link rtvref.validator.validator_config configuration function}.
+ *
+ * @namespace rtvref.validator
+ */
+
+// NOTE: Modules in this namespace are the only ones where third-party validation
+//  code (i.e. lodash methods) should be referenced. The rest of the library should
+//  use these methods for any type validation needed.
+//
+// Where possible, these functions should use the other type validators rather
+//  than third-party code (e.g. isArray.js needs to validate some of its arguments
+//  as finite numbers, so it should use isFinite.js to do that validation rather
+//  than 'lodash/isFinite', and let isFinite.js decide whether 'lodash/isFinite'
+//  is the right way to validate a finite number). This way, it makes it much
+//  easier later on to change third-party libraries, or add additional logic to
+//  how a type is validated.
+
+// NOTE: Validator modules are essentially precursors to plugins. For the time
+//  being, the expected interface for a validator module is:
+//  - 'validator: function': has the rtvref.validator.type_validator signature
+//  - 'type: string': The type the validator validates (e.g. rtvref.types.STRING
+//    for the STRING type validator)
+//
+// There can only be one validator for any given type.
+//
+// TODO: Later, if we ever expose a plugin architecture, we might change this to
+//  pass some type of registration function into the plugin, or the plugin calls a
+//  registration method on rtv, or maybe something else. Whatever we do, the basics
+//  would be to register a new type and provide the function for rtv to call to
+//  validate values for that type. Perhaps we might even allow overriding the
+//  default validator for an existing type.
+
+/**
+ * <h3>Type Validator Function</h3>
+ *
+ * NOTE: A validator must always give __precedence__ to
+ *  {@link rtvref.types.rules qualifier rules} for the type it's validating, over
+ *  any arguments specified. For example,
+ *
+ * NOTE: A validator __must not__ attempt to validate values considering basic
+ *  {@link rtvref.qualifiers qualifier} rules like allowing `null` when EXPECTED
+ *  vs not when REQUIRED, unless the type itself allows or disallows these
+ *  special values. A validator should focus on checking for its type. For example,
+ *  the {@link rtvref.validation.isString isString validator} requires the value
+ *  to be a string, excluding `null` and `undefined` regardless of the qualifier.
+ *  It does, however, allow an empty string if the qualifier is not REQUIRED because
+ *  that is one of its {@link rtvref.types.STRING type-specific qualifier rules}.
+ *
+ * @function rtvref.validator.type_validator
+ * @param {*} value The value to validate.
+ * @param {string} [qualifier] The validation qualifier from the immediate
+ *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
+ *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}
+ *  to maintain consistent behavior.
+ * @param {Object} [args] The arguments object, if any/applicable, for the type
+ *  being validated. For example, {@link rtvref.types.STRING_args string args} in
+ *  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least
+ *  5 characters in length).
+ * @returns {boolean} `true` if the value is verified according to the qualifier
+ *  and args; `false` otherwise.
+ */
+
+// TODO: Is it good to expose the entire impl module to _any_ type validator,
+//  even third-party plugin validators in the future? Should we, instead, provide
+//  a series of function references without stating where they come from (even
+//  if they're still just coming from `impl`)? A good exercise will be to actually
+//  implement the plugin architecture and write a third-party validator to really
+//  see what it's like... For now, this is all still internal, so we're going
+//  to roll with that.
+/**
+ * <h3>Type Validator Configuration Function</h3>
+ *
+ * This function is called to provide the
+ *  {@link rtvref.validator.type_validator type validator} with access to
+ *  internal utilities.
+ *
+ * @function rtvref.validator.validator_config
+ * @param {Object} settings Configuration settings.
+ * @param {rtvref.impl} settings.impl Reference to the `impl` module.
+ */
+

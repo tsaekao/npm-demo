@@ -33,7 +33,7 @@
     "node": "node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
     "node:internals": "rollup -c tools/rollup.internals.js && node -r ./dist_tools/internals.js --inspect",
-    "build:docs": "jsdoc2md -f \"src/**/*.js\" --separators > dist/rtv.js.md",
+    "build:docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --separators > dist/rtv.js.md",
     "build:lib": "BABEL_ENV=build rollup -c",
     "build": "npm run clean && npm run build:lib && npm run build:docs",
     "lint": "eslint rollup.config.js \"src/**/*.js\" \"tools/**/*.js\"",

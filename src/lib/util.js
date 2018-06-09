@@ -1,6 +1,8 @@
 ////// Utilities
 
-// NOTE: Ideally, this module has no dependencies.
+// NOTE: Ideally, this module has no dependencies. If it must, they should be
+//  third-party/external dependencies to avoid circular dependencies within
+//  this library.
 
 /**
  * RTV Utilities Module

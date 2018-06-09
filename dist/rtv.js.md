@@ -13,14 +13,6 @@
 </dd>
 </dl>
 
-## Functions
-
-<dl>
-<dt><a href="#isStringTypeset">isStringTypeset(ts)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Determines if a typeset represents a string, and only a string.</p>
-</dd>
-</dl>
-
 <a name="rtvref"></a>
 
 ## rtvref : <code>object</code>
@@ -49,6 +41,10 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
         * [.valid](#rtvref.RtvSuccess+valid) : <code>boolean</code>
         * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
+    * [.impl](#rtvref.impl) : <code>object</code>
+        * [.fullyQualify(typeset)](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+        * [.checkType(value, type)](#rtvref.impl.checkType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.check(value, typeset)](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
         * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
@@ -96,24 +92,56 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
         * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
     * [.validation](#rtvref.validation) : <code>object</code>
-        * [.isAny(v)](#rtvref.validation.isAny) ⇒ <code>boolean</code>
-        * [.isAnyObject(v)](#rtvref.validation.isAnyObject) ⇒ <code>boolean</code>
-        * [.isArray(v, [q], [args])](#rtvref.validation.isArray) ⇒ <code>boolean</code>
-        * [.isBoolean(v)](#rtvref.validation.isBoolean) ⇒ <code>boolean</code>
-        * [.isFinite(v, [q], [args])](#rtvref.validation.isFinite) ⇒ <code>boolean</code>
-        * [.isFunction(v)](#rtvref.validation.isFunction) ⇒ <code>boolean</code>
-        * [.isMap(v, [q], [args])](#rtvref.validation.isMap) ⇒ <code>boolean</code>
-        * [.isNumber(v, [q], [args])](#rtvref.validation.isNumber) ⇒ <code>boolean</code>
-        * [.isObject(v)](#rtvref.validation.isObject) ⇒ <code>boolean</code>
-        * [.isRegExp(v)](#rtvref.validation.isRegExp) ⇒ <code>boolean</code>
-        * [.isSet(v, [q], [args])](#rtvref.validation.isSet) ⇒ <code>boolean</code>
-        * [.isString(v, [q], [args])](#rtvref.validation.isString) ⇒ <code>boolean</code>
-        * [.isSymbol(v)](#rtvref.validation.isSymbol) ⇒ <code>boolean</code>
-        * [.isWeakMap(v)](#rtvref.validation.isWeakMap) ⇒ <code>boolean</code>
-        * [.isWeakSet(v)](#rtvref.validation.isWeakSet) ⇒ <code>boolean</code>
-        * [.validator(value, [qualifier], [args])](#rtvref.validation.validator) ⇒ <code>boolean</code>
         * [.isPrimitive(v)](#rtvref.validation.isPrimitive) ⇒ <code>boolean</code>
-        * [.isValidTypeset(v, [options])](#rtvref.validation.isValidTypeset) ⇒ <code>boolean</code>
+        * [.isTypeset(v, [options])](#rtvref.validation.isTypeset) ⇒ <code>boolean</code>
+    * [.validator](#rtvref.validator) : <code>object</code>
+        * [.isAny(v)](#rtvref.validator.isAny) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isAny.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isAny.config)
+        * [.isAnyObject(v)](#rtvref.validator.isAnyObject) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isAnyObject.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isAnyObject.config)
+        * [.isArray(v, [q], [args])](#rtvref.validator.isArray) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isArray.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isArray.config)
+        * [.isBoolean(v)](#rtvref.validator.isBoolean) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isBoolean.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isBoolean.config)
+        * [.isFinite(v, [q], [args])](#rtvref.validator.isFinite) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isFinite.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isFinite.config)
+        * [.isFunction(v)](#rtvref.validator.isFunction) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isFunction.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isFunction.config)
+        * [.isMap(v, [q], [args])](#rtvref.validator.isMap) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isMap.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isMap.config)
+        * [.isNumber(v, [q], [args])](#rtvref.validator.isNumber) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isNumber.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isNumber.config)
+        * [.isObject(v)](#rtvref.validator.isObject) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isObject.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isObject.config)
+        * [.isRegExp(v)](#rtvref.validator.isRegExp) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isRegExp.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isRegExp.config)
+        * [.isSet(v, [q], [args])](#rtvref.validator.isSet) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isSet.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isSet.config)
+        * [.isString(v, [q], [args])](#rtvref.validator.isString) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isString.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isString.config)
+        * [.isSymbol(v)](#rtvref.validator.isSymbol) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isSymbol.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isSymbol.config)
+        * [.isWeakMap(v)](#rtvref.validator.isWeakMap) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isWeakMap.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isWeakMap.config)
+        * [.isWeakSet(v)](#rtvref.validator.isWeakSet) ⇒ <code>boolean</code>
+            * [.type](#rtvref.validator.isWeakSet.type) : <code>string</code>
+            * [.config(settings)](#rtvref.validator.isWeakSet.config)
+        * [.type_validator(value, [qualifier], [args])](#rtvref.validator.type_validator) ⇒ <code>boolean</code>
+        * [.validator_config(settings)](#rtvref.validator.validator_config)
     * [.shape_descriptor](#rtvref.shape_descriptor) : <code>Object</code>
 
 
@@ -388,6 +416,94 @@ A string representation of this instance.
 
 **Kind**: instance method of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
 **Returns**: <code>string</code> - String representation.  
+
+* * *
+
+<a name="rtvref.impl"></a>
+
+### rtvref.impl : <code>object</code>
+<h2>RTV Implementation Module</h2>
+
+Provides the internal implementation for the externally-facing [RTV](#rtv)
+ API, as well as utilities for [type validators](#rtvref.validator).
+
+**Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
+
+* [.impl](#rtvref.impl) : <code>object</code>
+    * [.fullyQualify(typeset)](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+    * [.checkType(value, type)](#rtvref.impl.checkType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.check(value, typeset)](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+
+
+* * *
+
+<a name="rtvref.impl.fullyQualify"></a>
+
+#### impl.fullyQualify(typeset) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
+ are not fully-qualified).
+
+This function does not modify the input `typeset`.
+
+**Kind**: static method of [<code>impl</code>](#rtvref.impl)  
+**Returns**: [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) - A new, fully-qualified typeset
+ representing the input `typeset`. Only the first/immediate level of the
+ input typeset is fully-qualified. The new array returned contains references
+ to elements within the input typeset.  
+**Throws**:
+
+- <code>Error</code> If `typeset` is not a valid typeset.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Typeset to fully-qualify. |
+
+
+* * *
+
+<a name="rtvref.impl.checkType"></a>
+
+#### impl.checkType(value, type) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+Checks a value against a simple type using the
+ [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER).
+
+**Kind**: static method of [<code>impl</code>](#rtvref.impl)  
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - A success indicator if the
+ `value` is compliant to the type; an error indicator if not.  
+**Throws**:
+
+- <code>Error</code> If `type` is not a valid type name.
+
+**See**: [types](#rtvref.types)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | Value to check. |
+| type | <code>string</code> | Simple type name, must be one of [types](#rtvref.types.types). |
+
+
+* * *
+
+<a name="rtvref.impl.check"></a>
+
+#### impl.check(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+Checks a value against a typeset.
+
+**Kind**: static method of [<code>impl</code>](#rtvref.impl)  
+**Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - Success indicator if the `value`
+ is compliant to the `typeset`; error indicator otherwise. An exception is
+ __not__ thrown if the `value` is non-compliant.  
+**Throws**:
+
+- <code>Error</code> If `typeset` is not a valid typeset.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | Value to check. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape/type of the value. |
+
 
 * * *
 
@@ -1579,340 +1695,21 @@ Applicable to all numeric types.
 <a name="rtvref.validation"></a>
 
 ### rtvref.validation : <code>object</code>
-RTV Validation Namespace
+<h2>RTV Validation</h2>
 
-This namespace provides a [validator function](#rtvref.validation.validator)
- for each type, capable of validating a value against that type, considering any
- optional arguments provided.
-
-The default export for all modules is a
- [validator function](#rtvref.validation.validator).
+This namespace provides _validation helpers_ which verify values to be of
+ certain kinds, but not a single, specific [type](#rtvref.types) like
+ [type validators](#rtvref.validator) do. For example, the
+ [isTypeset](#rtvref.validation.isTypeset) helper verifies a value as a
+ [typeset](#rtvref.types.typeset), which is not an actual type, while
+ the [isString validator](#rtvref.validator.isString) verifies a value
+ as a [string](#rtvref.types.STRING).
 
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.validation](#rtvref.validation) : <code>object</code>
-    * [.isAny(v)](#rtvref.validation.isAny) ⇒ <code>boolean</code>
-    * [.isAnyObject(v)](#rtvref.validation.isAnyObject) ⇒ <code>boolean</code>
-    * [.isArray(v, [q], [args])](#rtvref.validation.isArray) ⇒ <code>boolean</code>
-    * [.isBoolean(v)](#rtvref.validation.isBoolean) ⇒ <code>boolean</code>
-    * [.isFinite(v, [q], [args])](#rtvref.validation.isFinite) ⇒ <code>boolean</code>
-    * [.isFunction(v)](#rtvref.validation.isFunction) ⇒ <code>boolean</code>
-    * [.isMap(v, [q], [args])](#rtvref.validation.isMap) ⇒ <code>boolean</code>
-    * [.isNumber(v, [q], [args])](#rtvref.validation.isNumber) ⇒ <code>boolean</code>
-    * [.isObject(v)](#rtvref.validation.isObject) ⇒ <code>boolean</code>
-    * [.isRegExp(v)](#rtvref.validation.isRegExp) ⇒ <code>boolean</code>
-    * [.isSet(v, [q], [args])](#rtvref.validation.isSet) ⇒ <code>boolean</code>
-    * [.isString(v, [q], [args])](#rtvref.validation.isString) ⇒ <code>boolean</code>
-    * [.isSymbol(v)](#rtvref.validation.isSymbol) ⇒ <code>boolean</code>
-    * [.isWeakMap(v)](#rtvref.validation.isWeakMap) ⇒ <code>boolean</code>
-    * [.isWeakSet(v)](#rtvref.validation.isWeakSet) ⇒ <code>boolean</code>
-    * [.validator(value, [qualifier], [args])](#rtvref.validation.validator) ⇒ <code>boolean</code>
     * [.isPrimitive(v)](#rtvref.validation.isPrimitive) ⇒ <code>boolean</code>
-    * [.isValidTypeset(v, [options])](#rtvref.validation.isValidTypeset) ⇒ <code>boolean</code>
-
-
-* * *
-
-<a name="rtvref.validation.isAny"></a>
-
-#### validation.isAny(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [ANY](#rtvref.types.ANY) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isAnyObject"></a>
-
-#### validation.isAnyObject(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [ANY_OBJECT](#rtvref.types.ANY_OBJECT) type.
-
-Determines if a value is _any_ type of object except a primitive.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isArray"></a>
-
-#### validation.isArray(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [ARRAY](#rtvref.types.ARRAY) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>ARRAY_args</code>](#rtvref.types.ARRAY_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isBoolean"></a>
-
-#### validation.isBoolean(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [BOOLEAN](#rtvref.types.BOOLEAN) type.
-
-Determines if a value is a boolean literal __only__ (i.e. a
- [primitive](#rtvref.types.primitives)). It does not validate
- `new Boolean(true)`, which is an object that is a boolean.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isFinite"></a>
-
-#### validation.isFinite(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [FINITE](#rtvref.types.FINITE) type.
-
-Determines if a value is a number literal __only__ (i.e. a
- [primitive](#rtvref.types.primitives)). It does not validate
- `new Number(1)`, which is an object that is a number.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isFunction"></a>
-
-#### validation.isFunction(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [FUNCTION](#rtvref.types.FUNCTION) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isMap"></a>
-
-#### validation.isMap(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [MAP](#rtvref.types.MAP) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isNumber"></a>
-
-#### validation.isNumber(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [NUMBER](#rtvref.types.NUMBER) type.
-
-Determines if a value is a number literal __only__ (i.e. a
- [primitive](#rtvref.types.primitives)). It does not validate
- `new Number(1)`, which is an object that is a number.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isObject"></a>
-
-#### validation.isObject(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [OBJECT](#rtvref.types.OBJECT) type.
-
-Determines if a value is an object that extends from `JavaScript.Object` and
- is not a function, array, regex, map, weak map, set, weak set, or primitive.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isRegExp"></a>
-
-#### validation.isRegExp(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [REGEXP](#rtvref.types.REGEXP) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isSet"></a>
-
-#### validation.isSet(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [SET](#rtvref.types.SET) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isString"></a>
-
-#### validation.isString(v, [q], [args]) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [STRING](#rtvref.types.STRING) type.
-
-Determines if a value is a string literal __only__ (i.e. a
- [primitive](#rtvref.types.primitives)). It does not validate
- `new String('value')`, which is an object that is a string.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>STRING_args</code>](#rtvref.types.STRING_args) | Type arguments. |
-
-
-* * *
-
-<a name="rtvref.validation.isSymbol"></a>
-
-#### validation.isSymbol(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [SYMBOL](#rtvref.types.SYMBOL) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isWeakMap"></a>
-
-#### validation.isWeakMap(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [WEAK_MAP](#rtvref.types.WEAK_MAP) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.isWeakSet"></a>
-
-#### validation.isWeakSet(v) ⇒ <code>boolean</code>
-[Validator](#rtvref.validation.validator) function for the
- [WEAK_SET](#rtvref.types.WEAK_SET) type.
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| v | <code>\*</code> | Value to validate. |
-
-
-* * *
-
-<a name="rtvref.validation.validator"></a>
-
-#### validation.validator(value, [qualifier], [args]) ⇒ <code>boolean</code>
-Type Validator Function.
-
-NOTE: A validator must always give __precedence__ to
- [qualifier rules](#rtvref.types.rules) for the type it's validating over
- any arguments specified.
-
-NOTE: A validator __must not__ attempt to validate values considering basic
- [qualifier](#rtvref.qualifiers) rules like allowing `null` when EXPECTED
- vs not when REQUIRED, unless the type itself allows or disallows these
- special values. A validator should focus on checking for its type. For example,
- the [isString validator](#rtvref.validation.isString) requires the value
- to be a string, excluding `null` and `undefined` regardless of the qualifier.
- It does, however, allow an empty string if the qualifier is not REQUIRED because
- that is one of its [type-specific qualifier rules](#rtvref.types.STRING).
-
-**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
-**Returns**: <code>boolean</code> - `true` if the value is verified according to the qualifier
- and args; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| value | <code>\*</code> | The value to validate. |
-| [qualifier] | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always default to [REQUIRED](#rtvref.qualifiers.REQUIRED)  to maintain consistent behavior. |
-| [args] | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
+    * [.isTypeset(v, [options])](#rtvref.validation.isTypeset) ⇒ <code>boolean</code>
 
 
 * * *
@@ -1932,9 +1729,9 @@ Determines if a value is a JavaScript [primitive](#rtvref.types.primitives).
 
 * * *
 
-<a name="rtvref.validation.isValidTypeset"></a>
+<a name="rtvref.validation.isTypeset"></a>
 
-#### validation.isValidTypeset(v, [options]) ⇒ <code>boolean</code>
+#### validation.isTypeset(v, [options]) ⇒ <code>boolean</code>
 Determines if a value is a typeset.
 
 **Kind**: static method of [<code>validation</code>](#rtvref.validation)  
@@ -1947,6 +1744,825 @@ Determines if a value is a typeset.
 | [options] | <code>Object</code> |  | Validation options. |
 | [options.deep] | <code>boolean</code> | <code>false</code> | If truthy, deeply-validates any nested typesets. Note  that typesets in nested shapes are also deeply-validated. |
 | [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be fully-qualified. |
+
+
+* * *
+
+<a name="rtvref.validator"></a>
+
+### rtvref.validator : <code>object</code>
+<h2>RTV Type Validators</h2>
+
+This namespace provides validators for each supported [type](#rtvref.types),
+ capable of validating a value against that type. Validators differ from
+ _validation helpers_ provided by the [validation](#rtvref.validation)
+ module in that validators verify a value against a single, specific type,
+ whereas the validation helpers do not.
+
+The default export for a validator module is a
+ .
+
+__Every validator module must provide the following interface:__
+
+- `{function} default` (the default export): The
+  [type validator](#rtvref.validator.type_validator) itself.
+- `{string} type`: The [type](#rtvref.types) verified.
+- `{function} config`: The
+  [configuration function](#rtvref.validator.validator_config).
+
+**Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
+
+* [.validator](#rtvref.validator) : <code>object</code>
+    * [.isAny(v)](#rtvref.validator.isAny) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isAny.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isAny.config)
+    * [.isAnyObject(v)](#rtvref.validator.isAnyObject) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isAnyObject.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isAnyObject.config)
+    * [.isArray(v, [q], [args])](#rtvref.validator.isArray) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isArray.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isArray.config)
+    * [.isBoolean(v)](#rtvref.validator.isBoolean) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isBoolean.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isBoolean.config)
+    * [.isFinite(v, [q], [args])](#rtvref.validator.isFinite) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isFinite.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isFinite.config)
+    * [.isFunction(v)](#rtvref.validator.isFunction) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isFunction.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isFunction.config)
+    * [.isMap(v, [q], [args])](#rtvref.validator.isMap) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isMap.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isMap.config)
+    * [.isNumber(v, [q], [args])](#rtvref.validator.isNumber) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isNumber.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isNumber.config)
+    * [.isObject(v)](#rtvref.validator.isObject) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isObject.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isObject.config)
+    * [.isRegExp(v)](#rtvref.validator.isRegExp) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isRegExp.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isRegExp.config)
+    * [.isSet(v, [q], [args])](#rtvref.validator.isSet) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isSet.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isSet.config)
+    * [.isString(v, [q], [args])](#rtvref.validator.isString) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isString.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isString.config)
+    * [.isSymbol(v)](#rtvref.validator.isSymbol) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isSymbol.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isSymbol.config)
+    * [.isWeakMap(v)](#rtvref.validator.isWeakMap) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isWeakMap.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isWeakMap.config)
+    * [.isWeakSet(v)](#rtvref.validator.isWeakSet) ⇒ <code>boolean</code>
+        * [.type](#rtvref.validator.isWeakSet.type) : <code>string</code>
+        * [.config(settings)](#rtvref.validator.isWeakSet.config)
+    * [.type_validator(value, [qualifier], [args])](#rtvref.validator.type_validator) ⇒ <code>boolean</code>
+    * [.validator_config(settings)](#rtvref.validator.validator_config)
+
+
+* * *
+
+<a name="rtvref.validator.isAny"></a>
+
+#### validator.isAny(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [ANY](#rtvref.types.ANY) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isAny(v)](#rtvref.validator.isAny) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isAny.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isAny.config)
+
+
+* * *
+
+<a name="rtvref.validator.isAny.type"></a>
+
+##### isAny.type : <code>string</code>
+Type: [ANY](#rtvref.types.ANY)
+
+**Kind**: static constant of [<code>isAny</code>](#rtvref.validator.isAny)  
+
+* * *
+
+<a name="rtvref.validator.isAny.config"></a>
+
+##### isAny.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isAny</code>](#rtvref.validator.isAny)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isAnyObject"></a>
+
+#### validator.isAnyObject(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [ANY_OBJECT](#rtvref.types.ANY_OBJECT) type.
+
+Determines if a value is _any_ type of object except a primitive.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isAnyObject(v)](#rtvref.validator.isAnyObject) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isAnyObject.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isAnyObject.config)
+
+
+* * *
+
+<a name="rtvref.validator.isAnyObject.type"></a>
+
+##### isAnyObject.type : <code>string</code>
+Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
+
+**Kind**: static constant of [<code>isAnyObject</code>](#rtvref.validator.isAnyObject)  
+
+* * *
+
+<a name="rtvref.validator.isAnyObject.config"></a>
+
+##### isAnyObject.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isAnyObject</code>](#rtvref.validator.isAnyObject)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isArray"></a>
+
+#### validator.isArray(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [ARRAY](#rtvref.types.ARRAY) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>ARRAY_args</code>](#rtvref.types.ARRAY_args) | Type arguments. |
+
+
+* [.isArray(v, [q], [args])](#rtvref.validator.isArray) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isArray.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isArray.config)
+
+
+* * *
+
+<a name="rtvref.validator.isArray.type"></a>
+
+##### isArray.type : <code>string</code>
+Type: [ARRAY](#rtvref.types.ARRAY)
+
+**Kind**: static constant of [<code>isArray</code>](#rtvref.validator.isArray)  
+
+* * *
+
+<a name="rtvref.validator.isArray.config"></a>
+
+##### isArray.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isArray</code>](#rtvref.validator.isArray)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isBoolean"></a>
+
+#### validator.isBoolean(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [BOOLEAN](#rtvref.types.BOOLEAN) type.
+
+Determines if a value is a boolean literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new Boolean(true)`, which is an object that is a boolean.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isBoolean(v)](#rtvref.validator.isBoolean) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isBoolean.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isBoolean.config)
+
+
+* * *
+
+<a name="rtvref.validator.isBoolean.type"></a>
+
+##### isBoolean.type : <code>string</code>
+Type: [BOOLEAN](#rtvref.types.BOOLEAN)
+
+**Kind**: static constant of [<code>isBoolean</code>](#rtvref.validator.isBoolean)  
+
+* * *
+
+<a name="rtvref.validator.isBoolean.config"></a>
+
+##### isBoolean.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isBoolean</code>](#rtvref.validator.isBoolean)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isFinite"></a>
+
+#### validator.isFinite(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [FINITE](#rtvref.types.FINITE) type.
+
+Determines if a value is a number literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new Number(1)`, which is an object that is a number.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+
+
+* [.isFinite(v, [q], [args])](#rtvref.validator.isFinite) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isFinite.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isFinite.config)
+
+
+* * *
+
+<a name="rtvref.validator.isFinite.type"></a>
+
+##### isFinite.type : <code>string</code>
+Type: [FINITE](#rtvref.types.FINITE)
+
+**Kind**: static constant of [<code>isFinite</code>](#rtvref.validator.isFinite)  
+
+* * *
+
+<a name="rtvref.validator.isFinite.config"></a>
+
+##### isFinite.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isFinite</code>](#rtvref.validator.isFinite)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isFunction"></a>
+
+#### validator.isFunction(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [FUNCTION](#rtvref.types.FUNCTION) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isFunction(v)](#rtvref.validator.isFunction) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isFunction.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isFunction.config)
+
+
+* * *
+
+<a name="rtvref.validator.isFunction.type"></a>
+
+##### isFunction.type : <code>string</code>
+Type: [FUNCTION](#rtvref.types.FUNCTION)
+
+**Kind**: static constant of [<code>isFunction</code>](#rtvref.validator.isFunction)  
+
+* * *
+
+<a name="rtvref.validator.isFunction.config"></a>
+
+##### isFunction.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isFunction</code>](#rtvref.validator.isFunction)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isMap"></a>
+
+#### validator.isMap(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [MAP](#rtvref.types.MAP) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
+
+
+* [.isMap(v, [q], [args])](#rtvref.validator.isMap) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isMap.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isMap.config)
+
+
+* * *
+
+<a name="rtvref.validator.isMap.type"></a>
+
+##### isMap.type : <code>string</code>
+Type: [MAP](#rtvref.types.MAP)
+
+**Kind**: static constant of [<code>isMap</code>](#rtvref.validator.isMap)  
+
+* * *
+
+<a name="rtvref.validator.isMap.config"></a>
+
+##### isMap.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isMap</code>](#rtvref.validator.isMap)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isNumber"></a>
+
+#### validator.isNumber(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [NUMBER](#rtvref.types.NUMBER) type.
+
+Determines if a value is a number literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new Number(1)`, which is an object that is a number.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+
+
+* [.isNumber(v, [q], [args])](#rtvref.validator.isNumber) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isNumber.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isNumber.config)
+
+
+* * *
+
+<a name="rtvref.validator.isNumber.type"></a>
+
+##### isNumber.type : <code>string</code>
+Type: [NUMBER](#rtvref.types.NUMBER)
+
+**Kind**: static constant of [<code>isNumber</code>](#rtvref.validator.isNumber)  
+
+* * *
+
+<a name="rtvref.validator.isNumber.config"></a>
+
+##### isNumber.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isNumber</code>](#rtvref.validator.isNumber)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isObject"></a>
+
+#### validator.isObject(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [OBJECT](#rtvref.types.OBJECT) type.
+
+Determines if a value is an object that extends from `JavaScript.Object` and
+ is not a function, array, regex, map, weak map, set, weak set, or primitive.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isObject(v)](#rtvref.validator.isObject) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isObject.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isObject.config)
+
+
+* * *
+
+<a name="rtvref.validator.isObject.type"></a>
+
+##### isObject.type : <code>string</code>
+Type: [OBJECT](#rtvref.types.OBJECT)
+
+**Kind**: static constant of [<code>isObject</code>](#rtvref.validator.isObject)  
+
+* * *
+
+<a name="rtvref.validator.isObject.config"></a>
+
+##### isObject.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isObject</code>](#rtvref.validator.isObject)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isRegExp"></a>
+
+#### validator.isRegExp(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [REGEXP](#rtvref.types.REGEXP) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isRegExp(v)](#rtvref.validator.isRegExp) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isRegExp.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isRegExp.config)
+
+
+* * *
+
+<a name="rtvref.validator.isRegExp.type"></a>
+
+##### isRegExp.type : <code>string</code>
+Type: [REGEXP](#rtvref.types.REGEXP)
+
+**Kind**: static constant of [<code>isRegExp</code>](#rtvref.validator.isRegExp)  
+
+* * *
+
+<a name="rtvref.validator.isRegExp.config"></a>
+
+##### isRegExp.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isRegExp</code>](#rtvref.validator.isRegExp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isSet"></a>
+
+#### validator.isSet(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [SET](#rtvref.types.SET) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
+
+
+* [.isSet(v, [q], [args])](#rtvref.validator.isSet) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isSet.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isSet.config)
+
+
+* * *
+
+<a name="rtvref.validator.isSet.type"></a>
+
+##### isSet.type : <code>string</code>
+Type: [SET](#rtvref.types.SET)
+
+**Kind**: static constant of [<code>isSet</code>](#rtvref.validator.isSet)  
+
+* * *
+
+<a name="rtvref.validator.isSet.config"></a>
+
+##### isSet.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isSet</code>](#rtvref.validator.isSet)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isString"></a>
+
+#### validator.isString(v, [q], [args]) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [STRING](#rtvref.types.STRING) type.
+
+Determines if a value is a string literal __only__ (i.e. a
+ [primitive](#rtvref.types.primitives)). It does not validate
+ `new String('value')`, which is an object that is a string.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+| [args] | [<code>STRING_args</code>](#rtvref.types.STRING_args) | Type arguments. |
+
+
+* [.isString(v, [q], [args])](#rtvref.validator.isString) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isString.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isString.config)
+
+
+* * *
+
+<a name="rtvref.validator.isString.type"></a>
+
+##### isString.type : <code>string</code>
+Type: [STRING](#rtvref.types.STRING)
+
+**Kind**: static constant of [<code>isString</code>](#rtvref.validator.isString)  
+
+* * *
+
+<a name="rtvref.validator.isString.config"></a>
+
+##### isString.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isString</code>](#rtvref.validator.isString)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isSymbol"></a>
+
+#### validator.isSymbol(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [SYMBOL](#rtvref.types.SYMBOL) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isSymbol(v)](#rtvref.validator.isSymbol) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isSymbol.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isSymbol.config)
+
+
+* * *
+
+<a name="rtvref.validator.isSymbol.type"></a>
+
+##### isSymbol.type : <code>string</code>
+Type: [SYMBOL](#rtvref.types.SYMBOL)
+
+**Kind**: static constant of [<code>isSymbol</code>](#rtvref.validator.isSymbol)  
+
+* * *
+
+<a name="rtvref.validator.isSymbol.config"></a>
+
+##### isSymbol.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isSymbol</code>](#rtvref.validator.isSymbol)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isWeakMap"></a>
+
+#### validator.isWeakMap(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [WEAK_MAP](#rtvref.types.WEAK_MAP) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isWeakMap(v)](#rtvref.validator.isWeakMap) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isWeakMap.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isWeakMap.config)
+
+
+* * *
+
+<a name="rtvref.validator.isWeakMap.type"></a>
+
+##### isWeakMap.type : <code>string</code>
+Type: [WEAK_MAP](#rtvref.types.WEAK_MAP)
+
+**Kind**: static constant of [<code>isWeakMap</code>](#rtvref.validator.isWeakMap)  
+
+* * *
+
+<a name="rtvref.validator.isWeakMap.config"></a>
+
+##### isWeakMap.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isWeakMap</code>](#rtvref.validator.isWeakMap)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.isWeakSet"></a>
+
+#### validator.isWeakSet(v) ⇒ <code>boolean</code>
+[Validator](#rtvref.validator.type_validator) for the
+ [WEAK_SET](#rtvref.types.WEAK_SET) type.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* [.isWeakSet(v)](#rtvref.validator.isWeakSet) ⇒ <code>boolean</code>
+    * [.type](#rtvref.validator.isWeakSet.type) : <code>string</code>
+    * [.config(settings)](#rtvref.validator.isWeakSet.config)
+
+
+* * *
+
+<a name="rtvref.validator.isWeakSet.type"></a>
+
+##### isWeakSet.type : <code>string</code>
+Type: [WEAK_SET](#rtvref.types.WEAK_SET)
+
+**Kind**: static constant of [<code>isWeakSet</code>](#rtvref.validator.isWeakSet)  
+
+* * *
+
+<a name="rtvref.validator.isWeakSet.config"></a>
+
+##### isWeakSet.config(settings)
+[Configuration Function](#rtvref.validator.validator_config)
+
+**Kind**: static method of [<code>isWeakSet</code>](#rtvref.validator.isWeakSet)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Standard configuration settings. |
+
+
+* * *
+
+<a name="rtvref.validator.type_validator"></a>
+
+#### validator.type_validator(value, [qualifier], [args]) ⇒ <code>boolean</code>
+<h3>Type Validator Function</h3>
+
+NOTE: A validator must always give __precedence__ to
+ [qualifier rules](#rtvref.types.rules) for the type it's validating, over
+ any arguments specified. For example,
+
+NOTE: A validator __must not__ attempt to validate values considering basic
+ [qualifier](#rtvref.qualifiers) rules like allowing `null` when EXPECTED
+ vs not when REQUIRED, unless the type itself allows or disallows these
+ special values. A validator should focus on checking for its type. For example,
+ the [isString validator](rtvref.validation.isString) requires the value
+ to be a string, excluding `null` and `undefined` regardless of the qualifier.
+ It does, however, allow an empty string if the qualifier is not REQUIRED because
+ that is one of its [type-specific qualifier rules](#rtvref.types.STRING).
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>boolean</code> - `true` if the value is verified according to the qualifier
+ and args; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>\*</code> | The value to validate. |
+| [qualifier] | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always default to [REQUIRED](#rtvref.qualifiers.REQUIRED)  to maintain consistent behavior. |
+| [args] | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
+
+
+* * *
+
+<a name="rtvref.validator.validator_config"></a>
+
+#### validator.validator_config(settings)
+<h3>Type Validator Configuration Function</h3>
+
+This function is called to provide the
+ [type validator](#rtvref.validator.type_validator) with access to
+ internal utilities.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| settings | <code>Object</code> | Configuration settings. |
+| settings.impl | [<code>impl</code>](#rtvref.impl) | Reference to the `impl` module. |
 
 
 * * *
@@ -1985,7 +2601,6 @@ Runtime Verification Library for browsers and Node.js.
     * [.t](#rtv.t) : <code>rtvref.Enumeration.&lt;String, String&gt;</code>
     * [.q](#rtv.q) : <code>rtvref.Enumeration.&lt;String, String&gt;</code>
     * [.e](#rtv.e) : <code>boolean</code>
-    * [._version](#rtv._version) : <code>string</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
     * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -2022,15 +2637,6 @@ Shortcut proxy for reading [enabled](#rtv.config.enabled).
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-
-* * *
-
-<a name="rtv._version"></a>
-
-### rtv._version : <code>string</code>
-[internal] Library version.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
 
 * * *
 
@@ -2199,21 +2805,6 @@ Contextual RTV Generator // TODO[docs]
 | Param | Type |
 | --- | --- |
 | context | <code>string</code> | 
-
-
-* * *
-
-<a name="isStringTypeset"></a>
-
-## isStringTypeset(ts) ⇒ <code>boolean</code>
-Determines if a typeset represents a string, and only a string.
-
-**Kind**: global function  
-**Returns**: <code>boolean</code> - `true` if so; `false` otherwise.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ts | [<code>typeset</code>](#rtvref.types.typeset) | Typeset to check. |
 
 
 * * *

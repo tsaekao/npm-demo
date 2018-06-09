@@ -1,59 +1,34 @@
 ////// Main Implementation Module
 
-import * as isAny from './validation/isAny';
-import * as isBoolean from './validation/isBoolean';
-import * as isString from './validation/isString';
-import * as isFunction from './validation/isFunction';
-import * as isRegExp from './validation/isRegExp';
-import * as isSymbol from './validation/isSymbol';
+import isArray from './validator/isArray';
+import isObject from './validator/isObject';
+import isString from './validator/isString';
+import isFunction from './validator/isFunction';
 
-import * as isFinite from './validation/isFinite';
-import * as isNumber from './validation/isNumber';
+import isTypeset from './validation/isTypeset';
 
-import * as isArray from './validation/isArray';
-
-import * as isAnyObject from './validation/isAnyObject';
-import * as isObject from './validation/isObject';
-
-import * as isMap from './validation/isMap';
-import * as isWeakMap from './validation/isWeakMap';
-
-import * as isSet from './validation/isSet';
-import * as isWeakSet from './validation/isWeakSet';
-
-import {isTypeset} from './validation/validation';
 import {DEFAULT_OBJECT_TYPE, default as types} from './types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
 import {print} from './util';
 import RtvSuccess from './RtvSuccess';
 import RtvError from './RtvError';
 
-// @type {Object.<string,function>} Map of validator type (string) to validator
-//  function.
-// TODO: In the future, with plugins, this should be dynamically-generated somehow.
-const validatorMap = {
-  [isAny.type]: isAny.validator,
-  [isBoolean.type]: isBoolean.validator,
-  [isString.type]: isString.validator,
-  [isFunction.type]: isFunction.validator,
-  [isRegExp.type]: isRegExp.validator,
-  [isSymbol.type]: isSymbol.validator,
-  [isFinite.type]: isFinite.validator,
-  [isNumber.type]: isNumber.validator,
-  [isArray.type]: isArray.validator,
-  [isAnyObject.type]: isAnyObject.validator,
-  [isObject.type]: isObject.validator,
-  [isMap.type]: isMap.validator,
-  [isWeakMap.type]: isWeakMap.validator,
-  [isSet.type]: isSet.validator,
-  [isWeakSet.type]: isWeakSet.validator
-};
+/**
+ * <h2>RTV Implementation Module</h2>
+ *
+ * Provides the internal implementation for the externally-facing {@link rtv RTV}
+ *  API, as well as utilities for {@link rtvref.validator type validators}.
+ *
+ * @namespace rtvref.impl
+ */
 
 /**
- * RTV Implementation Module
+ * [Internal] Map of validator type (string) to validator function.
  * @private
- * @namespace rtv.impl
+ * @name rtvref.impl._validatorMap
+ * @type {Object.<string,rtvref.validator.type_validator>}
  */
+const _validatorMap = {};
 
 /**
  * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
@@ -61,7 +36,7 @@ const validatorMap = {
  *
  * This function does not modify the input `typeset`.
  *
- * @function rtv.impl.fullyQualify
+ * @function rtvref.impl.fullyQualify
  * @param {rtvref.types.typeset} typeset Typeset to fully-qualify.
  * @returns {rtvref.types.fully_qualified_typeset} A new, fully-qualified typeset
  *  representing the input `typeset`. Only the first/immediate level of the
@@ -69,7 +44,7 @@ const validatorMap = {
  *  to elements within the input typeset.
  * @throws {Error} If `typeset` is not a valid typeset.
  */
-export const fullyQualify = function(typeset) {
+const fullyQualify = function(typeset) {
   if (!isTypeset(typeset)) { // start by validating so we can be confident later
     throw new Error(`Invalid typeset="${print(typeset)}"`);
   }
@@ -78,15 +53,15 @@ export const fullyQualify = function(typeset) {
   //  us make assumptions about what we find within it; without this knowledge,
   //  the algorithm below would not work
 
-  if (!isArray.validator(typeset)) {
+  if (!isArray(typeset)) {
     // must be either a string, object, or function with an implied qualifier
-    if (isObject.validator(typeset)) {
+    if (isObject(typeset)) {
       // must be a nested shape descriptor with default object type
       return [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, typeset];
     }
 
     // if a function, it has an implied type of ANY
-    if (isFunction.validator(typeset)) {
+    if (isFunction(typeset)) {
       return [DEFAULT_QUALIFIER, types.ANY, typeset];
     }
 
@@ -100,15 +75,15 @@ export const fullyQualify = function(typeset) {
   // typeset is an array: iterate its elements and build fqts iteratively
   typeset.forEach(function(rule, i) {
     // qualifiers are non-empty strings
-    if (i === 0 && (!isString.validator(rule) || !qualifiers.check(rule))) {
+    if (i === 0 && (!isString(rule) || !qualifiers.check(rule))) {
       fqts.push(DEFAULT_QUALIFIER); // add implied qualifier
     }
 
-    if (isString.validator(rule)) {
+    if (isString(rule)) {
       // must be a type
       curType = rule;
       fqts.push(curType);
-    } else if (isObject.validator(rule)) {
+    } else if (isObject(rule)) {
       if (i === 0) {
         // must be a nested shape descriptor using default object type
         curType = DEFAULT_OBJECT_TYPE;
@@ -119,7 +94,7 @@ export const fullyQualify = function(typeset) {
         fqts.push(rule);
       }
     // must be a validator, ANY is implied type if none specified
-    } else if (isFunction.validator(rule)) {
+    } else if (isFunction(rule)) {
       if (!curType) {
         curType = types.ANY;
         fqts.push(curType);
@@ -143,44 +118,42 @@ export const fullyQualify = function(typeset) {
 /**
  * Checks a value against a simple type using the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
- * @function rtv.impl.checkSimple
+ * @function rtvref.impl.checkType
  * @param {*} value Value to check.
- * @param {string} typeset Simple type name, must be one of {@link rtvref.types.types}.
+ * @param {string} type Simple type name, must be one of {@link rtvref.types.types}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the type; an error indicator if not.
- * @throws {Error} If `typeset` is not a valid type name.
+ * @throws {Error} If `type` is not a valid type name.
  * @see {@link rtvref.types}
  */
-export const checkSimple = function(value, typeset) {
-  types.verify(typeset);
+const checkType = function(value, type) {
+  types.verify(type);
 
-  if (validatorMap[typeset]) {
+  if (_validatorMap[type]) {
     // call the validator for the specified type
-    const valid = validatorMap[typeset](value, DEFAULT_QUALIFIER);
+    const valid = validatorMap[type](value, DEFAULT_QUALIFIER);
 
     if (valid) {
       return new RtvSuccess();
     }
 
-    return new RtvError(value, typeset, 'unknown.path', fullyQualify(typeset)); // TODO: add right params...
+    return new RtvError(value, type, 'unknown.path', fullyQualify(type)); // TODO: add right params...
   }
 
-  throw new Error(`Missing validator for "${print(typeset)}" type`);
+  throw new Error(`Missing validator for type="${print(type)}"`);
 };
 
 /**
- * Checks a value against a shape/typeset.
- * @function rtv.impl.check
+ * Checks a value against a typeset.
+ * @function rtvref.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset Expected shape/type of the value.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
  *  is compliant to the `typeset`; error indicator otherwise. An exception is
  *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid typeset.
- * @see {@link rtvref.types.typeset}
- * @see {@link rtvref.shape_descriptor}
  */
-export const check = function(value, typeset) {
+const check = function(value, typeset) {
   // TODO: on check failure (with a valid typeset), return a special RtvError object that
   //  contains extra properties to indicate what didn't match, what was expected,
   //  the shape that was checked, the value that was checked, etc.
@@ -188,8 +161,8 @@ export const check = function(value, typeset) {
   //  for the return type since impl shouldn't be exposed externally anyway.
   try {
     if (isTypeset(typeset)) {
-      if (isString.validator(typeset)) {
-        return checkSimple(value, typeset);
+      if (isString(typeset)) {
+        return checkType(value, typeset);
       }
 
       // TODO other typeset types
@@ -204,3 +177,58 @@ export const check = function(value, typeset) {
     throw err;
   }
 };
+
+/**
+ * [Internal] Registers a validator, adding a new type that can be
+ *  {@link rtvref.impl.check checked}.
+ *
+ * If a validator has already been registered for a particular type, the previous
+ *  validator is replaced by the newer one.
+ *
+ * @private
+ * @function rtvref.impl._registerType
+ * @param {rtvref.validator} validator The validator representing the type to be
+ *  registered.
+ * @throws {Error} if `validator` does not have the expected interface.
+ */
+const _registerType = function(validator) {
+  // NOTE: we can't dogfood and describe a shape to check() because the types
+  //  needed may not have been registered yet
+  if (!isObject(validator) || !types.check(validator.type) ||
+      !isFunction(validator.config) || !isFunction(validator.default)) {
+
+    throw new Error(`Cannot register an invalid validator for type="${print(validator && validator.type)}": missing at least one required property in [type, config, default]`);
+  }
+
+  _validatorMap[validator.type, validator.default];
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Define and export the module
+
+// define the module to be exported: properties/methods with an underscore prefix
+//  will be converted to non-enumerable properties/methods
+const impl = {
+  // internal
+  _validatorMap, // exposed mainly to support unit testing
+  _registerType,
+  // public
+  fullyQualify,
+  checkType,
+  check
+};
+
+// make properties/methods with underscore prefix internal by making them
+//  non-enumerable (but otherwise, a normal property)
+Object.keys(impl).forEach(function(method, name) {
+  if (name.indexOf('_') === 0) {
+    Object.defineProperty(impl, name, {
+      enumerable: false,
+      configurable: true,
+      writable: true,
+      value: method
+    });
+  }
+});
+
+export default impl;

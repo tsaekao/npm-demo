@@ -1,0 +1,30 @@
+////// Validation Module
+
+/**
+ * <h2>RTV Validation</h2>
+ *
+ * This namespace provides _validation helpers_ which verify values to be of
+ *  certain kinds, but not a single, specific {@link rtvref.types type} like
+ *  {@link rtvref.validator type validators} do. For example, the
+ *  {@link rtvref.validation.isTypeset isTypeset} helper verifies a value as a
+ *  {@link rtvref.types.typeset typeset}, which is not an actual type, while
+ *  the {@link rtvref.validator.isString isString validator} verifies a value
+ *  as a {@link rtvref.types.STRING string}.
+ *
+ * @namespace rtvref.validation
+ */
+
+// NOTE: Modules in this namespace are the only ones where third-party validation
+//  code (i.e. lodash methods) should be referenced. The rest of the library should
+//  use these methods for any type validation needed.
+//
+// NOTE: The only functions that should be defined directly in this module are
+//  those that don't map to a type as defined in ../types.js, such as
+//  `isTypeset()` or `isPrimitive()`.
+//
+// Where possible, these functions should use the other helpers or validators
+//  rather than third-party code (e.g. isTypeset.js needs to check for arrays,
+//  so it should use the isArray.js validator rather than 'lodash/isArray', and
+//  let isArray.js decide the best way to check a value as being an array). This
+//  way, it makes it much easier later on to change third-party libraries, or add
+//  additional logic to how a type is validated.
