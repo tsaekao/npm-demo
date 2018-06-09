@@ -4,18 +4,18 @@ import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import * as val from '../../../src/lib/validator/isFunction';
 
-describe('module: lib/validation/isFunction', function() {
+describe('module: lib/validator/isFunction', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.FUNCTION);
     });
 
     it('valid values', function() {
-      expect(vtu.testValues(val.type, val.validator).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
     it('other types/values', function() {
-      expect(vtu.testOtherValues(val.type, val.validator)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
     });
   });
 });

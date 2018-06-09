@@ -6,18 +6,18 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/isString';
 
-describe('module: lib/validation/isString', function() {
+describe('module: lib/validator/isString', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.STRING);
     });
 
     it('valid values', function() {
-      expect(vtu.testValues(val.type, val.validator).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
     it('other types/values', function() {
-      expect(vtu.testOtherValues(val.type, val.validator)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
     });
   });
 

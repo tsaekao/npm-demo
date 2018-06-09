@@ -16,7 +16,7 @@ describe('module: lib/validation/isPrimitive', function() {
       const values = [''].concat(validValues[types.STRING],
           validValues[types.BOOLEAN], validValues[types.NUMBER],
           validValues[types.SYMBOL]);
-      expect(vtu.testValues('isPrimitive', val.isPrimitive, values).failures).to.eql([]);
+      expect(vtu.testValues('isPrimitive', isPrimitive, values).failures).to.eql([]);
     });
   });
 });

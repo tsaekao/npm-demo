@@ -1,12 +1,14 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
 
+import '../../src/rtv'; // so that types get registered with `impl`
 import impl from '../../src/lib/impl';
 import {DEFAULT_OBJECT_TYPE, default as types} from '../../src/lib/types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from '../../src/lib/qualifiers';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
 import isObject from '../../src/lib/validator/isObject';
+import isFunction from '../../src/lib/validator/isFunction';
 
 describe('module: lib/impl', function() {
   describe('._validatorMap', function() {
@@ -14,7 +16,8 @@ describe('module: lib/impl', function() {
       expect(Object.getOwnPropertyDescriptor(impl, '_validatorMap')).to.eql({
         enumerable: false,
         configurable: true,
-        writable: true
+        writable: true,
+        value: impl._validatorMap
       });
       expect(isObject(impl._validatorMap)).to.be.true;
       expect(Object.keys(impl._validatorMap).length).to.equal(15); // # of known types
@@ -22,13 +25,55 @@ describe('module: lib/impl', function() {
   });
 
   describe('#_registerType()', function() {
+    const errorRE = /Cannot register an invalid validator/;
+    let validator;
+    let stringValidator;
+
+    beforeEach(function() {
+      stringValidator = impl._validatorMap[types.STRING];
+      validator = {
+        type: types.STRING,
+        config: function() {},
+        default: function() {}
+      };
+    });
+
+    afterEach(function() {
+      impl._validatorMap[types.STRING] = stringValidator;
+    });
+
     it('should be an internal method', function() {
       expect(Object.getOwnPropertyDescriptor(impl, '_registerType')).to.eql({
-        value: pkg.version,
         enumerable: false,
         configurable: true,
-        writable: true
+        writable: true,
+        value: impl._registerType
       });
+      expect(isFunction(impl._registerType)).to.be.true;
+    });
+
+    it('should throw if validator is invalid: not an object', function() {
+      expect(impl._registerType.bind(impl, 'foo')).to.throw(errorRE);
+    });
+
+    it('should throw if validator is invalid: unknown type', function() {
+      validator.type = 'unknown';
+      expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
+    });
+
+    it('should throw if validator is invalid: missing .type', function() {
+      delete validator.type;
+      expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
+    });
+
+    it('should throw if validator is invalid: missing #config()', function() {
+      validator.config = 123;
+      expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
+    });
+
+    it('should throw if validator is invalid: missing #default()', function() {
+      validator.default = 123;
+      expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
     });
   });
 
@@ -47,6 +92,10 @@ describe('module: lib/impl', function() {
     it('should throw if shape is not a valid typeset', function() {
       expect(impl.check.bind(impl, 1, 'foo')).to.throw(/Cannot check value: Invalid typeset/);
     });
+
+    it('should throw if typeset type is not supported', function() {
+      expect(impl.check.bind(impl, 1, function() {})).to.throw(/Missing handler for type of specified typeset/);
+    });
   });
 
   describe('#checkType()', function() {
@@ -62,7 +111,7 @@ describe('module: lib/impl', function() {
       const typesVerifyStub = sinon.stub(types, 'verify'); // prevent verification of unknown/invalid type
       expect(function() {
         impl.checkType(2, 'foo');
-      }).to.throw(/Missing validator for "foo" type/);
+      }).to.throw(/Missing validator for type="foo"/);
       typesVerifyStub.restore();
     });
   });

@@ -167,7 +167,7 @@ const check = function(value, typeset) {
 
       // TODO other typeset types
 
-      throw new Error(`Missing handler for typeset="${print(typeset)}" type specified`);
+      throw new Error(`Missing handler for type of specified typeset="${print(typeset)}"`);
     } else {
       throw new Error(`Invalid typeset="${print(typeset)}" specified`);
     }
@@ -200,7 +200,7 @@ const _registerType = function(validator) {
     throw new Error(`Cannot register an invalid validator for type="${print(validator && validator.type)}": missing at least one required property in [type, config, default]`);
   }
 
-  _validatorMap[validator.type, validator.default];
+  _validatorMap[validator.type] = validator.default;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,13 +220,13 @@ const impl = {
 
 // make properties/methods with underscore prefix internal by making them
 //  non-enumerable (but otherwise, a normal property)
-Object.keys(impl).forEach(function(method, name) {
-  if (name.indexOf('_') === 0) {
-    Object.defineProperty(impl, name, {
+Object.keys(impl).forEach(function(prop) {
+  if (prop.indexOf('_') === 0) {
+    Object.defineProperty(impl, prop, {
       enumerable: false,
       configurable: true,
       writable: true,
-      value: method
+      value: impl[prop]
     });
   }
 });

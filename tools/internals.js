@@ -9,21 +9,21 @@ import * as util from '../src/lib/util';
 import isTypeset from '../src/lib/validation/isTypeset';
 import isPrimitive from '../src/lib/validation/isPrimitive';
 
-import * as isAny from '../src/lib/validation/isAny';
-import * as isAnyObject from '../src/lib/validation/isAnyObject';
-import * as isArray from '../src/lib/validation/isArray';
-import * as isBoolean from '../src/lib/validation/isBoolean';
-import * as isFinite from '../src/lib/validation/isFinite';
-import * as isFunction from '../src/lib/validation/isFunction';
-import * as isMap from '../src/lib/validation/isMap';
-import * as isNumber from '../src/lib/validation/isNumber';
-import * as isObject from '../src/lib/validation/isObject';
-import * as isRegExp from '../src/lib/validation/isRegExp';
-import * as isSet from '../src/lib/validation/isSet';
-import * as isString from '../src/lib/validation/isString';
-import * as isSymbol from '../src/lib/validation/isSymbol';
-import * as isWeakMap from '../src/lib/validation/isWeakMap';
-import * as isWeakSet from '../src/lib/validation/isWeakSet';
+import * as isAny from '../src/lib/validator/isAny';
+import * as isAnyObject from '../src/lib/validator/isAnyObject';
+import * as isArray from '../src/lib/validator/isArray';
+import * as isBoolean from '../src/lib/validator/isBoolean';
+import * as isFinite from '../src/lib/validator/isFinite';
+import * as isFunction from '../src/lib/validator/isFunction';
+import * as isMap from '../src/lib/validator/isMap';
+import * as isNumber from '../src/lib/validator/isNumber';
+import * as isObject from '../src/lib/validator/isObject';
+import * as isRegExp from '../src/lib/validator/isRegExp';
+import * as isSet from '../src/lib/validator/isSet';
+import * as isString from '../src/lib/validator/isString';
+import * as isSymbol from '../src/lib/validator/isSymbol';
+import * as isWeakMap from '../src/lib/validator/isWeakMap';
+import * as isWeakSet from '../src/lib/validator/isWeakSet';
 
 global.rtvi = {
   rtv,

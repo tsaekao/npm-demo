@@ -2,8 +2,8 @@
 
 import _ from 'lodash';
 
-import types from '../../../src/lib/types';
-import * as util from '../../../src/lib/util';
+import types from '../../src/lib/types';
+import * as util from '../../src/lib/util';
 
 /**
  * Get a fresh copy of the valid values type map, or just one valid value type array.

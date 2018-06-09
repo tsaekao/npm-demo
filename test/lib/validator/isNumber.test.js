@@ -6,14 +6,14 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/isNumber';
 
-describe('module: lib/validation/isNumber', function() {
+describe('module: lib/validator/isNumber', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.NUMBER);
     });
 
     it('valid values', function() {
-      expect(vtu.testValues(val.type, val.validator).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
     it('other types/values', function() {
@@ -30,7 +30,7 @@ describe('module: lib/validation/isNumber', function() {
       });
 
       // nothing should pass
-      expect(vtu.testValues(val.type, val.validator, invalidValues).passes).to.eql([]);
+      expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);
     });
   });
 

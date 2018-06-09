@@ -6,14 +6,14 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/types';
 import * as val from '../../../src/lib/validator/isFinite';
 
-describe('module: lib/validation/isFinite', function() {
+describe('module: lib/validator/isFinite', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.FINITE);
     });
 
     it('valid values', function() {
-      expect(vtu.testValues(val.type, val.validator).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
     it('other types/values', function() {
@@ -34,7 +34,7 @@ describe('module: lib/validation/isFinite', function() {
           Number.NEGATIVE_INFINITY);
 
       // nothing should pass
-      expect(vtu.testValues(val.type, val.validator, invalidValues).passes).to.eql([]);
+      expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);
     });
   });
 

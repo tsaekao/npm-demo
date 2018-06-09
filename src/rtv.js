@@ -284,5 +284,6 @@ export default rtv;
 
   validators.forEach(function(val) {
     val.config({impl: publicImpl});
+    impl._registerType(val);
   });
 })();

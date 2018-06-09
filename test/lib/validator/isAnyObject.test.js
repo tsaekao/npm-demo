@@ -5,7 +5,7 @@ import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import * as val from '../../../src/lib/validator/isAnyObject';
 
-describe('module: lib/validation/isAnyObject', function() {
+describe('module: lib/validator/isAnyObject', function() {
   describe('validator', function() {
     it('type', function() {
       expect(val.type).to.equal(types.ANY_OBJECT);
@@ -24,7 +24,7 @@ describe('module: lib/validation/isAnyObject', function() {
         values = values.concat(validValues[type]);
       });
 
-      expect(vtu.testValues(val.type, val.validator, values).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.default, values).failures).to.eql([]);
     });
   });
 });
