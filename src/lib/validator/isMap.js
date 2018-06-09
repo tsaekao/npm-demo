@@ -4,7 +4,6 @@ import {default as _isMap} from 'lodash/isMap';
 
 import isFinite from './isFinite';
 import isString from './isString';
-import isArray from './isArray';
 
 import types from '../types';
 import qualifiers from '../qualifiers';
@@ -49,7 +48,7 @@ const isStringTypeset = function(ts) {
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isMap = function(v, q = qualifiers.REQUIRED, args) {
+export default function isMap(v, q = qualifiers.REQUIRED, args) {
   let valid = _isMap(v);
 
   if (valid && args) { // then check args
@@ -99,4 +98,4 @@ export default isMap = function(v, q = qualifiers.REQUIRED, args) {
   }
 
   return valid;
-};
+}

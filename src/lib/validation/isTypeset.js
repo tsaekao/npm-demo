@@ -21,7 +21,7 @@ import qualifiers from '../qualifiers';
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.typeset}
  */
-export default isTypeset = function(v, {deep = false, fullyQualified = false} = {}) {
+export default function isTypeset(v, {deep = false, fullyQualified = false} = {}) {
   let valid = !!(v && (isObject(v) || (isString(v) && types.check(v)) || isFunction(v) ||
       (isArray(v) && v.length > 0)));
 
@@ -264,4 +264,4 @@ export default isTypeset = function(v, {deep = false, fullyQualified = false} = 
   //  (and we can't go deep because it isn't an array)
 
   return valid;
-};
+}

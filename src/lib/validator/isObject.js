@@ -38,10 +38,10 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isObject = function(v) { // no qualifier rules, no args
+export default function isObject(v) { // no qualifier rules, no args
   return _isObjectLike(v) && // excludes primitives and functions
       !isArray(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
       !_isMap(v) && !isWeakMap(v) && // excludes weak/maps
       !_isSet(v) && !isWeakSet(v) && // excludes weak/sets
       !isRegExp(v); // excludes regex
-};
+}

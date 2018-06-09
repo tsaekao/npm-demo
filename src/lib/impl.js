@@ -131,7 +131,7 @@ const checkType = function(value, type) {
 
   if (_validatorMap[type]) {
     // call the validator for the specified type
-    const valid = validatorMap[type](value, DEFAULT_QUALIFIER);
+    const valid = _validatorMap[type](value, DEFAULT_QUALIFIER);
 
     if (valid) {
       return new RtvSuccess();

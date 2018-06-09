@@ -13,10 +13,10 @@ import qualifiers from '../qualifiers';
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
-export default isPrimitive = function(v) {
+export default function isPrimitive(v) {
   return v === undefined || v === null ||
       isString(v, qualifiers.EXPECTED) || // empty strings are OK in this case
       isBoolean(v) ||
       isNumber(v) ||
       isSymbol(v);
-};
+}

@@ -25,6 +25,6 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isWeakSet = function(v) {
+export default function isWeakSet(v) {
   return _isWeakSet(v);
-};
+}

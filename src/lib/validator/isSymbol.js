@@ -25,6 +25,6 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isSymbol = function(v) {
+export default function isSymbol(v) {
   return _isSymbol(v);
-};
+}

@@ -34,7 +34,7 @@ export const config = function(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isFinite = function(v, q = qualifiers.REQUIRED, args) {
+export default function isFinite(v, q = qualifiers.REQUIRED, args) {
   let valid = _isFinite(v); // eliminates NaN, +/-Infinity
 
   if (valid && args) { // then check args
@@ -56,4 +56,4 @@ export default isFinite = function(v, q = qualifiers.REQUIRED, args) {
   }
 
   return valid;
-};
+}

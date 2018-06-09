@@ -25,6 +25,6 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isRegExp = function(v) {
+export default function isRegExp(v) {
   return _isRegExp(v);
-};
+}

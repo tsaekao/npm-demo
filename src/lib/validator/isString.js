@@ -34,7 +34,7 @@ export const config = function(settings) {
  * @param {rtvref.types.STRING_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isString = function(v, q = qualifiers.REQUIRED, args) {
+export default function isString(v, q = qualifiers.REQUIRED, args) {
   let valid = (typeof v === 'string');
 
   if (valid) {
@@ -66,4 +66,4 @@ export default isString = function(v, q = qualifiers.REQUIRED, args) {
   }
 
   return valid;
-};
+}

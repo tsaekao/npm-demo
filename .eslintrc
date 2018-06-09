@@ -99,7 +99,9 @@
       "code": 100, // really should be 80, but let's allow a 20 char buffer
       "tabWidth": 2,
       "ignoreComments": true, // due to JSDoc syntax
-      "ignoreUrls": true
+      "ignoreUrls": true,
+      "ignoreTemplateLiterals": true,
+      "ignoreRegExpLiterals": true
     }],
     "new-cap": "error",
     "new-parens": "error",

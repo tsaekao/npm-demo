@@ -28,6 +28,6 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isAnyObject = function(v) {
+export default function isAnyObject(v) {
   return _isObject(v);
-};
+}

@@ -3,8 +3,6 @@
 import {default as _isSet} from 'lodash/isSet';
 
 import isFinite from './isFinite';
-import isString from './isString';
-import isArray from './isArray';
 
 import types from '../types';
 import qualifiers from '../qualifiers';
@@ -37,7 +35,7 @@ export const config = function(settings) {
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default isSet = function(v, q = qualifiers.REQUIRED, args) {
+export default function isSet(v, q = qualifiers.REQUIRED, args) {
   let valid = _isSet(v);
 
   if (valid && args) { // then check args
@@ -66,4 +64,4 @@ export default isSet = function(v, q = qualifiers.REQUIRED, args) {
   }
 
   return valid;
-};
+}
