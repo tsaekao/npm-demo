@@ -155,24 +155,26 @@ import Enumeration from './Enumeration';
  * Describes the possible types for a given value. It can be any one of the following
  *  JavaScript types:
  *
- * - `Object`: For the root or a nested {@link rtvref.shape_descriptor shape descriptor}
- *   of _implied_ {@link rtvref.types.OBJECT OBJECT} type (unless paired with a specific
- *   object type like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when
- *   using the `Array` notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty
- *   (has no properties), nothing will be verified (anything will pass).
- * - `String`: For a single type, such as {@link rtvref.types.FINITE FINITE}
- *   for a finite number. Must be one of the types defined in {@link rtvref.types}.
- * - `Function`: For a {@link rtvref.types.property_validator property validator}
- *   that will verify the value of the property using custom code. Since the Array
- *   form is not being used (only the validator is being provided), it's always
- *   invoked immediately. Since a type is not provided, the {@link rtvref.types.ANY ANY}
- *   type is implied.
- * - `Array`: For multiple type possibilities, optionally {@link rtvref.qualifiers qualified},
- *   using an __OR__ conjunction, which means the value of the property being described must
- *   match at _least one_ of the types listed, but not all. Matching is done in a short-circuit
- *   fashion, from the first to the last element in the typeset. If a simpler type is likely,
- *   it's more performant to specify it first/earlier in the typeset to avoid a match attempt
- *   on a nested shape or Array.
+ * - {@link rtvref.types.OBJECT Object}: For the root or a nested
+ *   {@link rtvref.shape_descriptor shape descriptor} of _implied_
+ *   {@link rtvref.types.OBJECT OBJECT} type (unless paired with a specific object type
+ *   like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when using the
+ *   Array notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty (has no properties),
+ *   nothing will be verified (anything will pass).
+ * - {@link rtvref.types.STRING String}: For a single type, such as
+ *   {@link rtvref.types.FINITE FINITE} for a finite number. Must be one of the types
+ *   defined in {@link rtvref.types}.
+ * - {@link rtvref.types.FUNCTION Function}: For a
+ *   {@link rtvref.types.property_validator property validator} that will verify the value of the
+ *   property using custom code. Since the Array form is not being used (only the validator is
+ *   being provided), it's always invoked immediately. Since a type is not provided, the
+ *   {@link rtvref.types.ANY ANY} type is implied.
+ * - {@link rtvref.types.ARRAY Array}: For multiple type possibilities, optionally
+ *   {@link rtvref.qualifiers qualified}, using an __OR__ conjunction, which means the value of
+ *   the property being described must match at _least one_ of the types listed, but not all.
+ *   Matching is done in a short-circuit fashion, from the first to the last element in the typeset.
+ *   If a simpler type is likely, it's more performant to specify it first/earlier in the typeset
+ *   to avoid a match attempt on a nested shape or Array.
  *   - Cannot be an empty Array.
  *   - A given type may not be included more than once in the typeset, but may appear
  *     again in a nested typeset (when a parent typeset describes an
@@ -342,7 +344,7 @@ import Enumeration from './Enumeration';
  *  be part of a larger parent typeset (though there would be no reference to
  *  the parent typeset, if any). This typeset is as it was specified in the
  *  parent shape, and therefore it may not be fully-qualified.
- * @returns {boolean} `true` to verify the value, `false` to reject it.
+ * @returns {boolean} A _truthy_ value to verify, a _falsy_ value to reject.
  */
 
 // Creates a definition object.

@@ -77,6 +77,8 @@ describe('module: lib/impl', function() {
     });
   });
 
+  describe('#_getCheckOptions()'); // TODO
+
   describe('#check()', function() {
     it('should return an RtvSuccess on successful validation'); // TODO
     it('should return an RtvError on failed validation'); // TODO
@@ -114,7 +116,12 @@ describe('module: lib/impl', function() {
       }).to.throw(/Missing validator for type="foo"/);
       typesVerifyStub.restore();
     });
+
+    it('should return an RtvError if a value is not verified against a type'); // TODO
   });
+
+  describe('#checkShape()'); // TODO
+  describe('#checkTypeset()'); // TODO
 
   describe('#fullyQualify()', function() {
     it('should FQ string typesets', function() {

@@ -1,7 +1,9 @@
 ////// RtvError Class
 
 import isTypeset from './validation/isTypeset';
-import isString from './validator/isString';
+import isArray from './validator/isArray';
+
+import {print} from './util';
 
 // @type {function} The super class.
 const extendsFrom = Error;
@@ -22,7 +24,8 @@ const extendsFrom = Error;
  * @extends {external:JS_Error}
  * @param {*} value The value being verified.
  * @param {rtvref.types.typeset} typeset The typeset used for verification.
- * @param {string} path The path deep into `value` where the failure occurred.
+ * @param {Array.<string>} path The path deep into `value` where the failure occurred.
+ *  An empty array signifies the _root_ (top-level) value that was checked.
  * @param {rtvref.types.fully_qualified_typeset} cause The fully qualified typeset
  *  that caused the failure.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.
@@ -40,7 +43,7 @@ const RtvError = function(value, typeset, path, cause) {
     throw new Error('Invalid typeset: ' + typeset);
   }
 
-  if (!isString(path)) {
+  if (!isArray(path)) {
     throw new Error('Invalid path: ' + path);
   }
 
@@ -102,22 +105,21 @@ const RtvError = function(value, typeset, path, cause) {
      * Path from `value` to the nested property that caused the failure.
      * @readonly
      * @name rtvref.RtvError#path
-     * @type {string}
+     * @type {Array.<string>}
      */
     path: {
       enumerable: true,
       configurable: true,
       get() {
-        return path;
+        return path.concat(); // shallow clone
       }
     },
 
+    // DEBUG TODO make sure the example is what it ends-up being...:
     /**
      * Fully qualified typeset that caused the failure. This will be a subset
      *  of `typeset`, and possibly of a nested typeset within `typeset`
      *  expressing only the direct cause of the failure.
-     *
-     * // TODO: make sure this is what it ends-up being...:
      *
      * If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
      *  and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
@@ -147,7 +149,7 @@ RtvError.prototype.constructor = RtvError;
  * @returns {string} String representation.
  */
 RtvError.prototype.toString = function() {
-  return `{rtvref.RtvError value=${this.value}, path=${this.path}}`;
+  return `{rtvref.RtvError value=${print(this.value)}, path="${this.path.join('/')}"}`;
 };
 
 export default RtvError;

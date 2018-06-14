@@ -1,5 +1,10 @@
 ////// Main Implementation Module
 
+import {default as _forEach} from 'lodash/forEach';
+
+// NOTE: These 4 validators are used to verify the basic types related to typesets.
+//  Validation of actual VALUES being checked should always be done via the
+//  _validatorMap.
 import isArray from './validator/isArray';
 import isObject from './validator/isObject';
 import isString from './validator/isString';
@@ -29,6 +34,33 @@ import RtvError from './RtvError';
  * @type {Object.<string,rtvref.validator.type_validator>}
  */
 const _validatorMap = {};
+
+/**
+ * Get the qualifier given any kind of typeset.
+ * @param {rtvref.types.typeset} typeset The typeset in question.
+ * @returns {string} The applicable {@link rtvref.qualifiers qualifier} for the
+ *  specified typeset.
+ * @throws {Error} If `typeset` is not a valid typeset.
+ */
+const getQualifier = function(typeset) {
+  if (!isTypeset(typeset)) { // start by validating so we can be confident later
+    throw new Error(`Invalid typeset="${print(typeset)}"`);
+  }
+
+  let qualifier = DEFAULT_QUALIFIER;
+
+  if (isArray(typeset)) {
+    // if there's a qualifier, it must be the first element, and since it's a
+    //  valid typeset, it cannot be an empty array
+    if (isString(typeset[0]) && qualifiers.check(typeset[0])) {
+      qualifier = typeset[0];
+    }
+  }
+  // else, it's either an object, function, or string, which implies the default
+  //  qualifier
+
+  return qualifier;
+};
 
 /**
  * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
@@ -116,6 +148,44 @@ const fullyQualify = function(typeset) {
 };
 
 /**
+ * [Internal] Common options for the various `check*()` functions.
+ * @private
+ * @typedef rtvref.impl._checkOptions
+ * @property {Array.<string>} path The current path into the typeset. Initially
+ *  empty to signify the root (top-level) value being checked.
+ * @property {boolean} isTypeset `true` if the typeset specified in the public
+ *  parameters has already been validated as being a typeset; `false` otherwise.
+ * @see {@link rtvref.impl.check}
+ * @see {@link rtvref.impl.checkShape}
+ * @see {@link rtvref.impl.checkType}
+ */
+
+/**
+ * Gets check options for any of the `check*()` functions.
+ * @private
+ * @function rtvref.impl._getCheckOptions
+ * @param {Object} [given] Given options, used as a basis for new options.
+ * @returns {rtvref.impl._checkOptions} A full, new options object, based on
+ *  `given` options, if any. Invalid given options will be ignored. The object
+ *  returned may contain references to objects in `given` depending on property
+ *  types.
+ * @see {@link rtvref.impl.check}
+ * @see {@link rtvref.impl.checkShape}
+ * @see {@link rtvref.impl.checkType}
+ * @throws {Error} If `given.path` is specified and not an array.
+ */
+const _getCheckOptions = function(given = {}) {
+  if (given.path && !isArray(given.path)) {
+    throw new Error(`given.path must be an Array when specified, given.path=${print(given.path)}`);
+  }
+
+  return {
+    path: given.path || [],
+    isTypeset: !!given.isTypeset || false
+  };
+};
+
+/**
  * Checks a value against a simple type using the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @function rtvref.impl.checkType
@@ -126,8 +196,11 @@ const fullyQualify = function(typeset) {
  * @throws {Error} If `type` is not a valid type name.
  * @see {@link rtvref.types}
  */
-const checkType = function(value, type) {
+// @param {rtvref.impl._checkOptions} options (internal parameter)
+const checkType = function(value, type /*, options*/) {
   types.verify(type);
+
+  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
   if (_validatorMap[type]) {
     // call the validator for the specified type
@@ -137,10 +210,90 @@ const checkType = function(value, type) {
       return new RtvSuccess();
     }
 
-    return new RtvError(value, type, 'unknown.path', fullyQualify(type)); // TODO: add right params...
+    return new RtvError(value, type, options.path, fullyQualify(type));
   }
 
   throw new Error(`Missing validator for type="${print(type)}"`);
+};
+
+/**
+ * Checks a value against a {@link rtvref.shape_descriptor shape descriptor} and
+ *  ensure the value's type is the default object type.
+ * @function rtvref.impl.checkShape
+ * @param {Object} value Value to check. Must be of the
+ *  {@link rtvref.types.DEFAULT_OBJECT_TYPE default} object type.
+ * @param {Object} shape Expected shape of the `value`. Must be an
+ *  {@link rtvref.types.OBJECT OBJECT}.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
+ *  `value` is compliant to the shape; an error indicator if not.
+ * @throws {Error} If `shape` is not an {@link rtvref.types.OBJECT OBJECT}.
+ */
+// @param {rtvref.impl._checkOptions} options (internal parameter)
+const checkShape = function(value, shape /*, options*/) {
+  if (!isObject(shape)) {
+    throw new Error(`Invalid shape=${print(shape)}`);
+  }
+
+  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+  const shapeType = types.DEFAULT_OBJECT_TYPE;
+
+  // value must be default object type
+  if (!checkType(value, shapeType)) { // NOTE: always check values with the _validatorMap
+    return new RtvError(value, shapeType, options.path, fullyQualify(shapeType));
+  }
+
+  let err; // @type {(RtvError|undefined)}
+
+  // only consider enumerable, own-properties of the shape
+  _forEach(shape, function(typeset, prop) {
+    // first, consider the qualifier and test the existence of the property
+    const qualifier = getQualifier(typeset);
+    if ((value[prop] === undefined && qualifier !== qualifiers.OPTIONAL) ||
+        (value[prop] === null && qualifier === qualifiers.REQUIRED)) {
+
+      // REQUIRED and EXPECTED require the property NOT to be undefined and to
+      //  be somewhere in the prototype chain; if it wasn't in the prototype chain,
+      //  it would still be undefined, so we don't need an 'in' operator check
+
+      // REQUIRED properties cannot have a value of null/undefined, and they must
+      //  exist somewhere in the prototype chain; if the property wasn't in the
+      //  prototype chain, the value would be undefined, so we don't need to test
+      //  this here either
+
+      err = new RtvError(value, typeset, options.path.concat(prop), fullyQualify(typeset));
+      return false; // break
+    }
+
+    // then, test the property's value against the typeset (indirectly recursive)
+    const result = check(value[prop], typeset, {path: options.path.concat(prop)}); // eslint-disable-line no-use-before-define
+    if (!result.valid) {
+      err = result;
+      return false; // break
+    }
+  });
+
+  return err || (new RtvSuccess());
+};
+
+/**
+ * Checks a value against an Array typeset.
+ * @function rtvref.impl.checkTypeset
+ * @param {*} value Value to check.
+ * @param {rtvref.types.typeset} typeset The Array typeset to check against.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
+ *  is compliant to the `typeset`; error indicator otherwise. An exception is
+ *  __not__ thrown if the `value` is non-compliant.
+ * @throws {Error} If `typeset` is not a valid Array typeset.
+ */
+// @param {rtvref.impl._checkOptions} options (internal parameter)
+const checkTypeset = function(value, typeset /*, options*/) {
+  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+
+  if (!(options.isTypeset || isTypeset(typeset)) || !isArray(typeset)) {
+    throw new Error(); // DEBUG TODO
+  }
+
+  // DEBUG TODO
 };
 
 /**
@@ -153,19 +306,47 @@ const checkType = function(value, type) {
  *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid typeset.
  */
-const check = function(value, typeset) {
-  // TODO: on check failure (with a valid typeset), return a special RtvError object that
-  //  contains extra properties to indicate what didn't match, what was expected,
-  //  the shape that was checked, the value that was checked, etc.
-  //  If check succeeds, return boolean `true`. rtv.check/verify can then test
-  //  for the return type since impl shouldn't be exposed externally anyway.
+// @param {rtvref.impl._checkOptions} options (internal parameter)
+const check = function(value, typeset /*, options*/) {
+  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+
   try {
     if (isTypeset(typeset)) {
+      options.isTypeset = true;
+
       if (isString(typeset)) {
-        return checkType(value, typeset);
+        // simple type: check value is of the type
+        return checkType(value, typeset, options);
       }
 
-      // TODO other typeset types
+      if (isFunction(typeset)) {
+        // property validator: bare function implies the ANY type
+        const tsMatch = types.ANY;
+        const tsMatchFQ = fullyQualify(types.ANY);
+
+        // value must be ANY type, and property validator must return true
+        // NOTE: always check values against the _validatorMap
+        const result = checkType(value, tsMatch, options);
+        if (!result.valid) {
+          return result;
+        }
+
+        if (typeset(value, tsMatchFQ, tsMatch)) {
+          return new RtvSuccess();
+        }
+
+        return new RtvError(value, tsMatch, options.path, tsMatchFQ);
+      }
+
+      if (isObject(typeset)) {
+        // shape descriptor: check value against shape
+        return checkShape(value, typeset, options);
+      }
+
+      if (isArray(typeset)) {
+        // Array typeset: check value against all types in typeset
+        return checkTypeset(value, typeset, options);
+      }
 
       throw new Error(`Missing handler for type of specified typeset="${print(typeset)}"`);
     } else {
@@ -212,9 +393,12 @@ const impl = {
   // internal
   _validatorMap, // exposed mainly to support unit testing
   _registerType,
+  _getCheckOptions,
   // public
   fullyQualify,
   checkType,
+  checkShape,
+  checkTypeset,
   check
 };
 

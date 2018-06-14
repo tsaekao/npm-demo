@@ -28,7 +28,7 @@ const REQUIRED = '!';
  *  Depending on the type, some requirements may not be enforced.
  *
  * Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- *  property to be defined _somewhere_ within the prototype chain, does not allow
+ *  property to be defined _somewhere_ within the prototype chain, does _not_ allow
  *  its value to be `undefined`, but does _allow_ its value to be `null`.
  *
  * See specific type for additional rules.
@@ -46,8 +46,7 @@ const EXPECTED = '+';
  *
  * Unless otherwise stated in type-specific rules, this qualifier _allows_ a
  *  property value to be `null` as well as `undefined`, and does _not_ require
- *  the property to be defined anywhere in the prototype chain. If the property
- *  is defined, then it is treated as an `EXPECTED` value.
+ *  the property to be defined anywhere in the prototype chain.
  *
  * See specific type for additional rules.
  *

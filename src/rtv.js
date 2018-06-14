@@ -46,6 +46,8 @@ import * as isWeakSet from './lib/validator/isWeakSet';
  *  the properties described in the shape, and each property is guaranteed to be
  *  assigned to a value of at least one type described in each property's typeset.
  *
+ * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
+ *
  * @typedef {Object} rtvref.shape_descriptor
  */
 
