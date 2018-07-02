@@ -10,6 +10,7 @@ describe('module: lib/types', function() {
 
   it('should export a "types" enumeration', function() {
     expect(types instanceof Enumeration).to.equal(true);
+    expect(types.$name).to.equal('types');
   });
 
   it('should export a default object type', function() {
@@ -37,6 +38,7 @@ describe('module: lib/types', function() {
     ];
 
     expect(_.difference(mod.objTypes.$values, knownTypes)).to.eql([]);
+    expect(mod.objTypes.$name).to.equal('objTypes');
   });
 
   it('should export an enumeration of all types that accept arguments', function() {
@@ -60,5 +62,6 @@ describe('module: lib/types', function() {
     ];
 
     expect(_.difference(mod.argTypes.$values, knownTypes)).to.eql([]);
+    expect(mod.argTypes.$name).to.equal('argTypes');
   });
 });

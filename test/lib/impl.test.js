@@ -77,7 +77,9 @@ describe('module: lib/impl', function() {
     });
   });
 
-  describe('#_getCheckOptions()'); // TODO
+  describe('#_getCheckOptions()', function() {
+    it('// TODO');
+  });
 
   describe('#check()', function() {
     it('should return an RtvSuccess on successful validation'); // TODO
@@ -118,10 +120,16 @@ describe('module: lib/impl', function() {
     });
 
     it('should return an RtvError if a value is not verified against a type'); // TODO
+
+    it('should use the options.qualifier if specified, only for non-array typesets'); // TODO
   });
 
-  describe('#checkShape()'); // TODO
-  describe('#checkTypeset()'); // TODO
+  describe('#checkShape()', function() {
+    it('// TODO');
+  });
+  describe('#checkTypeset()', function() {
+    it('// TODO');
+  });
 
   describe('#fullyQualify()', function() {
     it('should FQ string typesets', function() {
@@ -194,5 +202,7 @@ describe('module: lib/impl', function() {
       expect(function() { impl.fullyQualify(new Map()); }).to.throw(re);
       expect(function() { impl.fullyQualify(Symbol('asdf')); }).to.throw(re);
     });
+
+    it('should accept a qualifier override'); // TODO
   });
 });

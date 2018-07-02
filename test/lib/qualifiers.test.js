@@ -10,6 +10,7 @@ describe('module: lib/qualifiers', function() {
 
   it('should export a "qualifiers" enumeration', function() {
     expect(qualifiers instanceof Enumeration).to.equal(true);
+    expect(qualifiers.$name).to.equal('qualifiers');
   });
 
   it('should export a default qualifier', function() {

@@ -165,16 +165,16 @@ import Enumeration from './Enumeration';
  *   {@link rtvref.types.FINITE FINITE} for a finite number. Must be one of the types
  *   defined in {@link rtvref.types}.
  * - {@link rtvref.types.FUNCTION Function}: For a
- *   {@link rtvref.types.property_validator property validator} that will verify the value of the
+ *   {@link rtvref.types.custom_validator custom validator} that will verify the value of the
  *   property using custom code. Since the Array form is not being used (only the validator is
  *   being provided), it's always invoked immediately. Since a type is not provided, the
  *   {@link rtvref.types.ANY ANY} type is implied.
  * - {@link rtvref.types.ARRAY Array}: For multiple type possibilities, optionally
- *   {@link rtvref.qualifiers qualified}, using an __OR__ conjunction, which means the value of
- *   the property being described must match at _least one_ of the types listed, but not all.
- *   Matching is done in a short-circuit fashion, from the first to the last element in the typeset.
- *   If a simpler type is likely, it's more performant to specify it first/earlier in the typeset
- *   to avoid a match attempt on a nested shape or Array.
+ *   {@link rtvref.qualifiers qualified}, using a short-circuit __OR__ conjunction, which means
+ *   the value of the property being described must match _at least one_ of the types listed, but
+ *   not all. Matching is done in a short-circuit fashion, from the first to the last element in
+ *   the typeset. If a simpler type is a more likely match, it's more performant to specify it
+ *   first/earlier in the typeset to avoid a match attempt on a nested shape or Array.
  *   - Cannot be an empty Array.
  *   - A given type may not be included more than once in the typeset, but may appear
  *     again in a nested typeset (when a parent typeset describes an
@@ -197,7 +197,7 @@ import Enumeration from './Enumeration';
  *     or an array of non-empty strings or finite numbers. See the `ARRAY` type
  *     reference for more information on _shorthand_ and _full_ notations.
  *   - If an element is a `Function`, it must be the __last__ element in the Array
- *     and will be treated as a {@link rtvref.types.property_validator property validator}.
+ *     and will be treated as a {@link rtvref.types.custom_validator custom validator}.
  *     Only one validator can be specified for a given typeset (additional validators
  *     may appear in nested typesets).
  *
@@ -292,7 +292,7 @@ import Enumeration from './Enumeration';
  *
  * A {@link rtvref.types.typeset typeset} expressed without any shortcut notations
  *  or implied/default types to make it easier to parse, especially as the `match`
- *  parameter given to a {@link rtvref.types.property_validator property validator}.
+ *  parameter given to a {@link rtvref.types.custom_validator custom validator}.
  *  A fully-qualified typeset always uses the array notation, and has a single
  *  {@link rtvref.qualifiers qualifier} as its first element, followed by
  *  at least one type, and at most one validator.
@@ -308,37 +308,44 @@ import Enumeration from './Enumeration';
  */
 
 /**
- * <h3>Property Validator</h3>
+ * <h3>Custom Validator</h3>
  *
  * A function used as a {@link rtvref.types.typeset typeset}, or as a subset to
  *  a typeset, to provide custom verification of the value being verified.
  *
- * A typeset may only have one validator, and the validator is only called if
- *  the value being verified was verified by at least one type in the typeset.
+ * A typeset may only have one validator, and the validator is _only called if
+ *  the value being verified was verified by at least one type in the typeset_.
  *  The validator must be the __last__ element within the typeset (if the typeset
  *  is an array, and a validator is needed). The validator must also be
  *  specified _after_ the {@link rtvref.qualifiers qualifier} in a typeset Array.
- *  The validator is invoked immediately after the first type match, but only if
- *  a type match is made. If the typeset is not
- *  {@link rtvref.types.fully_qualified_typeset fully-qualified} and does not
- *  explicitly specify a type, the {@link rtvref.types.ANY ANY} type is implied.
  *
- * There is one disadvantage to using a property validator: It cannot be de/serialized
+ * The validator is invoked immediately after the first type match, but _only if
+ *  a type match is made_. If the typeset is not
+ *  {@link rtvref.types.fully_qualified_typeset fully-qualified} and does not
+ *  explicitly specify a type, the {@link rtvref.types.ANY ANY} type is implied,
+ *  which will match _any_ value, which means the validator will always be called.
+ *
+ * There is one disadvantage to using a custom validator: It cannot be de/serialized
  *  via JSON, which means it cannot be transmitted or persisted. One option would be
  *  to customize the de/serialization to JSON by serializing the validator to a
  *  special object with properties that would inform the deserialization process
  *  on how to reconstruct the validator dynamically.
  *
- * @typedef {function} rtvref.types.property_validator
+ * @typedef {function} rtvref.types.custom_validator
  * @param {*} value The value being verified.
  * @param {Array} match A __first-level__, {@link rtvref.types.fully_qualified_typeset fully-qualified}
  *  typeset describing the type that matched. This means the first level of this
  *  subset of `typeset` (the 3rd parameter) is fully-qualified, but any nested
  *  {@link rtvref.shape_descriptor shape descriptors} or arrays will not be (they
- *  will remain references to the same shapes/arrays in `typeset`). For example,
- *  if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this parameter
- *  would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,
+ *  will remain references to the same shapes/arrays in `typeset`).
+ *
+ * For example, if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this
+ *  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,
  *  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`.
+ *
+ * If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter
+ *  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the
+ *  original `[STRING, FINITE]`.
  * @param {rtvref.types.typeset} typeset Reference to the typeset used for
  *  verification. Note that the typeset may contain nested typeset(s), and may
  *  be part of a larger parent typeset (though there would be no reference to
@@ -376,7 +383,7 @@ const defs = {
    * - OPTIONAL: Since this qualifier removes the property's need for existence
    *   in the prototype chain, it renders the verification moot (i.e. the property
    *   might as well not be included in the {@link rtvref.shape_descriptor shape descriptor}
-   *   unless a {@link rtvref.types.property_validator property validator} is being
+   *   unless a {@link rtvref.types.custom_validator custom validator} is being
    *   used to do customized verification.
    *
    * @name rtvref.types.ANY
@@ -986,7 +993,7 @@ export const objTypes = new Enumeration(function() {
     }
   });
   return types;
-}());
+}(), 'objTypes');
 
 /**
  * Enumeration (`string -> string`) of {@link rtvref.types types} that accept
@@ -1002,7 +1009,7 @@ export const argTypes = new Enumeration(function() {
     }
   });
   return types;
-}());
+}(), 'argTypes');
 
 /**
  * Enumeration (`string -> string`) of all {@link rtvref.types types}.
@@ -1015,4 +1022,4 @@ export default new Enumeration(function() {
     types[name] = defs[name].value;
   });
   return types;
-}());
+}(), 'types');

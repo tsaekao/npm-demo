@@ -44,10 +44,16 @@ describe('module: lib/Enumeration', function() {
     }).to.throw(/cannot be undefined/);
   });
 
-  it('should prevent duplication values', function() {
+  it('should prevent duplicate values', function() {
     expect(function() {
       new Enumeration({foo: 1, bar: 1});
     }).to.throw(/duplicate value/);
+  });
+
+  it('should disallow keys that begin with "$"', function() {
+    expect(function() {
+      new Enumeration({$foo: 1});
+    }).to.throw(/cannot start with "\$"/);
   });
 
   it('should allow a null value', function() {
@@ -105,6 +111,27 @@ describe('module: lib/Enumeration', function() {
     const str = en + '';
     expect(str).not.to.equal({} + ''); // not the default serialization
     expect(str).to.contain('Enumeration');
+    expect(str).to.contain('$name=""');
     expect(str).to.contain('pairs=');
+  });
+
+  it('should default to an empty name', function() {
+    expect(en.$name).to.equal('');
+  });
+
+  it('should have a non-enumerable, read-only "$name" property', function() {
+    const desc = Object.getOwnPropertyDescriptor(en, '$name');
+    expect(desc.enumerable).to.be.false;
+    expect(desc.configurable).to.be.true;
+    expect(desc.writable).to.be.false;
+  });
+
+  it('should use its name in validation error messages', function() {
+    const en2 = new Enumeration({a: 1}, 'foo');
+    const str = en2 + '';
+    expect(str).to.contain('$name="foo"');
+    expect(function() {
+      en2.verify(2);
+    }).to.throw(/for foo enum/);
   });
 });

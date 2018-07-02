@@ -22,7 +22,7 @@ export const type = types.OBJECT;
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.isObject.config
- * @param {Object} settings Standard configuration settings.
+ * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
 };

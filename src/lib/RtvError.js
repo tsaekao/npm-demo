@@ -8,6 +8,13 @@ import {print} from './util';
 // @type {function} The super class.
 const extendsFrom = Error;
 
+// Renders a path array as a string.
+// @param {Array.<string>} path
+// @returns {string}
+const renderPath = function(path) {
+  return `/${path.join('/')}`;
+};
+
 /**
  * @external JS_Error
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
@@ -40,15 +47,15 @@ const RtvError = function(value, typeset, path, cause) {
   //  by checking the prototype chain, which isn't properly constructed.
 
   if (!isTypeset(typeset)) {
-    throw new Error('Invalid typeset: ' + typeset);
+    throw new Error(`Invalid typeset: ${print(typeset)}`);
   }
 
   if (!isArray(path)) {
-    throw new Error('Invalid path: ' + path);
+    throw new Error(`Invalid path: ${print(path)}`);
   }
 
   if (!isTypeset(cause, {fullyQualified: true})) {
-    throw new Error('Invalid cause (expecting a fully-qualified typeset): ' + cause);
+    throw new Error(`Invalid cause (expecting a fully-qualified typeset): ${print(cause)}`);
   }
 
   // NOTE: For some reason, calling `extendsFrom.call(this, message)` has
@@ -56,7 +63,7 @@ const RtvError = function(value, typeset, path, cause) {
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
   extendsFrom.call(this);
-  this.message = `Verification failed: value=${value}, path=${path}`;
+  this.message = `Verification failed: value=${print(value)}, path="${renderPath(this.path)}"`;
   this.name = 'RtvError';
 
   Object.defineProperties(this, {
@@ -102,7 +109,8 @@ const RtvError = function(value, typeset, path, cause) {
     },
 
     /**
-     * Path from `value` to the nested property that caused the failure.
+     * Path from `value` to the nested property that caused the failure. This
+     *  is a shallow clone of the original `path` specified.
      * @readonly
      * @name rtvref.RtvError#path
      * @type {Array.<string>}
@@ -149,7 +157,7 @@ RtvError.prototype.constructor = RtvError;
  * @returns {string} String representation.
  */
 RtvError.prototype.toString = function() {
-  return `{rtvref.RtvError value=${print(this.value)}, path="${this.path.join('/')}"}`;
+  return `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}"}`;
 };
 
 export default RtvError;

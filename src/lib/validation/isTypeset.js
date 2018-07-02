@@ -77,8 +77,9 @@ export default function isTypeset(v, {deep = false, fullyQualified = false} = {}
           }
         } else if (isFunction(rule)) {
           // must be a validator, but there can't be more than 1, it must be
-          //  in the last position (and always after the qualifier), and since
-          //  the typeset must be FQ'd, we must have an in-scope type
+          //  in the last position (which enforces the 1 count), always after the
+          //  qualifier, and since the typeset must be FQ'd, we must have an
+          //  in-scope type
           valid = !!(curType && (i + 1 === v.length));
         } else if (isObject(rule)) {
           // could be a shape, or type args (either way, it's a single object)
@@ -178,7 +179,8 @@ export default function isTypeset(v, {deep = false, fullyQualified = false} = {}
         }
       } else if (isFunction(rule)) {
         // must be a validator, but there can't be more than 1, and it must be
-        //  in the last position (and always after the qualifier, if any)
+        //  in the last position (which enforces the 1 count), and always after
+        //  the qualifier (if any)
         valid = (i + 1 === v.length);
         if (valid && !curType) {
           // if we have a validator but no in-scope type, ANY is implied

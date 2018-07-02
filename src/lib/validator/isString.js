@@ -14,7 +14,7 @@ export const type = types.STRING;
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.isString.config
- * @param {Object} settings Standard configuration settings.
+ * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
 };

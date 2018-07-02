@@ -1,8 +1,11 @@
 ////// Enumeration
 
+import {print} from './util';
+
 /**
  * Simple enumeration type. Own-properties on an instance are the keys in the
- *  specified `map`, with their associated values.
+ *  specified `map`, with their associated values. Key names cannot start with
+ *  "$".
  *
  * <pre><code>const state = new Enumeration({
  *   READY: 1,
@@ -22,13 +25,17 @@
  * @class rtvref.Enumeration
  * @param {Object.<String,*>} map Object mapping keys to values. Values cannot
  *  be `undefined`.
+ * @param {string} [name] Friendly name used to identify this enumeration,
+ *  especially in validation error messages.
  * @throws {Error} If `map` is falsy or empty.
  * @throws {Error} If `map` has a key that maps to `undefined`.
  * @throws {Error} If `map` contains a duplicate value.
+ * @throws {Error} If `map` has a key that is a restricted property (starts with
+ *  "$").
  */
 export default class Enumeration {
   // JSDoc is provided at the @class level
-  constructor(map) {
+  constructor(map, name) {
     map = map || {};
 
     const keys = Object.keys(map);
@@ -40,17 +47,35 @@ export default class Enumeration {
 
     // shallow-clone each key in the map into this
     keys.forEach((key) => {
+      if (key.indexOf('$') === 0) {
+        throw new Error(`map key "${key}" cannot start with "$"`);
+      }
+
       if (map[key] === undefined) {
-        throw new Error('map[' + key + '] cannot be undefined');
+        throw new Error(`map[${key}] cannot be undefined`);
       }
 
       const value = map[key];
       if (values.indexOf(value) >= 0) {
-        throw new Error('map[' + key + '] is a duplicate value: ' + value);
+        throw new Error(`map[${key}] is a duplicate value: ${print(value)}`);
       }
 
       values.push(value);
       this[key] = value;
+    });
+
+    /**
+     * Friendly name (not necessarily unique among all enumeration instances)
+     *  used to identify this enumeration, especially in validation error
+     *  messages. Empty string if not specified during construction.
+     * @readonly
+     * @name rtvref.Enumeration#$name
+     * @type {string}
+     */
+    Object.defineProperty(this, '$name', {
+      enumerable: false,
+      configurable: true,
+      value: (name && print(name)) || ''
     });
 
     /**
@@ -62,7 +87,7 @@ export default class Enumeration {
      *
      * @readonly
      * @name rtvref.Enumeration#$values
-     * @type Array.<String>
+     * @type {Array.<String>}
      */
     Object.defineProperty(this, '$values', {
       enumerable: false,
@@ -105,7 +130,7 @@ export default class Enumeration {
     const result = this.check(value);
 
     if (result === undefined && !silent) {
-      throw new Error('Invalid value for enum[' + this.$values.join(', ') + ']: ' + value);
+      throw new Error(`Invalid value for ${this.$name ? `${this.$name} ` : ''}enum[${this.$values.map(print).join(', ')}]: ${print(value)}`);
     }
 
     return result;
@@ -118,6 +143,6 @@ export default class Enumeration {
    */
   toString() {
     const pairs = Object.keys(this).map((k) => [k, this[k]]);
-    return `{rtvref.Enumeration pairs=[${pairs.map((p) => `[${p}]`).join(', ')}]}`;
+    return `{rtvref.Enumeration $name="${this.$name}" pairs=[${pairs.map((p) => `[${print(p)}]`).join(', ')}]}`;
   }
 }

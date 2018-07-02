@@ -75,4 +75,4 @@ export default new Enumeration({
   REQUIRED,
   EXPECTED,
   OPTIONAL
-});
+}, 'qualifiers');

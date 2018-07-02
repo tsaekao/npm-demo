@@ -80,6 +80,16 @@
  *  and args, a _falsy_ value to reject.
  */
 
+/**
+ * <h3>Type Validation Configuration Settings</h3>
+ *
+ * The settings provided to the
+ *  {@link rtvref.validator.validator_config configuration function}.
+ *
+ * @typedef {Object} rtvref.validator.validator_config_settings
+ * @property {rtvref.impl} impl Reference to the `impl` module.
+ */
+
 // TODO: Is it good to expose the entire impl module to _any_ type validator,
 //  even third-party plugin validators in the future? Should we, instead, provide
 //  a series of function references without stating where they come from (even
@@ -95,7 +105,6 @@
  *  internal utilities.
  *
  * @function rtvref.validator.validator_config
- * @param {Object} settings Configuration settings.
- * @param {rtvref.impl} settings.impl Reference to the `impl` module.
+ * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 

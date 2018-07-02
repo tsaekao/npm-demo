@@ -19,7 +19,7 @@ export const type = types.SET;
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.isSet.config
- * @param {Object} settings Standard configuration settings.
+ * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
   impl = settings.impl;
