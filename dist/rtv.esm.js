@@ -2089,8 +2089,8 @@ var defs = {
    * @typedef {Object} rtvref.types.CLASS_OBJECT_args
    * @property {function} [ctr] A reference to a constructor function. If specified,
    *  the class object (instance) must have this class function in its inheritance
-   *  chain such that `<class_object> instanceof <function> === true`. Note that
-   *  this property is not serializable to JSON. If not specified, then the object
+   *  chain such that `<class_object> instanceof ctr === true`. Note that this
+   *  property is not serializable to JSON. If not specified, then the object
    *  must be an {@link rtvref.types.OBJECT OBJECT} that is not a
    *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} among the other values that
    *  are not considered class objects.
@@ -2393,7 +2393,7 @@ var qualifiers = new Enumeration({
  * Type: {@link rtvref.types.FINITE FINITE}
  * @const {string} rtvref.validator.isFinite.type
  */
-var type = types.FINITE;
+var type$1 = types.FINITE;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -2448,7 +2448,7 @@ function isFinite$1(v) {
 }
 
 var isFinite$2 = Object.freeze({
-	type: type,
+	type: type$1,
 	config: config,
 	default: isFinite$1
 });
@@ -2459,7 +2459,7 @@ var isFinite$2 = Object.freeze({
  * Type: {@link rtvref.types.ARRAY ARRAY}
  * @const {string} rtvref.validator.isArray.type
  */
-var type$1 = types.ARRAY;
+var type$2 = types.ARRAY;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -2506,7 +2506,7 @@ function isArray$1(v) {
 }
 
 var isArray$2 = Object.freeze({
-	type: type$1,
+	type: type$2,
 	config: config$1,
 	default: isArray$1
 });
@@ -2822,7 +2822,7 @@ var isWeakMap_1 = isWeakMap;
  * Type: {@link rtvref.types.WEAK_MAP WEAK_MAP}
  * @const {string} rtvref.validator.isWeakMap.type
  */
-var type$2 = types.WEAK_MAP;
+var type$3 = types.WEAK_MAP;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -2843,7 +2843,7 @@ function isWeakMap$1(v) {
 }
 
 var isWeakMap$2 = Object.freeze({
-	type: type$2,
+	type: type$3,
 	config: config$2,
 	default: isWeakMap$1
 });
@@ -2880,7 +2880,7 @@ var isWeakSet_1 = isWeakSet;
  * Type: {@link rtvref.types.WEAK_SET WEAK_SET}
  * @const {string} rtvref.validator.isWeakSet.type
  */
-var type$3 = types.WEAK_SET;
+var type$4 = types.WEAK_SET;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -2901,7 +2901,7 @@ function isWeakSet$1(v) {
 }
 
 var isWeakSet$2 = Object.freeze({
-	type: type$3,
+	type: type$4,
 	config: config$3,
 	default: isWeakSet$1
 });
@@ -2952,7 +2952,7 @@ var isRegExp_1 = isRegExp;
  * Type: {@link rtvref.types.REGEXP REGEXP}
  * @const {string} rtvref.validator.isRegExp.type
  */
-var type$4 = types.REGEXP;
+var type$5 = types.REGEXP;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -2973,7 +2973,7 @@ function isRegExp$1(v) {
 }
 
 var isRegExp$2 = Object.freeze({
-	type: type$4,
+	type: type$5,
 	config: config$4,
 	default: isRegExp$1
 });
@@ -2984,7 +2984,7 @@ var isRegExp$2 = Object.freeze({
  * Type: {@link rtvref.types.OBJECT OBJECT}
  * @const {string} rtvref.validator.isObject.type
  */
-var type$5 = types.OBJECT;
+var type$6 = types.OBJECT;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -3014,7 +3014,7 @@ function isObject$1(v) {
 }
 
 var isObject$2 = Object.freeze({
-	type: type$5,
+	type: type$6,
 	config: config$5,
 	default: isObject$1
 });
@@ -3025,7 +3025,7 @@ var isObject$2 = Object.freeze({
  * Type: {@link rtvref.types.STRING STRING}
  * @const {string} rtvref.validator.isString.type
  */
-var type$6 = types.STRING;
+var type$7 = types.STRING;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -3088,7 +3088,7 @@ function isString(v) {
 }
 
 var isString$1 = Object.freeze({
-	type: type$6,
+	type: type$7,
 	config: config$6,
 	default: isString
 });
@@ -3099,7 +3099,7 @@ var isString$1 = Object.freeze({
  * Type: {@link rtvref.types.FUNCTION FUNCTION}
  * @const {string} rtvref.validator.isFunction.type
  */
-var type$7 = types.FUNCTION;
+var type$8 = types.FUNCTION;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -3120,9 +3120,46 @@ function isFunction$1(v) {
 }
 
 var isFunction$2 = Object.freeze({
-	type: type$7,
+	type: type$8,
 	config: config$7,
 	default: isFunction$1
+});
+
+////// isBoolean validator
+
+/**
+ * Type: {@link rtvref.types.BOOLEAN BOOLEAN}
+ * @const {string} rtvref.validator.isBoolean.type
+ */
+var type$9 = types.BOOLEAN;
+
+/**
+ * {@link rtvref.validator.validator_config Configuration Function}
+ * @function rtvref.validator.isBoolean.config
+ * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
+ */
+var config$8 = function config(settings) {};
+
+/**
+ * {@link rtvref.validator.type_validator Validator} for the
+ *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
+ *
+ * Determines if a value is a boolean literal __only__ (i.e. a
+ *  {@link rtvref.types.primitives primitive}). It does not validate
+ *  `new Boolean(true)`, which is an object that is a boolean.
+ *
+ * @function rtvref.validator.isBoolean
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if validated; `false` otherwise.
+ */
+function isBoolean(v) {
+  return v === true || v === false;
+}
+
+var isBoolean$1 = Object.freeze({
+	type: type$9,
+	config: config$8,
+	default: isBoolean
 });
 
 ////// isTypeset validation module
@@ -3936,36 +3973,59 @@ var checkWithShape = function checkWithShape(value, shape /*, options*/) {
  *  the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
  *  would then be `[FINITE]`.
  *
- * @param {rtvref.types.typeset} typeset An Array typeset from which to extract
- *  the next complete type. __This Array will be modified.__
- * @param {rtvref.types.typeset} [qualifier] If specified __and a qualifier
- *  is not found in `typeset`__, this qualifier will be used to qualify the returned
- *  sub-type Array typeset. If a qualifier is found in `typeset`, this parameter
- *  is ignored. If a qualifier is __not__ found in `typeset` and this parameter
- *  is specified, then this qualifier will be used to qualify the returned
- *  sub-type Array typeset.
+ * @param {(rtvref.types.typeset|Array)} typeset An Array typeset from which to
+ *  extract the next complete type. __This Array will be modified.__ Can also
+ *  be an empty array (which is not a valid typeset, but is tolerated; see the
+ *  return value for more information).
+ * @param {(rtvref.qualifiers|boolean)} [qualifier] Optional, and can either
+ *  be a valid qualifier, `true`, or `false`.
  *
- *  For example, if `typeset` is `[EXPECTED, STRING, FINITE]` then this parameter
- *   is ignored and the returned Array is `[EXPECTED, STRING]`, with `typeset`
- *   now just `[FINITE]`. Calling this method again with `typeset` as `[FINITE]`
- *   would return `[FINITE]` and leave `typeset` empty, if this parameter was not
- *   specified. Specify the original qualifier `EXPECTED` to get `[EXPECTED, FINITE]`
- *   back from this method.
+ *  <h4>Parameter is specified, and is a qualifier</h4>
  *
- * @returns {rtvref.types.typeset} The extracted __Array typeset__ as a new Array,
- *  which is a sub-type of the given `typeset`. This sub-typeset is not necessarily
- *  fully-qualified.
- * @throws {Error} If `typeset` is not a valid Array typeset.
+ *  If __a qualifier is not found in `typeset`__, this qualifier will be used to
+ *  qualify the returned sub-type Array typeset. If a qualifier is found in `typeset`,
+ *  this parameter is ignored. If a qualifier is __not__ found in `typeset` and
+ *  this parameter is specified, then this qualifier will be used to qualify the
+ *  returned sub-type Array typeset.
+ *
+ *  __Examples:__
+ *  - `typeset = [EXPECTED, STRING, FINITE];`
+ *  - `extractNextType(typeset, REQUIRED) === [EXPECTED, STRING]`, `typeset === [FINITE]`
+ *  - `extractNextType(typeset) === [FINITE]`, `typeset === []`
+ *  - `typeset = [FINITE];`
+ *  - `extractNextType(typeset, EXPECTED) === [EXPECTED, FINITE]`
+ *
+ *  <h4>Parameter is specified, and is a boolean</h4>
+ *
+ *  If `true`, the qualifier, if any, will be included in the returned sub-type
+ *  Array typeset. If `false`, the qualifier, if any, will be ignored.
+ *
+ *  __Examples:__
+ *  - `extractNextType([STRING], true) === [STRING]`
+ *  - `extractNextType([REQUIRED, STRING], true) === [EXPECTED, STRING]`
+ *  - `extractNextType([REQUIRED, STRING], false) === [STRING]`
+ *
+ * @returns {(rtvref.types.typeset|Array)} The extracted __Array typeset__ as a
+ *  new Array, which is a sub-type of the given `typeset`. This sub-typeset is
+ *  not necessarily fully-qualified. If `typeset` was an empty array, an empty
+ *  array is returned (which is the only case where an invalid Array typeset
+ *  is tolerated, so that this function is easy to use in loops, checking for
+ *  the stopping condition where the returned sub-typeset is empty).
+ * @throws {Error} If `typeset` is not empty and not a valid Array typeset.
  * @throws {Error} If `qualifier` is specified but not valid.
  */
 var extractNextType = function extractNextType(typeset, qualifier) {
-  if (qualifier) {
+  if (qualifier && !isBoolean(qualifier)) {
     qualifiers.verify(qualifier);
   }
 
   // check for an array first since that's must faster than isTypeset()
-  if (!isArray$1(typeset) || !isTypeset(typeset)) {
+  if (!isArray$1(typeset) || typeset.length > 0 && !isTypeset(typeset)) {
     throw new Error('Invalid array typeset=' + print(typeset));
+  }
+
+  if (typeset.length === 0) {
+    return [];
   }
 
   var subtype = []; // subset type of `typeset`
@@ -3973,15 +4033,17 @@ var extractNextType = function extractNextType(typeset, qualifier) {
 
   // FIRST: check for the qualifier, which must be the first element, if specified
   if (qualifiers.check(type)) {
-    subtype.push(type); // ignore the specified qualifier
+    if (qualifier !== false) {
+      subtype.push(type); // include, and ignore the specified qualifier
+    }
 
     // next type: typeset cannot be empty because it's valid and since
     //  there's a qualifier, there must be at least one type in it too
     type = typeset.shift();
   } else {
     // must be a type or the validator, which we'll check for below
-    // use the specified qualifier, if any
-    if (qualifier) {
+    // use the specified qualifier, if any, and if allowed
+    if (qualifier && !isBoolean(qualifier)) {
       subtype.push(qualifier);
     }
   }
@@ -3990,17 +4052,15 @@ var extractNextType = function extractNextType(typeset, qualifier) {
     // simple type
     subtype.push(type);
 
-    // now check for args
+    // check for args if applicable to type (as of now, there are no types that
+    //  require args)
     if (argTypes.check(type) && typeset.length > 0 && isTypeArgs(typeset[0])) {
       subtype.push(typeset.shift());
+    }
 
-      // check for ARRAY since it could be `[ARRAY, {args}, [...]]` as complete type
-      if (type === types.ARRAY) {
-        if (typeset.length > 0 && isArray$1(typeset[0])) {
-          // add array typeset to subtype
-          subtype.push(typeset.shift());
-        }
-      }
+    // check for ARRAY since it could be `[ARRAY, {args}, [...]]` as complete type
+    if (type === types.ARRAY && typeset.length > 0 && isArray$1(typeset[0])) {
+      subtype.push(typeset.shift());
     }
   } else if (isShape(type) || isArray$1(type) || isValidator(type)) {
     // - Shape: if the given typeset was in its original form (nothing extracted from it)
@@ -4034,8 +4094,7 @@ var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
   }
 
   var match = void 0; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
-  var qualifier = DEFAULT_QUALIFIER; // assume the default qualifier to begin
-  var hasQualifier = false; // true if the typeset specifies a qualifier as its first element
+  var qualifier = getQualifier(typeset);
 
   // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
@@ -4044,112 +4103,50 @@ var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
   //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
   //  assume that itself is valid because the isTypeset check was just shallow)
   var typesetCopy = typeset.concat(); // shallow clone so we can modify the array locally
-  var idx = 0;
-  var type = typesetCopy.shift(); // must be >= 1 element since array typesets cannot be empty
-  console.log('===== entering while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  var subtype = extractNextType(typesetCopy, false); // exclude qualifier we already have
+  var idx = -1; // DEBUG no longer needed
+  console.log('===== entering while, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
   var count = -1; // DEBUG remove
-  while (type) {
-    // [].shift() === undefined; undefined isn't a valid type; we'll stop when done
+  while (subtype.length > 0) {
     count++;
     if (count > 4) {
-      console.log('===== breaking on count>4, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      console.log('===== FORCE-BREAK on count>4, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
       break;
     }
-    console.log('===== starting while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-    if (idx === 0) {
-      // check for the qualifier, which must be the first element, if specified
-      if (qualifiers.check(type)) {
-        hasQualifier = true;
-        qualifier = type;
+    console.log('===== starting while, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
 
-        // next type
-        type = typesetCopy.shift();
-        idx++;
-        console.log('===== looping from qualifier=%s, typesetCopy=%s, idx=%s, type=%s', qualifier, print(typesetCopy), idx, type); // DEBUG
-        continue;
-      }
-      // else, must be a type or the validator, which we'll check for below
-    }
-
-    console.log('===== will check for validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-
-    // Before going further, we have to check for an important case in __typeset__:
-    //  an Array that has 1-4 elements and represents a single type, possibly with
-    //  args (but it could also be 2+ different types, in which case, we need to
-    //  process each one individually).
-    // For example:
-    //  [STRING]
-    //  [EXPECTED, {shape}]: one type, qualified
-    //  [[...]]: nested array
-    //  [OPTIONAL, ARRAY, {args}, [...]]: fully-qualified nested array with args
-    //  and more...
-    // NOTE: by definition, an Array typeset cannot be empty, and since we've eliminated
-    //  the qualifier, if any, with the `idx === 0` case above, the length of typesetCopy
-    //  must be at most 3 at this point
-    if (typesetCopy.length <= 3) {
-      if (typesetCopy.length) {}
-    }
-
-    if (!hasQualifier && idx === 0 && typesetCopy.length <= 2 || hasQualifier && idx === 1 && typesetCopy.length === 1) {
-
-      if (hasQualifier) {
-        // idx === 1 is implied, otherwise hasQualifier would have to be false
-        if (typesetCopy.length === 1) {
-          // what remains is either another type (string), a function (validator),
-          //  or args for `type` (which could be a shape if `type` is an object type)
-
-          // DEBUG TODO
-
-          // since the typeset is valid, the single type cannot be a qualifier: must
-          //  be either a string, function, object/shape, array; or args for type
-
-        } else {
-            // length must be 2, which means a type and args, or two types
-
-          }
-      }
-    }
-
-    // check for the validator
-    if (isValidator(type)) {
-      console.log('===== is validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+    // check for the validator, which will always come alone, and since the validator
+    //  must be at the end of an Array typeset, it also signals the end of all subtypes
+    if (subtype.length === 1 && isValidator(subtype[0])) {
+      console.log('===== is validator, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
       // if we reach the validator (which must be the very last element) in this
       //  loop, none of the types matched, unless the validator is the only
       //  type in the typeset, at which point it gets an implied type of ANY,
       //  which matches any value
-      if (typeset.length === 1 || typeset.length === 2 && hasQualifier) {
+      // NOTE: we have to test the original typeset for the ANY condition
+      if (typeset.length === 1 || typeset.length === 2 && qualifiers.check(typeset[0])) {
         match = fullyQualify(types.ANY);
       }
 
-      break; // break (since this must be the last element anyway)
+      break; // break (since this must be the last element in typeset)
     } else {
-      console.log('===== not validator, checking argTypes, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-      // look for type args (if applicable) before checking the value against this type
-      var typeArgs = void 0;
-      if (isString(type) && argTypes.check(type) && typesetCopy.length > 0 && isTypeArgs(typesetCopy[0])) {
-
-        typeArgs = typesetCopy.shift();
-        idx++;
-      }
-
-      console.log('===== calling check, typesetCopy=%s, idx=%s, type=%s, typeArgs=%s, value=%s', print(typesetCopy), idx, type, print(typeArgs), print(value)); // DEBUG
-      var result = check(value, typeArgs ? [type, typeArgs] : type, _getCheckOptions(options, {
+      console.log('===== calling check, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
+      var result = check(value, subtype, _getCheckOptions(options, {
         qualifier: qualifier,
         isTypeset: false // don't assume it's valid since we only check shallow as we go
       }));
 
-      console.log('===== check result=%s, typesetCopy=%s, idx=%s, type=%s', print(result), print(typesetCopy), idx, type); // DEBUG
+      console.log('===== check result=%s, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(result), print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
       if (result.valid) {
         match = fullyQualify(type, qualifier);
-        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, type=%s', print(match), print(typesetCopy), idx, type); // DEBUG
+        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(match), print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
         break; // break on first match
       }
     }
 
-    // next type
-    type = typesetCopy.shift();
-    idx++;
-    console.log('===== looping, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+    // next subtype
+    subtype = extractNextType(typesetCopy);
+    console.log('===== looping, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
   }
   var err = void 0; // @type {(RtvError|undefined)}
 
@@ -4297,14 +4294,14 @@ Object.keys(impl).forEach(function (prop) {
  * Type: {@link rtvref.types.ANY ANY}
  * @const {string} rtvref.validator.isAny.type
  */
-var type$8 = types.ANY;
+var type$10 = types.ANY;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.isAny.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$8 = function config(settings) {};
+var config$9 = function config(settings) {};
 
 /**
  * {@link rtvref.validator.type_validator Validator} for the
@@ -4318,46 +4315,9 @@ function isAny(v) {
 }
 
 var isAny$1 = Object.freeze({
-	type: type$8,
-	config: config$8,
-	default: isAny
-});
-
-////// isBoolean validator
-
-/**
- * Type: {@link rtvref.types.BOOLEAN BOOLEAN}
- * @const {string} rtvref.validator.isBoolean.type
- */
-var type$9 = types.BOOLEAN;
-
-/**
- * {@link rtvref.validator.validator_config Configuration Function}
- * @function rtvref.validator.isBoolean.config
- * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
- */
-var config$9 = function config(settings) {};
-
-/**
- * {@link rtvref.validator.type_validator Validator} for the
- *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
- *
- * Determines if a value is a boolean literal __only__ (i.e. a
- *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new Boolean(true)`, which is an object that is a boolean.
- *
- * @function rtvref.validator.isBoolean
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if validated; `false` otherwise.
- */
-function isBoolean(v) {
-  return v === true || v === false;
-}
-
-var isBoolean$1 = Object.freeze({
-	type: type$9,
+	type: type$10,
 	config: config$9,
-	default: isBoolean
+	default: isAny
 });
 
 /** `Object#toString` result references. */
@@ -4393,7 +4353,7 @@ var isSymbol_1 = isSymbol;
  * Type: {@link rtvref.types.SYMBOL SYMBOL}
  * @const {string} rtvref.validator.isSymbol.type
  */
-var type$10 = types.SYMBOL;
+var type$11 = types.SYMBOL;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -4414,7 +4374,7 @@ function isSymbol$1(v) {
 }
 
 var isSymbol$2 = Object.freeze({
-	type: type$10,
+	type: type$11,
 	config: config$10,
 	default: isSymbol$1
 });
@@ -4498,7 +4458,7 @@ var _isNaN = isNaN;
  * Type: {@link rtvref.types.NUMBER NUMBER}
  * @const {string} rtvref.validator.isNumber.type
  */
-var type$11 = types.NUMBER;
+var type$12 = types.NUMBER;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -4559,7 +4519,7 @@ function isNumber$1(v) {
 }
 
 var isNumber$2 = Object.freeze({
-	type: type$11,
+	type: type$12,
 	config: config$11,
 	default: isNumber$1
 });
@@ -4570,7 +4530,7 @@ var isNumber$2 = Object.freeze({
  * Type: {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
  * @const {string} rtvref.validator.isAnyObject.type
  */
-var type$12 = types.ANY_OBJECT;
+var type$13 = types.ANY_OBJECT;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -4594,7 +4554,7 @@ function isAnyObject(v) {
 }
 
 var isAnyObject$1 = Object.freeze({
-	type: type$12,
+	type: type$13,
 	config: config$12,
 	default: isAnyObject
 });
@@ -4607,7 +4567,7 @@ var impl$1 = void 0; // @type {rtvref.impl}
  * Type: {@link rtvref.types.MAP MAP}
  * @const {string} rtvref.validator.isMap.type
  */
-var type$13 = types.MAP;
+var type$14 = types.MAP;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -4718,7 +4678,7 @@ function isMap$1(v) {
 
 
 var isMap$2 = Object.freeze({
-	type: type$13,
+	type: type$14,
 	config: config$13,
 	default: isMap$1
 });
@@ -4731,7 +4691,7 @@ var impl$2 = void 0; // @type {rtvref.impl}
  * Type: {@link rtvref.types.SET SET}
  * @const {string} rtvref.validator.isSet.type
  */
-var type$14 = types.SET;
+var type$15 = types.SET;
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
@@ -4808,7 +4768,7 @@ function isSet$1(v) {
 }
 
 var isSet$2 = Object.freeze({
-	type: type$14,
+	type: type$15,
 	config: config$14,
 	default: isSet$1
 });

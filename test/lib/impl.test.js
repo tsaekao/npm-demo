@@ -146,7 +146,7 @@ describe.only('module: lib/impl', function() { // DEBUG remove only
     });
   });
 
-  describe.only('#extractNextType()', function() { // DEBUG remove only
+  describe('#extractNextType()', function() { // DEBUG remove only
     it('should use the specified qualifier unless a qualifier is found', function() {
       let typeset = [qualifiers.EXPECTED, types.FUNCTION];
       let nextType = impl.extractNextType(typeset, qualifiers.OPTIONAL);
@@ -159,6 +159,14 @@ describe.only('module: lib/impl', function() { // DEBUG remove only
 
       expect(typeset).to.eql([]);
       expect(nextType).to.eql([qualifiers.OPTIONAL, types.FUNCTION]);
+    });
+
+    it('should use the qualifier, if any, if qualifier=true', function() {
+      expect(impl.extractNextType([types.STRING], true)).to.eql([types.STRING]);
+      expect(impl.extractNextType([qualifiers.REQUIRED, types.STRING], true))
+        .to.eql([qualifiers.REQUIRED, types.STRING]);
+      expect(impl.extractNextType([qualifiers.REQUIRED, types.STRING], false))
+        .to.eql([types.STRING]);
     });
 
     it('should handle simple string types', function() {
@@ -256,20 +264,27 @@ describe.only('module: lib/impl', function() { // DEBUG remove only
       expect(typeset).to.eql([]);
       expect(nextType).to.eql([qualifiers.REQUIRED, val]);
 
-      typeset = [types.PLAIN_OBJECT, val];
+      typeset = [types.ANY, val];
       nextType = impl.extractNextType(typeset);
 
       expect(typeset).to.eql([val]);
-      expect(nextType).to.eql([types.PLAIN_OBJECT]);
+      expect(nextType).to.eql([types.ANY]);
 
       nextType = impl.extractNextType(typeset);
 
       expect(typeset).to.eql([]);
       expect(nextType).to.eql([val]);
     });
+
+    it('should allow an empty array as the typeset', function() {
+      expect(function() {
+        impl.extractNextType([]);
+      }).not.to.throw(/Invalid array typeset/);
+      expect(impl.extractNextType([])).to.eql([]);
+    });
   });
 
-  describe('#check()', function() {
+  describe.only('#check()', function() { // DEBUG remove only
     it('should return an RtvSuccess on successful validation', function() {
       expect(impl.check(1, types.FINITE)).to.be.an.instanceof(RtvSuccess);
       expect(impl.check(1, function() { return true; })).to.be.an.instanceof(RtvSuccess);

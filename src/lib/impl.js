@@ -2,13 +2,13 @@
 
 import {default as _forEach} from 'lodash/forEach';
 
-// NOTE: These 4 validators are used to verify the basic types related to typesets.
-//  Validation of actual VALUES being checked should always be done via the
-//  _validatorMap.
+// NOTE: These validators are used for internal purposes. Validation of actual
+//  VALUES being checked should always be done via the _validatorMap.
 import isArray from './validator/isArray';
 import isObject from './validator/isObject';
 import isString from './validator/isString';
 import isFunction from './validator/isFunction';
+import isBoolean from './validator/isBoolean';
 
 import isTypeset from './validation/isTypeset';
 import isShape from './validation/isShape';
@@ -316,36 +316,59 @@ const checkWithShape = function(value, shape /*, options*/) {
  *  the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
  *  would then be `[FINITE]`.
  *
- * @param {rtvref.types.typeset} typeset An Array typeset from which to extract
- *  the next complete type. __This Array will be modified.__
- * @param {rtvref.types.typeset} [qualifier] If specified __and a qualifier
- *  is not found in `typeset`__, this qualifier will be used to qualify the returned
- *  sub-type Array typeset. If a qualifier is found in `typeset`, this parameter
- *  is ignored. If a qualifier is __not__ found in `typeset` and this parameter
- *  is specified, then this qualifier will be used to qualify the returned
- *  sub-type Array typeset.
+ * @param {(rtvref.types.typeset|Array)} typeset An Array typeset from which to
+ *  extract the next complete type. __This Array will be modified.__ Can also
+ *  be an empty array (which is not a valid typeset, but is tolerated; see the
+ *  return value for more information).
+ * @param {(rtvref.qualifiers|boolean)} [qualifier] Optional, and can either
+ *  be a valid qualifier, `true`, or `false`.
  *
- *  For example, if `typeset` is `[EXPECTED, STRING, FINITE]` then this parameter
- *   is ignored and the returned Array is `[EXPECTED, STRING]`, with `typeset`
- *   now just `[FINITE]`. Calling this method again with `typeset` as `[FINITE]`
- *   would return `[FINITE]` and leave `typeset` empty, if this parameter was not
- *   specified. Specify the original qualifier `EXPECTED` to get `[EXPECTED, FINITE]`
- *   back from this method.
+ *  <h4>Parameter is specified, and is a qualifier</h4>
  *
- * @returns {rtvref.types.typeset} The extracted __Array typeset__ as a new Array,
- *  which is a sub-type of the given `typeset`. This sub-typeset is not necessarily
- *  fully-qualified.
- * @throws {Error} If `typeset` is not a valid Array typeset.
+ *  If __a qualifier is not found in `typeset`__, this qualifier will be used to
+ *  qualify the returned sub-type Array typeset. If a qualifier is found in `typeset`,
+ *  this parameter is ignored. If a qualifier is __not__ found in `typeset` and
+ *  this parameter is specified, then this qualifier will be used to qualify the
+ *  returned sub-type Array typeset.
+ *
+ *  __Examples:__
+ *  - `typeset = [EXPECTED, STRING, FINITE];`
+ *  - `extractNextType(typeset, REQUIRED) === [EXPECTED, STRING]`, `typeset === [FINITE]`
+ *  - `extractNextType(typeset) === [FINITE]`, `typeset === []`
+ *  - `typeset = [FINITE];`
+ *  - `extractNextType(typeset, EXPECTED) === [EXPECTED, FINITE]`
+ *
+ *  <h4>Parameter is specified, and is a boolean</h4>
+ *
+ *  If `true`, the qualifier, if any, will be included in the returned sub-type
+ *  Array typeset. If `false`, the qualifier, if any, will be ignored.
+ *
+ *  __Examples:__
+ *  - `extractNextType([STRING], true) === [STRING]`
+ *  - `extractNextType([REQUIRED, STRING], true) === [EXPECTED, STRING]`
+ *  - `extractNextType([REQUIRED, STRING], false) === [STRING]`
+ *
+ * @returns {(rtvref.types.typeset|Array)} The extracted __Array typeset__ as a
+ *  new Array, which is a sub-type of the given `typeset`. This sub-typeset is
+ *  not necessarily fully-qualified. If `typeset` was an empty array, an empty
+ *  array is returned (which is the only case where an invalid Array typeset
+ *  is tolerated, so that this function is easy to use in loops, checking for
+ *  the stopping condition where the returned sub-typeset is empty).
+ * @throws {Error} If `typeset` is not empty and not a valid Array typeset.
  * @throws {Error} If `qualifier` is specified but not valid.
  */
 const extractNextType = function(typeset, qualifier) {
-  if (qualifier) {
+  if (qualifier && !isBoolean(qualifier)) {
     qualifiers.verify(qualifier);
   }
 
   // check for an array first since that's must faster than isTypeset()
-  if (!isArray(typeset) || !isTypeset(typeset)) {
+  if (!isArray(typeset) || (typeset.length > 0 && !isTypeset(typeset))) {
     throw new Error(`Invalid array typeset=${print(typeset)}`);
+  }
+
+  if (typeset.length === 0) {
+    return [];
   }
 
   const subtype = []; // subset type of `typeset`
@@ -353,15 +376,17 @@ const extractNextType = function(typeset, qualifier) {
 
   // FIRST: check for the qualifier, which must be the first element, if specified
   if (qualifiers.check(type)) {
-    subtype.push(type); // ignore the specified qualifier
+    if (qualifier !== false) {
+      subtype.push(type); // include, and ignore the specified qualifier
+    }
 
     // next type: typeset cannot be empty because it's valid and since
     //  there's a qualifier, there must be at least one type in it too
     type = typeset.shift();
   } else {
     // must be a type or the validator, which we'll check for below
-    // use the specified qualifier, if any
-    if (qualifier) {
+    // use the specified qualifier, if any, and if allowed
+    if (qualifier && !isBoolean(qualifier)) {
       subtype.push(qualifier);
     }
   }
@@ -380,7 +405,8 @@ const extractNextType = function(typeset, qualifier) {
     if (type === types.ARRAY && typeset.length > 0 && isArray(typeset[0])) {
       subtype.push(typeset.shift());
     }
-  } else if (isShape(type) || isArray(type) || isValidator(type)) {
+  } else {
+    // Must be either a shape, an array (nested typeset), or a validator:
     // - Shape: if the given typeset was in its original form (nothing extracted from it)
     //  then the first type could be a shape, in which case it has an implied type of
     //  OBJECT and is itself the args for it
@@ -412,8 +438,7 @@ const checkWithArray = function(value, typeset /*, options*/) {
   }
 
   let match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
-  let qualifier = DEFAULT_QUALIFIER; // assume the default qualifier to begin
-  let hasQualifier = false; // true if the typeset specifies a qualifier as its first element
+  const qualifier = getQualifier(typeset);
 
   // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
@@ -422,114 +447,50 @@ const checkWithArray = function(value, typeset /*, options*/) {
   //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
   //  assume that itself is valid because the isTypeset check was just shallow)
   const typesetCopy = typeset.concat(); // shallow clone so we can modify the array locally
-  let idx = 0;
-  let type = typesetCopy.shift(); // must be >= 1 element since array typesets cannot be empty
-  console.log('===== entering while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  let subtype = extractNextType(typesetCopy, false); // exclude qualifier we already have
+  const idx = -1; // DEBUG no longer needed
+  console.log('===== entering while, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
   let count = -1; // DEBUG remove
-  while (type) { // [].shift() === undefined; undefined isn't a valid type; we'll stop when done
+  while (subtype.length > 0) {
     count++;
     if (count > 4) {
-      console.log('===== breaking on count>4, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      console.log('===== FORCE-BREAK on count>4, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
       break;
     }
-    console.log('===== starting while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-    if (idx === 0) {
-      // check for the qualifier, which must be the first element, if specified
-      if (qualifiers.check(type)) {
-        hasQualifier = true;
-        qualifier = type;
+    console.log('===== starting while, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
 
-        // next type
-        type = typesetCopy.shift();
-        idx++;
-        console.log('===== looping from qualifier=%s, typesetCopy=%s, idx=%s, type=%s', qualifier, print(typesetCopy), idx, type); // DEBUG
-        continue;
-      }
-      // else, must be a type or the validator, which we'll check for below
-    }
-
-    console.log('===== will check for validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-
-    // Before going further, we have to check for an important case in __typeset__:
-    //  an Array that has 1-4 elements and represents a single type, possibly with
-    //  args (but it could also be 2+ different types, in which case, we need to
-    //  process each one individually).
-    // For example:
-    //  [STRING]
-    //  [EXPECTED, {shape}]: one type, qualified
-    //  [[...]]: nested array
-    //  [OPTIONAL, ARRAY, {args}, [...]]: fully-qualified nested array with args
-    //  and more...
-    // NOTE: by definition, an Array typeset cannot be empty, and since we've eliminated
-    //  the qualifier, if any, with the `idx === 0` case above, the length of typesetCopy
-    //  must be at most 3 at this point
-    if (typesetCopy.length <= 3) {
-      if (typesetCopy.length) {
-      }
-    }
-
-    if ((!hasQualifier && idx === 0 && typesetCopy.length <= 2) ||
-        (hasQualifier && idx === 1 && typesetCopy.length === 1)) {
-
-      if (hasQualifier) {
-        // idx === 1 is implied, otherwise hasQualifier would have to be false
-        if (typesetCopy.length === 1) {
-          // what remains is either another type (string), a function (validator),
-          //  or args for `type` (which could be a shape if `type` is an object type)
-
-          // DEBUG TODO
-
-          // since the typeset is valid, the single type cannot be a qualifier: must
-          //  be either a string, function, object/shape, array; or args for type
-
-        } else {
-          // length must be 2, which means a type and args, or two types
-
-        }
-      }
-    }
-
-    // check for the validator
-    if (isValidator(type)) {
-      console.log('===== is validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+    // check for the validator, which will always come alone, and since the validator
+    //  must be at the end of an Array typeset, it also signals the end of all subtypes
+    if (subtype.length === 1 && isValidator(subtype[0])) {
+      console.log('===== is validator, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
       // if we reach the validator (which must be the very last element) in this
       //  loop, none of the types matched, unless the validator is the only
       //  type in the typeset, at which point it gets an implied type of ANY,
       //  which matches any value
-      if (typeset.length === 1 || (typeset.length === 2 && hasQualifier)) {
+      // NOTE: we have to test the original typeset for the ANY condition
+      if (typeset.length === 1 || (typeset.length === 2 && qualifiers.check(typeset[0]))) {
         match = fullyQualify(types.ANY);
       }
 
-      break; // break (since this must be the last element anyway)
+      break; // break (since this must be the last element in typeset)
     } else {
-      console.log('===== not validator, checking argTypes, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
-      // look for type args (if applicable) before checking the value against this type
-      let typeArgs;
-      if (isString(type) && argTypes.check(type) && typesetCopy.length > 0 &&
-          isTypeArgs(typesetCopy[0])) {
-
-        typeArgs = typesetCopy.shift();
-        idx++;
-      }
-
-      console.log('===== calling check, typesetCopy=%s, idx=%s, type=%s, typeArgs=%s, value=%s', print(typesetCopy), idx, type, print(typeArgs), print(value)); // DEBUG
-      const result = check(value, typeArgs ? [type, typeArgs] : type, _getCheckOptions(options, {
+      console.log('===== calling check, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
+      const result = check(value, subtype, _getCheckOptions(options, {
         qualifier,
         isTypeset: false // don't assume it's valid since we only check shallow as we go
       }));
 
-      console.log('===== check result=%s, typesetCopy=%s, idx=%s, type=%s', print(result), print(typesetCopy), idx, type); // DEBUG
+      console.log('===== check result=%s, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(result), print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
       if (result.valid) {
         match = fullyQualify(type, qualifier);
-        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, type=%s', print(match), print(typesetCopy), idx, type); // DEBUG
+        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(match), print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
         break; // break on first match
       }
     }
 
-    // next type
-    type = typesetCopy.shift();
-    idx++;
-    console.log('===== looping, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+    // next subtype
+    subtype = extractNextType(typesetCopy);
+    console.log('===== looping, typesetCopy=%s, idx=%s, subtype=%s', print(typesetCopy), idx, print(subtype)); // DEBUG
   };
 
   let err; // @type {(RtvError|undefined)}
