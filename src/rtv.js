@@ -7,7 +7,7 @@ import qualifiers from './lib/qualifiers';
 import RtvSuccess from './lib/RtvSuccess';
 
 // all known types
-// TODO: In the future, with plugins, this should be dynamically-generated somehow.
+// TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
 import * as isAny from './lib/validator/isAny';
 import * as isBoolean from './lib/validator/isBoolean';
 import * as isString from './lib/validator/isString';
@@ -49,6 +49,7 @@ import * as isWeakSet from './lib/validator/isWeakSet';
  * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
  *
  * @typedef {Object} rtvref.shape_descriptor
+ * @see {@link rtvref.validation.isShape}
  */
 
 /**
@@ -259,7 +260,7 @@ export default rtv;
 // Register all known types with impl
 
 (function() { // put in an IIFE so there's nothing unnecessarily retained in any closures
-  // TODO: In the future, with plugins, this should be dynamically-generated somehow.
+  // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
   const validators = [
     isAny,
     isBoolean,

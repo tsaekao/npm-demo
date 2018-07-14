@@ -23,7 +23,8 @@ import Enumeration from './Enumeration';
  *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
  * - `Symbol`
  *
- * @namespace rtvref.types.primitives
+ * @typedef {*} rtvref.types.primitives
+ * @see {@link rtvref.validation.isPrimitive}
  */
 
 /**
@@ -38,7 +39,7 @@ import Enumeration from './Enumeration';
  *  the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * @namespace rtvref.types.rules
+ * @typedef {*} rtvref.types.rules
  */
 
 /**
@@ -46,9 +47,10 @@ import Enumeration from './Enumeration';
  *
  * Some types will accept, or may even expect, one or more arguments. Each type
  *  will specify whether it has arguments, and if they're optional or required.
- *  Arguments are specified as a single object immediately following a type in an
- *  __Array__ {@link rtvref.types.typeset typeset} (i.e. an Array must be used as
- *  the typeset in order to provide arguments for a type).
+ *  Arguments are specified as a single {@link rtvref.types.OBJECT object}
+ *  immediately following a type in an __Array__ {@link rtvref.types.typeset typeset}
+ *  (i.e. an Array must be used as the typeset in order to provide arguments for
+ *  a type).
  *
  * An arguments object immediately follows its type in a typeset, such as
  *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
@@ -66,6 +68,7 @@ import Enumeration from './Enumeration';
  *  required strings cannot be empty.
  *
  * @typedef {Object} rtvref.types.type_arguments
+ * @see {@link rtvref.validation.isTypeArgs}
  */
 
 /**
@@ -184,13 +187,24 @@ import Enumeration from './Enumeration';
  *   - An Array is necessary if a type needs or requires
  *     {@link rtvref.types.type_arguments arguments}.
  *   - If the __first__ element (or second, if a {@link rtvref.types.qualifiers qualifier}
- *     is provided, but the typeset is not
+ *     is provided, and this, in a typeset that is _not_
  *     {@link rtvref.types.fully_qualified_typeset fully-qualified}), is an `Object`,
  *     it's treated as a nested {@link rtvref.shape_descriptor shape descriptor}
  *     describing an object of the default {@link rtvref.types.OBJECT OBJECT} type.
  *     To include a shape descriptor at any other position within the array, it
  *     __must__ be preceded by a type, even if the default `OBJECT` type is being
- *     used (i.e. `OBJECT` must be specified as the type).
+ *     used (i.e. `OBJECT` must be specified as the type). For example, all
+ *     these typesets are equivalent (and equivalent to just `{name: STRING}`
+ *     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
+ *     `[REQUIRED, OBJECT, {name: STRING}]`, describing an object that has a name
+ *     property which is a non-empty string. Changing it to `[STRING, {name: STRING}]`,
+ *     however, does __not__ mean, "a non-empty string, or an object with a name
+ *     property which is a non-empty string". In this case, `{name: STRING}` would
+ *     be treated as {@link rtvref.types.STRING_args STRING arguments}, which is
+ *     likely not the desired intent. The object would have to be preceded by an
+ *     object type (e.g. {@link rtvref.types.OBJECT OBJECT},
+ *     {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, etc.) to have it interpreted
+ *     as in the OR case.
  *   - If an element is an `Array` (any position), it's treated as a __nested list__
  *     with an implied {@link rtvref.types.ARRAY ARRAY} type, e.g.
  *     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
@@ -352,6 +366,7 @@ import Enumeration from './Enumeration';
  *  the parent typeset, if any). This typeset is as it was specified in the
  *  parent shape, and therefore it may not be fully-qualified.
  * @returns {boolean} A _truthy_ value to verify, a _falsy_ value to reject.
+ * @see {@link rtvref.validation.isValidator}
  */
 
 // Creates a definition object.
@@ -593,15 +608,36 @@ const defs = {
    * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
    *  unless arguments prevent them.
    *
-   * Arguments (optional): {@link rtvref.types.ARRAY_args}. Note that the `ARRAY`
-   *  type must be specified when using arguments (i.e. the shorthand notation
-   *  cannot be used).
+   * Arguments (optional): {@link rtvref.types.ARRAY_args},
+   *  {@link rtvref.types.typeset Array typeset}. Note that the `ARRAY` type must
+   *  be specified when using arguments (i.e. the shorthand notation cannot
+   *  be used).
    *
    * When describing arrays, either _shorthand_ or _full_ notation may be used.
    *  In the shorthand notation, the `ARRAY` type isn't necessary, but
    *  {@link rtvref.types.ARRAY_args arguments} can't be specified. In the full
    *  notation, the `ARRAY` type is required, but arguments can optionally be
-   *  specified.
+   *  specified, as can the array that follows it.
+   *
+   * __NOTE__: It's important to realize that arrays are essentially
+   *  nested {@link rtvref.types.typeset Array typesets}. They represent a
+   *  set of types that will be used to validate each element of an array using
+   *  a short-circuit OR conjunction, looking for the first type that matches.
+   *
+   * <h4>Example: Simple array</h4>
+   *
+   * The 'value' property must be an array (possibly empty) of any type of value.
+   *
+   * <pre><code>{
+   *   value: [ARRAY]
+   * }
+   * </code></pre>
+   *
+   * __NOTE__: Since arrays are, in reality, nested
+   *  {@link rtvref.types.typeset Array typesets}, and since an empty array is
+   *  an invalid Array typeset, it's not possible to use the shorthand notation
+   *  to indicate what could be the equivalent: `[[]]`. The inner Array typeset
+   *  would be deemed _invalid_.
    *
    * <h4>Example: Shorthand notation</h4>
    *
@@ -615,31 +651,40 @@ const defs = {
    *
    * <h4>Example: Shorthand, mixed types</h4>
    *
-   * The 'value' property must be either a boolean, or an array (possibly empty) of
-   *  finite numbers of any value.
+   * The 'value' property must be either a boolean; or an array (possibly empty) of
+   *  finite numbers of any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [BOOLEAN, [FINITE]]
+   *   value: [BOOLEAN, [FINITE, STRING]]
    * }
    * </code></pre>
    *
    * <h4>Example: Full notation</h4>
    *
    * The 'value' property must be an array (possibly empty) of finite numbers of
-   *  any value.
+   *  any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [ARRAY, [FINITE]]
+   *   value: [ARRAY, [FINITE, STRING]]
    * }
    * </code></pre>
    *
    * <h4>Example: Full, mixed types, arguments</h4>
    *
-   * The 'value' property must be either a boolean, or a non-empty array of finite
-   *  numbers of any value.
+   * The 'value' property must be either a boolean; or a non-empty array of finite
+   *  numbers of any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE]]
+   *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE, STRING]]
+   * }
+   * </code></pre>
+   *
+   * <h4>Example: Full, no Array typeset</h4>
+   *
+   * The 'value' property must be a non-empty array of any type of value.
+   *
+   * <pre><code>{
+   *   value: [ARRAY, {min: 1}]
    * }
    * </code></pre>
    *
@@ -803,8 +848,8 @@ const defs = {
    * @typedef {Object} rtvref.types.CLASS_OBJECT_args
    * @property {function} [ctr] A reference to a constructor function. If specified,
    *  the class object (instance) must have this class function in its inheritance
-   *  chain such that `<class_object> instanceof <function> === true`. Note that
-   *  this property is not serializable to JSON. If not specified, then the object
+   *  chain such that `<class_object> instanceof ctr === true`. Note that this
+   *  property is not serializable to JSON. If not specified, then the object
    *  must be an {@link rtvref.types.OBJECT OBJECT} that is not a
    *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} among the other values that
    *  are not considered class objects.

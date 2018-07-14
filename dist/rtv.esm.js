@@ -1264,7 +1264,8 @@ var Enumeration = function () {
  *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
  * - `Symbol`
  *
- * @namespace rtvref.types.primitives
+ * @typedef {*} rtvref.types.primitives
+ * @see {@link rtvref.validation.isPrimitive}
  */
 
 /**
@@ -1279,7 +1280,7 @@ var Enumeration = function () {
  *  the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * @namespace rtvref.types.rules
+ * @typedef {*} rtvref.types.rules
  */
 
 /**
@@ -1287,9 +1288,10 @@ var Enumeration = function () {
  *
  * Some types will accept, or may even expect, one or more arguments. Each type
  *  will specify whether it has arguments, and if they're optional or required.
- *  Arguments are specified as a single object immediately following a type in an
- *  __Array__ {@link rtvref.types.typeset typeset} (i.e. an Array must be used as
- *  the typeset in order to provide arguments for a type).
+ *  Arguments are specified as a single {@link rtvref.types.OBJECT object}
+ *  immediately following a type in an __Array__ {@link rtvref.types.typeset typeset}
+ *  (i.e. an Array must be used as the typeset in order to provide arguments for
+ *  a type).
  *
  * An arguments object immediately follows its type in a typeset, such as
  *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
@@ -1307,6 +1309,7 @@ var Enumeration = function () {
  *  required strings cannot be empty.
  *
  * @typedef {Object} rtvref.types.type_arguments
+ * @see {@link rtvref.validation.isTypeArgs}
  */
 
 /**
@@ -1425,13 +1428,24 @@ var Enumeration = function () {
  *   - An Array is necessary if a type needs or requires
  *     {@link rtvref.types.type_arguments arguments}.
  *   - If the __first__ element (or second, if a {@link rtvref.types.qualifiers qualifier}
- *     is provided, but the typeset is not
+ *     is provided, and this, in a typeset that is _not_
  *     {@link rtvref.types.fully_qualified_typeset fully-qualified}), is an `Object`,
  *     it's treated as a nested {@link rtvref.shape_descriptor shape descriptor}
  *     describing an object of the default {@link rtvref.types.OBJECT OBJECT} type.
  *     To include a shape descriptor at any other position within the array, it
  *     __must__ be preceded by a type, even if the default `OBJECT` type is being
- *     used (i.e. `OBJECT` must be specified as the type).
+ *     used (i.e. `OBJECT` must be specified as the type). For example, all
+ *     these typesets are equivalent (and equivalent to just `{name: STRING}`
+ *     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
+ *     `[REQUIRED, OBJECT, {name: STRING}]`, describing an object that has a name
+ *     property which is a non-empty string. Changing it to `[STRING, {name: STRING}]`,
+ *     however, does __not__ mean, "a non-empty string, or an object with a name
+ *     property which is a non-empty string". In this case, `{name: STRING}` would
+ *     be treated as {@link rtvref.types.STRING_args STRING arguments}, which is
+ *     likely not the desired intent. The object would have to be preceded by an
+ *     object type (e.g. {@link rtvref.types.OBJECT OBJECT},
+ *     {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, etc.) to have it interpreted
+ *     as in the OR case.
  *   - If an element is an `Array` (any position), it's treated as a __nested list__
  *     with an implied {@link rtvref.types.ARRAY ARRAY} type, e.g.
  *     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
@@ -1593,6 +1607,7 @@ var Enumeration = function () {
  *  the parent typeset, if any). This typeset is as it was specified in the
  *  parent shape, and therefore it may not be fully-qualified.
  * @returns {boolean} A _truthy_ value to verify, a _falsy_ value to reject.
+ * @see {@link rtvref.validation.isValidator}
  */
 
 // Creates a definition object.
@@ -1834,15 +1849,36 @@ var defs = {
    * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
    *  unless arguments prevent them.
    *
-   * Arguments (optional): {@link rtvref.types.ARRAY_args}. Note that the `ARRAY`
-   *  type must be specified when using arguments (i.e. the shorthand notation
-   *  cannot be used).
+   * Arguments (optional): {@link rtvref.types.ARRAY_args},
+   *  {@link rtvref.types.typeset Array typeset}. Note that the `ARRAY` type must
+   *  be specified when using arguments (i.e. the shorthand notation cannot
+   *  be used).
    *
    * When describing arrays, either _shorthand_ or _full_ notation may be used.
    *  In the shorthand notation, the `ARRAY` type isn't necessary, but
    *  {@link rtvref.types.ARRAY_args arguments} can't be specified. In the full
    *  notation, the `ARRAY` type is required, but arguments can optionally be
-   *  specified.
+   *  specified, as can the array that follows it.
+   *
+   * __NOTE__: It's important to realize that arrays are essentially
+   *  nested {@link rtvref.types.typeset Array typesets}. They represent a
+   *  set of types that will be used to validate each element of an array using
+   *  a short-circuit OR conjunction, looking for the first type that matches.
+   *
+   * <h4>Example: Simple array</h4>
+   *
+   * The 'value' property must be an array (possibly empty) of any type of value.
+   *
+   * <pre><code>{
+   *   value: [ARRAY]
+   * }
+   * </code></pre>
+   *
+   * __NOTE__: Since arrays are, in reality, nested
+   *  {@link rtvref.types.typeset Array typesets}, and since an empty array is
+   *  an invalid Array typeset, it's not possible to use the shorthand notation
+   *  to indicate what could be the equivalent: `[[]]`. The inner Array typeset
+   *  would be deemed _invalid_.
    *
    * <h4>Example: Shorthand notation</h4>
    *
@@ -1856,31 +1892,40 @@ var defs = {
    *
    * <h4>Example: Shorthand, mixed types</h4>
    *
-   * The 'value' property must be either a boolean, or an array (possibly empty) of
-   *  finite numbers of any value.
+   * The 'value' property must be either a boolean; or an array (possibly empty) of
+   *  finite numbers of any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [BOOLEAN, [FINITE]]
+   *   value: [BOOLEAN, [FINITE, STRING]]
    * }
    * </code></pre>
    *
    * <h4>Example: Full notation</h4>
    *
    * The 'value' property must be an array (possibly empty) of finite numbers of
-   *  any value.
+   *  any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [ARRAY, [FINITE]]
+   *   value: [ARRAY, [FINITE, STRING]]
    * }
    * </code></pre>
    *
    * <h4>Example: Full, mixed types, arguments</h4>
    *
-   * The 'value' property must be either a boolean, or a non-empty array of finite
-   *  numbers of any value.
+   * The 'value' property must be either a boolean; or a non-empty array of finite
+   *  numbers of any value, or non-empty strings.
    *
    * <pre><code>{
-   *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE]]
+   *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE, STRING]]
+   * }
+   * </code></pre>
+   *
+   * <h4>Example: Full, no Array typeset</h4>
+   *
+   * The 'value' property must be a non-empty array of any type of value.
+   *
+   * <pre><code>{
+   *   value: [ARRAY, {min: 1}]
    * }
    * </code></pre>
    *
@@ -3100,9 +3145,11 @@ function isTypeset(v) {
       _ref$fullyQualified = _ref.fullyQualified,
       fullyQualified = _ref$fullyQualified === undefined ? false : _ref$fullyQualified;
 
+  // FIRST: make sure it's an acceptable type for a typeset: object (shape),
+  //  string (just a plain type name), function (validator), or array (non-empty)
   var valid = !!(v && (isObject$1(v) || isString(v) && types.check(v) || isFunction$1(v) || isArray$1(v) && v.length > 0));
 
-  // FIRST: check if needs to be fully-qualified, and check deep within if requested
+  // THEN: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray$1(v) && v.length >= 2) {
@@ -3337,10 +3384,49 @@ function isTypeset(v) {
       return valid; // break if no longer valid
     });
   }
-  // else, must be invalid, or valid but non-array and doesn't need to be FQ'd
-  //  (and we can't go deep because it isn't an array)
+
+  // ELSE: must valid (but non-array/object and doesn't need to be FQ'd), or invalid
 
   return valid;
+}
+
+////// isShape validation module
+
+/**
+ * Determines if a value is a {@link rtvref.shape_descriptor shape}.
+ * @function rtvref.validation.isShape
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ */
+function isShape(v) {
+  return isObject$1(v);
+}
+
+////// isTypeArgs validation module
+
+/**
+ * Determines if a value is a {@link rtvref.types.type_arguments type arguments}
+ *  object.
+ * @function rtvref.validation.isTypeArgs
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ */
+function isTypeArgs(v) {
+  return isObject$1(v);
+}
+
+////// isValidator validation module
+
+/**
+ * Determines if a value is a {@link rtvref.types.custom_validator custom validator}.
+ * @function rtvref.validation.isValidator
+ * @param {*} v Value to validate.
+ * @returns {boolean} `true` if it is; `false` otherwise.
+ */
+function isValidator(v) {
+  // TODO[plugins]: should this module be renamed to isCustomValidator since it's
+  //  perhaps overloaded with 'validator' concept for plugins @see rtvref.validator?
+  return isFunction$1(v);
 }
 
 ////// RtvSuccess Class
@@ -3451,7 +3537,7 @@ var RtvError = function RtvError(value, typeset, path, cause) {
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
   extendsFrom.call(this);
-  this.message = 'Verification failed: value=' + print(value) + ', path="' + renderPath(this.path) + '"';
+  this.message = 'Verification failed: value=' + print(value) + ', path="' + renderPath(path) + '"';
   this.name = 'RtvError';
 
   Object.defineProperties(this, {
@@ -3632,14 +3718,14 @@ var fullyQualify = function fullyQualify(typeset) {
   //  the algorithm below would not work
 
   if (!isArray$1(typeset)) {
-    // must be either a string, object, or function with an implied qualifier
-    if (isObject$1(typeset)) {
+    // must be either a string, shape, or function with an implied qualifier
+    if (isShape(typeset)) {
       // must be a nested shape descriptor with default object type
       return [qualifier, DEFAULT_OBJECT_TYPE, typeset];
     }
 
-    // if a function, it has an implied type of ANY
-    if (isFunction$1(typeset)) {
+    // if a validator, it has an implied type of ANY
+    if (isValidator(typeset)) {
       return [qualifier, types.ANY, typeset];
     }
 
@@ -3663,18 +3749,15 @@ var fullyQualify = function fullyQualify(typeset) {
       // must be a type
       curType = rule;
       fqts.push(curType);
-    } else if (isObject$1(rule)) {
-      if (i === 0) {
-        // must be a nested shape descriptor using default object type
-        curType = DEFAULT_OBJECT_TYPE;
-        fqts.push(curType, rule);
-      } else {
-        // must be args for curType since typeset is an array and object is not
-        //  in first position
-        fqts.push(rule);
-      }
-      // must be a validator, ANY is implied type if none specified
-    } else if (isFunction$1(rule)) {
+    } else if (i === 0 && isShape(rule)) {
+      // nested shape descriptor using default object type
+      curType = DEFAULT_OBJECT_TYPE;
+      fqts.push(curType, rule);
+    } else if (isTypeArgs(rule)) {
+      // args for curType since typeset is an array and object is not in first position
+      fqts.push(rule);
+    } else if (isValidator(rule)) {
+      // validator: ANY is implied type if none specified
       if (!curType) {
         curType = types.ANY;
         fqts.push(curType);
@@ -3703,7 +3786,9 @@ var fullyQualify = function fullyQualify(typeset) {
  * @property {Array.<string>} path The current path into the typeset. Initially
  *  empty to signify the root (top-level) value being checked.
  * @property {boolean} isTypeset `true` if the typeset specified in the public
- *  parameters has already been validated as being a typeset; `false` otherwise.
+ *  parameters has already been validated and is a valid __shallow__ typeset;
+ *  `false` otherwise (which means the typeset should first be validated before
+ *  being processed).
  * @property {(string|undefined)} qualifier The {@link rtvref.qualifiers qualifier}
  *  in context; `undefined` if none. This property should be used when calling
  *  a `check*()` function for a typeset subtype where the typeset's qualifier
@@ -3750,7 +3835,7 @@ var _getCheckOptions = function _getCheckOptions() {
 };
 
 /**
- * Checks a value against a simple type using the
+ * Checks a value using a simple type assuming the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @function rtvref.impl.checkType
  * @param {*} value Value to check.
@@ -3761,7 +3846,7 @@ var _getCheckOptions = function _getCheckOptions() {
  * @see {@link rtvref.types}
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkType = function checkType(value, type /*, options*/) {
+var checkWithType = function checkWithType(value, type /*, options*/) {
   types.verify(type);
 
   var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
@@ -3781,7 +3866,7 @@ var checkType = function checkType(value, type /*, options*/) {
 };
 
 /**
- * Checks a value against a {@link rtvref.shape_descriptor shape descriptor} and
+ * Checks a value using a {@link rtvref.shape_descriptor shape descriptor} and
  *  ensure the value's type is the default object type.
  * @function rtvref.impl.checkShape
  * @param {Object} value Value to check. Must be of the
@@ -3793,8 +3878,8 @@ var checkType = function checkType(value, type /*, options*/) {
  * @throws {Error} If `shape` is not an {@link rtvref.types.OBJECT OBJECT}.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkShape = function checkShape(value, shape /*, options*/) {
-  if (!isObject$1(shape)) {
+var checkWithShape = function checkWithShape(value, shape /*, options*/) {
+  if (!isShape(shape)) {
     throw new Error('Invalid shape=' + print(shape));
   }
 
@@ -3802,7 +3887,7 @@ var checkShape = function checkShape(value, shape /*, options*/) {
   var shapeType = DEFAULT_OBJECT_TYPE;
 
   // value must be default object type
-  if (!checkType(value, shapeType)) {
+  if (!checkWithType(value, shapeType)) {
     // NOTE: always check values with the _validatorMap
     return new RtvError(value, shapeType, options.path, fullyQualify(shapeType, options.qualifier));
   }
@@ -3831,7 +3916,8 @@ var checkShape = function checkShape(value, shape /*, options*/) {
     // then, test the property's value against the typeset (indirectly recursive)
     var result = check(value[prop], typeset, _getCheckOptions(options, { // eslint-disable-line no-use-before-define
       path: options.path.concat(prop),
-      qualifier: qualifier
+      qualifier: qualifier,
+      isTypeset: false // don't assume it's valid since we only check shallow as we go
     }));
 
     if (!result.valid) {
@@ -3844,7 +3930,92 @@ var checkShape = function checkShape(value, shape /*, options*/) {
 };
 
 /**
- * Checks a value against an Array typeset.
+ * Extracts (modifies) the next complete type from an Array typeset.
+ *
+ * For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE]`,
+ *  the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
+ *  would then be `[FINITE]`.
+ *
+ * @param {rtvref.types.typeset} typeset An Array typeset from which to extract
+ *  the next complete type. __This Array will be modified.__
+ * @param {rtvref.types.typeset} [qualifier] If specified __and a qualifier
+ *  is not found in `typeset`__, this qualifier will be used to qualify the returned
+ *  sub-type Array typeset. If a qualifier is found in `typeset`, this parameter
+ *  is ignored. If a qualifier is __not__ found in `typeset` and this parameter
+ *  is specified, then this qualifier will be used to qualify the returned
+ *  sub-type Array typeset.
+ *
+ *  For example, if `typeset` is `[EXPECTED, STRING, FINITE]` then this parameter
+ *   is ignored and the returned Array is `[EXPECTED, STRING]`, with `typeset`
+ *   now just `[FINITE]`. Calling this method again with `typeset` as `[FINITE]`
+ *   would return `[FINITE]` and leave `typeset` empty, if this parameter was not
+ *   specified. Specify the original qualifier `EXPECTED` to get `[EXPECTED, FINITE]`
+ *   back from this method.
+ *
+ * @returns {rtvref.types.typeset} The extracted __Array typeset__ as a new Array,
+ *  which is a sub-type of the given `typeset`. This sub-typeset is not necessarily
+ *  fully-qualified.
+ * @throws {Error} If `typeset` is not a valid Array typeset.
+ * @throws {Error} If `qualifier` is specified but not valid.
+ */
+var extractNextType = function extractNextType(typeset, qualifier) {
+  if (qualifier) {
+    qualifiers.verify(qualifier);
+  }
+
+  // check for an array first since that's must faster than isTypeset()
+  if (!isArray$1(typeset) || !isTypeset(typeset)) {
+    throw new Error('Invalid array typeset=' + print(typeset));
+  }
+
+  var subtype = []; // subset type of `typeset`
+  var type = typeset.shift(); // NOTE: [].shift() === undefined
+
+  // FIRST: check for the qualifier, which must be the first element, if specified
+  if (qualifiers.check(type)) {
+    subtype.push(type); // ignore the specified qualifier
+
+    // next type: typeset cannot be empty because it's valid and since
+    //  there's a qualifier, there must be at least one type in it too
+    type = typeset.shift();
+  } else {
+    // must be a type or the validator, which we'll check for below
+    // use the specified qualifier, if any
+    if (qualifier) {
+      subtype.push(qualifier);
+    }
+  }
+
+  if (isString(type)) {
+    // simple type
+    subtype.push(type);
+
+    // now check for args
+    if (argTypes.check(type) && typeset.length > 0 && isTypeArgs(typeset[0])) {
+      subtype.push(typeset.shift());
+
+      // check for ARRAY since it could be `[ARRAY, {args}, [...]]` as complete type
+      if (type === types.ARRAY) {
+        if (typeset.length > 0 && isArray$1(typeset[0])) {
+          // add array typeset to subtype
+          subtype.push(typeset.shift());
+        }
+      }
+    }
+  } else if (isShape(type) || isArray$1(type) || isValidator(type)) {
+    // - Shape: if the given typeset was in its original form (nothing extracted from it)
+    //  then the first type could be a shape, in which case it has an implied type of
+    //  OBJECT and is itself the args for it
+    // - Array: a nested array is an Array typeset with an implied type of ARRAY and no args
+    // - Validator: a custom validator has an implied type of ANY and no args
+    subtype.push(type);
+  }
+
+  return subtype;
+};
+
+/**
+ * Checks a value using an Array typeset.
  * @function rtvref.impl.checkTypeset
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset The Array typeset to check against.
@@ -3854,11 +4025,12 @@ var checkShape = function checkShape(value, shape /*, options*/) {
  * @throws {Error} If `typeset` is not a valid Array typeset.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkTypeset = function checkTypeset(value, typeset /*, options*/) {
+var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
   var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
-  if (!(options.isTypeset || isTypeset(typeset)) || !isArray$1(typeset)) {
-    throw new Error('Invalid typeset=' + print(typeset));
+  // check for an array first since that's must faster than isTypeset()
+  if (!isArray$1(typeset) || !(options.isTypeset || isTypeset(typeset))) {
+    throw new Error('Invalid array typeset=' + print(typeset));
   }
 
   var match = void 0; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
@@ -3868,19 +4040,79 @@ var checkTypeset = function checkTypeset(value, typeset /*, options*/) {
   // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
   //  using a short-circuit OR conjunction
-  forEach_1(typeset, function (type, idx) {
+  // NOTE: due to the isTypeset check above, we can assume that each 'type' is
+  //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
+  //  assume that itself is valid because the isTypeset check was just shallow)
+  var typesetCopy = typeset.concat(); // shallow clone so we can modify the array locally
+  var idx = 0;
+  var type = typesetCopy.shift(); // must be >= 1 element since array typesets cannot be empty
+  console.log('===== entering while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  var count = -1; // DEBUG remove
+  while (type) {
+    // [].shift() === undefined; undefined isn't a valid type; we'll stop when done
+    count++;
+    if (count > 4) {
+      console.log('===== breaking on count>4, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      break;
+    }
+    console.log('===== starting while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
     if (idx === 0) {
       // check for the qualifier, which must be the first element, if specified
       if (qualifiers.check(type)) {
         hasQualifier = true;
         qualifier = type;
-        return true; // next type
+
+        // next type
+        type = typesetCopy.shift();
+        idx++;
+        console.log('===== looping from qualifier=%s, typesetCopy=%s, idx=%s, type=%s', qualifier, print(typesetCopy), idx, type); // DEBUG
+        continue;
       }
       // else, must be a type or the validator, which we'll check for below
     }
 
+    console.log('===== will check for validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+
+    // Before going further, we have to check for an important case in __typeset__:
+    //  an Array that has 1-4 elements and represents a single type, possibly with
+    //  args (but it could also be 2+ different types, in which case, we need to
+    //  process each one individually).
+    // For example:
+    //  [STRING]
+    //  [EXPECTED, {shape}]: one type, qualified
+    //  [[...]]: nested array
+    //  [OPTIONAL, ARRAY, {args}, [...]]: fully-qualified nested array with args
+    //  and more...
+    // NOTE: by definition, an Array typeset cannot be empty, and since we've eliminated
+    //  the qualifier, if any, with the `idx === 0` case above, the length of typesetCopy
+    //  must be at most 3 at this point
+    if (typesetCopy.length <= 3) {
+      if (typesetCopy.length) {}
+    }
+
+    if (!hasQualifier && idx === 0 && typesetCopy.length <= 2 || hasQualifier && idx === 1 && typesetCopy.length === 1) {
+
+      if (hasQualifier) {
+        // idx === 1 is implied, otherwise hasQualifier would have to be false
+        if (typesetCopy.length === 1) {
+          // what remains is either another type (string), a function (validator),
+          //  or args for `type` (which could be a shape if `type` is an object type)
+
+          // DEBUG TODO
+
+          // since the typeset is valid, the single type cannot be a qualifier: must
+          //  be either a string, function, object/shape, array; or args for type
+
+        } else {
+            // length must be 2, which means a type and args, or two types
+
+          }
+      }
+    }
+
     // check for the validator
-    if (isFunction$1(type)) {
+    if (isValidator(type)) {
+      console.log('===== is validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
       // if we reach the validator (which must be the very last element) in this
       //  loop, none of the types matched, unless the validator is the only
       //  type in the typeset, at which point it gets an implied type of ANY,
@@ -3889,27 +4121,44 @@ var checkTypeset = function checkTypeset(value, typeset /*, options*/) {
         match = fullyQualify(types.ANY);
       }
 
-      return false; // break (since this must be the last element anyway)
+      break; // break (since this must be the last element anyway)
     } else {
-      var result = check(value, type, _getCheckOptions(options, {
-        qualifier: qualifier
+      console.log('===== not validator, checking argTypes, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      // look for type args (if applicable) before checking the value against this type
+      var typeArgs = void 0;
+      if (isString(type) && argTypes.check(type) && typesetCopy.length > 0 && isTypeArgs(typesetCopy[0])) {
+
+        typeArgs = typesetCopy.shift();
+        idx++;
+      }
+
+      console.log('===== calling check, typesetCopy=%s, idx=%s, type=%s, typeArgs=%s, value=%s', print(typesetCopy), idx, type, print(typeArgs), print(value)); // DEBUG
+      var result = check(value, typeArgs ? [type, typeArgs] : type, _getCheckOptions(options, {
+        qualifier: qualifier,
+        isTypeset: false // don't assume it's valid since we only check shallow as we go
       }));
 
+      console.log('===== check result=%s, typesetCopy=%s, idx=%s, type=%s', print(result), print(typesetCopy), idx, type); // DEBUG
       if (result.valid) {
         match = fullyQualify(type, qualifier);
-        return false; // break on first match
+        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, type=%s', print(match), print(typesetCopy), idx, type); // DEBUG
+        break; // break on first match
       }
     }
-  });
 
+    // next type
+    type = typesetCopy.shift();
+    idx++;
+    console.log('===== looping, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  }
   var err = void 0; // @type {(RtvError|undefined)}
 
   if (match) {
     // check for a validator at the end of the Array typeset and invoke it
-    var validator = typeset[typeset.length - 1];
-    if (isFunction$1(validator)) {
-      if (!validator(value, match, typeset)) {
-        // invalid inspite of the match since the validator said no
+    var lastType = typeset[typeset.length - 1];
+    if (isValidator(lastType)) {
+      if (!lastType(value, match, typeset)) {
+        // invalid in spite of the match since the validator said no
         err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier));
       }
       // else, valid!
@@ -3943,17 +4192,17 @@ var check = function check(value, typeset /*, options*/) {
 
       if (isString(typeset)) {
         // simple type: check value is of the type
-        return checkType(value, typeset, options);
+        return checkWithType(value, typeset, options);
       }
 
-      if (isFunction$1(typeset)) {
+      if (isValidator(typeset)) {
         // custom validator: bare function implies the ANY type
         var match = types.ANY;
         var fqMatch = fullyQualify(match);
 
         // value must be ANY type, and custom validator must return true
         // NOTE: always check values against the _validatorMap
-        var result = checkType(value, match, options);
+        var result = checkWithType(value, match, options);
         if (!result.valid) {
           return result;
         }
@@ -3965,19 +4214,19 @@ var check = function check(value, typeset /*, options*/) {
         return new RtvError(value, match, options.path, fqMatch);
       }
 
-      if (isObject$1(typeset)) {
+      if (isShape(typeset)) {
         // shape descriptor: check value against shape
-        return checkShape(value, typeset, options);
+        return checkWithShape(value, typeset, options);
       }
 
       if (isArray$1(typeset)) {
         // Array typeset: check value against all types in typeset
-        return checkTypeset(value, typeset, options);
+        return checkWithArray(value, typeset, options);
       }
 
-      throw new Error('Missing handler for type of specified typeset="' + print(typeset) + '"');
+      throw new Error('Missing handler for type of specified typeset=' + print(typeset));
     } else {
-      throw new Error('Invalid typeset="' + print(typeset) + '" specified');
+      throw new Error('Invalid typeset=' + print(typeset) + ' specified');
     }
   } catch (checkErr) {
     var err = new Error('Cannot check value: ' + checkErr.message);
@@ -4022,9 +4271,10 @@ var impl = {
   _getCheckOptions: _getCheckOptions,
   // public
   fullyQualify: fullyQualify,
-  checkType: checkType,
-  checkShape: checkShape,
-  checkTypeset: checkTypeset,
+  extractNextType: extractNextType,
+  checkWithType: checkWithType,
+  checkWithShape: checkWithShape,
+  checkWithArray: checkWithArray,
   check: check
 };
 
@@ -4590,6 +4840,7 @@ var isSet$2 = Object.freeze({
  * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
  *
  * @typedef {Object} rtvref.shape_descriptor
+ * @see {@link rtvref.validation.isShape}
  */
 
 /**
@@ -4803,7 +5054,7 @@ Object.defineProperty(rtv, '_version', {
 
 (function () {
   // put in an IIFE so there's nothing unnecessarily retained in any closures
-  // TODO: In the future, with plugins, this should be dynamically-generated somehow.
+  // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
   var validators = [isAny$1, isBoolean$1, isString$1, isFunction$2, isRegExp$2, isSymbol$2, isFinite$2, isNumber$2, isArray$2, isAnyObject$1, isObject$2, isMap$2, isWeakMap$2, isSet$2, isWeakSet$2];
 
   var publicImpl = {}; // impl for validators, excluding any internal parts

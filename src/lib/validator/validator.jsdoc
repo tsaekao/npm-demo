@@ -43,12 +43,12 @@
 //
 // There can only be one validator for any given type.
 //
-// TODO: Later, if we ever expose a plugin architecture, we might change this to
-//  pass some type of registration function into the plugin, or the plugin calls a
-//  registration method on rtv, or maybe something else. Whatever we do, the basics
-//  would be to register a new type and provide the function for rtv to call to
-//  validate values for that type. Perhaps we might even allow overriding the
-//  default validator for an existing type.
+// TODO[plugins]: Later, if we ever expose a plugin architecture, we might change
+//  this to pass some type of registration function into the plugin, or the plugin
+//  calls a registration method on rtv, or maybe something else. Whatever we do,
+//  the basics would be to register a new type and provide the function for rtv to
+//  call to validate values for that type. Perhaps we might even allow overriding
+//  the default validator for an existing type.
 
 /**
  * <h3>Type Validator Function</h3>
@@ -90,7 +90,7 @@
  * @property {rtvref.impl} impl Reference to the `impl` module.
  */
 
-// TODO: Is it good to expose the entire impl module to _any_ type validator,
+// TODO[plugins]: Is it good to expose the entire impl module to _any_ type validator,
 //  even third-party plugin validators in the future? Should we, instead, provide
 //  a series of function references without stating where they come from (even
 //  if they're still just coming from `impl`)? A good exercise will be to actually

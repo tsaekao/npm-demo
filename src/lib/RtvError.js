@@ -63,7 +63,7 @@ const RtvError = function(value, typeset, path, cause) {
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
   extendsFrom.call(this);
-  this.message = `Verification failed: value=${print(value)}, path="${renderPath(this.path)}"`;
+  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}"`;
   this.name = 'RtvError';
 
   Object.defineProperties(this, {

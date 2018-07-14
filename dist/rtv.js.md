@@ -13,6 +13,17 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#extractNextType">extractNextType(typeset, [qualifier])</a> ⇒ <code><a href="#rtvref.types.typeset">typeset</a></code></dt>
+<dd><p>Extracts (modifies) the next complete type from an Array typeset.</p>
+<p>For example, if the given <code>typeset</code> is <code>[EXPECTED, STRING, {string_args}, FINITE]</code>,
+ the returned array would be <code>[EXPECTED, STRING, {atring_args}]</code> and <code>typeset</code>
+ would then be <code>[FINITE]</code>.</p>
+</dd>
+</dl>
+
 <a name="rtvref"></a>
 
 ## rtvref : <code>object</code>
@@ -59,8 +70,6 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
-        * [.primitives](#rtvref.types.primitives) : <code>object</code>
-        * [.rules](#rtvref.types.rules) : <code>object</code>
         * [.ANY](#rtvref.types.ANY) : <code>string</code>
         * [.STRING](#rtvref.types.STRING) : <code>string</code>
         * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
@@ -86,6 +95,8 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
         * [.JSON](#rtvref.types.JSON) : <code>string</code>
         * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
+        * [.primitives](#rtvref.types.primitives) : <code>\*</code>
+        * [.rules](#rtvref.types.rules) : <code>\*</code>
         * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
         * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
@@ -97,7 +108,10 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
     * [.validation](#rtvref.validation) : <code>object</code>
         * [.isPrimitive(v)](#rtvref.validation.isPrimitive) ⇒ <code>boolean</code>
+        * [.isShape(v)](#rtvref.validation.isShape) ⇒ <code>boolean</code>
+        * [.isTypeArgs(v)](#rtvref.validation.isTypeArgs) ⇒ <code>boolean</code>
         * [.isTypeset(v, [options])](#rtvref.validation.isTypeset) ⇒ <code>boolean</code>
+        * [.isValidator(v)](#rtvref.validation.isValidator) ⇒ <code>boolean</code>
     * [.validator](#rtvref.validator) : <code>object</code>
         * [.isAny(v)](#rtvref.validator.isAny) ⇒ <code>boolean</code>
             * [.type](#rtvref.validator.isAny.type) : <code>string</code>
@@ -510,7 +524,7 @@ This function does not modify the input `typeset`.
 <a name="rtvref.impl.checkType"></a>
 
 #### impl.checkType(value, type) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-Checks a value against a simple type using the
+Checks a value using a simple type assuming the
  [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER).
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -533,7 +547,7 @@ Checks a value against a simple type using the
 <a name="rtvref.impl.checkShape"></a>
 
 #### impl.checkShape(value, shape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-Checks a value against a [shape descriptor](#rtvref.shape_descriptor) and
+Checks a value using a [shape descriptor](#rtvref.shape_descriptor) and
  ensure the value's type is the default object type.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -555,7 +569,7 @@ Checks a value against a [shape descriptor](#rtvref.shape_descriptor) and
 <a name="rtvref.impl.checkTypeset"></a>
 
 #### impl.checkTypeset(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-Checks a value against an Array typeset.
+Checks a value using an Array typeset.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
 **Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - Success indicator if the `value`
@@ -694,8 +708,6 @@ Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
     * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.primitives](#rtvref.types.primitives) : <code>object</code>
-    * [.rules](#rtvref.types.rules) : <code>object</code>
     * [.ANY](#rtvref.types.ANY) : <code>string</code>
     * [.STRING](#rtvref.types.STRING) : <code>string</code>
     * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
@@ -721,6 +733,8 @@ Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
     * [.WEAK_SET](#rtvref.types.WEAK_SET) : <code>string</code>
     * [.JSON](#rtvref.types.JSON) : <code>string</code>
     * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
+    * [.primitives](#rtvref.types.primitives) : <code>\*</code>
+    * [.rules](#rtvref.types.rules) : <code>\*</code>
     * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
     * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
@@ -761,46 +775,6 @@ Enumeration (`string -> string`) of [types](#rtvref.types) that accept
 Enumeration (`string -> string`) of all [types](#rtvref.types).
 
 **Kind**: static property of [<code>types</code>](#rtvref.types)  
-
-* * *
-
-<a name="rtvref.types.primitives"></a>
-
-#### types.primitives : <code>object</code>
-<h3>Primitives</h3>
-
-In RTV.js (as in [ECMAScript 2015](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)),
- a _primitive_ is considered one of the following types:
-
-- `undefined`
-- `null`
-- `string` (note that `new String('s')` does not produce a _primitive_, it
-  produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
-- `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
-  it produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
-- `number` (note that `new Number(1)` does not produce a _primitive_,
-  it produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
-- `Symbol`
-
-**Kind**: static namespace of [<code>types</code>](#rtvref.types)  
-
-* * *
-
-<a name="rtvref.types.rules"></a>
-
-#### types.rules : <code>object</code>
-<h3>Rules Per Qualifiers</h3>
-
-[Qualifiers](#rtvref.qualifiers) state basic rules. Unless otherwise stated,
- every type herein abides by those basic rules. Each type will also impose
- additional rules specific to the type of value it represents.
-
-For example, while the [FINITE](#rtvref.types.FINITE) type states that the
- value must not be `NaN`, `+Infinity`, nor `-Infinity`; it could be `null` if
- the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
- used is `OPTIONAL`.
-
-**Kind**: static namespace of [<code>types</code>](#rtvref.types)  
 
 * * *
 
@@ -1018,15 +992,36 @@ Promise rules per qualifiers: Must be a `Promise` instance.
 Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
  unless arguments prevent them.
 
-Arguments (optional): [ARRAY_args](#rtvref.types.ARRAY_args). Note that the `ARRAY`
- type must be specified when using arguments (i.e. the shorthand notation
- cannot be used).
+Arguments (optional): [ARRAY_args](#rtvref.types.ARRAY_args),
+ [Array typeset](#rtvref.types.typeset). Note that the `ARRAY` type must
+ be specified when using arguments (i.e. the shorthand notation cannot
+ be used).
 
 When describing arrays, either _shorthand_ or _full_ notation may be used.
  In the shorthand notation, the `ARRAY` type isn't necessary, but
  [arguments](#rtvref.types.ARRAY_args) can't be specified. In the full
  notation, the `ARRAY` type is required, but arguments can optionally be
- specified.
+ specified, as can the array that follows it.
+
+__NOTE__: It's important to realize that arrays are essentially
+ nested [Array typesets](#rtvref.types.typeset). They represent a
+ set of types that will be used to validate each element of an array using
+ a short-circuit OR conjunction, looking for the first type that matches.
+
+<h4>Example: Simple array</h4>
+
+The 'value' property must be an array (possibly empty) of any type of value.
+
+<pre><code>{
+  value: [ARRAY]
+}
+</code></pre>
+
+__NOTE__: Since arrays are, in reality, nested
+ [Array typesets](#rtvref.types.typeset), and since an empty array is
+ an invalid Array typeset, it's not possible to use the shorthand notation
+ to indicate what could be the equivalent: `[[]]`. The inner Array typeset
+ would be deemed _invalid_.
 
 <h4>Example: Shorthand notation</h4>
 
@@ -1040,31 +1035,40 @@ The 'value' property must be an array (possibly empty) of finite numbers of
 
 <h4>Example: Shorthand, mixed types</h4>
 
-The 'value' property must be either a boolean, or an array (possibly empty) of
- finite numbers of any value.
+The 'value' property must be either a boolean; or an array (possibly empty) of
+ finite numbers of any value, or non-empty strings.
 
 <pre><code>{
-  value: [BOOLEAN, [FINITE]]
+  value: [BOOLEAN, [FINITE, STRING]]
 }
 </code></pre>
 
 <h4>Example: Full notation</h4>
 
 The 'value' property must be an array (possibly empty) of finite numbers of
- any value.
+ any value, or non-empty strings.
 
 <pre><code>{
-  value: [ARRAY, [FINITE]]
+  value: [ARRAY, [FINITE, STRING]]
 }
 </code></pre>
 
 <h4>Example: Full, mixed types, arguments</h4>
 
-The 'value' property must be either a boolean, or a non-empty array of finite
- numbers of any value.
+The 'value' property must be either a boolean; or a non-empty array of finite
+ numbers of any value, or non-empty strings.
 
 <pre><code>{
-  value: [BOOLEAN, ARRAY, {min: 1}, [FINITE]]
+  value: [BOOLEAN, ARRAY, {min: 1}, [FINITE, STRING]]
+}
+</code></pre>
+
+<h4>Example: Full, no Array typeset</h4>
+
+The 'value' property must be a non-empty array of any type of value.
+
+<pre><code>{
+  value: [ARRAY, {min: 1}]
 }
 </code></pre>
 
@@ -1423,6 +1427,47 @@ Default object type: [OBJECT](#rtvref.types.OBJECT)
 
 * * *
 
+<a name="rtvref.types.primitives"></a>
+
+#### types.primitives : <code>\*</code>
+<h3>Primitives</h3>
+
+In RTV.js (as in [ECMAScript 2015](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)),
+ a _primitive_ is considered one of the following types:
+
+- `undefined`
+- `null`
+- `string` (note that `new String('s')` does not produce a _primitive_, it
+  produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
+- `boolean` (note that `new Boolean(true)` does not produce a _primitive_,
+  it produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
+- `number` (note that `new Number(1)` does not produce a _primitive_,
+  it produces an [object](#rtvref.types.OBJECT), and __should be avoided__).
+- `Symbol`
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [isPrimitive](#rtvref.validation.isPrimitive)  
+
+* * *
+
+<a name="rtvref.types.rules"></a>
+
+#### types.rules : <code>\*</code>
+<h3>Rules Per Qualifiers</h3>
+
+[Qualifiers](#rtvref.qualifiers) state basic rules. Unless otherwise stated,
+ every type herein abides by those basic rules. Each type will also impose
+ additional rules specific to the type of value it represents.
+
+For example, while the [FINITE](#rtvref.types.FINITE) type states that the
+ value must not be `NaN`, `+Infinity`, nor `-Infinity`; it could be `null` if
+ the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
+ used is `OPTIONAL`.
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+
+* * *
+
 <a name="rtvref.types.type_arguments"></a>
 
 #### types.type_arguments : <code>Object</code>
@@ -1430,9 +1475,10 @@ Default object type: [OBJECT](#rtvref.types.OBJECT)
 
 Some types will accept, or may even expect, one or more arguments. Each type
  will specify whether it has arguments, and if they're optional or required.
- Arguments are specified as a single object immediately following a type in an
- __Array__ [typeset](#rtvref.types.typeset) (i.e. an Array must be used as
- the typeset in order to provide arguments for a type).
+ Arguments are specified as a single [object](#rtvref.types.OBJECT)
+ immediately following a type in an __Array__ [typeset](#rtvref.types.typeset)
+ (i.e. an Array must be used as the typeset in order to provide arguments for
+ a type).
 
 An arguments object immediately follows its type in a typeset, such as
  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
@@ -1450,6 +1496,7 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
  required strings cannot be empty.
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [isTypeArgs](#rtvref.validation.isTypeArgs)  
 
 * * *
 
@@ -1539,13 +1586,24 @@ Describes the possible types for a given value. It can be any one of the followi
   - An Array is necessary if a type needs or requires
     [arguments](#rtvref.types.type_arguments).
   - If the __first__ element (or second, if a [qualifier](rtvref.types.qualifiers)
-    is provided, but the typeset is not
+    is provided, and this, in a typeset that is _not_
     [fully-qualified](#rtvref.types.fully_qualified_typeset)), is an `Object`,
     it's treated as a nested [shape descriptor](#rtvref.shape_descriptor)
     describing an object of the default [OBJECT](#rtvref.types.OBJECT) type.
     To include a shape descriptor at any other position within the array, it
     __must__ be preceded by a type, even if the default `OBJECT` type is being
-    used (i.e. `OBJECT` must be specified as the type).
+    used (i.e. `OBJECT` must be specified as the type). For example, all
+    these typesets are equivalent (and equivalent to just `{name: STRING}`
+    as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
+    `[REQUIRED, OBJECT, {name: STRING}]`, describing an object that has a name
+    property which is a non-empty string. Changing it to `[STRING, {name: STRING}]`,
+    however, does __not__ mean, "a non-empty string, or an object with a name
+    property which is a non-empty string". In this case, `{name: STRING}` would
+    be treated as [STRING arguments](#rtvref.types.STRING_args), which is
+    likely not the desired intent. The object would have to be preceded by an
+    object type (e.g. [OBJECT](#rtvref.types.OBJECT),
+    [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), etc.) to have it interpreted
+    as in the OR case.
   - If an element is an `Array` (any position), it's treated as a __nested list__
     with an implied [ARRAY](#rtvref.types.ARRAY) type, e.g.
     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
@@ -1694,6 +1752,7 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **Returns**: <code>boolean</code> - A _truthy_ value to verify, a _falsy_ value to reject.  
+**See**: [isValidator](#rtvref.validation.isValidator)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1801,7 +1860,10 @@ This namespace provides _validation helpers_ which verify values to be of
 
 * [.validation](#rtvref.validation) : <code>object</code>
     * [.isPrimitive(v)](#rtvref.validation.isPrimitive) ⇒ <code>boolean</code>
+    * [.isShape(v)](#rtvref.validation.isShape) ⇒ <code>boolean</code>
+    * [.isTypeArgs(v)](#rtvref.validation.isTypeArgs) ⇒ <code>boolean</code>
     * [.isTypeset(v, [options])](#rtvref.validation.isTypeset) ⇒ <code>boolean</code>
+    * [.isValidator(v)](#rtvref.validation.isValidator) ⇒ <code>boolean</code>
 
 
 * * *
@@ -1810,6 +1872,37 @@ This namespace provides _validation helpers_ which verify values to be of
 
 #### validation.isPrimitive(v) ⇒ <code>boolean</code>
 Determines if a value is a JavaScript [primitive](#rtvref.types.primitives).
+
+**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtvref.validation.isShape"></a>
+
+#### validation.isShape(v) ⇒ <code>boolean</code>
+Determines if a value is a [shape](#rtvref.shape_descriptor).
+
+**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+
+* * *
+
+<a name="rtvref.validation.isTypeArgs"></a>
+
+#### validation.isTypeArgs(v) ⇒ <code>boolean</code>
+Determines if a value is a [type arguments](#rtvref.types.type_arguments)
+ object.
 
 **Kind**: static method of [<code>validation</code>](#rtvref.validation)  
 **Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
@@ -1836,6 +1929,21 @@ Determines if a value is a typeset.
 | [options] | <code>Object</code> |  | Validation options. |
 | [options.deep] | <code>boolean</code> | <code>false</code> | If truthy, deeply-validates any nested typesets. Note  that typesets in nested shapes are also deeply-validated. |
 | [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be fully-qualified. |
+
+
+* * *
+
+<a name="rtvref.validation.isValidator"></a>
+
+#### validation.isValidator(v) ⇒ <code>boolean</code>
+Determines if a value is a [custom validator](#rtvref.types.custom_validator).
+
+**Kind**: static method of [<code>validation</code>](#rtvref.validation)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
 
 
 * * *
@@ -2697,6 +2805,7 @@ When a value is [checked](#rtv.check) or [verified](#rtv.verify) against
 The shape descriptor itself must be an [OBJECT](#rtvref.types.OBJECT).
 
 **Kind**: static typedef of [<code>rtvref</code>](#rtvref)  
+**See**: [isShape](#rtvref.validation.isShape)  
 
 * * *
 
@@ -2917,6 +3026,33 @@ Contextual RTV Generator // TODO[docs]
 | Param | Type |
 | --- | --- |
 | context | <code>string</code> | 
+
+
+* * *
+
+<a name="extractNextType"></a>
+
+## extractNextType(typeset, [qualifier]) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
+Extracts (modifies) the next complete type from an Array typeset.
+
+For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE]`,
+ the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
+ would then be `[FINITE]`.
+
+**Kind**: global function  
+**Returns**: [<code>typeset</code>](#rtvref.types.typeset) - The extracted __Array typeset__ as a new Array,
+ which is a sub-type of the given `typeset`. This sub-typeset is not necessarily
+ fully-qualified.  
+**Throws**:
+
+- <code>Error</code> If `typeset` is not a valid Array typeset.
+- <code>Error</code> If `qualifier` is specified but not valid.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | An Array typeset from which to extract  the next complete type. __This Array will be modified.__ |
+| [qualifier] | [<code>typeset</code>](#rtvref.types.typeset) | If specified __and a qualifier  is not found in `typeset`__, this qualifier will be used to qualify the returned  sub-type Array typeset. If a qualifier is found in `typeset`, this parameter  is ignored. If a qualifier is __not__ found in `typeset` and this parameter  is specified, then this qualifier will be used to qualify the returned  sub-type Array typeset.  For example, if `typeset` is `[EXPECTED, STRING, FINITE]` then this parameter   is ignored and the returned Array is `[EXPECTED, STRING]`, with `typeset`   now just `[FINITE]`. Calling this method again with `typeset` as `[FINITE]`   would return `[FINITE]` and leave `typeset` empty, if this parameter was not   specified. Specify the original qualifier `EXPECTED` to get `[EXPECTED, FINITE]`   back from this method. |
 
 
 * * *

@@ -119,17 +119,17 @@ describe('module: lib/RtvError', function() {
   it('should have a message including the value and path', function() {
     const value = null;
     const typeset = [types.STRING];
-    const path = 'the.path';
+    const path = ['the', 'path'];
     const cause = [qualifiers.REQUIRED, types.STRING];
     const err = new RtvError(value, typeset, path, cause);
     expect(err.message).to.contain(`value=${value}`);
-    expect(err.message).to.contain(`path=${path}`);
+    expect(err.message).to.contain(`path="/${path.join('/')}"`);
   });
 
   it('should extend Error', function() {
     const value = null;
     const typeset = [types.STRING];
-    const path = 'the.path';
+    const path = ['the', 'path'];
     const cause = [qualifiers.REQUIRED, types.STRING];
     const err = new RtvError(value, typeset, path, cause);
     expect(err instanceof Error).to.equal(true);
@@ -191,6 +191,6 @@ describe('module: lib/RtvError', function() {
     expect(str.match(/^Error\: /)).to.equal(null); // not the default serialization
     expect(str).to.contain('RtvError');
     expect(str).to.contain(`value=${value}`);
-    expect(str).to.contain(`path="${path.join('/')}"`);
+    expect(str).to.contain(`path="/${path.join('/')}"`);
   });
 });

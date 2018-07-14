@@ -11,8 +11,11 @@ import isString from './validator/isString';
 import isFunction from './validator/isFunction';
 
 import isTypeset from './validation/isTypeset';
+import isShape from './validation/isShape';
+import isTypeArgs from './validation/isTypeArgs';
+import isValidator from './validation/isValidator';
 
-import {DEFAULT_OBJECT_TYPE, default as types} from './types';
+import {DEFAULT_OBJECT_TYPE, argTypes, default as types} from './types';
 import {DEFAULT_QUALIFIER, default as qualifiers} from './qualifiers';
 import {print} from './util';
 import RtvSuccess from './RtvSuccess';
@@ -96,14 +99,14 @@ const fullyQualify = function(typeset, qualifier = DEFAULT_QUALIFIER) {
   //  the algorithm below would not work
 
   if (!isArray(typeset)) {
-    // must be either a string, object, or function with an implied qualifier
-    if (isObject(typeset)) {
+    // must be either a string, shape, or function with an implied qualifier
+    if (isShape(typeset)) {
       // must be a nested shape descriptor with default object type
       return [qualifier, DEFAULT_OBJECT_TYPE, typeset];
     }
 
-    // if a function, it has an implied type of ANY
-    if (isFunction(typeset)) {
+    // if a validator, it has an implied type of ANY
+    if (isValidator(typeset)) {
       return [qualifier, types.ANY, typeset];
     }
 
@@ -127,25 +130,23 @@ const fullyQualify = function(typeset, qualifier = DEFAULT_QUALIFIER) {
       // must be a type
       curType = rule;
       fqts.push(curType);
-    } else if (isObject(rule)) {
-      if (i === 0) {
-        // must be a nested shape descriptor using default object type
-        curType = DEFAULT_OBJECT_TYPE;
-        fqts.push(curType, rule);
-      } else {
-        // must be args for curType since typeset is an array and object is not
-        //  in first position
-        fqts.push(rule);
-      }
-    // must be a validator, ANY is implied type if none specified
-    } else if (isFunction(rule)) {
+    } else if (i === 0 && isShape(rule)) {
+      // nested shape descriptor using default object type
+      curType = DEFAULT_OBJECT_TYPE;
+      fqts.push(curType, rule);
+    } else if (isTypeArgs(rule)) {
+      // args for curType since typeset is an array and object is not in first position
+      fqts.push(rule);
+    } else if (isValidator(rule)) {
+      // validator: ANY is implied type if none specified
       if (!curType) {
         curType = types.ANY;
         fqts.push(curType);
       }
 
       fqts.push(rule);
-    } else { // must be an array
+    } else {
+      // must be an array
       if (curType !== types.ARRAY) {
         // add implied ARRAY type
         curType = types.ARRAY;
@@ -166,7 +167,9 @@ const fullyQualify = function(typeset, qualifier = DEFAULT_QUALIFIER) {
  * @property {Array.<string>} path The current path into the typeset. Initially
  *  empty to signify the root (top-level) value being checked.
  * @property {boolean} isTypeset `true` if the typeset specified in the public
- *  parameters has already been validated as being a typeset; `false` otherwise.
+ *  parameters has already been validated and is a valid __shallow__ typeset;
+ *  `false` otherwise (which means the typeset should first be validated before
+ *  being processed).
  * @property {(string|undefined)} qualifier The {@link rtvref.qualifiers qualifier}
  *  in context; `undefined` if none. This property should be used when calling
  *  a `check*()` function for a typeset subtype where the typeset's qualifier
@@ -210,7 +213,7 @@ const _getCheckOptions = function(current = {}, override = {}) {
 };
 
 /**
- * Checks a value against a simple type using the
+ * Checks a value using a simple type assuming the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @function rtvref.impl.checkType
  * @param {*} value Value to check.
@@ -221,7 +224,7 @@ const _getCheckOptions = function(current = {}, override = {}) {
  * @see {@link rtvref.types}
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkType = function(value, type /*, options*/) {
+const checkWithType = function(value, type /*, options*/) {
   types.verify(type);
 
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
@@ -241,7 +244,7 @@ const checkType = function(value, type /*, options*/) {
 };
 
 /**
- * Checks a value against a {@link rtvref.shape_descriptor shape descriptor} and
+ * Checks a value using a {@link rtvref.shape_descriptor shape descriptor} and
  *  ensure the value's type is the default object type.
  * @function rtvref.impl.checkShape
  * @param {Object} value Value to check. Must be of the
@@ -253,8 +256,8 @@ const checkType = function(value, type /*, options*/) {
  * @throws {Error} If `shape` is not an {@link rtvref.types.OBJECT OBJECT}.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkShape = function(value, shape /*, options*/) {
-  if (!isObject(shape)) {
+const checkWithShape = function(value, shape /*, options*/) {
+  if (!isShape(shape)) {
     throw new Error(`Invalid shape=${print(shape)}`);
   }
 
@@ -262,7 +265,7 @@ const checkShape = function(value, shape /*, options*/) {
   const shapeType = DEFAULT_OBJECT_TYPE;
 
   // value must be default object type
-  if (!checkType(value, shapeType)) { // NOTE: always check values with the _validatorMap
+  if (!checkWithType(value, shapeType)) { // NOTE: always check values with the _validatorMap
     return new RtvError(value, shapeType, options.path,
         fullyQualify(shapeType, options.qualifier));
   }
@@ -293,7 +296,8 @@ const checkShape = function(value, shape /*, options*/) {
     // then, test the property's value against the typeset (indirectly recursive)
     const result = check(value[prop], typeset, _getCheckOptions(options, { // eslint-disable-line no-use-before-define
       path: options.path.concat(prop),
-      qualifier
+      qualifier,
+      isTypeset: false // don't assume it's valid since we only check shallow as we go
     }));
 
     if (!result.valid) {
@@ -306,7 +310,90 @@ const checkShape = function(value, shape /*, options*/) {
 };
 
 /**
- * Checks a value against an Array typeset.
+ * Extracts (modifies) the next complete type from an Array typeset.
+ *
+ * For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE]`,
+ *  the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
+ *  would then be `[FINITE]`.
+ *
+ * @param {rtvref.types.typeset} typeset An Array typeset from which to extract
+ *  the next complete type. __This Array will be modified.__
+ * @param {rtvref.types.typeset} [qualifier] If specified __and a qualifier
+ *  is not found in `typeset`__, this qualifier will be used to qualify the returned
+ *  sub-type Array typeset. If a qualifier is found in `typeset`, this parameter
+ *  is ignored. If a qualifier is __not__ found in `typeset` and this parameter
+ *  is specified, then this qualifier will be used to qualify the returned
+ *  sub-type Array typeset.
+ *
+ *  For example, if `typeset` is `[EXPECTED, STRING, FINITE]` then this parameter
+ *   is ignored and the returned Array is `[EXPECTED, STRING]`, with `typeset`
+ *   now just `[FINITE]`. Calling this method again with `typeset` as `[FINITE]`
+ *   would return `[FINITE]` and leave `typeset` empty, if this parameter was not
+ *   specified. Specify the original qualifier `EXPECTED` to get `[EXPECTED, FINITE]`
+ *   back from this method.
+ *
+ * @returns {rtvref.types.typeset} The extracted __Array typeset__ as a new Array,
+ *  which is a sub-type of the given `typeset`. This sub-typeset is not necessarily
+ *  fully-qualified.
+ * @throws {Error} If `typeset` is not a valid Array typeset.
+ * @throws {Error} If `qualifier` is specified but not valid.
+ */
+const extractNextType = function(typeset, qualifier) {
+  if (qualifier) {
+    qualifiers.verify(qualifier);
+  }
+
+  // check for an array first since that's must faster than isTypeset()
+  if (!isArray(typeset) || !isTypeset(typeset)) {
+    throw new Error(`Invalid array typeset=${print(typeset)}`);
+  }
+
+  const subtype = []; // subset type of `typeset`
+  let type = typeset.shift(); // NOTE: [].shift() === undefined
+
+  // FIRST: check for the qualifier, which must be the first element, if specified
+  if (qualifiers.check(type)) {
+    subtype.push(type); // ignore the specified qualifier
+
+    // next type: typeset cannot be empty because it's valid and since
+    //  there's a qualifier, there must be at least one type in it too
+    type = typeset.shift();
+  } else {
+    // must be a type or the validator, which we'll check for below
+    // use the specified qualifier, if any
+    if (qualifier) {
+      subtype.push(qualifier);
+    }
+  }
+
+  if (isString(type)) {
+    // simple type
+    subtype.push(type);
+
+    // check for args if applicable to type (as of now, there are no types that
+    //  require args)
+    if (argTypes.check(type) && typeset.length > 0 && isTypeArgs(typeset[0])) {
+      subtype.push(typeset.shift());
+    }
+
+    // check for ARRAY since it could be `[ARRAY, {args}, [...]]` as complete type
+    if (type === types.ARRAY && typeset.length > 0 && isArray(typeset[0])) {
+      subtype.push(typeset.shift());
+    }
+  } else if (isShape(type) || isArray(type) || isValidator(type)) {
+    // - Shape: if the given typeset was in its original form (nothing extracted from it)
+    //  then the first type could be a shape, in which case it has an implied type of
+    //  OBJECT and is itself the args for it
+    // - Array: a nested array is an Array typeset with an implied type of ARRAY and no args
+    // - Validator: a custom validator has an implied type of ANY and no args
+    subtype.push(type);
+  }
+
+  return subtype;
+};
+
+/**
+ * Checks a value using an Array typeset.
  * @function rtvref.impl.checkTypeset
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset The Array typeset to check against.
@@ -316,11 +403,12 @@ const checkShape = function(value, shape /*, options*/) {
  * @throws {Error} If `typeset` is not a valid Array typeset.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkTypeset = function(value, typeset /*, options*/) {
+const checkWithArray = function(value, typeset /*, options*/) {
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
-  if (!(options.isTypeset || isTypeset(typeset)) || !isArray(typeset)) {
-    throw new Error(`Invalid typeset=${print(typeset)}`);
+  // check for an array first since that's must faster than isTypeset()
+  if (!isArray(typeset) || !(options.isTypeset || isTypeset(typeset))) {
+    throw new Error(`Invalid array typeset=${print(typeset)}`);
   }
 
   let match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
@@ -330,19 +418,80 @@ const checkTypeset = function(value, typeset /*, options*/) {
   // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
   //  using a short-circuit OR conjunction
-  _forEach(typeset, function(type, idx) {
+  // NOTE: due to the isTypeset check above, we can assume that each 'type' is
+  //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
+  //  assume that itself is valid because the isTypeset check was just shallow)
+  const typesetCopy = typeset.concat(); // shallow clone so we can modify the array locally
+  let idx = 0;
+  let type = typesetCopy.shift(); // must be >= 1 element since array typesets cannot be empty
+  console.log('===== entering while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  let count = -1; // DEBUG remove
+  while (type) { // [].shift() === undefined; undefined isn't a valid type; we'll stop when done
+    count++;
+    if (count > 4) {
+      console.log('===== breaking on count>4, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      break;
+    }
+    console.log('===== starting while, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
     if (idx === 0) {
       // check for the qualifier, which must be the first element, if specified
       if (qualifiers.check(type)) {
         hasQualifier = true;
         qualifier = type;
-        return true; // next type
+
+        // next type
+        type = typesetCopy.shift();
+        idx++;
+        console.log('===== looping from qualifier=%s, typesetCopy=%s, idx=%s, type=%s', qualifier, print(typesetCopy), idx, type); // DEBUG
+        continue;
       }
       // else, must be a type or the validator, which we'll check for below
     }
 
+    console.log('===== will check for validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+
+    // Before going further, we have to check for an important case in __typeset__:
+    //  an Array that has 1-4 elements and represents a single type, possibly with
+    //  args (but it could also be 2+ different types, in which case, we need to
+    //  process each one individually).
+    // For example:
+    //  [STRING]
+    //  [EXPECTED, {shape}]: one type, qualified
+    //  [[...]]: nested array
+    //  [OPTIONAL, ARRAY, {args}, [...]]: fully-qualified nested array with args
+    //  and more...
+    // NOTE: by definition, an Array typeset cannot be empty, and since we've eliminated
+    //  the qualifier, if any, with the `idx === 0` case above, the length of typesetCopy
+    //  must be at most 3 at this point
+    if (typesetCopy.length <= 3) {
+      if (typesetCopy.length) {
+      }
+    }
+
+    if ((!hasQualifier && idx === 0 && typesetCopy.length <= 2) ||
+        (hasQualifier && idx === 1 && typesetCopy.length === 1)) {
+
+      if (hasQualifier) {
+        // idx === 1 is implied, otherwise hasQualifier would have to be false
+        if (typesetCopy.length === 1) {
+          // what remains is either another type (string), a function (validator),
+          //  or args for `type` (which could be a shape if `type` is an object type)
+
+          // DEBUG TODO
+
+          // since the typeset is valid, the single type cannot be a qualifier: must
+          //  be either a string, function, object/shape, array; or args for type
+
+        } else {
+          // length must be 2, which means a type and args, or two types
+
+        }
+      }
+    }
+
     // check for the validator
-    if (isFunction(type)) {
+    if (isValidator(type)) {
+      console.log('===== is validator, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
       // if we reach the validator (which must be the very last element) in this
       //  loop, none of the types matched, unless the validator is the only
       //  type in the typeset, at which point it gets an implied type of ANY,
@@ -351,27 +500,46 @@ const checkTypeset = function(value, typeset /*, options*/) {
         match = fullyQualify(types.ANY);
       }
 
-      return false; // break (since this must be the last element anyway)
+      break; // break (since this must be the last element anyway)
     } else {
-      const result = check(value, type, _getCheckOptions(options, {
-        qualifier
+      console.log('===== not validator, checking argTypes, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+      // look for type args (if applicable) before checking the value against this type
+      let typeArgs;
+      if (isString(type) && argTypes.check(type) && typesetCopy.length > 0 &&
+          isTypeArgs(typesetCopy[0])) {
+
+        typeArgs = typesetCopy.shift();
+        idx++;
+      }
+
+      console.log('===== calling check, typesetCopy=%s, idx=%s, type=%s, typeArgs=%s, value=%s', print(typesetCopy), idx, type, print(typeArgs), print(value)); // DEBUG
+      const result = check(value, typeArgs ? [type, typeArgs] : type, _getCheckOptions(options, {
+        qualifier,
+        isTypeset: false // don't assume it's valid since we only check shallow as we go
       }));
 
+      console.log('===== check result=%s, typesetCopy=%s, idx=%s, type=%s', print(result), print(typesetCopy), idx, type); // DEBUG
       if (result.valid) {
         match = fullyQualify(type, qualifier);
-        return false; // break on first match
+        console.log('===== exiting loop on break, match=%s, typesetCopy=%s, idx=%s, type=%s', print(match), print(typesetCopy), idx, type); // DEBUG
+        break; // break on first match
       }
     }
-  });
+
+    // next type
+    type = typesetCopy.shift();
+    idx++;
+    console.log('===== looping, typesetCopy=%s, idx=%s, type=%s', print(typesetCopy), idx, type); // DEBUG
+  };
 
   let err; // @type {(RtvError|undefined)}
 
   if (match) {
     // check for a validator at the end of the Array typeset and invoke it
-    const validator = typeset[typeset.length - 1];
-    if (isFunction(validator)) {
-      if (!validator(value, match, typeset)) {
-        // invalid inspite of the match since the validator said no
+    const lastType = typeset[typeset.length - 1];
+    if (isValidator(lastType)) {
+      if (!lastType(value, match, typeset)) {
+        // invalid in spite of the match since the validator said no
         err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier));
       }
       // else, valid!
@@ -405,17 +573,17 @@ const check = function(value, typeset /*, options*/) {
 
       if (isString(typeset)) {
         // simple type: check value is of the type
-        return checkType(value, typeset, options);
+        return checkWithType(value, typeset, options);
       }
 
-      if (isFunction(typeset)) {
+      if (isValidator(typeset)) {
         // custom validator: bare function implies the ANY type
         const match = types.ANY;
         const fqMatch = fullyQualify(match);
 
         // value must be ANY type, and custom validator must return true
         // NOTE: always check values against the _validatorMap
-        const result = checkType(value, match, options);
+        const result = checkWithType(value, match, options);
         if (!result.valid) {
           return result;
         }
@@ -427,19 +595,19 @@ const check = function(value, typeset /*, options*/) {
         return new RtvError(value, match, options.path, fqMatch);
       }
 
-      if (isObject(typeset)) {
+      if (isShape(typeset)) {
         // shape descriptor: check value against shape
-        return checkShape(value, typeset, options);
+        return checkWithShape(value, typeset, options);
       }
 
       if (isArray(typeset)) {
         // Array typeset: check value against all types in typeset
-        return checkTypeset(value, typeset, options);
+        return checkWithArray(value, typeset, options);
       }
 
-      throw new Error(`Missing handler for type of specified typeset="${print(typeset)}"`);
+      throw new Error(`Missing handler for type of specified typeset=${print(typeset)}`);
     } else {
-      throw new Error(`Invalid typeset="${print(typeset)}" specified`);
+      throw new Error(`Invalid typeset=${print(typeset)} specified`);
     }
   } catch (checkErr) {
     const err = new Error(`Cannot check value: ${checkErr.message}`);
@@ -485,9 +653,10 @@ const impl = {
   _getCheckOptions,
   // public
   fullyQualify,
-  checkType,
-  checkShape,
-  checkTypeset,
+  extractNextType,
+  checkWithType,
+  checkWithShape,
+  checkWithArray,
   check
 };
 

@@ -22,10 +22,12 @@ import qualifiers from '../qualifiers';
  * @see {@link rtvref.types.typeset}
  */
 export default function isTypeset(v, {deep = false, fullyQualified = false} = {}) {
+  // FIRST: make sure it's an acceptable type for a typeset: object (shape),
+  //  string (just a plain type name), function (validator), or array (non-empty)
   let valid = !!(v && (isObject(v) || (isString(v) && types.check(v)) || isFunction(v) ||
       (isArray(v) && v.length > 0)));
 
-  // FIRST: check if needs to be fully-qualified, and check deep within if requested
+  // THEN: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray(v) && v.length >= 2) {
@@ -262,8 +264,8 @@ export default function isTypeset(v, {deep = false, fullyQualified = false} = {}
       return valid; // break if no longer valid
     });
   }
-  // else, must be invalid, or valid but non-array and doesn't need to be FQ'd
-  //  (and we can't go deep because it isn't an array)
+
+  // ELSE: must valid (but non-array/object and doesn't need to be FQ'd), or invalid
 
   return valid;
 }

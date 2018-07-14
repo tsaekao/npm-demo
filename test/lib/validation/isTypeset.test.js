@@ -44,7 +44,9 @@ describe('module: lib/validation/isTypeset', function() {
         [types.CLASS_OBJECT],
 
         [types.MAP_OBJECT, {count: 2}],
-        [[{foo: types.STRING}]]
+        [[{foo: types.STRING}]],
+        [[]], // inner array won't be validated since we aren't going deep
+        [ARRAY, {min: 1}]
       ];
 
       badValues = [
@@ -114,6 +116,8 @@ describe('module: lib/validation/isTypeset', function() {
       goodValues[14].unshift(DEFAULT_QUALIFIER);
       goodValues[15].unshift(DEFAULT_QUALIFIER);
       goodValues[16].unshift(DEFAULT_QUALIFIER, types.ARRAY);
+      goodValues[17].unshift(DEFAULT_QUALIFIER, types.ARRAY);
+      goodValues[18].unshift(DEFAULT_QUALIFIER);
 
       goodValues.push(
           [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {foo: types.STRING}]
@@ -193,6 +197,7 @@ describe('module: lib/validation/isTypeset', function() {
         Symbol('foo'),
         true,
         false,
+        [[]], // outer array typeset is OK, but inner one is not
 
         // STRING type appears more than once in the nested (array) typeset
         [types.STRING, [types.STRING, types.STRING]],

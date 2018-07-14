@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
 import * as vtu from '../validationTestUtil';
-import types, {DEFAULT_OBJECT_TYPE} from '../../../src/lib/types';
+import types from '../../../src/lib/types';
 import isPrimitive from '../../../src/lib/validation/isPrimitive';
 
 describe('module: lib/validation/isPrimitive', function() {

@@ -9,8 +9,11 @@ import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
 import isObject from '../../src/lib/validator/isObject';
 import isFunction from '../../src/lib/validator/isFunction';
+import * as isTypesetMod from '../../src/lib/validation/isTypeset';
 
-describe('module: lib/impl', function() {
+describe.only('module: lib/impl', function() { // DEBUG remove only
+  this.timeout(0); // DEBUG remove
+
   describe('._validatorMap', function() {
     it('should be an internal property', function() {
       expect(Object.getOwnPropertyDescriptor(impl, '_validatorMap')).to.eql({
@@ -78,12 +81,255 @@ describe('module: lib/impl', function() {
   });
 
   describe('#_getCheckOptions()', function() {
-    it('// TODO');
+    it('should return new default options if no current or override given', function() {
+      expect(impl._getCheckOptions()).to.eql({
+        path: [],
+        isTypeset: false,
+        qualifier: undefined
+      });
+    });
+
+    it('should use current options', function() {
+      let options = impl._getCheckOptions({
+        path: [1],
+        isTypeset: true,
+        qualifier: qualifiers.EXPECTED,
+        foo: 1
+      });
+      expect(options).to.eql({
+        path: [1],
+        isTypeset: true,
+        qualifier: qualifiers.EXPECTED
+      });
+      // should not include extra property 'foo'
+      expect(Object.keys(options)).to.eql(['path', 'isTypeset', 'qualifier']);
+
+      // other properties are defaults
+      options = impl._getCheckOptions({isTypeset: true});
+      expect(options).to.eql({path: [], isTypeset: true, qualifier: undefined});
+    });
+
+    it('should use override options', function() {
+      let options = impl._getCheckOptions(undefined,
+          {path: [1], isTypeset: true, qualifier: 'string', foo: 1});
+      expect(options).to.eql({
+        path: [1],
+        isTypeset: true,
+        qualifier: 'string'
+      });
+      // should not include extra property 'foo'
+      expect(Object.keys(options)).to.eql(['path', 'isTypeset', 'qualifier']);
+
+      // other properties are defaults
+      options = impl._getCheckOptions(undefined, {isTypeset: true});
+      expect(options).to.eql({path: [], isTypeset: true, qualifier: undefined});
+    });
+
+    it('should require current.path to be an array', function() {
+      expect(function() {
+        impl._getCheckOptions({path: [1]});
+      }).not.to.throw(/current.path must be an Array/);
+
+      expect(function() {
+        impl._getCheckOptions({path: 1});
+      }).to.throw(/current.path must be an Array/);
+    });
+
+    it('should require override.path to be an array', function() {
+      expect(function() {
+        impl._getCheckOptions(undefined, {path: [1]});
+      }).not.to.throw(/override.path must be an Array/);
+
+      expect(function() {
+        impl._getCheckOptions(undefined, {path: 1});
+      }).to.throw(/override.path must be an Array/);
+    });
+  });
+
+  describe.only('#extractNextType()', function() { // DEBUG remove only
+    it('should use the specified qualifier unless a qualifier is found', function() {
+      let typeset = [qualifiers.EXPECTED, types.FUNCTION];
+      let nextType = impl.extractNextType(typeset, qualifiers.OPTIONAL);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([qualifiers.EXPECTED, types.FUNCTION]);
+
+      typeset = [types.FUNCTION];
+      nextType = impl.extractNextType(typeset, qualifiers.OPTIONAL);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([qualifiers.OPTIONAL, types.FUNCTION]);
+    });
+
+    it('should handle simple string types', function() {
+      let typeset = [types.STRING, types.FINITE];
+      let nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([types.FINITE]);
+      expect(nextType).to.eql([types.STRING]);
+
+      const args = {};
+      const arr = [];
+      const val = function() {};
+
+      typeset = [types.ARRAY, args, arr, val];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([val]);
+      expect(nextType).to.eql([types.ARRAY, args, arr]);
+
+      typeset = [types.PLAIN_OBJECT, args, types.ARRAY, arr];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([types.ARRAY, arr]);
+      expect(nextType).to.eql([types.PLAIN_OBJECT, args]);
+
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([types.ARRAY, arr]);
+
+      typeset = [types.STRING, args, val];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([val]);
+      expect(nextType).to.eql([types.STRING, args]);
+
+      expect(function() {
+        impl.extractNextType([types.BOOLEAN, args]);
+      }).to.throw(/Invalid array typeset/);
+    });
+
+    it('should handle shapes', function() {
+      const shape = {foo: types.STRING};
+      let typeset = [shape];
+      let nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([shape]);
+
+      typeset = [shape];
+      nextType = impl.extractNextType(typeset, qualifiers.REQUIRED);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([qualifiers.REQUIRED, shape]);
+
+      typeset = [types.PLAIN_OBJECT, shape];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([types.PLAIN_OBJECT, shape]);
+    });
+
+    it('should handle arrays', function() {
+      const arr = [types.STRING];
+      let typeset = [arr];
+      let nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([arr]);
+
+      typeset = [arr];
+      nextType = impl.extractNextType(typeset, qualifiers.REQUIRED);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([qualifiers.REQUIRED, arr]);
+
+      typeset = [types.ARRAY, arr];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([types.ARRAY, arr]);
+    });
+
+    it('should handle validators', function() {
+      const val = function() {};
+      let typeset = [val];
+      let nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([val]);
+
+      typeset = [val];
+      nextType = impl.extractNextType(typeset, qualifiers.REQUIRED);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([qualifiers.REQUIRED, val]);
+
+      typeset = [types.PLAIN_OBJECT, val];
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([val]);
+      expect(nextType).to.eql([types.PLAIN_OBJECT]);
+
+      nextType = impl.extractNextType(typeset);
+
+      expect(typeset).to.eql([]);
+      expect(nextType).to.eql([val]);
+    });
   });
 
   describe('#check()', function() {
-    it('should return an RtvSuccess on successful validation'); // TODO
-    it('should return an RtvError on failed validation'); // TODO
+    it('should return an RtvSuccess on successful validation', function() {
+      expect(impl.check(1, types.FINITE)).to.be.an.instanceof(RtvSuccess);
+      expect(impl.check(1, function() { return true; })).to.be.an.instanceof(RtvSuccess);
+      expect(impl.check({foo: 'bar'}, {foo: types.STRING})).to.be.an.instanceof(RtvSuccess);
+      expect(impl.check(1, [types.FINITE])).to.be.an.instanceof(RtvSuccess);
+    });
+
+    it('should return an RtvError on failed validation', function() {
+      expect(impl.check(1, types.STRING)).to.be.an.instanceof(RtvError);
+      expect(impl.check(1, function() { return false; })).to.be.an.instanceof(RtvError);
+      expect(impl.check({foo: 'bar'}, {foo: types.FINITE})).to.be.an.instanceof(RtvError);
+      expect(impl.check(1, [types.STRING])).to.be.an.instanceof(RtvError);
+    });
+
+    it('should return an RtvError with correct properties on failed validation', function() {
+      let value = 1;
+      let typeset = types.STRING;
+      let err = impl.check(value, typeset);
+      expect(err.value).to.equal(value);
+      expect(err.path).to.eql([]);
+      expect(err.typeset).to.equal(typeset);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
+
+      typeset = function() { return false; };
+      err = impl.check(value, typeset);
+      expect(err.value).to.equal(value);
+      expect(err.path).to.eql([]);
+      expect(err.typeset).to.equal(types.ANY); // validator alone means ANY
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.ANY]);
+
+      value = {foo: 'bar'};
+      typeset = {foo: types.FINITE};
+      err = impl.check(value, typeset);
+      expect(err.value).to.equal('bar');
+      expect(err.path).to.eql(['foo']);
+      expect(err.typeset).to.equal(typeset.foo);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.FINITE]);
+
+      value = {foo: {bar: {baz: -1}}};
+      typeset = {
+        foo: {
+          bar: {
+            baz: [types.STRING, types.FINITE, {exact: 0}]
+          }
+        }
+      };
+      err = impl.check(value, typeset);
+      expect(err.value).to.equal(-1);
+      expect(err.path).to.eql(['foo', 'bar', 'baz']);
+      expect(err.typeset).to.equal(typeset.foo.bar.baz);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.FINITE, {exact: 0}]);
+
+      value = 1;
+      typeset = [types.STRING];
+      err = impl.check(value, typeset);
+      expect(err.value).to.equal(value);
+      expect(err.path).to.eql([]);
+      expect(err.typeset).to.equal(typeset);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
+    });
 
     it('should check a string value as a string', function() {
       expect(impl.check('foo', types.STRING)).to.be.an.instanceof(RtvSuccess);
@@ -98,23 +344,26 @@ describe('module: lib/impl', function() {
     });
 
     it('should throw if typeset type is not supported', function() {
-      expect(impl.check.bind(impl, 1, function() {})).to.throw(/Missing handler for type of specified typeset/);
+      const isTypesetStub = sinon.stub(isTypesetMod, 'default').returns(true);
+      expect(impl.check.bind(impl, 1, /asdf/))
+        .to.throw(/Missing handler for type of specified typeset/);
+      isTypesetStub.restore();
     });
   });
 
-  describe('#checkType()', function() {
+  describe('#checkWithType()', function() {
     it('should check simple types against values'); // TODO
 
     it('should throw if type is not valid', function() {
       expect(function() {
-        impl.checkType('value', 'foo');
-      }).to.throw(/Invalid value for enum/);
+        impl.checkWithType('value', 'foo');
+      }).to.throw(/Invalid value for types enum/);
     });
 
     it('should throw if type is not handled', function() {
       const typesVerifyStub = sinon.stub(types, 'verify'); // prevent verification of unknown/invalid type
       expect(function() {
-        impl.checkType(2, 'foo');
+        impl.checkWithType(2, 'foo');
       }).to.throw(/Missing validator for type="foo"/);
       typesVerifyStub.restore();
     });
@@ -124,11 +373,11 @@ describe('module: lib/impl', function() {
     it('should use the options.qualifier if specified, only for non-array typesets'); // TODO
   });
 
-  describe('#checkShape()', function() {
-    it('// TODO');
+  describe('#checkWithShape()', function() {
+    it('should check a shape'); // TODO
   });
-  describe('#checkTypeset()', function() {
-    it('// TODO');
+  describe('#checkWithArray()', function() {
+    it('should check an array typeset'); // TODO
   });
 
   describe('#fullyQualify()', function() {
