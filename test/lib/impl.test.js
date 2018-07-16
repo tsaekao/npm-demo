@@ -285,10 +285,10 @@ describe.only('module: lib/impl', function() { // DEBUG remove only
   });
 
   describe.only('#check()', function() { // DEBUG remove only
-    it('should return an RtvSuccess on successful validation', function() {
-      expect(impl.check(1, types.FINITE)).to.be.an.instanceof(RtvSuccess);
-      expect(impl.check(1, function() { return true; })).to.be.an.instanceof(RtvSuccess);
-      expect(impl.check({foo: 'bar'}, {foo: types.STRING})).to.be.an.instanceof(RtvSuccess);
+    it.only('should return an RtvSuccess on successful validation', function() {
+      // expect(impl.check(1, types.FINITE)).to.be.an.instanceof(RtvSuccess);
+      // expect(impl.check(1, function() { return true; })).to.be.an.instanceof(RtvSuccess);
+      // expect(impl.check({foo: 'bar'}, {foo: types.STRING})).to.be.an.instanceof(RtvSuccess);
       expect(impl.check(1, [types.FINITE])).to.be.an.instanceof(RtvSuccess);
     });
 

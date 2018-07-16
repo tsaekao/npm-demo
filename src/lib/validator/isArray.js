@@ -7,6 +7,8 @@ import isFinite from './isFinite';
 import types from '../types';
 import qualifiers from '../qualifiers';
 
+let impl; // @type {rtvref.impl}
+
 /**
  * Type: {@link rtvref.types.ARRAY ARRAY}
  * @const {string} rtvref.validator.isArray.type
@@ -19,6 +21,7 @@ export const type = types.ARRAY;
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
+  impl = settings.impl;
 };
 
 /**

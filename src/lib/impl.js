@@ -473,6 +473,11 @@ const checkWithArray = function(value, typeset /*, options*/) {
       }
 
       break; // break (since this must be the last element in typeset)
+    } else if (isArray(subtype[0]) || subtype[0] === types.ARRAY) {
+      // subtype is a nested Array typeset
+      // DEBUG TODO: need to call checkWithType(value, subtype) and that method should handle
+      //  an array as its second parameter as representing a single type with possible
+      //  qualifier and args, and pass that onto the appropriate validator...
     } else {
       console.log('===== calling check, typesetCopy=%s, idx=%s, subtype=%s, value=%s', print(typesetCopy), idx, print(subtype), print(value)); // DEBUG
       const result = check(value, subtype, _getCheckOptions(options, {
