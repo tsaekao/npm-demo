@@ -2,20 +2,24 @@ import {expect} from 'chai';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
-import isValidator from '../../../src/lib/validation/isValidator';
+import * as val from '../../../src/lib/validation/isValidator';
 
 describe('module: lib/validation/isValidator', function() {
-  let validValues;
-
-  beforeEach(function() {
-    validValues = vtu.getValidValues();
+  it('#type', function() {
+    expect(val.type).to.equal(undefined);
   });
 
-  describe('#isValidator', function() {
-    it('should validate shape descriptors', function() {
-      expect(vtu.testValues('isValidator', isValidator,
+  describe('#default', function() {
+    let validValues;
+
+    beforeEach(function() {
+      validValues = vtu.getValidValues();
+    });
+
+    it('should validate custom validators', function() {
+      expect(vtu.testValues('isValidator', val.default,
           validValues[types.FUNCTION]).failures).to.eql([]);
-      expect(vtu.testOtherValues(types.OBJECT, isValidator)).to.eql([]);
+      expect(vtu.testOtherValues(types.FUNCTION, val.default)).to.eql([]);
     });
   });
 });

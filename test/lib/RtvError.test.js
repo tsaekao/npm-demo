@@ -124,6 +124,16 @@ describe('module: lib/RtvError', function() {
     const err = new RtvError(value, typeset, path, cause);
     expect(err.message).to.contain(`value=${value}`);
     expect(err.message).to.contain(`path="/${path.join('/')}"`);
+    expect(err.message).to.contain(`cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
+  });
+
+  it('should have a message including path="/" with path array is empty', function() {
+    const value = null;
+    const typeset = [types.STRING];
+    const path = [];
+    const cause = [qualifiers.REQUIRED, types.STRING];
+    const err = new RtvError(value, typeset, path, cause);
+    expect(err.message).to.contain(`path="/"`);
   });
 
   it('should extend Error', function() {
@@ -192,5 +202,6 @@ describe('module: lib/RtvError', function() {
     expect(str).to.contain('RtvError');
     expect(str).to.contain(`value=${value}`);
     expect(str).to.contain(`path="/${path.join('/')}"`);
+    expect(str).to.contain(`cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
   });
 });

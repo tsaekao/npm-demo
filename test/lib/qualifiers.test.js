@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import * as mod from '../../src/lib/qualifiers';
 import Enumeration from '../../src/lib/Enumeration';
-import isString from '../../src/lib/validator/isString';
+import isString from '../../src/lib/validation/isString';
 
 describe('module: lib/qualifiers', function() {
   const qualifiers = mod.default;

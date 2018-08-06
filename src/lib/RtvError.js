@@ -1,7 +1,7 @@
 ////// RtvError Class
 
 import isTypeset from './validation/isTypeset';
-import isArray from './validator/isArray';
+import isArray from './validation/isArray';
 
 import {print} from './util';
 
@@ -12,7 +12,12 @@ const extendsFrom = Error;
 // @param {Array.<string>} path
 // @returns {string}
 const renderPath = function(path) {
-  return `/${path.join('/')}`;
+  // returns '/' if the path is empty
+  return path.reduce(function(strPath, elem) {
+    // cast `elem` to string rather than print() to avoid quotes (should be a
+    //  string anyway)
+    return `${strPath}${strPath === '/' ? '' : '/'}${elem + ''}`;
+  }, '/');
 };
 
 /**
@@ -34,7 +39,9 @@ const renderPath = function(path) {
  * @param {Array.<string>} path The path deep into `value` where the failure occurred.
  *  An empty array signifies the _root_ (top-level) value that was checked.
  * @param {rtvref.types.fully_qualified_typeset} cause The fully qualified typeset
- *  that caused the failure.
+ *  that caused the failure. This is normally the fully-qualified version of `typeset`,
+ *  but could be a sub-type if `typeset` is an Array typeset or a
+ *  {@link rtvref.shape_descriptor shape descriptor}.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.
  */
 const RtvError = function(value, typeset, path, cause) {
@@ -63,7 +70,7 @@ const RtvError = function(value, typeset, path, cause) {
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
   extendsFrom.call(this);
-  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}"`;
+  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}", cause=${print(cause)}`;
   this.name = 'RtvError';
 
   Object.defineProperties(this, {
@@ -123,7 +130,6 @@ const RtvError = function(value, typeset, path, cause) {
       }
     },
 
-    // DEBUG TODO make sure the example is what it ends-up being...:
     /**
      * Fully qualified typeset that caused the failure. This will be a subset
      *  of `typeset`, and possibly of a nested typeset within `typeset`
@@ -157,7 +163,7 @@ RtvError.prototype.constructor = RtvError;
  * @returns {string} String representation.
  */
 RtvError.prototype.toString = function() {
-  return `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}"}`;
+  return `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
 };
 
 export default RtvError;

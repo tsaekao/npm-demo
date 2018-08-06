@@ -75,7 +75,7 @@ export default class Enumeration {
     Object.defineProperty(this, '$name', {
       enumerable: false,
       configurable: true,
-      value: (name && print(name)) || ''
+      value: name || ''
     });
 
     /**
@@ -130,7 +130,7 @@ export default class Enumeration {
     const result = this.check(value);
 
     if (result === undefined && !silent) {
-      throw new Error(`Invalid value for ${this.$name ? `${this.$name} ` : ''}enum[${this.$values.map(print).join(', ')}]: ${print(value)}`);
+      throw new Error(`Invalid value for ${this.$name ? `${print(this.$name)} ` : ''}enum[${this.$values.map(print).join(', ')}]: ${print(value)}`);
     }
 
     return result;
@@ -143,6 +143,6 @@ export default class Enumeration {
    */
   toString() {
     const pairs = Object.keys(this).map((k) => [k, this[k]]);
-    return `{rtvref.Enumeration $name="${this.$name}" pairs=[${pairs.map((p) => `[${print(p)}]`).join(', ')}]}`;
+    return `{rtvref.Enumeration $name=${print(this.$name)} pairs=[${pairs.map(print).join(', ')}]}`;
   }
 }

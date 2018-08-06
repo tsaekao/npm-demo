@@ -49,6 +49,7 @@ Shapes must be:
 - [x] Add linting: ESLint
 - [x] Add unit test system: Mocha + Chai
 - [x] Add minified output: UglifyJS?
+- [ ] Unit tests must be run both in the browser and in Node.js
 - [ ] Add Gitlab CI config, or use TravisCI?
 - [ ] Publish to npm
     - [ ] Add `.npmignore`

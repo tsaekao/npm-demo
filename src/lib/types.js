@@ -186,9 +186,9 @@ import Enumeration from './Enumeration';
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is necessary if a type needs or requires
  *     {@link rtvref.types.type_arguments arguments}.
- *   - If the __first__ element (or second, if a {@link rtvref.types.qualifiers qualifier}
+ *   - If the __first__ (or second, if a {@link rtvref.types.qualifiers qualifier}
  *     is provided, and this, in a typeset that is _not_
- *     {@link rtvref.types.fully_qualified_typeset fully-qualified}), is an `Object`,
+ *     {@link rtvref.types.fully_qualified_typeset fully-qualified}), element is an `Object`,
  *     it's treated as a nested {@link rtvref.shape_descriptor shape descriptor}
  *     describing an object of the default {@link rtvref.types.OBJECT OBJECT} type.
  *     To include a shape descriptor at any other position within the array, it
@@ -407,12 +407,16 @@ const defs = {
    */
   ANY: def('any'),
 
-  // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because of JSON requirement...)
-  //  for a regular expression test. Similar prop names to collection_args.
+  // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
+  //  of JSON requirement...) for a regular expression test. Similar prop names
+  //  to collection_args.
   /**
    * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
-   * @property {string} [exact] An exact string to match.
+   * @property {string} [exact] An exact string to match. Can be an empty string.
+   *  Note, however, that the {@link rtvref.qualifiers qualifier} must not be
+   *  `REQUIRED` because that will disallow an empty string as the value being
+   *  checked (i.e. this argument will be ignored).
    * @property {string} [partial] A partial value to match (must be somewhere
    *  within the string). Ignored if empty string, or `exact` is specified. `min`
    *  and `max` take __precedence__ over this argument (the length will be
@@ -594,6 +598,9 @@ const defs = {
   /**
    * <h3>Array Arguments</h3>
    * @typedef {Object} rtvref.types.ARRAY_args
+   * @property {rtvref.types.typeset} [typeset] The typeset which every value in
+   *  the array must match. Defaults to {@link rtvref.types.ANY} which means any
+   *  value will match.
    * @property {number} [length] Exact length. Ignored if not a
    *  {@link rtvref.types.FINITE FINITE} number >= 0.
    * @property {number} [min] Minimum inclusive length. Ignored if `exact` is
@@ -614,19 +621,21 @@ const defs = {
    *  be used).
    *
    * When describing arrays, either _shorthand_ or _full_ notation may be used.
-   *  In the shorthand notation, the `ARRAY` type isn't necessary, but
-   *  {@link rtvref.types.ARRAY_args arguments} can't be specified. In the full
-   *  notation, the `ARRAY` type is required, but arguments can optionally be
-   *  specified, as can the array that follows it.
+   *  In the shorthand notation, the `ARRAY` type isn't necessary, but it's only
+   *  possible to specify the Array typeset to use to validate each array element,
+   *  and {@link rtvref.types.ARRAY_args arguments} can't be specified. In the
+   *  {@link rtvref.types.fully_qualified_typeset fully-qualified} notation, the
+   *  `ARRAY` type is required, but the Array typeset must be moved into the
+   *  `typeset` argument (along with any other argument necessary).
    *
-   * __NOTE__: It's important to realize that arrays are essentially
-   *  nested {@link rtvref.types.typeset Array typesets}. They represent a
-   *  set of types that will be used to validate each element of an array using
-   *  a short-circuit OR conjunction, looking for the first type that matches.
+   * __NOTE__: It's important to realize that arrays (as in the JavaScript Array
+   *  type) are essentially nested {@link rtvref.types.typeset Array typesets}.
+   *  They represent a set of types that will be used to validate each element
+   *  of an array using a short-circuit OR conjunction, looking for the first type that matches.
    *
    * <h4>Example: Simple array</h4>
    *
-   * The 'value' property must be an array (possibly empty) of any type of value.
+   * The `value` property must be an array (possibly empty) of any type of value.
    *
    * <pre><code>{
    *   value: [ARRAY]
@@ -641,7 +650,7 @@ const defs = {
    *
    * <h4>Example: Shorthand notation</h4>
    *
-   * The 'value' property must be an array (possibly empty) of finite numbers of
+   * The `value` property must be an array (possibly empty) of finite numbers of
    *  any value.
    *
    * <pre><code>{
@@ -651,40 +660,40 @@ const defs = {
    *
    * <h4>Example: Shorthand, mixed types</h4>
    *
-   * The 'value' property must be either a boolean; or an array (possibly empty) of
-   *  finite numbers of any value, or non-empty strings.
+   * The `value` property must be either a boolean; or an array (possibly empty) of
+   *  finite numbers of any value, or non-empty strings, or a mix of both.
    *
    * <pre><code>{
    *   value: [BOOLEAN, [FINITE, STRING]]
    * }
    * </code></pre>
    *
-   * <h4>Example: Full notation</h4>
+   * <h4>Example: Fully-qualified notation, no typeset</h4>
    *
-   * The 'value' property must be an array (possibly empty) of finite numbers of
-   *  any value, or non-empty strings.
+   * The `value` property must be a non-empty array of any type of value.
    *
    * <pre><code>{
-   *   value: [ARRAY, [FINITE, STRING]]
+   *   value: [REQUIRED, ARRAY, {min: 1}]
    * }
    * </code></pre>
    *
-   * <h4>Example: Full, mixed types, arguments</h4>
+   * <h4>Example: Fully-qualified notation</h4>
    *
-   * The 'value' property must be either a boolean; or a non-empty array of finite
-   *  numbers of any value, or non-empty strings.
+   * The `value` property must be an array (possibly empty) of finite numbers of
+   *  any value (nested typeset is not fully-qualified).
    *
    * <pre><code>{
-   *   value: [BOOLEAN, ARRAY, {min: 1}, [FINITE, STRING]]
+   *   value: [REQUIRED, ARRAY, {typeset: [FINITE]}]
    * }
-   * </code></pre>
    *
-   * <h4>Example: Full, no Array typeset</h4>
+   * <h4>Example: Fully-qualified, mixed types</h4>
    *
-   * The 'value' property must be a non-empty array of any type of value.
+   * The `value` property must be either a boolean; or an array (possibly empty) of
+   *  finite numbers of any value, or non-empty strings, or a mix of both
+   *  (nested typeset is not fully-qualified).
    *
    * <pre><code>{
-   *   value: [ARRAY, {min: 1}]
+   *   value: [REQUIRED, BOOLEAN, ARRAY, {typeset: [FINITE, STRING]}]
    * }
    * </code></pre>
    *

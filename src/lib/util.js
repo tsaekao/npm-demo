@@ -13,31 +13,46 @@
 /**
  * Pretty-print a value.
  * @function rtv.util.print
- * @param {*} value Value to print.
+ * @param {*} printValue Value to print.
  * @returns {string} Pretty-printed value. It's not perfect and may not catch
  *  all types, but attempts to be good enough.
  */
-export const print = function(value) {
-  const replacer = function replacer(key, val) {
-    if (typeof val === 'function') {
-      return '<function>';
-    } else if (typeof val === 'symbol') {
-      return `<<${val.toString()}>>`;
-    } else if (val === null || val === undefined) {
-      return val + '';
+export const print = function(printValue) {
+  // NOTE: key will be undefined when the replacer is called outside of the
+  //  JSON.stringify() call, as well as for the first stringify() call
+  const replacer = function(stringifying, key, value) {
+    if (value === undefined || value === null) {
+      return stringifying ? value : (value + '');
     }
 
-    return val;
-  };
+    if (typeof value === 'string') {
+      return stringifying ? value : `"${value}"`;
+    }
 
-  // do an initial pass to see if we have a string
-  const result = replacer(undefined, value);
+    if (typeof value === 'number') { // also catches NaN
+      return stringifying ? value : `${value}`;
+    }
 
-  // if it's just a string, return it
+    if (typeof value === 'boolean') {
+      return stringifying ? value : `${value}`;
+    }
+
+    if (typeof value === 'function') {
+      return '<function>';
+    }
+
+    if (typeof value === 'symbol') {
+      return value.toString();
+    }
+
+    return value; // keep stringifying since we're returning an object
+  }
+
+  const result = replacer(false, undefined, printValue);
+
   if (typeof result === 'string') {
     return result;
   }
 
-  // otherwise, stringify it
-  return JSON.stringify(value, replacer);
+  return JSON.stringify(result, replacer.bind(null, true)); // recursive
 };

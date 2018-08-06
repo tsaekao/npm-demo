@@ -3,28 +3,45 @@
 /**
  * <h2>RTV Validation</h2>
  *
- * This namespace provides _validation helpers_ which verify values to be of
- *  certain kinds, but not a single, specific {@link rtvref.types type} like
- *  {@link rtvref.validator type validators} do. For example, the
- *  {@link rtvref.validation.isTypeset isTypeset} helper verifies a value as a
- *  {@link rtvref.types.typeset typeset}, which is not an actual type, while
- *  the {@link rtvref.validator.isString isString validator} verifies a value
- *  as a {@link rtvref.types.STRING string}.
+ * This namespace provides _type validations_ which verify values to be of
+ *  the {@link rtvref.types types} defined in this library. If permitted values
+ *  differ between {@link rtvref.qualifiers qualifiers}, the validation must
+ *  only permit the `REQUIRED` values. Validations strictly check for types;
+ *  they do not consider {@link rtvref.types.type_arguments type arguments} or
+ *  qualifiers like {@link rtvref.validator type validators} do.
+ *
+ * Validations may also check for pseudo-types, such as the
+ *  {@link rtvref.validation.isTypeset isTypeset} validation verifying a value as
+ *  a {@link rtvref.types.typeset typeset}, which is not an actual type.
+ *
+ * __Every validation module must provide the following interface:__
+ *
+ * - `{function} default` (the default export): The
+ *   {@link rtvref.validation.method validation method} itself.
+ * - `{(string|undefined)} type`: The {@link rtvref.types type} verified;
+ *   `undefined` for a pseudo-type (e.g. {@link rtvref.types.primitives primitive}
+ *   or {@link rtvref.types.typeset typeset}).
+ *
+ * Validations are meant to be leaf modules. They should not import other modules
+ *  other than types and other validations. Validation modules should be named
+ *  as `is<Type>` such that their default export is named `is<Type>`.
+ *
+ * NOTE: Where possible, validations should use the other validations rather than
+ *  third-party code (e.g. isTypeset.js needs to check for objects, so it should
+ *  use the isObject.js validation rather than 'lodash/isObject', and let
+ *  isObject.js decide the best way to check a value as being an 'object' as
+ *  defined by this library in rtvref.types.OBJECT). This way, it makes it much
+ *  easier to change the definition of a type later on.
  *
  * @namespace rtvref.validation
  */
 
-// NOTE: Modules in this namespace are the only ones where third-party validation
-//  code (i.e. lodash methods) should be referenced. The rest of the library should
-//  use these methods for any type validation needed.
-//
-// NOTE: The only functions that should be defined directly in this module are
-//  those that don't map to a type as defined in ../types.js, such as
-//  `isTypeset()` or `isPrimitive()`.
-//
-// Where possible, these functions should use the other helpers or validators
-//  rather than third-party code (e.g. isTypeset.js needs to check for arrays,
-//  so it should use the isArray.js validator rather than 'lodash/isArray', and
-//  let isArray.js decide the best way to check a value as being an array). This
-//  way, it makes it much easier later on to change third-party libraries, or add
-//  additional logic to how a type is validated.
+/**
+ * <h3>Type Validation Method</h3>
+ *
+ * Verifies a value is of a certain {@link rtvref.types type}.
+ *
+ * @function rtvref.validation.method
+ * @param {*} value The value to validate.
+ * @returns {boolean} `true` if the value matches the type; `false` otherwise.
+ */

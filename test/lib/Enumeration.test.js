@@ -132,6 +132,6 @@ describe('module: lib/Enumeration', function() {
     expect(str).to.contain('$name="foo"');
     expect(function() {
       en2.verify(2);
-    }).to.throw(/for foo enum/);
+    }).to.throw(/for "foo" enum/);
   });
 });

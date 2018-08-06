@@ -1,16 +1,14 @@
-////// Validation Module
+////// Validator Module
 
 /**
  * <h2>RTV Type Validators</h2>
  *
  * This namespace provides validators for each supported {@link rtvref.types type},
- *  capable of validating a value against that type. Validators differ from
- *  _validation helpers_ provided by the {@link rtvref.validation validation}
+ *  capable of fully validating a value against that type. Validators differ from
+ *  type _validations_ provided by the {@link rtvref.validation validation}
  *  module in that validators verify a value against a single, specific type,
- *  whereas the validation helpers do not.
- *
- * The default export for a validator module is a
- *  .
+ *  considering {@link rtvref.qualifiers qualifiers} as well as
+ *  {@link rtvref.types.type_arguments type arguments}.
  *
  * __Every validator module must provide the following interface:__
  *
@@ -20,29 +18,19 @@
  * - `{function} config`: The
  *   {@link rtvref.validator.validator_config configuration function}.
  *
+ * Validator modules should be named as `val<Type>` such that their default
+ *  export is named `val<Type>`.
+ *
+ * There can only be one validator for any given type. Where possible, each
+ *  validator should use applicable {@link rtvref.validation type validations}
+ *  rather than third-party code (e.g. lodash) to ensure that the semantics of
+ *  each type is properly interpreted. If the validator introduces an entirely
+ *  new type, then it should use whatever means necessary to properly identify
+ *  the type which it validates.
+ *
  * @namespace rtvref.validator
  */
 
-// NOTE: Modules in this namespace are the only ones where third-party validation
-//  code (i.e. lodash methods) should be referenced. The rest of the library should
-//  use these methods for any type validation needed.
-//
-// Where possible, these functions should use the other type validators rather
-//  than third-party code (e.g. isArray.js needs to validate some of its arguments
-//  as finite numbers, so it should use isFinite.js to do that validation rather
-//  than 'lodash/isFinite', and let isFinite.js decide whether 'lodash/isFinite'
-//  is the right way to validate a finite number). This way, it makes it much
-//  easier later on to change third-party libraries, or add additional logic to
-//  how a type is validated.
-
-// NOTE: Validator modules are essentially precursors to plugins. For the time
-//  being, the expected interface for a validator module is:
-//  - 'validator: function': has the rtvref.validator.type_validator signature
-//  - 'type: string': The type the validator validates (e.g. rtvref.types.STRING
-//    for the STRING type validator)
-//
-// There can only be one validator for any given type.
-//
 // TODO[plugins]: Later, if we ever expose a plugin architecture, we might change
 //  this to pass some type of registration function into the plugin, or the plugin
 //  calls a registration method on rtv, or maybe something else. Whatever we do,
@@ -61,7 +49,7 @@
  *  {@link rtvref.qualifiers qualifier} rules like allowing `null` when EXPECTED
  *  vs not when REQUIRED, unless the type itself allows or disallows these
  *  special values. A validator should focus on checking for its type. For example,
- *  the {@link rtvref.validation.isString isString validator} requires the value
+ *  the {@link rtvref.validation.isString isString validation} requires the value
  *  to be a string, excluding `null` and `undefined` regardless of the qualifier.
  *  It does, however, allow an empty string if the qualifier is not REQUIRED because
  *  that is one of its {@link rtvref.types.STRING type-specific qualifier rules}.
@@ -70,18 +58,18 @@
  * @param {*} value The value to validate.
  * @param {string} [qualifier] The validation qualifier from the immediate
  *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
- *  Validators should always default to {@link rtvref.qualifiers.REQUIRED REQUIRED}
- *  to maintain consistent behavior.
+ *  Validators should always explicitly default to
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED} to maintain consistent behavior.
  * @param {Object} [args] The arguments object, if any/applicable, for the type
  *  being validated. For example, {@link rtvref.types.STRING_args string args} in
  *  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least
  *  5 characters in length).
- * @returns {boolean} A _truthy_ value to verify according to the qualifier
- *  and args, a _falsy_ value to reject.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid;
+ *  `RtvError` if not.
  */
 
 /**
- * <h3>Type Validation Configuration Settings</h3>
+ * <h3>Type Validator Configuration Settings</h3>
  *
  * The settings provided to the
  *  {@link rtvref.validator.validator_config configuration function}.
