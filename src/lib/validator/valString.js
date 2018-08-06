@@ -41,32 +41,26 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valString(v, q = qualifiers.REQUIRED, args) {
-  let valid = isString(v);
+  let valid = isString(v) || (q !== qualifiers.REQUIRED && v === '');
 
-  if (valid) {
-    if (q === qualifiers.REQUIRED) {
-      valid = !!v; // cannot be empty when required
-    }
+  if (valid && args) { // then check args
+    if (isString(args.exact)) { // empty string OK
+      valid = (v === args.exact);
+    } else {
+      let min;
+      if (valid && isFinite(args.min) && args.min >= 0) {
+        min = args.min;
+        valid = (v.length >= min);
+      }
 
-    if (valid && args) { // then check args
-      if (isString(args.exact)) { // empty string OK
-        valid = (v === args.exact);
-      } else {
-        let min;
-        if (valid && isFinite(args.min) && args.min >= 0) {
-          min = args.min;
-          valid = (v.length >= min);
-        }
+      if (valid && isFinite(args.max) && args.max >= 0) {
+        if (min === undefined || args.max >= min) {
+          valid = (v.length <= args.max);
+        } // else, ignore
+      }
 
-        if (valid && isFinite(args.max) && args.max >= 0) {
-          if (min === undefined || args.max >= min) {
-            valid = (v.length <= args.max);
-          } // else, ignore
-        }
-
-        if (valid && args.partial) {
-          valid = v.includes(args.partial);
-        }
+      if (valid && args.partial) {
+        valid = v.includes(args.partial);
       }
     }
   }

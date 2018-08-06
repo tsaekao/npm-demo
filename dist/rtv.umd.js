@@ -2841,10 +2841,17 @@ var type$7 = types.STRING;
  *
  * @function rtvref.validation.isString.default
  * @param {*} v Value to validate.
+ * @param {Object} [options] Validation options.
+ * @param {boolean} [options.allowEmpty=false] If truthy, empty strings are
+ *  permitted.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
 function isString(v) {
-  return typeof v === 'string';
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$allowEmpty = _ref.allowEmpty,
+      allowEmpty = _ref$allowEmpty === undefined ? false : _ref$allowEmpty;
+
+  return typeof v === 'string' && (v !== '' || allowEmpty);
 }
 
 ////// isFunction validation
@@ -3007,12 +3014,12 @@ function isTypeset(v) {
   var valid = !!(v && (isObject$1(v) || isString(v) && types.check(v) || isValidator(v) || isArray$1(v) && v.length > 0));
 
   if (!valid) {
-    options.failure = 'Value v=' + print(v) + ' is not a valid type for a typeset: Expecting object (shape), string (single type), function (custom validator), or array (typeset, non-empty)';
+    options.failure = 'Value v=' + print(v) + ' is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)';
   }
 
   // THEN: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
-    var failurePrefix = 'Fully-qualified ' + (deep ? 'deep ' : 'shallow') + ' typeset=' + print(v);
+    var failurePrefix = 'Fully-qualified ' + (deep ? 'deep' : 'shallow') + ' typeset=' + print(v);
 
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray$1(v) && v.length >= 2) {
@@ -3109,21 +3116,21 @@ function isTypeset(v) {
             shape && forEach_1(shape, function (ts, prop) {
               var opts = { deep: deep, fullyQualified: fullyQualified };
               valid = isTypeset(ts, opts); // recursive
-              options.failure = opts.failure && failurePrefix + ' [index=' + i + ', prop="' + prop + '"]: ' + opts.failure;
+              options.failure = opts.failure && failurePrefix + ' (index=' + i + ', prop="' + prop + '"): ' + opts.failure;
               return valid; // break on first invalid
             });
           } else if (valid && deep && curType === types.ARRAY && rule.typeset) {
             // ARRAY type with args.typeset specified, and we're deep-validating
             var opts = { deep: deep, fullyQualified: fullyQualified };
             valid = isTypeset(rule.typeset, opts);
-            options.failure = opts.failure && failurePrefix + ' [index=' + i + ']: ' + opts.failure;
+            options.failure = opts.failure && failurePrefix + ' (index=' + i + '): ' + opts.failure;
           }
         } else {
           // any other type in a fully-qualified array typeset is not supported
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = failurePrefix + ': Unexpected value at index=' + i + ': Expecting object (shape), string (single type), or function (custom validator)';
+          options.failure = failurePrefix + ': Unexpected value at index=' + i + ': Expecting object (shape), non-empty string (single type), or function (custom validator)';
         }
 
         return valid; // break if no longer valid
@@ -3146,7 +3153,7 @@ function isTypeset(v) {
     // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
     //  definition, and deep (if requested)
   } else if (valid && !fullyQualified && isArray$1(v)) {
-    var _failurePrefix = 'Non-qualified ' + (deep ? 'deep ' : 'shallow') + ' typeset=' + print(v);
+    var _failurePrefix = 'Non-qualified ' + (deep ? 'deep' : 'shallow') + ' typeset=' + print(v);
     var _usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
     var _curType = void 0; // @type {string} current in-scope type
     var _argType = void 0; // @type {(string|undefined)} current in-scope type IIF it accepts args
@@ -3241,14 +3248,14 @@ function isTypeset(v) {
           shape && forEach_1(shape, function (ts, prop) {
             var opts = { deep: deep, fullyQualified: fullyQualified };
             valid = isTypeset(ts, opts); // recursive
-            options.failure = opts.failure && _failurePrefix + ' [index=' + i + ', prop="' + prop + '"]: ' + opts.failure;
+            options.failure = opts.failure && _failurePrefix + ' (index=' + i + ', prop="' + prop + '"): ' + opts.failure;
             return valid; // break on first invalid
           });
         } else if (valid && deep && _curType === types.ARRAY && rule.typeset) {
           // ARRAY type with args.typeset specified, and we're deep-validating
           var opts = { deep: deep, fullyQualified: fullyQualified };
           valid = isTypeset(rule.typeset, opts);
-          options.failure = opts.failure && _failurePrefix + ' [index=' + i + ']: ' + opts.failure;
+          options.failure = opts.failure && _failurePrefix + ' (index=' + i + '): ' + opts.failure;
         }
       } else if (isArray$1(rule)) {
         // a nested array implies the ARRAY type in shorthand notation
@@ -3264,14 +3271,14 @@ function isTypeset(v) {
         if (valid && deep) {
           var _opts = { deep: deep, fullyQualified: fullyQualified };
           valid = isTypeset(rule, _opts); // recursive
-          options.failure = _opts.failure && _failurePrefix + ' [index=' + i + ']: ' + _opts.failure;
+          options.failure = _opts.failure && _failurePrefix + ' (index=' + i + '): ' + _opts.failure;
         }
       } else {
         // any other type in a non-qualified array typeset is not supported
         // NOTE: ARRAY shorthand notation is permitted in non-qualified typesets,
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
-        options.failure = _failurePrefix + ': Unexpected value at index=' + i + ': Expecting object (shape), string (single type), function (custom validator), or array (typeset)';
+        options.failure = _failurePrefix + ': Unexpected value at index=' + i + ': Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)';
       }
 
       return valid; // break if no longer valid
@@ -3296,7 +3303,7 @@ function isTypeset(v) {
     forEach_1(v, function (ts, prop) {
       var opts = { deep: deep, fullyQualified: fullyQualified };
       valid = isTypeset(ts, opts); // recursive
-      options.failure = opts.failure && _failurePrefix2 + ' [prop="' + prop + '"]: ' + opts.failure;
+      options.failure = opts.failure && _failurePrefix2 + ' (prop="' + prop + '"): ' + opts.failure;
       return valid; // break if no longer valid
     });
   }
@@ -4477,34 +4484,28 @@ function valString(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : qualifiers.REQUIRED;
   var args = arguments[2];
 
-  var valid = isString(v);
+  var valid = isString(v) || q !== qualifiers.REQUIRED && v === '';
 
-  if (valid) {
-    if (q === qualifiers.REQUIRED) {
-      valid = !!v; // cannot be empty when required
-    }
+  if (valid && args) {
+    // then check args
+    if (isString(args.exact)) {
+      // empty string OK
+      valid = v === args.exact;
+    } else {
+      var min = void 0;
+      if (valid && isFinite$1(args.min) && args.min >= 0) {
+        min = args.min;
+        valid = v.length >= min;
+      }
 
-    if (valid && args) {
-      // then check args
-      if (isString(args.exact)) {
-        // empty string OK
-        valid = v === args.exact;
-      } else {
-        var min = void 0;
-        if (valid && isFinite$1(args.min) && args.min >= 0) {
-          min = args.min;
-          valid = v.length >= min;
-        }
+      if (valid && isFinite$1(args.max) && args.max >= 0) {
+        if (min === undefined || args.max >= min) {
+          valid = v.length <= args.max;
+        } // else, ignore
+      }
 
-        if (valid && isFinite$1(args.max) && args.max >= 0) {
-          if (min === undefined || args.max >= min) {
-            valid = v.length <= args.max;
-          } // else, ignore
-        }
-
-        if (valid && args.partial) {
-          valid = v.includes(args.partial);
-        }
+      if (valid && args.partial) {
+        valid = v.includes(args.partial);
       }
     }
   }

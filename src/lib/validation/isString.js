@@ -19,8 +19,11 @@ export const type = types.STRING;
  *
  * @function rtvref.validation.isString.default
  * @param {*} v Value to validate.
+ * @param {Object} [options] Validation options.
+ * @param {boolean} [options.allowEmpty=false] If truthy, empty strings are
+ *  permitted.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isString(v) {
-  return (typeof v === 'string');
+export default function isString(v, {allowEmpty = false} = {}) {
+  return (typeof v === 'string') && (v !== '' || allowEmpty);
 }

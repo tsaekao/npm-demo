@@ -40,12 +40,12 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
       (isArray(v) && v.length > 0)));
 
   if (!valid) {
-    options.failure = `Value v=${print(v)} is not a valid type for a typeset: Expecting object (shape), string (single type), function (custom validator), or array (typeset, non-empty)`;
+    options.failure = `Value v=${print(v)} is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)`;
   }
 
   // THEN: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
-    const failurePrefix = `Fully-qualified ${deep ? 'deep ' : 'shallow'} typeset=${print(v)}`;
+    const failurePrefix = `Fully-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v)}`;
 
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray(v) && v.length >= 2) {
@@ -143,21 +143,21 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             shape && _forEach(shape, function(ts, prop) {
               const opts = {deep, fullyQualified};
               valid = isTypeset(ts, opts); // recursive
-              options.failure = opts.failure && `${failurePrefix} [index=${i}, prop="${prop}"]: ${opts.failure}`;
+              options.failure = opts.failure && `${failurePrefix} (index=${i}, prop="${prop}"): ${opts.failure}`;
               return valid; // break on first invalid
             });
           } else if (valid && deep && curType === types.ARRAY && rule.typeset) {
             // ARRAY type with args.typeset specified, and we're deep-validating
             const opts = {deep, fullyQualified};
             valid = isTypeset(rule.typeset, opts);
-            options.failure = opts.failure && `${failurePrefix} [index=${i}]: ${opts.failure}`;
+            options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
           }
         } else {
           // any other type in a fully-qualified array typeset is not supported
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), string (single type), or function (custom validator)`;
+          options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), non-empty string (single type), or function (custom validator)`;
         }
 
         return valid; // break if no longer valid
@@ -180,7 +180,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
   //  definition, and deep (if requested)
   } else if (valid && !fullyQualified && isArray(v)) {
-    const failurePrefix = `Non-qualified ${deep ? 'deep ' : 'shallow'} typeset=${print(v)}`;
+    const failurePrefix = `Non-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v)}`;
     const usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
     let curType; // @type {string} current in-scope type
     let argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
@@ -276,14 +276,14 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           shape && _forEach(shape, function(ts, prop) {
             const opts = {deep, fullyQualified};
             valid = isTypeset(ts, opts); // recursive
-            options.failure = opts.failure && `${failurePrefix} [index=${i}, prop="${prop}"]: ${opts.failure}`;
+            options.failure = opts.failure && `${failurePrefix} (index=${i}, prop="${prop}"): ${opts.failure}`;
             return valid; // break on first invalid
           });
         } else if (valid && deep && curType === types.ARRAY && rule.typeset) {
           // ARRAY type with args.typeset specified, and we're deep-validating
           const opts = {deep, fullyQualified};
           valid = isTypeset(rule.typeset, opts);
-          options.failure = opts.failure && `${failurePrefix} [index=${i}]: ${opts.failure}`;
+          options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
         }
       } else if (isArray(rule)) {
         // a nested array implies the ARRAY type in shorthand notation
@@ -299,14 +299,14 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         if (valid && deep) {
           const opts = {deep, fullyQualified};
           valid = isTypeset(rule, opts); // recursive
-          options.failure = opts.failure && `${failurePrefix} [index=${i}]: ${opts.failure}`;
+          options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
         }
       } else {
         // any other type in a non-qualified array typeset is not supported
         // NOTE: ARRAY shorthand notation is permitted in non-qualified typesets,
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
-        options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), string (single type), function (custom validator), or array (typeset)`;
+        options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
       }
 
       return valid; // break if no longer valid
@@ -331,7 +331,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
     _forEach(v, function(ts, prop) {
       const opts = {deep, fullyQualified};
       valid = isTypeset(ts, opts); // recursive
-      options.failure = opts.failure && `${failurePrefix} [prop="${prop}"]: ${opts.failure}`;
+      options.failure = opts.failure && `${failurePrefix} (prop="${prop}"): ${opts.failure}`;
       return valid; // break if no longer valid
     });
   }

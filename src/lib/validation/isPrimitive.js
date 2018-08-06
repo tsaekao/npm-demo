@@ -19,7 +19,7 @@ export const type = undefined;
  */
 export default function isPrimitive(v) {
   return v === undefined || v === null ||
-      isString(v) ||
+      isString(v, {allowEmpty: true}) ||
       isBoolean(v) ||
       isNumber(v) ||
       isSymbol(v);
