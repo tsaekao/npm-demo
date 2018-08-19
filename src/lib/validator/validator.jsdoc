@@ -1,5 +1,7 @@
 ////// Validator Module
 
+// DEBUG TODO keep the note at line 14, or change it...?
+
 /**
  * <h2>RTV Type Validators</h2>
  *
@@ -45,14 +47,12 @@
  *  {@link rtvref.types.rules qualifier rules} for the type it's validating, over
  *  any arguments specified. For example,
  *
- * NOTE: A validator __must not__ attempt to validate values considering basic
- *  {@link rtvref.qualifiers qualifier} rules like allowing `null` when EXPECTED
- *  vs not when REQUIRED, unless the type itself allows or disallows these
- *  special values. A validator should focus on checking for its type. For example,
- *  the {@link rtvref.validation.isString isString validation} requires the value
- *  to be a string, excluding `null` and `undefined` regardless of the qualifier.
- *  It does, however, allow an empty string if the qualifier is not REQUIRED because
- *  that is one of its {@link rtvref.types.STRING type-specific qualifier rules}.
+ * __NOTE:__ A validator must support all its qualifier rules, including proper
+ *  handling of `null` values when {@link rtvref.qualifiers.EXPECTED EXPECTED}
+ *  and `undefined` values when {@link rtvref.qualifiers.OPTIONAL OPTIONAL},
+ *  __in addition to__ and type-specific qualifier rules. For example, the
+ *  {@link rtvref.types.STRING STRING} type permits empty strings when not
+ *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  *
  * @function rtvref.validator.type_validator
  * @param {*} value The value to validate.

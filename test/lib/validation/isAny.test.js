@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
@@ -10,8 +11,16 @@ describe('module: lib/validation/isAny', function() {
   });
 
   describe('#default', function() {
-    it('valid values', function() {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+    it('should validate any value including undefined and null', function() {
+      const validValues = vtu.getValidValues(); // @type {Object}
+      const validTypes = Object.keys(validValues); // @type {Array}
+
+      let values = [undefined, null];
+      _.forEach(validTypes, function(type) {
+        values = values.concat(validValues[type]);
+      });
+
+      expect(vtu.testValues(val.type, val.default, values).failures).to.eql([]);
     });
 
     it('other types/values', function() {

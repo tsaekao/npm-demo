@@ -24,7 +24,10 @@ export const getValidValues = function(type) {
     // primitives
     //
 
-    [types.ANY]: [undefined, null],
+    // NOTE: specific values for types.ANY would be [undefined, null], and for types.NULL
+    //  would be [null], but these would cause issues with testOtherValues() tests,
+    //  so we exclude them and special-case them in unit tests
+
     [types.STRING]: ['literal-string'],
     [types.BOOLEAN]: [true, false],
     [types.SYMBOL]: [Symbol(), Symbol('symbol'), Symbol(1), Symbol.for('other')],
@@ -65,6 +68,21 @@ export const getValidValues = function(type) {
 };
 
 /**
+ * Get all values for all types in one single list.
+ * @returns {Array} All types in a single, flat list.
+ */
+export const getAllValues = function() {
+  const validValues = getValidValues();
+  const values = [];
+
+  _.forEach(validValues, function(typeValues) {
+    values.concat(typeValues);
+  });
+
+  return values;
+};
+
+/**
  * Determines if a test result is a pass.
  * @param {(boolean|rtvref.RtvSuccess)} result Test result.
  * @returns {boolean} True if the result is a pass; false otherwise.
@@ -99,7 +117,7 @@ export const failed = function(result) {
 export const testValues = function(type, valFn, values, ...rest) {
   values = values || getValidValues(types.verify(type)); // get valid values for the type
   if (!values || values.length === 0) {
-    throw new Error(`Missing test values for type=${type}, values=${util.print(values)}`);
+    throw new Error(`Missing test values for type="${type}", values=${util.print(values)}`);
   }
 
   const passes = [];
@@ -133,8 +151,9 @@ export const testValues = function(type, valFn, values, ...rest) {
 export const testOtherValues = function(type, valFn, treatAsValid) {
   types.verify(type);
   const validValues = getValidValues();
-  if (!validValues.hasOwnProperty(type) || validValues[type].length === 0) {
-    throw new Error(`Missing valid test values for type=${type}`);
+  if (type !== types.ANY && type !== types.NULL &&
+      (!validValues.hasOwnProperty(type) || validValues[type].length === 0)) {
+    throw new Error(`Missing valid test values for type="${type}"`);
   }
 
   delete validValues[type]; // keep other (invalid) values
@@ -161,12 +180,17 @@ export const testOtherValues = function(type, valFn, treatAsValid) {
  * @param {string} [qualifier] Optional qualifier, one of
  *  {@link rtvref.qualifiers qualifiers}.
  * @param {rtvref.types.type_arguments} [args] Optional type args.
+ * @returns {rtvref.RtvSuccess} The resulting success that has been validated (test
+ *  will fail with an exception before the result is returned, if the result
+ *  wasn't as expected).
  */
 export const expectValidatorSuccess = function(validator, value, qualifier, args) {
   const result = validator.default(value, qualifier, args);
 
   expect(result).to.be.an.instanceof(RtvSuccess);
   expect(result.valid).to.be.true;
+
+  return result;
 };
 
 /**
@@ -182,6 +206,9 @@ export const expectValidatorSuccess = function(validator, value, qualifier, args
  *  alter the expectation for the error's `cause` property to be `eql` to
  *  `[EXPECTED, FINITE]`. All `RtvError` properties are tested using `eql`
  *  except for `value` which is tested using `equal`.
+ * @returns {rtvref.RtvError} The resulting error that has been validated (test
+ *  will fail with an exception before the result is returned, if the result
+ *  wasn't as expected).
  */
 export const expectValidatorError = function(validator, value, qualifier, args, expectations = {}) {
   const result = validator.default(value, qualifier, args);
@@ -244,4 +271,6 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
   } else {
     expect(result.path).to.eql([]);
   }
+
+  return result;
 };

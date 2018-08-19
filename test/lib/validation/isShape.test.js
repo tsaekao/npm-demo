@@ -17,10 +17,6 @@ describe('module: lib/validation/isShape', function() {
     });
 
     it('should validate shape descriptors', function() {
-      // NOTE: If ever a shape is no longer just an OBJECT type (and therefore
-      //  isShape(shape) !== isObject(shape)), isTypeset validation will need
-      //  to be updated to no longer use isObject() to test for either a shape
-      //  or type args.
       expect(vtu.testValues('isShape', val.default,
           validValues[types.OBJECT]).failures).to.eql([]);
       expect(vtu.testOtherValues(types.OBJECT, val.default)).to.eql([]);

@@ -46,7 +46,7 @@ export const print = function(printValue) {
     }
 
     return value; // keep stringifying since we're returning an object
-  }
+  };
 
   const result = replacer(false, undefined, printValue);
 

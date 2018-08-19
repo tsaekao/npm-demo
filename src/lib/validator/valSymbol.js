@@ -2,11 +2,21 @@
 
 import {type, default as isSymbol} from '../validation/isSymbol';
 
-import qualifiers from '../qualifiers';
+import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
+const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
+
+/**
+ * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
+ *  configured on this validator.
+ * @private
+ * @name rtvref.validator.valObject._impl
+ * @type {rtvref.impl}
+ */
+export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.SYMBOL SYMBOL}
@@ -16,7 +26,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
- * @function rtvref.validator.isSymbol.config
+  * @function rtvref.validator.valSymbol.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -26,13 +36,17 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SYMBOL SYMBOL} type.
- * @function rtvref.validator.isSymbol.default
+  * @function rtvref.validator.valSymbol.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valSymbol(v, q = qualifiers.REQUIRED) {
+export default function valSymbol(v, q = REQUIRED) {
+  if (nilPermitted(v, q)) {
+    return new RtvSuccess();
+  }
+
   if (isSymbol(v)) {
     return new RtvSuccess();
   }

@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
+import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
@@ -17,8 +18,16 @@ describe('module: lib/validator/valAny', function() {
       vtu.expectValidatorSuccess(val, 1);
     });
 
-    it('valid values', function() {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+    it('should validate any value including undefined and null', function() {
+      const validValues = vtu.getValidValues(); // @type {Object}
+      const validTypes = Object.keys(validValues); // @type {Array}
+
+      let values = [undefined, null];
+      _.forEach(validTypes, function(type) {
+        values = values.concat(validValues[type]);
+      });
+
+      expect(vtu.testValues(val.type, val.default, values).failures).to.eql([]);
     });
 
     it('other types/values', function() {
@@ -28,6 +37,23 @@ describe('module: lib/validator/valAny', function() {
   });
 
   describe('qualifiers', function() {
+    describe('rules are supported', function() {
+      it('REQUIRED (other than values previously tested)', function() {
+        vtu.expectValidatorSuccess(val, undefined, qualifiers.REQUIRED);
+        vtu.expectValidatorSuccess(val, null, qualifiers.REQUIRED);
+      });
+
+      it('EXPECTED', function() {
+        vtu.expectValidatorSuccess(val, undefined, qualifiers.EXPECTED);
+        vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
+      });
+
+      it('OPTIONAL', function() {
+        vtu.expectValidatorSuccess(val, undefined, qualifiers.OPTIONAL);
+        vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
+      });
+    });
+
     describe('are used in error typesets', function() {
       let isAnyStub;
 

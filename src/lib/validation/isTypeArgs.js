@@ -16,5 +16,8 @@ export const type = undefined;
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
 export default function isTypeArgs(v) {
+  // NOTE: Since shapes are also type args, this check must always validate a
+  //  shape; and since at this time, OBJECT === shape === type args, we just
+  //  check for an OBJECT type
   return isObject(v);
 }

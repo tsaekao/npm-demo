@@ -3,23 +3,26 @@ import {expect} from 'chai';
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
-import * as val from '../../../src/lib/validator/valFunction';
+import * as val from '../../../src/lib/validator/valNull';
 
-describe('module: lib/validator/valFunction', function() {
+describe('module: lib/validator/valNull', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
-      expect(val.type).to.equal(types.FUNCTION);
+      expect(val.type).to.equal(types.NULL);
     });
 
     it('succeeds with an RtvSuccess', function() {
-      vtu.expectValidatorSuccess(val, function() {});
+      vtu.expectValidatorSuccess(val, null);
     });
 
     it('valid values', function() {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      vtu.expectValidatorSuccess(val, null);
     });
 
     it('other types/values', function() {
+      vtu.expectValidatorError(val, undefined);
+
+      // does not test for undefined/null
       expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
     });
   });
@@ -28,7 +31,7 @@ describe('module: lib/validator/valFunction', function() {
     describe('rules are supported', function() {
       it('REQUIRED (other than values previously tested)', function() {
         vtu.expectValidatorError(val, undefined, qualifiers.REQUIRED);
-        vtu.expectValidatorError(val, null, qualifiers.REQUIRED);
+        vtu.expectValidatorSuccess(val, null, qualifiers.REQUIRED);
       });
 
       it('EXPECTED', function() {

@@ -33,8 +33,7 @@ describe('module: lib/types', function() {
       types.ANY_OBJECT,
       types.OBJECT,
       types.PLAIN_OBJECT,
-      types.CLASS_OBJECT,
-      types.MAP_OBJECT
+      types.CLASS_OBJECT
     ];
 
     expect(_.difference(mod.objTypes.$values, knownTypes)).to.eql([]);
@@ -54,7 +53,7 @@ describe('module: lib/types', function() {
       types.OBJECT,
       types.PLAIN_OBJECT,
       types.CLASS_OBJECT,
-      types.MAP_OBJECT,
+      types.HASH_MAP,
       types.MAP,
       types.WEAK_MAP,
       types.SET,

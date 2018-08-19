@@ -5,23 +5,25 @@ import impl from './lib/impl';
 import types from './lib/types';
 import qualifiers from './lib/qualifiers';
 import RtvSuccess from './lib/RtvSuccess';
+import isTypeset from './lib/validation/isTypeset';
 
 // all known types
 // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
 import * as valAny from './lib/validator/valAny';
-import * as valBoolean from './lib/validator/valBoolean';
-import * as valString from './lib/validator/valString';
-import * as valFunction from './lib/validator/valFunction';
-import * as valRegExp from './lib/validator/valRegExp';
-import * as valSymbol from './lib/validator/valSymbol';
-import * as valFinite from './lib/validator/valFinite';
-import * as valNumber from './lib/validator/valNumber';
-import * as valArray from './lib/validator/valArray';
 import * as valAnyObject from './lib/validator/valAnyObject';
-import * as valObject from './lib/validator/valObject';
+import * as valArray from './lib/validator/valArray';
+import * as valBoolean from './lib/validator/valBoolean';
+import * as valFinite from './lib/validator/valFinite';
+import * as valFunction from './lib/validator/valFunction';
 import * as valMap from './lib/validator/valMap';
-import * as valWeakMap from './lib/validator/valWeakMap';
+import * as valNull from './lib/validator/valNull';
+import * as valNumber from './lib/validator/valNumber';
+import * as valObject from './lib/validator/valObject';
+import * as valRegExp from './lib/validator/valRegExp';
 import * as valSet from './lib/validator/valSet';
+import * as valString from './lib/validator/valString';
+import * as valSymbol from './lib/validator/valSymbol';
+import * as valWeakMap from './lib/validator/valWeakMap';
 import * as valWeakSet from './lib/validator/valWeakSet';
 
 /**
@@ -72,6 +74,13 @@ const rtv = {
    * @type {rtvref.Enumeration.<String,String>}
    */
   q: qualifiers,
+
+  /**
+   * Determines if a value is a typeset.
+   * @function rtv.isTypeset
+   * @see {@link rtvref.validation.isTypeset.default}
+   */
+  isTypeset,
 
   /**
    * Checks a value against a typeset for compliance.
@@ -263,19 +272,20 @@ export default rtv;
   // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
   const validators = [
     valAny,
-    valBoolean,
-    valString,
-    valFunction,
-    valRegExp,
-    valSymbol,
-    valFinite,
-    valNumber,
-    valArray,
     valAnyObject,
-    valObject,
+    valArray,
+    valBoolean,
+    valFinite,
+    valFunction,
+    valNull,
     valMap,
-    valWeakMap,
+    valNumber,
+    valObject,
+    valRegExp,
     valSet,
+    valString,
+    valSymbol,
+    valWeakMap,
     valWeakSet
   ];
 

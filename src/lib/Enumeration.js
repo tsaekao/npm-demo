@@ -130,7 +130,7 @@ export default class Enumeration {
     const result = this.check(value);
 
     if (result === undefined && !silent) {
-      throw new Error(`Invalid value for ${this.$name ? `${print(this.$name)} ` : ''}enum[${this.$values.map(print).join(', ')}]: ${print(value)}`);
+      throw new Error(`Invalid value for ${this.$name ? `${print(this.$name)} ` : ''}enumeration (${this.$values.map(print).join(', ')}): ${print(value)}`);
     }
 
     return result;

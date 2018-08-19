@@ -1,6 +1,6 @@
-////// isWeakMap validator
+////// isNull validator
 
-import {type, default as isWeakMap} from '../validation/isWeakMap';
+import {type, default as isNull} from '../validation/isNull';
 
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
@@ -10,23 +10,14 @@ const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
- * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
- *  configured on this validator.
- * @private
- * @name rtvref.validator.valObject._impl
- * @type {rtvref.impl}
- */
-export {impl as _impl};
-
-/**
- * Type: {@link rtvref.types.WEAK_MAP WEAK_MAP}
- * @const {string} rtvref.validator.isWeakMap.type
+ * Type: {@link rtvref.types.NULL NULL}
+ * @const {string} rtvref.validator.valNull.type
  */
 export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valWeakMap.config
+  * @function rtvref.validator.valNull.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -35,19 +26,19 @@ export const config = function(settings) {
 
 /**
  * {@link rtvref.validator.type_validator Validator} for the
- *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
-  * @function rtvref.validator.valWeakMap.default
+ *  {@link rtvref.types.NULL NULL} type.
+ * @function rtvref.validator.valNull.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valWeakMap(v, q = REQUIRED) {
+export default function valNull(v, q = REQUIRED) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  if (isWeakMap(v)) {
+  if (isNull(v)) {
     return new RtvSuccess();
   }
 

@@ -32,6 +32,23 @@ describe('module: lib/validator/valArray', function() {
       });
     });
 
+    describe('rules are supported', function() {
+      it('REQUIRED (other than values previously tested)', function() {
+        vtu.expectValidatorError(val, undefined, qualifiers.REQUIRED);
+        vtu.expectValidatorError(val, null, qualifiers.REQUIRED);
+      });
+
+      it('EXPECTED', function() {
+        vtu.expectValidatorError(val, undefined, qualifiers.EXPECTED);
+        vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
+      });
+
+      it('OPTIONAL', function() {
+        vtu.expectValidatorSuccess(val, undefined, qualifiers.OPTIONAL);
+        vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
+      });
+    });
+
     describe('are used in error typesets', function() {
       it('DEFAULT', function() {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED

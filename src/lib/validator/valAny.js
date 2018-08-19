@@ -6,7 +6,17 @@ import qualifiers from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
+const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
+
+/**
+ * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
+ *  configured on this validator.
+ * @private
+ * @name rtvref.validator.valObject._impl
+ * @type {rtvref.impl}
+ */
+export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.ANY ANY}
@@ -16,7 +26,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
- * @function rtvref.validator.isAny.config
+  * @function rtvref.validator.valAny.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -26,13 +36,16 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ANY ANY} type.
- * @function rtvref.validator.isAny.default
+  * @function rtvref.validator.valAny.default
  * @param {*} v Value to validate.
   * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
 * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valAny(v, q = qualifiers.REQUIRED) {
+export default function valAny(v, q = REQUIRED) {
+  // NOTE: no point checking basic qualifier rules since this type allows both
+  //  undefined and null regardless of the qualifier
+
   if (isAny(v)) {
     return new RtvSuccess();
   }

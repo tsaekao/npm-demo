@@ -17,10 +17,6 @@ describe('module: lib/validation/isTypeArgs', function() {
     });
 
     it('should validate type arguments', function() {
-      // NOTE: If ever type args are no longer just an OBJECT type (and therefore
-      //  isTypeArgs(args) !== isObject(args)), isTypeset validation will need
-      //  to be updated to no longer use isObject() to test for either a shape
-      //  or type args.
       expect(vtu.testValues('isTypeArgs', val.default,
           validValues[types.OBJECT]).failures).to.eql([]);
       expect(vtu.testOtherValues(types.OBJECT, val.default)).to.eql([]);

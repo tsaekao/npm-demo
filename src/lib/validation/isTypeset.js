@@ -3,13 +3,77 @@
 import {default as _forEach} from 'lodash/forEach';
 
 import isArray from './isArray';
-import isObject from './isObject'; // shapes and type args
+import isShape from './isShape';
+import isTypeArgs from './isTypeArgs';
 import isString from './isString';
 import isValidator from './isValidator';
 
 import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from '../types';
 import qualifiers from '../qualifiers';
 import {print} from '../util';
+
+// Deep-verify a shape.
+// @param {string} type The in-scope type (should be an object type from types.objTypes).
+// @param {Object} rule The rule from the typeset being evaluated. This should be the args
+//  for the `type`, which is either the shape itself, or an args object containing a
+//  property that provides the shape.
+// @param {Object} options The options object originally given to isTypeset().
+// @param {string} failurePrefix The prefix to use if a failure message is generated.
+// @param {number} [idx=-1] The position of `rule` within an Array typeset (if the
+//  shape is nested), or a negative value if the typeset is not an Array.
+// @returns {boolean} True if the shape is valid, false otherwise.
+const deepVerifyShape = function(type, rule, options, failurePrefix, idx = -1) {
+  let valid = true;
+
+  // if it's a class object, the shape is an optional sub-property of the object;
+  //  if it's a map object, there is no shape (the args are rtvref.types.collection_args);
+  //  otherwise, the shape is the rule/object itself
+  let shape;
+
+  if (type === types.CLASS_OBJECT && rule.hasOwnProperty('shape')) {
+    // shape must be valid descriptor
+    valid = isShape(rule.shape);
+    if (valid) {
+      shape = rule.shape;
+    } else {
+      // NOTE: since the type is CLASS_OBJECT, `idx` _must_ be >= 0 because an
+      //  Array typeset is required to specify this object type along with a shape:
+      //  [CLASS_OBJECT, {shape: {...}}]
+      options.failure = `${failurePrefix}: Expecting a valid shape descriptor in "shape" property of args for type=${print(type)} at index=${idx}`;
+    }
+  } else {
+    valid = isShape(rule);
+    if (valid) {
+      shape = rule;
+    } else {
+      options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type)}${idx >= 0 ? ` at index=${idx}` : ''}`;
+    }
+  }
+
+  if (shape) { // undefined if not valid or not provided
+    // validate all of the shape's typesets (each own-prop should be a typeset)
+    _forEach(shape, function(ts, prop) {
+      const opts = Object.assign({}, options); // options.failure should not exist at this point
+      valid = isTypeset(ts, opts); // eslint-disable-line no-use-before-define
+      options.failure = opts.failure && `${failurePrefix} (${idx >= 0 ? `index=${idx}, ` : ''}prop="${prop}"): ${opts.failure}`;
+      return valid; // break on first invalid
+    });
+  }
+
+  return valid;
+};
+
+// Deep-verify a nested Array typeset.
+// @param {rtvref.types.typeset} typeset The nested Array typeset to verify.
+// @param {Object} options The options object originally given to isTypeset().
+// @param {string} failurePrefix The prefix to use if a failure message is generated.
+// @param {number} [idx] The position of `typeset` within the parent Array typeset.
+const deepVerifyArray = function(typeset, options, failurePrefix, idx) {
+  const opts = Object.assign({}, options); // options.failure should not exist at this point
+  const valid = isTypeset(typeset, opts); // eslint-disable-line no-use-before-define
+  options.failure = opts.failure && `${failurePrefix} (index=${idx}): ${opts.failure}`;
+  return valid;
+};
 
 /**
  * Type: `undefined`, {@link rtvref.types.typeset typeset} pseudo-type.
@@ -22,11 +86,13 @@ export const type = undefined;
  * @function rtvref.validation.isTypeset.default
  * @param {*} v Value to validate.
  * @param {Object} [options] Validation options.
- * @param {boolean} [options.deep=false] If truthy, deeply-validates any nested typesets. Note
- *  that typesets in nested shapes are also deeply-validated.
- * @param {boolean} [options.fullyQualified=false] If truthy, the typeset must be fully-qualified.
- * @param {(string|undefined)} [options.failure] If an options object is specified, this
- *  property will be added and set to a failure message IIF the validation fails.
+ * @param {boolean} [options.deep=false] If truthy, deeply-validates any nested
+ *  typesets. Note that typesets in nested shapes are also deeply-validated.
+ * @param {boolean} [options.fullyQualified=false] If truthy, the typeset must be
+ *  fully-qualified.
+ * @param {(string|undefined)} [options.failure] (Output property) If an options
+ *  object is specified, this property will be added and set to a failure message
+ *  IIF the validation fails.
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.typeset}
  */
@@ -34,9 +100,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   const deep = !!options.deep;
   const fullyQualified = !!options.fullyQualified;
 
-  // FIRST: make sure it's an acceptable type for a typeset: object (shape),
-  //  string (just a plain type name), function (validator), or array (non-empty)
-  let valid = !!(v && (isObject(v) || (isString(v) && types.check(v)) || isValidator(v) ||
+  // FIRST: make sure it's an acceptable type for a typeset: shape, string
+  //  (just a plain type name), function (validator), or array (non-empty)
+  let valid = !!(v && (isShape(v) || (isString(v) && types.check(v)) || isValidator(v) ||
       (isArray(v) && v.length > 0)));
 
   if (!valid) {
@@ -55,10 +121,10 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
       // Updates the current in-scope type (curType) and marks it as used in usedTypes.
       //  If the type has already been used, it sets valid to false.
-      // @param {string} type New in-scope type.
-      const updateCurType = function(type) {
+      // @param {string} newType New in-scope type.
+      const updateCurType = function(newType) {
         // set the rule as the current in-scope type
-        curType = type;
+        curType = newType;
 
         if (usedTypes[curType]) {
           // a type cannot appear more than once in a typeset (but nested is OK)
@@ -71,15 +137,15 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
       // iterate through each element in the typeset array to make sure all required
       //  rules/properties of a fully-qualified typeset are specified
-      _forEach(v, function(rule, i) {
-        if (i === 0) {
+      _forEach(v, function(rule, idx) {
+        if (idx === 0) {
           // first position must always be the qualifier
           // more efficient to check for a string first than to always iterate
           //  all qualifiers (or all types, below) when it isn't since we know
           //  they're always strings
           valid = isString(rule) && !!qualifiers.check(rule);
           if (!valid) {
-            options.failure = `${failurePrefix}: Expected a qualifier at index=${i}, found ${print(rule)}`;
+            options.failure = `${failurePrefix}: Expected a qualifier at index=${idx}, found ${print(rule)}`;
           }
         } else if (isString(rule)) {
           // additional qualifier, or simple type
@@ -87,11 +153,11 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             // cannot have more than one qualifier and qualifier must be in first position
             //  (and this is not the first position because that's handled specially, above)
             valid = false;
-            options.failure = `${failurePrefix}: Cannot have more than one qualifier, and qualifier must be in first position, index=${i}`;
+            options.failure = `${failurePrefix}: Cannot have more than one qualifier, and qualifier must be in first position, index=${idx}`;
           } else if (!types.check(rule)) {
             // if not a qualifier, it must be a valid type (since it's a string)
             valid = false;
-            options.failure = `${failurePrefix}: Expected a valid type in ${types} at index=${i}, found ${print(rule)}`;
+            options.failure = `${failurePrefix}: Expected a valid type in ${types} at index=${idx}, found ${print(rule)}`;
           } else {
             // set the rule as the current in-scope type
             updateCurType(rule);
@@ -107,11 +173,11 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  in the last position (which enforces the 1 count), always after the
           //  qualifier, and since the typeset must be FQ'd, we must have an
           //  in-scope type
-          valid = !!(curType && (i + 1 === v.length));
+          valid = !!(curType && (idx + 1 === v.length));
           if (!valid) {
-            options.failure = `${failurePrefix}: Unexpected custom validator at index=${i}: Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type`;
+            options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type`;
           }
-        } else if (isObject(rule)) {
+        } else if (isTypeArgs(rule)) {
           // could be a shape, or type args (either way, it's a single object)
           // since the typeset must be fully-qualified, argType must already be
           //  a type that takes arguments, since arguments are always provided
@@ -128,48 +194,29 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             // since the typeset must be fully-qualified and we don't already
             //  have an in-scope arg type, the typeset is invalid
             valid = false;
-            options.failure = `${failurePrefix}: Expecting a type that takes arguments at index=${i - 1}`;
+            options.failure = `${failurePrefix}: Expecting a type that takes arguments at index=${idx - 1}`;
           }
 
-          // only go deep if the object is a shape (which means the current in-scope
+          // only go deep if the rule is a shape (which means the current in-scope
           //  type must be an object type) or ARRAY args with `typeset` specified
           if (valid && deep && objTypes.check(curType)) {
-            // if it's a class object, the shape is an optional sub-property of the object;
-            //  if it's a map object, there is no shape; otherwise, it's the object itself
-            const shape = (curType === types.CLASS_OBJECT) ? rule.shape :
-              ((curType === types.MAP_OBJECT) ? undefined : rule);
-
-            // validate all of the shape's typesets (each own-prop should be a typeset)
-            shape && _forEach(shape, function(ts, prop) {
-              const opts = {deep, fullyQualified};
-              valid = isTypeset(ts, opts); // recursive
-              options.failure = opts.failure && `${failurePrefix} (index=${i}, prop="${prop}"): ${opts.failure}`;
-              return valid; // break on first invalid
-            });
-          } else if (valid && deep && curType === types.ARRAY && rule.typeset) {
+            valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
+          } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
             // ARRAY type with args.typeset specified, and we're deep-validating
-            const opts = {deep, fullyQualified};
-            valid = isTypeset(rule.typeset, opts);
-            options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
+            valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
           }
+          // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+          //  the rule (object) needs no further validation
         } else {
           // any other type in a fully-qualified array typeset is not supported
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), non-empty string (single type), or function (custom validator)`;
+          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), or function (custom validator)`;
         }
 
         return valid; // break if no longer valid
       });
-
-      // make sure at least one type was specified
-      if (valid) {
-        valid = !!curType;
-        if (!valid) {
-          options.failure = `${failurePrefix}: Failed to find a type in the typeset`;
-        }
-      }
     } else {
       // automatically invalid if not an array because a typeset must be in the
       //  array form in order to be FQ'd
@@ -188,10 +235,10 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
     // Updates the current in-scope type (curType) and marks it as used in usedTypes.
     //  If the type has already been used, it sets valid to false.
-    // @param {string} type New in-scope type.
-    const updateCurType = function(type) {
+    // @param {string} newType New in-scope type.
+    const updateCurType = function(newType) {
       // set the rule as the current in-scope type
-      curType = type;
+      curType = newType;
 
       if (usedTypes[curType]) {
         // a type cannot appear more than once in a typeset (but nested is OK)
@@ -204,13 +251,13 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
     // iterate through each element in the typeset array to make sure all required
     //  rules/properties of a typeset are specified
-    _forEach(v, function(rule, i) {
+    _forEach(v, function(rule, idx) {
       if (isString(rule)) {
         if (qualifiers.check(rule)) {
           hasQualifier = true;
-          valid = (i === 0); // must be in the first position
+          valid = (idx === 0); // must be in the first position
           if (!valid) {
-            options.failure = `${failurePrefix}: Unexpected qualifier at index=${i}: There must be at most one qualifier and it may only be in the first position`;
+            options.failure = `${failurePrefix}: Unexpected qualifier at index=${idx}: There must be at most one qualifier and it may only be in the first position`;
           }
         } else if (types.check(rule)) {
           // set the rule as the current in-scope type
@@ -223,20 +270,20 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         } else {
           // some unknown/invalid qualifier or type
           valid = false;
-          options.failure = `${failurePrefix}: Unknown/invalid qualifier/type=${print(rule)} at index=${i}`;
+          options.failure = `${failurePrefix}: Unknown/invalid qualifier/type=${print(rule)} at index=${idx}`;
         }
       } else if (isValidator(rule)) {
         // must be a validator, but there can't be more than 1, and it must be
         //  in the last position (which enforces the 1 count), and always after
         //  the qualifier (if any)
-        valid = (i + 1 === v.length);
+        valid = (idx + 1 === v.length);
         if (valid && !curType) {
           // if we have a validator but no in-scope type, ANY is implied
           updateCurType(types.ANY);
         } else if (!valid) {
-          options.failure = `${failurePrefix}: Unexpected custom validator at index=${i}: Must be at the last position`;
+          options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be at the last position`;
         }
-      } else if (isObject(rule)) {
+      } else if (isTypeArgs(rule)) {
         // could be a shape, or type args (either way, it's just one object)
         // NOTE: for object types, the args are the shapes themselves, except
         //  for CLASS_OBJECT where the shape is specified within the args; still,
@@ -247,13 +294,16 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           // since there's no in-scope arg type, the object must be a shape using
           //  the default OBJECT type, but it must be in the first position (or
           //  second if the first element was a qualifier)
+          // NOTE: we do not set argType (it remains undefined here) because the
+          //  rule is the type and args all in one, therefore we consume the
+          //  rule/object as the in-scope arg type's arguments
           updateCurType(DEFAULT_OBJECT_TYPE);
           if (valid) {
-            valid = (i === 0 || (hasQualifier && i === 1));
+            valid = (idx === 0 || (hasQualifier && idx === 1));
             // NOTE: do not set argType because the shape is the default object type's
             //  args, so they should be consumed by the in-scope arg type
             if (!valid) {
-              options.failure = `${failurePrefix}: Shape at index=${i} is missing an object type in ${objTypes}: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
+              options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
             }
           }
         } else {
@@ -264,27 +314,16 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           argType = undefined;
         }
 
-        // only go deep if the object is a shape, which means the current in-scope
-        //  type must be an object type or ARRAY args with `typeset` specified
+        // only go deep if the rule is a shape, which means the current in-scope
+        //  type must be an object type, or ARRAY args with `typeset` specified
         if (valid && deep && objTypes.check(curType)) {
-          // if it's a class object, the shape is an optional sub-property of the object;
-          //  if it's a map object, there is no shape; otherwise, it's the object itself
-          const shape = (curType === types.CLASS_OBJECT) ? rule.shape :
-            ((curType === types.MAP_OBJECT) ? undefined : rule);
-
-          // validate all of the shape's typesets (each own-prop should be a typeset)
-          shape && _forEach(shape, function(ts, prop) {
-            const opts = {deep, fullyQualified};
-            valid = isTypeset(ts, opts); // recursive
-            options.failure = opts.failure && `${failurePrefix} (index=${i}, prop="${prop}"): ${opts.failure}`;
-            return valid; // break on first invalid
-          });
-        } else if (valid && deep && curType === types.ARRAY && rule.typeset) {
+          valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
+        } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
           // ARRAY type with args.typeset specified, and we're deep-validating
-          const opts = {deep, fullyQualified};
-          valid = isTypeset(rule.typeset, opts);
-          options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
+          valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
         }
+        // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+        //  the rule (object) needs no further validation
       } else if (isArray(rule)) {
         // a nested array implies the ARRAY type in shorthand notation
         updateCurType(types.ARRAY);
@@ -299,14 +338,14 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         if (valid && deep) {
           const opts = {deep, fullyQualified};
           valid = isTypeset(rule, opts); // recursive
-          options.failure = opts.failure && `${failurePrefix} (index=${i}): ${opts.failure}`;
+          options.failure = opts.failure && `${failurePrefix} (index=${idx}): ${opts.failure}`;
         }
       } else {
         // any other type in a non-qualified array typeset is not supported
         // NOTE: ARRAY shorthand notation is permitted in non-qualified typesets,
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
-        options.failure = `${failurePrefix}: Unexpected value at index=${i}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
+        options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
       }
 
       return valid; // break if no longer valid
@@ -323,17 +362,12 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   // NEXT: if it's a shape descriptor, check if deep is requested as long as it's
   //  valid and does not need to be FQ'd (otherwise, 'v' must be an array and
   //  would be invalid as a FQ'd typeset)
-  } else if (valid && deep && !fullyQualified && isObject(v)) {
+  } else if (valid && deep && !fullyQualified && isShape(v)) {
     const failurePrefix = `Non-qualified deep shape=${print(v)}`;
 
     // we need to deep-validate a shape descriptor, which means each one of its
     //  own-properties must be a valid typeset
-    _forEach(v, function(ts, prop) {
-      const opts = {deep, fullyQualified};
-      valid = isTypeset(ts, opts); // recursive
-      options.failure = opts.failure && `${failurePrefix} (prop="${prop}"): ${opts.failure}`;
-      return valid; // break if no longer valid
-    });
+    valid = deepVerifyShape(DEFAULT_OBJECT_TYPE, v, options, failurePrefix);
   }
 
   // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid

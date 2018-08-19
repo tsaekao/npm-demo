@@ -13,14 +13,6 @@
 </dd>
 </dl>
 
-## Functions
-
-<dl>
-<dt><a href="#toTypeset">toTypeset(type, [qualifier], [args], [fullyQualified])</a> ⇒ <code><a href="#rtvref.types.typeset">typeset</a></code></dt>
-<dd><p>Convert a type, qualifier, and args into a typeset.</p>
-</dd>
-</dl>
-
 <a name="rtvref"></a>
 
 ## rtvref : <code>object</code>
@@ -52,6 +44,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
     * [.impl](#rtvref.impl) : <code>object</code>
         * [.getQualifier(typeset)](#rtvref.impl.getQualifier) ⇒ <code>string</code>
+        * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
         * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
         * [.checkType(value, singleType)](#rtvref.impl.checkType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -64,11 +57,13 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
         * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
         * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
+        * [.checkBasicRules(v, [q])](#rtvref.qualifiers.checkBasicRules) ⇒ <code>boolean</code>
     * [.types](#rtvref.types) : <code>object</code>
         * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.ANY](#rtvref.types.ANY) : <code>string</code>
+        * [.NULL](#rtvref.types.NULL) : <code>string</code>
         * [.STRING](#rtvref.types.STRING) : <code>string</code>
         * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
         * [.SYMBOL](#rtvref.types.SYMBOL) : <code>string</code>
@@ -86,7 +81,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.OBJECT](#rtvref.types.OBJECT) : <code>string</code>
         * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>string</code>
         * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>string</code>
-        * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>string</code>
+        * [.HASH_MAP](#rtvref.types.HASH_MAP) : <code>string</code>
         * [.MAP](#rtvref.types.MAP) : <code>string</code>
         * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
         * [.SET](#rtvref.types.SET) : <code>string</code>
@@ -415,6 +410,7 @@ Provides the internal implementation for the externally-facing [RTV](#rtv)
 
 * [.impl](#rtvref.impl) : <code>object</code>
     * [.getQualifier(typeset)](#rtvref.impl.getQualifier) ⇒ <code>string</code>
+    * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
     * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
     * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
     * [.checkType(value, singleType)](#rtvref.impl.checkType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -430,17 +426,47 @@ Provides the internal implementation for the externally-facing [RTV](#rtv)
 #### impl.getQualifier(typeset) ⇒ <code>string</code>
 Get the qualifier given any kind of typeset.
 
+The typeset's validity is __not__ checked. The function attempts to get a
+ qualifier, and defaults to the [default qualifier](qualifiers.DEFAULT_QUALIFIER)
+ if it cannot.
+
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
 **Returns**: <code>string</code> - The applicable [qualifier](#rtvref.qualifiers) for the
- specified typeset.  
-**Throws**:
-
-- <code>Error</code> If `typeset` is not a valid typeset.
-
+ specified typeset, which is assumed to be valid.  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset in question. |
+
+
+* * *
+
+<a name="rtvref.impl.toTypeset"></a>
+
+#### impl.toTypeset(type, [qualifier], [args], [fullyQualified]) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
+Convert a type, qualifier, and args into a typeset.
+
+While the `qualifier`, `args`, and `fullyQualified` parameters are all
+ optional and may be omitted, their order must be maintained: If needed,
+ the `qualifier` must always be before `args`, and `args` before
+ `fullyQualified`. Parameters with `undefined` values will be ignored.
+
+**Kind**: static method of [<code>impl</code>](#rtvref.impl)  
+**Returns**: [<code>typeset</code>](#rtvref.types.typeset) - The simplest typeset that represents the
+ combination of the specified type, qualifier, and args, unless `fullyQualified`
+ was set to `true`, in which case it'll always be an array typeset and
+ fully-qualified.  
+**Throws**:
+
+- <code>Error</code> If `type`, `qualifier`, or `args` is invalid.
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| type | <code>string</code> |  | A single type from [types](#rtvref.types.types). |
+| [qualifier] | <code>string</code> \| <code>Object</code> \| <code>boolean</code> | <code>&quot;rtvref.qualifiers.DEFAULT_QUALIFIER&quot;</code> | Optional qualifier from [qualifiers](#rtvref.qualifiers.qualifiers). Can also be  either the `args` parameter, or the `fullyQualified` parameter if the  default qualifier is being used. |
+| [args] | <code>Object</code> \| <code>boolean</code> |  | Optional  [type arguments](#rtvref.types.type_arguments). If specified, this  parameter must be an [object](#rtvref.types.OBJECT), however the  properties of the object are not validated against the specified `type`  (i.e. they are not guaranteed to be valid for that type). Can also be  the `fullyQualified` parameter if type arguments aren't applicable. |
+| [fullyQualified] | <code>boolean</code> | <code>false</code> | If _truthy_, the generated typeset  will always be [fully-qualified](#rtvref.types.fully_qualified_typeset).  Otherwise, it'll be the simplest typeset possible. |
 
 
 * * *
@@ -518,7 +544,7 @@ Checks a value using a single type.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| singleType | [<code>typeset</code>](#rtvref.types.typeset) | Either a simple type name (one of  [types](#rtvref.types.types)) or an Array typeset which represents a single  type. A [custom validator](#rtvref.types.custom_validator) is not considered  a valid single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied. |
+| singleType | [<code>typeset</code>](#rtvref.types.typeset) | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.shape_descriptor),  or an Array typeset which represents a single type.  A [custom validator](#rtvref.types.custom_validator) is not considered  a valid single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied. |
 
 
 * * *
@@ -594,6 +620,8 @@ Checks a value against a typeset.
 ### rtvref.qualifiers : <code>object</code>
 <h2>Qualifiers</h2>
 
+Qualifiers determine the degree at which a value must be of a given type.
+
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
@@ -602,6 +630,7 @@ Checks a value against a typeset.
     * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
     * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
     * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
+    * [.checkBasicRules(v, [q])](#rtvref.qualifiers.checkBasicRules) ⇒ <code>boolean</code>
 
 
 * * *
@@ -618,47 +647,69 @@ Enumeration (`string -> string`) of [qualifiers](#rtvref.qualifiers).
 <a name="rtvref.qualifiers.REQUIRED"></a>
 
 #### qualifiers.REQUIRED : <code>string</code>
-Required qualifier: Property _must_ exist and be of the expected type.
- Depending on the type, additional requirements may be enforced.
+Required qualifier: The value __must__ be of the expected type. Depending on
+ the type, additional requirements may be enforced.
 
-Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- property to be defined _somewhere_ within the prototype chain, and does not
- allow its value to be `null` or `undefined`.
+Unless otherwise stated in type-specific rules, this qualifier does not
+ allow the value to be `null` or `undefined`.
+
+Note the fact the value cannot be `undefined` implicitly requires a
+ [shape](#rtvref.shape_descriptor)'s property to be defined _somewhere_
+ its prototype chain (if it weren't, then its value would be `undefined`,
+ violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
+ would require the `name` property to exist and not be `undefined`, but would
+ allow it to be `null` or even an empty string.
 
 See specific type for additional rules.
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
-**See**: [types](#rtvref.types)  
+**See**
+
+- [types](#rtvref.types)
+- [STRING](#rtvref.types.STRING)
+
 
 * * *
 
 <a name="rtvref.qualifiers.EXPECTED"></a>
 
 #### qualifiers.EXPECTED : <code>string</code>
-Expected qualifier: Property _should_ exist and be of the expected type.
- Depending on the type, some requirements may not be enforced.
+Expected qualifier: The value _should_ be of the expected type. Depending on
+ the type, additional requirements may be enforced.
 
-Unless otherwise stated in type-specific rules, this qualifier _requires_ the
- property to be defined _somewhere_ within the prototype chain, does _not_ allow
- its value to be `undefined`, but does _allow_ its value to be `null`.
+Unless otherwise stated in type-specific rules, this qualifier does _not_ allow
+ the value to be `undefined`, but does _allow_ it to be `null`.
+
+Note the fact the value cannot be `undefined` implicitly requires a
+ [shape](#rtvref.shape_descriptor)'s property to be defined _somewhere_
+ its prototype chain (if it weren't, then its value would be `undefined`,
+ violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
+ would require the `name` property to exist and not be `undefined`, but would
+ allow it to be `null` or even an empty string.
 
 See specific type for additional rules.
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
-**See**: [types](#rtvref.types)  
+**See**
+
+- [types](#rtvref.types)
+- [STRING](#rtvref.types.STRING)
+
 
 * * *
 
 <a name="rtvref.qualifiers.OPTIONAL"></a>
 
 #### qualifiers.OPTIONAL : <code>string</code>
-Optional qualifier: Property _may_ exist and be of the expected type.
- Depending on the type, some requirements may not be enforced (i.e. less so
- than with the `EXPECTED` qualifier).
+Optional qualifier: The value _may_ be of the expected type. Depending on
+ the type, additional requirements may be enforced.
 
 Unless otherwise stated in type-specific rules, this qualifier _allows_ a
- property value to be `null` as well as `undefined`, and does _not_ require
- the property to be defined anywhere in the prototype chain.
+ the value to be `null` as well as `undefined`,
+
+Note the fact the value can be `undefined` implies it does _not_ require a
+ [shape](#rtvref.shape_descriptor)'s property to be defined anywhere in
+ its prototype chain.
 
 See specific type for additional rules.
 
@@ -676,6 +727,32 @@ Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
 
 * * *
 
+<a name="rtvref.qualifiers.checkBasicRules"></a>
+
+#### qualifiers.checkBasicRules(v, [q]) ⇒ <code>boolean</code>
+Convenience function to check if a nil value (either `undefined` or `null`)
+ is permitted under basic qualifier rules:
+
+- REQUIRED: Cannot be `undefined` nor `null`.
+- EXPECTED: Can be `null`.
+- OPTIONAL: Can be either `undefined` or `null`.
+
+**Kind**: static method of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**Returns**: <code>boolean</code> - `true` if the value is _nil_ (either `null` or `undefined`)
+ and the basic qualifier's rules allow it to be so; `false` otherwise.
+
+ For example, `nilPermitted(null, REQUIRED) === false` while
+  `nilPermitted(null, EXPECTED) === true`. Also, `nilPermitted(1, *) === false`
+  because the value `1` is not _nil_  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to check. |
+| [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
+
+
+* * *
+
 <a name="rtvref.types"></a>
 
 ### rtvref.types : <code>object</code>
@@ -688,6 +765,7 @@ Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
     * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.types](#rtvref.types.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.ANY](#rtvref.types.ANY) : <code>string</code>
+    * [.NULL](#rtvref.types.NULL) : <code>string</code>
     * [.STRING](#rtvref.types.STRING) : <code>string</code>
     * [.BOOLEAN](#rtvref.types.BOOLEAN) : <code>string</code>
     * [.SYMBOL](#rtvref.types.SYMBOL) : <code>string</code>
@@ -705,7 +783,7 @@ Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
     * [.OBJECT](#rtvref.types.OBJECT) : <code>string</code>
     * [.PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) : <code>string</code>
     * [.CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) : <code>string</code>
-    * [.MAP_OBJECT](#rtvref.types.MAP_OBJECT) : <code>string</code>
+    * [.HASH_MAP](#rtvref.types.HASH_MAP) : <code>string</code>
     * [.MAP](#rtvref.types.MAP) : <code>string</code>
     * [.WEAK_MAP](#rtvref.types.WEAK_MAP) : <code>string</code>
     * [.SET](#rtvref.types.SET) : <code>string</code>
@@ -767,14 +845,29 @@ The any type is special in that it allows _anything_, which includes `null`
 
 Any rules per qualifiers:
 
-- REQUIRED: Property must be defined _somewhere_ in the prototype chain, but
-  its value can be anything, including `null` and `undefined`.
+- REQUIRED: Can be any value, including `null` and `undefined`.
 - EXPECTED: Same rules as REQUIRED.
-- OPTIONAL: Since this qualifier removes the property's need for existence
-  in the prototype chain, it renders the verification moot (i.e. the property
-  might as well not be included in the [shape descriptor](#rtvref.shape_descriptor)
-  unless a [custom validator](#rtvref.types.custom_validator) is being
-  used to do customized verification.
+- OPTIONAL: Same rules as EXPECTED.
+
+Since this type removes the property's need for existence in the prototype
+ chain, it renders the verification moot (i.e. the property of this type might
+ as well not be included in a [shape descriptor](#rtvref.shape_descriptor)
+ unless a [custom validator](#rtvref.types.custom_validator) is being
+ used to do customized verification.
+
+**Kind**: static constant of [<code>types</code>](#rtvref.types)  
+**See**: [qualifiers](#rtvref.qualifiers)  
+
+* * *
+
+<a name="rtvref.types.NULL"></a>
+
+#### types.NULL : <code>string</code>
+Null rules per qualifiers: must be the `null` [primitive](#rtvref.types.primitives).
+
+Use this special type to explicitly test for a `null` value. For example,
+ a [shape](#rtvref.shape_descriptor)'s property may be required to be
+ `null` under certain circumstances.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
@@ -1106,7 +1199,6 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 - [OBJECT](#rtvref.types.OBJECT)
 - [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 - [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
 
 
 * * *
@@ -1165,7 +1257,6 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 - [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 - [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 - [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
 
 
 * * *
@@ -1214,7 +1305,6 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 - [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 - [OBJECT](#rtvref.types.OBJECT)
 - [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
 
 
 * * *
@@ -1266,16 +1356,16 @@ Arguments (optional): [CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args)
 - [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 - [OBJECT](#rtvref.types.OBJECT)
 - [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
 
 
 * * *
 
-<a name="rtvref.types.MAP_OBJECT"></a>
+<a name="rtvref.types.HASH_MAP"></a>
 
-#### types.MAP_OBJECT : <code>string</code>
-A _map_ object is an [OBJECT](#rtvref.types.OBJECT) that is treated as a
- hash map with an expected set of keys and values. Keys can be described
+#### types.HASH_MAP : <code>string</code>
+A simple [OBJECT](#rtvref.types.OBJECT) that is treated as a hash map
+ with an expected set of keys (forcibly strings due to the nature of the
+ native JavaScript `Object` type) and values. Keys can be described
  using a regular expression, and values can be described using a
  [typeset](#rtvref.types.typeset). Empty maps are permitted.
 
@@ -1301,7 +1391,7 @@ Arguments (optional): [collection_args](#rtvref.types.collection_args)
 
 #### types.MAP : <code>string</code>
 An ES6 map supports any value as its keys, unlike a
- [MAP_OBJECT](#rtvref.types.MAP_OBJECT) that only supports strings. Keys can
+ [HASH_MAP](#rtvref.types.HASH_MAP) that only supports strings. Keys can
  be described using a regular expression (if they are strings), and values can
  be described using a [typeset](#rtvref.types.typeset). Empty maps are permitted
  by default.
@@ -1314,7 +1404,7 @@ Arguments (optional): [collection_args](#rtvref.types.collection_args)
 **See**
 
 - [qualifiers](#rtvref.qualifiers)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
+- [HASH_MAP](#rtvref.types.HASH_MAP)
 - [WEAK_MAP](#rtvref.types.WEAK_MAP)
 
 
@@ -1324,7 +1414,7 @@ Arguments (optional): [collection_args](#rtvref.types.collection_args)
 
 #### types.WEAK_MAP : <code>string</code>
 An ES6 weak map supports any _object_ as its keys, unlike a
- [MAP_OBJECT](#rtvref.types.MAP_OBJECT) that only supports strings,
+ [HASH_MAP](#rtvref.types.HASH_MAP) that only supports strings,
  and a [MAP](#rtvref.types.MAP) that supports any type of value.
 
 Weak map rules per qualifiers: Must be a `WeakMap` instance.
@@ -1333,7 +1423,7 @@ Weak map rules per qualifiers: Must be a `WeakMap` instance.
 **See**
 
 - [qualifiers](#rtvref.qualifiers)
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
+- [HASH_MAP](#rtvref.types.HASH_MAP)
 - [MAP](#rtvref.types.MAP)
 
 
@@ -1489,7 +1579,7 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
 Describes the keys and values in a collection-based object, which is one of
  the following types:
 
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT) (NOTE: only __own-enumerable
+- [HASH_MAP](#rtvref.types.HASH_MAP) (NOTE: only __own-enumerable
   properties__ are considered part of this type of collection)
 - [MAP](#rtvref.types.MAP)
 - [SET](#rtvref.types.SET) (with some exceptions)
@@ -1511,7 +1601,7 @@ The [WEAK_MAP](#rtvref.types.WEAK_MAP) and [WEAK_SET](#rtvref.types.WEAK_SET)
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **See**
 
-- [MAP_OBJECT](#rtvref.types.MAP_OBJECT)
+- [HASH_MAP](#rtvref.types.HASH_MAP)
 - [MAP](#rtvref.types.MAP)
 - [WEAK_MAP](#rtvref.types.WEAK_MAP)
 - [SET](#rtvref.types.SET)
@@ -1522,9 +1612,9 @@ The [WEAK_MAP](#rtvref.types.WEAK_MAP) and [WEAK_SET](#rtvref.types.WEAK_SET)
 | Name | Type | Description |
 | --- | --- | --- |
 | [length] | <code>number</code> | The exact number of elements required in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. Ignored if not a  [FINITE](#rtvref.types.FINITE) number.  Applies to: All collection types. |
-| [keys] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each key  in the collection.  If the type is [MAP_OBJECT](#rtvref.types.MAP_OBJECT), this argument is   hard set to the [STRING](#rtvref.types.STRING) type due to the nature of   its JavaScript `Object`-based implementation and does not need to be specified.  Applies to: [MAP_OBJECT](#rtvref.types.MAP_OBJECT) (with restrictions),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
-| [keyExp] | <code>string</code> | A string-based regular expression describing the  names of keys found in the collection. By default, there are no restrictions  on key names. Ignored if the key type is not [STRING](#rtvref.types.STRING),  as specified in `keys`.  For example, to require numerical keys, the following expression could be   used: `"^\\d+$"`.  Applies to: [MAP_OBJECT](#rtvref.types.MAP_OBJECT),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
-| [keyFlagSpec] | <code>string</code> | A string specifying any flags to use with  the regular expression specified in `keyExp`. Ignored if _falsy_ or if  `keyExp` is not specified. See the  [RegExp#flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)  parameter for more information.  Applies to: [MAP_OBJECT](#rtvref.types.MAP_OBJECT),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
+| [keys] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each key  in the collection.  If the type is [HASH_MAP](#rtvref.types.HASH_MAP), this argument is   hard set to the [STRING](#rtvref.types.STRING) type due to the nature of   its JavaScript `Object`-based implementation and does not need to be specified.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP) (with restrictions),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
+| [keyExp] | <code>string</code> | A string-based regular expression describing the  names of keys found in the collection. By default, there are no restrictions  on key names. Ignored if the key type is not [STRING](#rtvref.types.STRING),  as specified in `keys`.  For example, to require numerical keys, the following expression could be   used: `"^\\d+$"`.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
+| [keyFlagSpec] | <code>string</code> | A string specifying any flags to use with  the regular expression specified in `keyExp`. Ignored if _falsy_ or if  `keyExp` is not specified. See the  [RegExp#flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)  parameter for more information.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
 | [values] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each value in  the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any elements to be considered valid, unless `length` is  specified).  For example, to require arrays of non-empty string values as values in the   collection, the following typeset could be used: `[[types.STRING]]`.  Applies to: All collection types. |
 
 
@@ -1738,7 +1828,7 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being verified. |
-| match | <code>Array</code> | A __first-level__, [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the type that matched. This means the first level of this  subset of `typeset` (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example, if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`. If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the  original `[STRING, FINITE]`. |
+| match | <code>Array</code> | A __first-level__,  [fully-qualified](#rtvref.types.fully_qualified_typeset) typeset describing  the type that matched. This means the first level of this subset of `typeset`  (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example, if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`. If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the  original `[STRING, FINITE]`. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). This typeset is as it was specified in the  parent shape, and therefore it may not be fully-qualified. |
 
 
@@ -1820,7 +1910,7 @@ Applicable to all numeric types.
 | Name | Type | Description |
 | --- | --- | --- |
 | [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctr === true`. Note that this  property is not serializable to JSON. If not specified, then the object  must be an [OBJECT](#rtvref.types.OBJECT) that is not a  [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) among the other values that  are not considered class objects. |
-| [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. |
+| [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. Ignored if not a valid shape descriptor. |
 
 
 * * *
@@ -1930,14 +2020,12 @@ NOTE: A validator must always give __precedence__ to
  [qualifier rules](#rtvref.types.rules) for the type it's validating, over
  any arguments specified. For example,
 
-NOTE: A validator __must not__ attempt to validate values considering basic
- [qualifier](#rtvref.qualifiers) rules like allowing `null` when EXPECTED
- vs not when REQUIRED, unless the type itself allows or disallows these
- special values. A validator should focus on checking for its type. For example,
- the [isString validation](rtvref.validation.isString) requires the value
- to be a string, excluding `null` and `undefined` regardless of the qualifier.
- It does, however, allow an empty string if the qualifier is not REQUIRED because
- that is one of its [type-specific qualifier rules](#rtvref.types.STRING).
+__NOTE:__ A validator must support all its qualifier rules, including proper
+ handling of `null` values when [EXPECTED](#rtvref.qualifiers.EXPECTED)
+ and `undefined` values when [OPTIONAL](#rtvref.qualifiers.OPTIONAL),
+ __in addition to__ and type-specific qualifier rules. For example, the
+ [STRING](#rtvref.types.STRING) type permits empty strings when not
+ [REQUIRED](#rtvref.qualifiers.REQUIRED).
 
 **Kind**: static method of [<code>validator</code>](#rtvref.validator)  
 **Returns**: [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError) - An `RtvSuccess` if valid;
@@ -2027,6 +2115,7 @@ Runtime Verification Library for browsers and Node.js.
     * [.e](#rtv.e) : <code>boolean</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
+    * [.isTypeset()](#rtv.isTypeset)
     * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.c(value, typeset)](#rtv.c) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.verify(value, typeset)](#rtv.verify) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
@@ -2099,6 +2188,16 @@ rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
 
 **Kind**: static property of [<code>config</code>](#rtv.config)  
 **See**: [rtv.enabled](rtv.enabled)  
+
+* * *
+
+<a name="rtv.isTypeset"></a>
+
+### rtv.isTypeset()
+Determines if a value is a typeset.
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+**See**: [default](#rtvref.validation.isTypeset.default)  
 
 * * *
 
@@ -2229,31 +2328,6 @@ Contextual RTV Generator // TODO[docs]
 | Param | Type |
 | --- | --- |
 | context | <code>string</code> | 
-
-
-* * *
-
-<a name="toTypeset"></a>
-
-## toTypeset(type, [qualifier], [args], [fullyQualified]) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
-Convert a type, qualifier, and args into a typeset.
-
-**Kind**: global function  
-**Returns**: [<code>typeset</code>](#rtvref.types.typeset) - The simplest typeset that represents the
- combination of the specified type, qualifier, and args, unless `fullyQualified`
- was set to `true`, in which case it'll always be an array typeset and
- fully-qualified.  
-**Throws**:
-
-- <code>Error</code> If `type`, `qualifier`, or `args` is invalid.
-
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| type | <code>string</code> |  | A single type from [types](#rtvref.types.types). |
-| [qualifier] | <code>string</code> \| <code>Object</code> \| <code>boolean</code> | <code>&quot;rtvref.qualifiers.DEFAULT_QUALIFIER&quot;</code> | Optional qualifier from [qualifiers](#rtvref.qualifiers.qualifiers). Can also be  either the `args` parameter, or the `fullyQualified` parameter if the  default qualifier is being used. |
-| [args] | <code>Object</code> \| <code>boolean</code> |  | Optional  [type arguments](#rtvref.types.type_arguments). If specified, this  parameter must be an [object](#rtvref.types.OBJECT), however the  properties of the object are not validated against the specified `type`  (i.e. they are not guaranteed to be valid for that type). Can also be  the `fullyQualified` parameter if type argumenst aren't applicable. |
-| [fullyQualified] | <code>boolean</code> | <code>false</code> | If _truthy_, the generated typeset  will always be [fully-qualified](#rtvref.types.fully_qualified_typeset).  Otherwise, it'll be the simplest typeset possible. |
 
 
 * * *

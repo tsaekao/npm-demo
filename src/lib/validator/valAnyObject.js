@@ -1,12 +1,25 @@
 ////// isAnyObject validator
 
+import _forEach from 'lodash/forEach';
+
 import {type, default as isAnyObject} from '../validation/isAnyObject';
 
-import qualifiers from '../qualifiers';
+import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
+import isShape from '../validation/isShape';
 
+const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
+
+/**
+ * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
+ *  configured on this validator.
+ * @private
+ * @name rtvref.validator.valObject._impl
+ * @type {rtvref.impl}
+ */
+export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
@@ -16,7 +29,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
- * @function rtvref.validator.isAnyObject.config
+  * @function rtvref.validator.valAnyObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -29,16 +42,37 @@ export const config = function(settings) {
  *
  * Determines if a value is _any_ type of object except a primitive.
  *
- * @function rtvref.validator.isAnyObject.default
+  * @function rtvref.validator.valAnyObject.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
+ * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valAnyObject(v, q = qualifiers.REQUIRED) {
-  if (isAnyObject(v)) {
+export default function valAnyObject(v, q = REQUIRED, args) {
+  if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
+  if (!isAnyObject(v)) {
+    return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
+  }
+
+  // args is the optional shape: ignore if it isn't a shape, like other validators
+  //  ignore invalid args properties
+  const shape = isShape(args) ? args : undefined;
+  let err; // @type {(RtvError|undefined)}
+
+  // only consider enumerable, own-properties of the shape
+  _forEach(shape, function(typeset, prop) {
+    const result = impl.check(v[prop], typeset); // check prop value against shape prop typeset
+
+    if (!result.valid) {
+      err = new RtvError(v, shape, [prop].concat(result.path), result.cause);
+    }
+
+    return !err; // break on first error
+  });
+
+  return err || (new RtvSuccess());
 }

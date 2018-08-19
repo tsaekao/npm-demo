@@ -77,7 +77,7 @@ import Enumeration from './Enumeration';
  * Describes the keys and values in a collection-based object, which is one of
  *  the following types:
  *
- * - {@link rtvref.types.MAP_OBJECT MAP_OBJECT} (NOTE: only __own-enumerable
+ * - {@link rtvref.types.HASH_MAP HASH_MAP} (NOTE: only __own-enumerable
  *   properties__ are considered part of this type of collection)
  * - {@link rtvref.types.MAP MAP}
  * - {@link rtvref.types.SET SET} (with some exceptions)
@@ -107,11 +107,11 @@ import Enumeration from './Enumeration';
  * @property {rtvref.types.typeset} [keys] A typeset describing each key
  *  in the collection.
  *
- *  If the type is {@link rtvref.types.MAP_OBJECT MAP_OBJECT}, this argument is
+ *  If the type is {@link rtvref.types.HASH_MAP HASH_MAP}, this argument is
  *   hard set to the {@link rtvref.types.STRING STRING} type due to the nature of
  *   its JavaScript `Object`-based implementation and does not need to be specified.
  *
- *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT} (with restrictions),
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP} (with restrictions),
  *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
  * @property {string} [keyExp] A string-based regular expression describing the
@@ -122,7 +122,7 @@ import Enumeration from './Enumeration';
  *  For example, to require numerical keys, the following expression could be
  *   used: `"^\\d+$"`.
  *
- *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT},
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP},
  *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
  * @property {string} [keyFlagSpec] A string specifying any flags to use with
@@ -131,7 +131,7 @@ import Enumeration from './Enumeration';
  *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp RegExp#flags}
  *  parameter for more information.
  *
- *  Applies to: {@link rtvref.types.MAP_OBJECT MAP_OBJECT},
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP},
  *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
  *
  * @property {rtvref.types.typeset} [values] A typeset describing each value in
@@ -145,7 +145,7 @@ import Enumeration from './Enumeration';
  *
  *  Applies to: All collection types.
  *
- * @see {@link rtvref.types.MAP_OBJECT}
+ * @see {@link rtvref.types.HASH_MAP}
  * @see {@link rtvref.types.MAP}
  * @see {@link rtvref.types.WEAK_MAP}
  * @see {@link rtvref.types.SET}
@@ -347,9 +347,10 @@ import Enumeration from './Enumeration';
  *
  * @typedef {function} rtvref.types.custom_validator
  * @param {*} value The value being verified.
- * @param {Array} match A __first-level__, {@link rtvref.types.fully_qualified_typeset fully-qualified}
- *  typeset describing the type that matched. This means the first level of this
- *  subset of `typeset` (the 3rd parameter) is fully-qualified, but any nested
+ * @param {Array} match A __first-level__,
+ *  {@link rtvref.types.fully_qualified_typeset fully-qualified} typeset describing
+ *  the type that matched. This means the first level of this subset of `typeset`
+ *  (the 3rd parameter) is fully-qualified, but any nested
  *  {@link rtvref.shape_descriptor shape descriptors} or arrays will not be (they
  *  will remain references to the same shapes/arrays in `typeset`).
  *
@@ -360,6 +361,7 @@ import Enumeration from './Enumeration';
  * If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter
  *  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the
  *  original `[STRING, FINITE]`.
+ *
  * @param {rtvref.types.typeset} typeset Reference to the typeset used for
  *  verification. Note that the typeset may contain nested typeset(s), and may
  *  be part of a larger parent typeset (though there would be no reference to
@@ -372,7 +374,9 @@ import Enumeration from './Enumeration';
 // Creates a definition object.
 // @param {string} value Type value. Must not be empty.
 // @param {boolean} [hasArgs=false] If the type takes arguments.
-// @param {boolean} [isObject=false] If the type is an object type.
+// @param {boolean} [isObject=false] If the type is an object type, which means
+//  it describes a shape (either directly as its args object, e.g. PLAIN_OBJECT,
+//  or indirectly as a property inside it's args object, e.g. CLASS_OBJECT).
 // @returns {{value: boolean, hasArgs: boolean, isObject: boolean}} Type definition.
 const def = function(value, hasArgs, isObject) {
   return {
@@ -392,20 +396,34 @@ const defs = {
    *
    * Any rules per qualifiers:
    *
-   * - REQUIRED: Property must be defined _somewhere_ in the prototype chain, but
-   *   its value can be anything, including `null` and `undefined`.
+   * - REQUIRED: Can be any value, including `null` and `undefined`.
    * - EXPECTED: Same rules as REQUIRED.
-   * - OPTIONAL: Since this qualifier removes the property's need for existence
-   *   in the prototype chain, it renders the verification moot (i.e. the property
-   *   might as well not be included in the {@link rtvref.shape_descriptor shape descriptor}
-   *   unless a {@link rtvref.types.custom_validator custom validator} is being
-   *   used to do customized verification.
+   * - OPTIONAL: Same rules as EXPECTED.
+   *
+   * Since this type removes the property's need for existence in the prototype
+   *  chain, it renders the verification moot (i.e. the property of this type might
+   *  as well not be included in a {@link rtvref.shape_descriptor shape descriptor}
+   *  unless a {@link rtvref.types.custom_validator custom validator} is being
+   *  used to do customized verification.
    *
    * @name rtvref.types.ANY
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
   ANY: def('any'),
+
+  /**
+   * Null rules per qualifiers: must be the `null` {@link rtvref.types.primitives primitive}.
+   *
+   * Use this special type to explicitly test for a `null` value. For example,
+   *  a {@link rtvref.shape_descriptor shape}'s property may be required to be
+   *  `null` under certain circumstances.
+   *
+   * @name rtvref.types.NULL
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   */
+  NULL: def('null'),
 
   // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
   //  of JSON requirement...) for a regular expression test. Similar prop names
@@ -748,7 +766,6 @@ const defs = {
    * @see {@link rtvref.types.OBJECT}
    * @see {@link rtvref.types.PLAIN_OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
-   * @see {@link rtvref.types.MAP_OBJECT}
    */
   ANY_OBJECT: def('anyObject', true, true),
 
@@ -803,7 +820,6 @@ const defs = {
    * @see {@link rtvref.types.ANY_OBJECT}
    * @see {@link rtvref.types.PLAIN_OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
-   * @see {@link rtvref.types.MAP_OBJECT}
    */
   OBJECT: def('object', true, true),
 
@@ -848,7 +864,6 @@ const defs = {
    * @see {@link rtvref.types.ANY_OBJECT}
    * @see {@link rtvref.types.OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
-   * @see {@link rtvref.types.MAP_OBJECT}
    */
   PLAIN_OBJECT: def('plainObject', true, true),
 
@@ -863,7 +878,7 @@ const defs = {
    *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} among the other values that
    *  are not considered class objects.
    * @property {rtvref.shape_descriptor} [shape] A description of the class object's
-   *  shape.
+   *  shape. Ignored if not a valid shape descriptor.
    */
 
   /**
@@ -910,13 +925,13 @@ const defs = {
    * @see {@link rtvref.types.ANY_OBJECT}
    * @see {@link rtvref.types.OBJECT}
    * @see {@link rtvref.types.PLAIN_OBJECT}
-   * @see {@link rtvref.types.MAP_OBJECT}
    */
   CLASS_OBJECT: def('classObject', true, true),
 
   /**
-   * A _map_ object is an {@link rtvref.types.OBJECT OBJECT} that is treated as a
-   *  hash map with an expected set of keys and values. Keys can be described
+   * A simple {@link rtvref.types.OBJECT OBJECT} that is treated as a hash map
+   *  with an expected set of keys (forcibly strings due to the nature of the
+   *  native JavaScript `Object` type) and values. Keys can be described
    *  using a regular expression, and values can be described using a
    *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
    *
@@ -924,7 +939,7 @@ const defs = {
    *
    * Arguments (optional): {@link rtvref.types.collection_args}
    *
-   * @name rtvref.types.MAP_OBJECT
+   * @name rtvref.types.HASH_MAP
    * @const {string}
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.ANY_OBJECT}
@@ -934,11 +949,11 @@ const defs = {
    * @see {@link rtvref.types.MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
-  MAP_OBJECT: def('mapObject', true, true),
+  HASH_MAP: def('mapObject', true), // NOTE: NOT an object type (unrelated to shapes)
 
   /**
    * An ES6 map supports any value as its keys, unlike a
-   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings. Keys can
+   *  {@link rtvref.types.HASH_MAP HASH_MAP} that only supports strings. Keys can
    *  be described using a regular expression (if they are strings), and values can
    *  be described using a {@link rtvref.types.typeset typeset}. Empty maps are permitted
    *  by default.
@@ -950,14 +965,14 @@ const defs = {
    * @name rtvref.types.MAP
    * @const {string}
    * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.MAP_OBJECT}
+   * @see {@link rtvref.types.HASH_MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
   MAP: def('map', true),
 
   /**
    * An ES6 weak map supports any _object_ as its keys, unlike a
-   *  {@link rtvref.types.MAP_OBJECT MAP_OBJECT} that only supports strings,
+   *  {@link rtvref.types.HASH_MAP HASH_MAP} that only supports strings,
    *  and a {@link rtvref.types.MAP MAP} that supports any type of value.
    *
    * Weak map rules per qualifiers: Must be a `WeakMap` instance.
@@ -965,7 +980,7 @@ const defs = {
    * @name rtvref.types.WEAK_MAP
    * @const {string}
    * @see {@link rtvref.qualifiers}
-   * @see {@link rtvref.types.MAP_OBJECT}
+   * @see {@link rtvref.types.HASH_MAP}
    * @see {@link rtvref.types.MAP}
    */
   WEAK_MAP: def('weakMap'), // not iterable, so does not accept any collection args

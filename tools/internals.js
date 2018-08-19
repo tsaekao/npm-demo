@@ -21,6 +21,7 @@ import * as isBoolean from '../src/lib/validation/isBoolean';
 import * as isFinite from '../src/lib/validation/isFinite';
 import * as isFunction from '../src/lib/validation/isFunction';
 import * as isMap from '../src/lib/validation/isMap';
+import * as isNull from '../src/lib/validation/isNull';
 import * as isNumber from '../src/lib/validation/isNumber';
 import * as isObject from '../src/lib/validation/isObject';
 import * as isRegExp from '../src/lib/validation/isRegExp';
@@ -38,6 +39,7 @@ import * as valBoolean from '../src/lib/validator/valBoolean';
 import * as valFinite from '../src/lib/validator/valFinite';
 import * as valFunction from '../src/lib/validator/valFunction';
 import * as valMap from '../src/lib/validator/valMap';
+import * as valNull from '../src/lib/validator/valNull';
 import * as valNumber from '../src/lib/validator/valNumber';
 import * as valObject from '../src/lib/validator/valObject';
 import * as valRegExp from '../src/lib/validator/valRegExp';
@@ -59,10 +61,6 @@ global.rtvi = {
 
     util,
     validation: {
-      isTypeset,
-      isPrimitive
-    },
-    validation: {
       // NOTE: these are the full modules, so it'll look like
       //  `isAny.default(value)` when executing the type validation
 
@@ -81,6 +79,7 @@ global.rtvi = {
       isFinite,
       isFunction,
       isMap,
+      isNull,
       isNumber,
       isObject,
       isRegExp,
@@ -100,6 +99,7 @@ global.rtvi = {
       valFinite,
       valFunction,
       valMap,
+      valNull,
       valNumber,
       valObject,
       valRegExp,
