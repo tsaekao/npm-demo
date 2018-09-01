@@ -16,8 +16,9 @@ describe('module: lib/validation/isAnyObject', function() {
       const validTypes = Object.keys(validValues); // @type {Array}
 
       // remove primitives
-      _.pull(validTypes, types.ANY, types.STRING, types.BOOLEAN, types.NUMBER,
-          types.FINITE, types.INT, types.FLOAT, types.SYMBOL);
+      _.pull(validTypes, types.ANY, types.NULL, types.STRING, types.BOOLEAN,
+          types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT,
+          types.SYMBOL);
 
       let values = [];
       _.forEach(validTypes, function(type) {

@@ -10,6 +10,15 @@ const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
+ * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
+ *  configured on this validator.
+ * @private
+ * @name rtvref.validator.valNull._impl
+ * @type {rtvref.impl}
+ */
+export {impl as _impl};
+
+/**
  * Type: {@link rtvref.types.NULL NULL}
  * @const {string} rtvref.validator.valNull.type
  */

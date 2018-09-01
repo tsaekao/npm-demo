@@ -3,11 +3,11 @@ import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
-import * as val from '../../../src/lib/validation/isNumber';
+import * as val from '../../../src/lib/validation/isInt';
 
-describe('module: lib/validation/isNumber', function() {
+describe('module: lib/validation/isInt', function() {
   it('#type', function() {
-    expect(val.type).to.equal(types.NUMBER);
+    expect(val.type).to.equal(types.INT);
   });
 
   describe('#default', function() {
@@ -19,13 +19,18 @@ describe('module: lib/validation/isNumber', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
-      // remove subset types
-      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT);
+      // remove subset types: keep FLOAT since it isn't a subset
+      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT);
 
       // build a list of all remaining invalid values
       let invalidValues = [
         // put some NUMBER values back in which aren't overlaps
-        NaN
+        NaN,
+        Infinity,
+        Number.POSITIVE_INFINITY,
+        -Infinity,
+        Number.NEGATIVE_INFINITY,
+        Number.MIN_VALUE // float, number closest to zero
       ];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {expect} from 'chai';
 
 import types from '../../src/lib/types';
-import qualifiers, {DEFAULT_QUALIFIER} from '../../src/lib/qualifiers';
+import {DEFAULT_QUALIFIER} from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
@@ -32,14 +32,65 @@ export const getValidValues = function(type) {
     [types.BOOLEAN]: [true, false],
     [types.SYMBOL]: [Symbol(), Symbol('symbol'), Symbol(1), Symbol.for('other')],
 
-    [types.NUMBER]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,
-      Number.MAX_VALUE, Number.MAX_SAFE_INTEGER, Number.EPSILON,
-      7.7, -7.7, Infinity, -Infinity, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY],
-    [types.FINITE]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,
-      Number.MAX_VALUE, Number.MAX_SAFE_INTEGER, Number.EPSILON, 7.7, -7.7],
-    [types.INT]: [-1, -0, 0, 1, Number.MIN_VALUE, Number.MIN_SAFE_INTEGER,
-      Number.MAX_VALUE, Number.MAX_SAFE_INTEGER, Number.EPSILON],
-    [types.FLOAT]: [7.7, -7.7],
+    [types.NUMBER]: [
+      -1,
+      -0,
+      0,
+      1,
+      7.7,
+      -7.7,
+      Number.EPSILON,
+      Number.MIN_VALUE, // float, number closest to zero
+      Number.MAX_VALUE, // int, unsafe
+      Infinity,
+      Number.POSITIVE_INFINITY,
+      -Infinity,
+      Number.NEGATIVE_INFINITY,
+      Number.MIN_SAFE_INTEGER - 1, // unsafe
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER + 1 // unsafe
+    ],
+    [types.FINITE]: [
+      -1,
+      -0,
+      0,
+      1,
+      7.7,
+      -7.7,
+      Number.EPSILON,
+      Number.MIN_VALUE, // float, number closest to zero
+      Number.MAX_VALUE, // int, unsafe
+      Number.MIN_SAFE_INTEGER - 1, // unsafe
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER + 1 // unsafe
+    ],
+    [types.INT]: [
+      -1,
+      -0,
+      0,
+      1,
+      Number.MAX_VALUE, // int, unsafe
+      Number.MIN_SAFE_INTEGER - 1, // unsafe
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER + 1 // unsafe
+    ],
+    [types.SAFE_INT]: [
+      -1,
+      -0,
+      0,
+      1,
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER
+    ],
+    [types.FLOAT]: [
+      7.7,
+      -7.7,
+      Number.EPSILON,
+      Number.MIN_VALUE // float, number closest to zero
+    ],
 
     //
     // non-primitives

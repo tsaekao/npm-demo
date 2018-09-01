@@ -47,6 +47,7 @@ describe('module: lib/types', function() {
       types.NUMBER,
       types.FINITE,
       types.INT,
+      types.SAFE_INT,
       types.FLOAT,
       types.ARRAY,
       types.ANY_OBJECT,

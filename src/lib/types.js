@@ -514,19 +514,29 @@ const defs = {
    * In all cases, the value must be a number {@link rtvref.types.primitives primitive}.
    *  Note that `new Number(1) !== 1` because the former is an _object_, not a number.
    *
+   * An number is not guaranteed to be a
+   *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer}.
+   *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
    * @name rtvref.types.NUMBER
    * @const {string}
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.FINITE}
+   * @see {@link rtvref.types.INT}
+   * @see {@link rtvref.types.SAFE_INT}
+   * @see {@link rtvref.types.FLOAT}
    */
   NUMBER: def('number', true),
 
   /**
    * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
-   *  value can be either a safe integer or a {@link rtvref.types.FLOAT floating point number}.
-   *  It must also be a number {@link rtvref.types.primitives primitive}.
+   *  value can be either an {@link rtvref.types.INT integer},
+   *  or a {@link rtvref.types.FLOAT floating point number}. It must also be a
+   *  number {@link rtvref.types.primitives primitive}.
+   *
+   * A finite number is not guaranteed to be a
+   *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer}.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
@@ -534,37 +544,65 @@ const defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.NUMBER}
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
+   * @see {@link rtvref.types.INT}
+   * @see {@link rtvref.types.SAFE_INT}
+   * @see {@link rtvref.types.FLOAT}
    */
   FINITE: def('finite', true),
 
   /**
-   * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} integer,
-   *  but is not necessarily _safe_. It must also be a number
-   *  {@link rtvref.types.primitives primitive}.
+   * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number,
+   *  an integer, and a number {@link rtvref.types.primitives primitive}.
+   *
+   * An integer is not guaranteed to be a
+   *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer}.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
    * @name rtvref.types.INT
    * @const {string}
    * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.NUMBER}
    * @see {@link rtvref.types.FINITE}
+   * @see {@link rtvref.types.SAFE_INT}
    * @see {@link rtvref.types.FLOAT}
-   * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger Number.isSafeInteger()}
    */
   INT: def('int', true),
 
   /**
+   * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number, a
+   *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer},
+   *  and a number {@link rtvref.types.primitives primitive}.
+   *
+   * An integer is safe if it's an IEEE-754 double precision number which isn't
+   *  the result of a rounded unsafe integer. For example, `2^53 - 1` is safe,
+   *  but `2^53` is not because `2^53 + 1` would be rounded to `2^53`.
+   *
+   * Arguments (optional): {@link rtvref.types.numeric_args}
+   *
+   * @name rtvref.types.INT
+   * @const {string}
+   * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.NUMBER}
+   * @see {@link rtvref.types.FINITE}
+   * @see {@link rtvref.types.INT}
+   * @see {@link rtvref.types.FLOAT}
+   */
+  SAFE_INT: def('safeInt', true),
+
+  /**
    * Float rules per qualifiers: Must be a {@link rtvref.types.FINITE finite}
-   *  floating point number. It must also be a number
-   *  {@link rtvref.types.primitives primitive}.
+   *  floating point number, and a number {@link rtvref.types.primitives primitive}.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
    * @name rtvref.types.FLOAT
    * @const {string}
    * @see {@link rtvref.qualifiers}
+   * @see {@link rtvref.types.NUMBER}
+   * @see {@link rtvref.types.FINITE}
    * @see {@link rtvref.types.INT}
+   * @see {@link rtvref.types.SAFE_INT}
    */
   FLOAT: def('float', true),
 

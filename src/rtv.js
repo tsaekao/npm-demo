@@ -15,11 +15,13 @@ import * as valArray from './lib/validator/valArray';
 import * as valBoolean from './lib/validator/valBoolean';
 import * as valFinite from './lib/validator/valFinite';
 import * as valFunction from './lib/validator/valFunction';
+import * as valInt from './lib/validator/valInt';
 import * as valMap from './lib/validator/valMap';
 import * as valNull from './lib/validator/valNull';
 import * as valNumber from './lib/validator/valNumber';
 import * as valObject from './lib/validator/valObject';
 import * as valRegExp from './lib/validator/valRegExp';
+import * as valSafeInt from './lib/validator/valSafeInt';
 import * as valSet from './lib/validator/valSet';
 import * as valString from './lib/validator/valString';
 import * as valSymbol from './lib/validator/valSymbol';
@@ -277,11 +279,13 @@ export default rtv;
     valBoolean,
     valFinite,
     valFunction,
+    valInt,
     valNull,
     valMap,
     valNumber,
     valObject,
     valRegExp,
+    valSafeInt,
     valSet,
     valString,
     valSymbol,

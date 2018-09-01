@@ -1,8 +1,6 @@
-////// isString validator
+////// isSafeInt validator
 
-import {type, default as isString} from '../validation/isString';
-
-import isFinite from '../validation/isFinite';
+import {type, default as isSafeInt} from '../validation/isSafeInt';
 
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
@@ -15,20 +13,20 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valString._impl
+ * @name rtvref.validator.valSafeInt._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
- * Type: {@link rtvref.types.STRING STRING}
- * @const {string} rtvref.validator.valString.type
+ * Type: {@link rtvref.types.SAFE_INT SAFE_INT}
+ * @const {string} rtvref.validator.valSafeInt.type
  */
 export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valString.config
+  * @function rtvref.validator.valSafeInt.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -37,44 +35,40 @@ export const config = function(settings) {
 
 /**
  * {@link rtvref.validator.type_validator Validator} for the
- *  {@link rtvref.types.STRING STRING} type.
+ *  {@link rtvref.types.SAFE_INT SAFE_INT} type.
  *
- * Determines if a value is a string literal __only__ (i.e. a
+ * Determines if a value is a number literal __only__ (i.e. a
  *  {@link rtvref.types.primitives primitive}). It does not validate
- *  `new String('value')`, which is an object that is a string.
+ *  `new Number(1)`, which is an object that is a number.
  *
-  * @function rtvref.validator.valString.default
+  * @function rtvref.validator.valSafeInt.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
- * @param {rtvref.types.STRING_args} [args] Type arguments.
+ * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valString(v, q = REQUIRED, args) {
+export default function valSafeInt(v, q = REQUIRED, args) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  let valid = isString(v) || (q !== REQUIRED && v === '');
+  let valid = isSafeInt(v);
 
-  if (valid && args) { // then check args
-    if (isString(args.exact)) { // empty string OK
+  if (valid && args) { // then check args against normal type range
+    if (isSafeInt(args.exact)) {
       valid = (v === args.exact);
     } else {
       let min;
-      if (valid && isFinite(args.min) && args.min >= 0) {
+      if (valid && isSafeInt(args.min)) {
         min = args.min;
-        valid = (v.length >= min);
+        valid = (v >= min);
       }
 
-      if (valid && isFinite(args.max) && args.max >= 0) {
+      if (valid && isSafeInt(args.max)) {
         if (min === undefined || args.max >= min) {
-          valid = (v.length <= args.max);
+          valid = (v <= args.max);
         } // else, ignore
-      }
-
-      if (valid && args.partial) {
-        valid = v.includes(args.partial);
       }
     }
   }

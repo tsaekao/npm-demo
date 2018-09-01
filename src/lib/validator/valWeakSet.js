@@ -13,14 +13,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valWeakSet._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.WEAK_SET WEAK_SET}
- * @const {string} rtvref.validator.isWeakSet.type
+ * @const {string} rtvref.validator.valWeakSet.type
  */
 export {type};
 

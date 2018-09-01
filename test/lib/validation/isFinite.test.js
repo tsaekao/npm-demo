@@ -19,18 +19,21 @@ describe('module: lib/validation/isFinite', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
-      // remove subset types (NUMBER is partial subset)
-      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.FLOAT);
+      // remove subset types
+      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT);
 
       // build a list of all remaining invalid values
-      let invalidValues = [];
+      let invalidValues = [
+        // put some NUMBER values back in which aren't overlaps
+        NaN,
+        Infinity,
+        Number.POSITIVE_INFINITY,
+        -Infinity,
+        Number.NEGATIVE_INFINITY
+      ];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);
       });
-
-      // add some invalid NUMBER values back in
-      invalidValues.splice(0, 0, NaN, Infinity, -Infinity, Number.POSITIVE_INFINITY,
-          Number.NEGATIVE_INFINITY);
 
       // nothing should pass
       expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);

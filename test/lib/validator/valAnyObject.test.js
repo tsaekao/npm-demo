@@ -23,7 +23,8 @@ describe('module: lib/validator/valAnyObject', function() {
 
       // remove primitives
       _.pull(validTypes, types.ANY, types.NULL, types.STRING, types.BOOLEAN,
-          types.NUMBER, types.FINITE, types.INT, types.FLOAT, types.SYMBOL);
+          types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT,
+          types.SYMBOL);
 
       let values = [];
       _.forEach(validTypes, function(type) {

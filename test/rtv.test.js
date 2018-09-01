@@ -46,7 +46,7 @@ describe('module: rtv', function() {
       expect(rtv.verify(...params)).to.be.an.instanceof(RtvSuccess);
     });
 
-    it('should throw an RtvError if verify fails', function() { // TODO enable this test once verify() throws RtvError
+    it('should throw an RtvError if verify fails', function() {
       try {
         rtv.verify('foo', rtv.t.BOOLEAN);
         expect('statement above should have thrown').to.be.true; // fail this test

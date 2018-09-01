@@ -4,12 +4,12 @@ import _ from 'lodash';
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
-import * as val from '../../../src/lib/validator/valFinite';
+import * as val from '../../../src/lib/validator/valInt';
 
-describe('module: lib/validator/valFinite', function() {
+describe('module: lib/validator/valInt', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
-      expect(val.type).to.equal(types.FINITE);
+      expect(val.type).to.equal(types.INT);
     });
 
     it('succeeds with an RtvSuccess', function() {
@@ -24,8 +24,8 @@ describe('module: lib/validator/valFinite', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
-      // remove subset types
-      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT);
+      // remove subset types: keep FLOAT since it isn't a subset
+      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT);
 
       // build a list of all remaining invalid values
       let invalidValues = [
@@ -34,7 +34,8 @@ describe('module: lib/validator/valFinite', function() {
         Infinity,
         Number.POSITIVE_INFINITY,
         -Infinity,
-        Number.NEGATIVE_INFINITY
+        Number.NEGATIVE_INFINITY,
+        Number.MIN_VALUE // float, number closest to zero
       ];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);
@@ -111,6 +112,9 @@ describe('module: lib/validator/valFinite', function() {
       vtu.expectValidatorSuccess(val, 7, undefined, {exact: Number.NEGATIVE_INFINITY});
       vtu.expectValidatorSuccess(val, 7, undefined, {exact: Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {exact: Number.POSITIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, 7, undefined, {exact: Number.EPSILON});
+      vtu.expectValidatorSuccess(val, 7, undefined, {exact: Number.MIN_VALUE}); // float
+      vtu.expectValidatorSuccess(val, 7, undefined, {exact: 7.7});
 
       // ignored: invalid type
       vtu.expectValidatorSuccess(val, 7, undefined, {exact: '6'});
@@ -138,6 +142,9 @@ describe('module: lib/validator/valFinite', function() {
       vtu.expectValidatorSuccess(val, 7, undefined, {min: Number.NEGATIVE_INFINITY});
       vtu.expectValidatorSuccess(val, 7, undefined, {min: Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {min: Number.POSITIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, 7, undefined, {min: Number.EPSILON});
+      vtu.expectValidatorSuccess(val, 7, undefined, {min: Number.MIN_VALUE}); // float
+      vtu.expectValidatorSuccess(val, 7, undefined, {min: 7.7});
     });
 
     it('checks for a maximum number', function() {
@@ -156,6 +163,9 @@ describe('module: lib/validator/valFinite', function() {
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.POSITIVE_INFINITY});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: -Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.NEGATIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.EPSILON});
+      vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.MIN_VALUE}); // float
+      vtu.expectValidatorSuccess(val, 7, undefined, {max: 7.7});
     });
 
     it('max ignored if less than min', function() {

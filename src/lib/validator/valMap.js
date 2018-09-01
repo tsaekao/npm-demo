@@ -19,14 +19,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valMap._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.MAP MAP}
- * @const {string} rtvref.validator.isMap.type
+ * @const {string} rtvref.validator.valMap.type
  */
 export {type};
 

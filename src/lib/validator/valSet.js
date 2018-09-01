@@ -17,14 +17,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valSet._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.SET SET}
- * @const {string} rtvref.validator.isSet.type
+ * @const {string} rtvref.validator.valSet.type
  */
 export {type};
 

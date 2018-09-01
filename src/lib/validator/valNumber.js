@@ -15,14 +15,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valNumber._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.NUMBER NUMBER}
- * @const {string} rtvref.validator.isNumber.type
+ * @const {string} rtvref.validator.valNumber.type
  */
 export {type};
 
@@ -62,8 +62,9 @@ export default function valNumber(v, q = REQUIRED, args) {
     valid = true;
   }
 
-  if (valid && args) { // then check args
-    if (isNumber(args.exact) || _isNaN(args.exact)) { // NaN OK for this arg (careful: NaN !== NaN...)
+  if (valid && args) { // then check args against normal type range
+    // NOTE: NaN is OK for the exact arg (careful: NaN !== NaN...)
+    if (isNumber(args.exact) || _isNaN(args.exact)) {
       valid = (v === args.exact) || (_isNaN(v) && _isNaN(args.exact));
     } else {
       let min;

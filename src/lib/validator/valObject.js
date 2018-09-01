@@ -23,7 +23,7 @@ export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.OBJECT OBJECT}
- * @const {string} rtvref.validator.isObject.type
+ * @const {string} rtvref.validator.valObject.type
  */
 export {type};
 

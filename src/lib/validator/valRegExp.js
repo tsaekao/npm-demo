@@ -13,14 +13,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valRegExp._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.REGEXP REGEXP}
- * @const {string} rtvref.validator.isRegExp.type
+ * @const {string} rtvref.validator.valRegExp.type
  */
 export {type};
 

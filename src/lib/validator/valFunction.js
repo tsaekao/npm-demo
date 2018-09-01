@@ -11,7 +11,7 @@ let impl; // @type {rtvref.impl}
 
 /**
  * Type: {@link rtvref.types.FUNCTION FUNCTION}
- * @const {string} rtvref.validator.isFunction.type
+ * @const {string} rtvref.validator.valFunction.type
  */
 export {type};
 

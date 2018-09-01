@@ -13,14 +13,14 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valObject._impl
+ * @name rtvref.validator.valFinite._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
  * Type: {@link rtvref.types.FINITE FINITE}
- * @const {string} rtvref.validator.isFinite.type
+ * @const {string} rtvref.validator.valFinite.type
  */
 export {type};
 
@@ -53,19 +53,19 @@ export default function valFinite(v, q = REQUIRED, args) {
     return new RtvSuccess();
   }
 
-  let valid = isFinite(v); // eliminates NaN, +/-Infinity
+  let valid = isFinite(v);
 
-  if (valid && args) { // then check args
-    if (isFinite(args.exact)) { // ignore if NaN, +/-Infinity
+  if (valid && args) { // then check args against normal type range
+    if (isFinite(args.exact)) {
       valid = (v === args.exact);
     } else {
       let min;
-      if (valid && isFinite(args.min)) { // ignore if NaN, +/-Infinity
+      if (valid && isFinite(args.min)) {
         min = args.min;
         valid = (v >= min);
       }
 
-      if (valid && isFinite(args.max)) { // ignore if NaN, +/-Infinity
+      if (valid && isFinite(args.max)) {
         if (min === undefined || args.max >= min) {
           valid = (v <= args.max);
         } // else, ignore
