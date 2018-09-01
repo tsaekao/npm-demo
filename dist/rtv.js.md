@@ -70,6 +70,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.NUMBER](#rtvref.types.NUMBER) : <code>string</code>
         * [.FINITE](#rtvref.types.FINITE) : <code>string</code>
         * [.INT](#rtvref.types.INT) : <code>string</code>
+        * [.INT](#rtvref.types.INT) : <code>string</code>
         * [.FLOAT](#rtvref.types.FLOAT) : <code>string</code>
         * [.FUNCTION](#rtvref.types.FUNCTION) : <code>string</code>
         * [.REGEXP](#rtvref.types.REGEXP) : <code>string</code>
@@ -772,6 +773,7 @@ Convenience function to check if a nil value (either `undefined` or `null`)
     * [.NUMBER](#rtvref.types.NUMBER) : <code>string</code>
     * [.FINITE](#rtvref.types.FINITE) : <code>string</code>
     * [.INT](#rtvref.types.INT) : <code>string</code>
+    * [.INT](#rtvref.types.INT) : <code>string</code>
     * [.FLOAT](#rtvref.types.FLOAT) : <code>string</code>
     * [.FUNCTION](#rtvref.types.FUNCTION) : <code>string</code>
     * [.REGEXP](#rtvref.types.REGEXP) : <code>string</code>
@@ -924,6 +926,9 @@ Number rules per qualifiers:
 In all cases, the value must be a number [primitive](#rtvref.types.primitives).
  Note that `new Number(1) !== 1` because the former is an _object_, not a number.
 
+An number is not guaranteed to be a
+ [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger).
+
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -931,6 +936,9 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 - [qualifiers](#rtvref.qualifiers)
 - [FINITE](#rtvref.types.FINITE)
+- [INT](#rtvref.types.INT)
+- [rtvref.types.SAFE_INT](rtvref.types.SAFE_INT)
+- [FLOAT](#rtvref.types.FLOAT)
 
 
 * * *
@@ -939,8 +947,12 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 #### types.FINITE : <code>string</code>
 Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
- value can be either a safe integer or a [floating point number](#rtvref.types.FLOAT).
- It must also be a number [primitive](#rtvref.types.primitives).
+ value can be either an [integer](#rtvref.types.INT),
+ or a [floating point number](#rtvref.types.FLOAT). It must also be a
+ number [primitive](#rtvref.types.primitives).
+
+A finite number is not guaranteed to be a
+ [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger).
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
@@ -949,7 +961,9 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 - [qualifiers](#rtvref.qualifiers)
 - [NUMBER](#rtvref.types.NUMBER)
-- [Number.isSafeInteger()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger)
+- [INT](#rtvref.types.INT)
+- [rtvref.types.SAFE_INT](rtvref.types.SAFE_INT)
+- [FLOAT](#rtvref.types.FLOAT)
 
 
 * * *
@@ -957,9 +971,11 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 <a name="rtvref.types.INT"></a>
 
 #### types.INT : <code>string</code>
-Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) integer,
- but is not necessarily _safe_. It must also be a number
- [primitive](#rtvref.types.primitives).
+Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) number,
+ an integer, and a number [primitive](#rtvref.types.primitives).
+
+An integer is not guaranteed to be a
+ [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger).
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
@@ -967,9 +983,35 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 **See**
 
 - [qualifiers](#rtvref.qualifiers)
+- [NUMBER](#rtvref.types.NUMBER)
 - [FINITE](#rtvref.types.FINITE)
+- [rtvref.types.SAFE_INT](rtvref.types.SAFE_INT)
 - [FLOAT](#rtvref.types.FLOAT)
-- [Number.isSafeInteger()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger)
+
+
+* * *
+
+<a name="rtvref.types.INT"></a>
+
+#### types.INT : <code>string</code>
+Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) number, a
+ [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger),
+ and a number [primitive](#rtvref.types.primitives).
+
+An integer is safe if it's an IEEE-754 double precision number which isn't
+ the result of a rounded unsafe integer. For example, `2^53 - 1` is safe,
+ but `2^53` is not because `2^53 + 1` would be rounded to `2^53`.
+
+Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
+
+**Kind**: static constant of [<code>types</code>](#rtvref.types)  
+**See**
+
+- [qualifiers](#rtvref.qualifiers)
+- [NUMBER](#rtvref.types.NUMBER)
+- [FINITE](#rtvref.types.FINITE)
+- [INT](#rtvref.types.INT)
+- [FLOAT](#rtvref.types.FLOAT)
 
 
 * * *
@@ -978,8 +1020,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 #### types.FLOAT : <code>string</code>
 Float rules per qualifiers: Must be a [finite](#rtvref.types.FINITE)
- floating point number. It must also be a number
- [primitive](#rtvref.types.primitives).
+ floating point number, and a number [primitive](#rtvref.types.primitives).
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
@@ -987,7 +1028,10 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 **See**
 
 - [qualifiers](#rtvref.qualifiers)
+- [NUMBER](#rtvref.types.NUMBER)
+- [FINITE](#rtvref.types.FINITE)
 - [INT](#rtvref.types.INT)
+- [rtvref.types.SAFE_INT](rtvref.types.SAFE_INT)
 
 
 * * *
