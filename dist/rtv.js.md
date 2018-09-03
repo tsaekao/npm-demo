@@ -1077,7 +1077,8 @@ Date rules per qualifiers: Must be a `Date` instance.
 <a name="rtvref.types.ERROR"></a>
 
 #### types.ERROR : <code>string</code>
-Error rules per qualifiers: Must be an `Error` instance.
+Error rules per qualifiers: Must be an `Error` instance, which includes `TypeError`,
+ `RangeError`, `ReferenceError`, etc.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -1204,10 +1205,11 @@ An _any_ object is anything that is __not__ a [primitive](#rtvref.types), which
  [ARRAY](#rtvref.types.ARRAY) type. To test for a function, use the
  [FUNCTION](#rtvref.types.FUNCTION) type.
 
-The following values are considered any objects:
+The following values __are considered__ any objects:
 
 - `{}`
 - `new Object()`
+- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
 - `new Number(1)`
@@ -1215,9 +1217,11 @@ The following values are considered any objects:
 - `new Array()` (also see [ARRAY](#rtvref.types.ARRAY))
 - `/re/` (also see [REGEXP](#rtvref.types.REGEXP))
 - `new RegExp('re')` (also see [REGEXP](#rtvref.types.REGEXP))
+- `new Date()` (also see [DATE](#rtvref.types.DATE))
+- `new Error()` (also see [ERROR](#rtvref.types.ERROR))
+- `new Promise()` (also see [PROMISE](#rtvref.types.PROMISE))
 - `function(){}` (also see [FUNCTION](#rtvref.types.FUNCTION))
 - `arguments` (function arguments)
-- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new Map()` (also see [MAP](#rtvref.types.MAP))
 - `new WeakMap()` (also see [WEAK_MAP](#rtvref.types.WEAK_MAP))
 - `new Set()` (also see [SET](#rtvref.types.SET))
@@ -1253,7 +1257,8 @@ Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
 An object is one that extends from `JavaScript.Object` (i.e. an _instance_
  of _something_ that extends from Object) and is not a
  [function](#rtvref.types.FUNCTION), [array](#rtvref.types.ARRAY),
- [regular expression](#rtvref.types.REGEXP), function arguments object,
+ [regular expression](#rtvref.types.REGEXP), [DATE](#rtvref.types.DATE),
+ function arguments object,
  [map](#rtvref.types.MAP), [weak map](#rtvref.types.WEAK_MAP),
  [set](#rtvref.types.SET), [weak set](#rtvref.types.WEAK_SET), nor a
  [primitive](#rtvref.types).
@@ -1267,17 +1272,20 @@ The following values are considered objects:
 
 - `{}`
 - `new Object()`
-- `new String('')`
-- `new Boolean(true)`
-- `new Number(1)`
-- `new function() {}` (class instance)
+- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 
 The following values __are not__ considered objects:
 
+- `new String('')`
+- `new Boolean(true)`
+- `new Number(1)`
 - `[]` (also see [ARRAY](#rtvref.types.ARRAY))
 - `new Array()` (also see [ARRAY](#rtvref.types.ARRAY))
 - `/re/` (also see [REGEXP](#rtvref.types.REGEXP))
 - `new RegExp('re')` (also see [REGEXP](#rtvref.types.REGEXP))
+- `new Date()` (also see [DATE](#rtvref.types.DATE))
+- `new Error()` (also see [ERROR](#rtvref.types.ERROR))
+- `new Promise()` (also see [PROMISE](#rtvref.types.PROMISE))
 - `function(){}` (also see [FUNCTION](#rtvref.types.FUNCTION))
 - `arguments` (function arguments)
 - `new Map()` (also see [MAP](#rtvref.types.MAP))
@@ -1318,14 +1326,17 @@ The following values are considered plain objects:
 
 The following values __are not__ considered plain objects:
 
-- `[]` (also see [ARRAY](#rtvref.types.ARRAY))
-- `new Array()` (also see [ARRAY](#rtvref.types.ARRAY))
+- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
 - `new Number(1)`
-- `new function() {}` (class instance)
+- `[]` (also see [ARRAY](#rtvref.types.ARRAY))
+- `new Array()` (also see [ARRAY](#rtvref.types.ARRAY))
 - `/re/` (also see [REGEXP](#rtvref.types.REGEXP))
 - `new RegExp('re')` (also see [REGEXP](#rtvref.types.REGEXP))
+- `new Date()` (also see [DATE](#rtvref.types.DATE))
+- `new Error()` (also see [ERROR](#rtvref.types.ERROR))
+- `new Promise()` (also see [PROMISE](#rtvref.types.PROMISE))
 - `function(){}` (also see [FUNCTION](#rtvref.types.FUNCTION))
 - `arguments` (function arguments)
 - `new Map()` (also see [MAP](#rtvref.types.MAP))
@@ -1377,6 +1388,9 @@ The following values __are not__ considered class objects:
 - `new Array()` (also see [ARRAY](#rtvref.types.ARRAY))
 - `/re/` (also see [REGEXP](#rtvref.types.REGEXP))
 - `new RegExp('re')` (also see [REGEXP](#rtvref.types.REGEXP))
+- `new Date()` (also see [DATE](#rtvref.types.DATE))
+- `new Error()` (also see [ERROR](#rtvref.types.ERROR))
+- `new Promise()` (also see [PROMISE](#rtvref.types.PROMISE))
 - `function(){}` (also see [FUNCTION](#rtvref.types.FUNCTION))
 - `arguments` (function arguments)
 - `new Map()` (also see [MAP](#rtvref.types.MAP))

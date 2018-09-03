@@ -18,6 +18,8 @@ import * as isAny from '../src/lib/validation/isAny';
 import * as isAnyObject from '../src/lib/validation/isAnyObject';
 import * as isArray from '../src/lib/validation/isArray';
 import * as isBoolean from '../src/lib/validation/isBoolean';
+import * as isDate from '../src/lib/validation/isDate';
+import * as isError from '../src/lib/validation/isError';
 import * as isFinite from '../src/lib/validation/isFinite';
 import * as isFunction from '../src/lib/validation/isFunction';
 import * as isInt from '../src/lib/validation/isInt';
@@ -25,6 +27,7 @@ import * as isMap from '../src/lib/validation/isMap';
 import * as isNull from '../src/lib/validation/isNull';
 import * as isNumber from '../src/lib/validation/isNumber';
 import * as isObject from '../src/lib/validation/isObject';
+import * as isPromise from '../src/lib/validation/isPromise';
 import * as isRegExp from '../src/lib/validation/isRegExp';
 import * as isSafeInt from '../src/lib/validation/isSafeInt';
 import * as isSet from '../src/lib/validation/isSet';
@@ -38,6 +41,8 @@ import * as valAny from '../src/lib/validator/valAny';
 import * as valAnyObject from '../src/lib/validator/valAnyObject';
 import * as valArray from '../src/lib/validator/valArray';
 import * as valBoolean from '../src/lib/validator/valBoolean';
+import * as valDate from '../src/lib/validator/valDate';
+import * as valError from '../src/lib/validator/valError';
 import * as valFinite from '../src/lib/validator/valFinite';
 import * as valFunction from '../src/lib/validator/valFunction';
 import * as valInt from '../src/lib/validator/valInt';
@@ -45,6 +50,7 @@ import * as valMap from '../src/lib/validator/valMap';
 import * as valNull from '../src/lib/validator/valNull';
 import * as valNumber from '../src/lib/validator/valNumber';
 import * as valObject from '../src/lib/validator/valObject';
+import * as valPromise from '../src/lib/validator/valPromise';
 import * as valRegExp from '../src/lib/validator/valRegExp';
 import * as valSafeInt from '../src/lib/validator/valSafeInt';
 import * as valSet from '../src/lib/validator/valSet';
@@ -80,6 +86,8 @@ global.rtvi = {
       isAnyObject,
       isArray,
       isBoolean,
+      isDate,
+      isError,
       isFinite,
       isFunction,
       isInt,
@@ -87,6 +95,7 @@ global.rtvi = {
       isNull,
       isNumber,
       isObject,
+      isPromise,
       isRegExp,
       isSafeInt,
       isSet,
@@ -102,6 +111,8 @@ global.rtvi = {
       valAnyObject,
       valArray,
       valBoolean,
+      valDate,
+      valError,
       valFinite,
       valFunction,
       valInt,
@@ -109,6 +120,7 @@ global.rtvi = {
       valNull,
       valNumber,
       valObject,
+      valPromise,
       valRegExp,
       valSafeInt,
       valSet,

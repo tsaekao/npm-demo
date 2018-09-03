@@ -13,6 +13,8 @@ import * as valAny from './lib/validator/valAny';
 import * as valAnyObject from './lib/validator/valAnyObject';
 import * as valArray from './lib/validator/valArray';
 import * as valBoolean from './lib/validator/valBoolean';
+import * as valDate from './lib/validator/valDate';
+import * as valError from './lib/validator/valError';
 import * as valFinite from './lib/validator/valFinite';
 import * as valFunction from './lib/validator/valFunction';
 import * as valInt from './lib/validator/valInt';
@@ -20,6 +22,7 @@ import * as valMap from './lib/validator/valMap';
 import * as valNull from './lib/validator/valNull';
 import * as valNumber from './lib/validator/valNumber';
 import * as valObject from './lib/validator/valObject';
+import * as valPromise from './lib/validator/valPromise';
 import * as valRegExp from './lib/validator/valRegExp';
 import * as valSafeInt from './lib/validator/valSafeInt';
 import * as valSet from './lib/validator/valSet';
@@ -277,6 +280,8 @@ export default rtv;
     valAnyObject,
     valArray,
     valBoolean,
+    valDate,
+    valError,
     valFinite,
     valFunction,
     valInt,
@@ -284,6 +289,7 @@ export default rtv;
     valMap,
     valNumber,
     valObject,
+    valPromise,
     valRegExp,
     valSafeInt,
     valSet,

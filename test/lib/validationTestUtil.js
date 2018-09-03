@@ -110,9 +110,14 @@ export const getValidValues = function(type) {
       return [new WeakSet(), new WeakSet(values)];
     }()),
     [types.REGEXP]: [/regexp/, new RegExp('regexp')],
+    [types.DATE]: [new Date()],
+    [types.ERROR]: [new Error(), new TypeError(), new URIError(), new ReferenceError(), new RangeError(),
+      new EvalError(), new SyntaxError()],
+    [types.PROMISE]: [new Promise(function() {})],
     [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')],
-    [types.OBJECT]: [new String('new-string'), new Boolean(true), new Boolean(false), // eslint-disable-line no-new-wrappers
-      new Number(1), new Object(), {}, new (function() {})()] // eslint-disable-line no-new-wrappers
+    [types.ANY_OBJECT]: [new String('new-string'), new Boolean(true), new Boolean(false), // eslint-disable-line no-new-wrappers
+      new Number(1)], // eslint-disable-line no-new-wrappers
+    [types.OBJECT]: [new Object(), {}, new (function() {})()] // eslint-disable-line no-new-wrappers
   };
 
   return type ? validValues[type] : validValues;
@@ -190,8 +195,9 @@ export const testValues = function(type, valFn, values, ...rest) {
 
 /**
  * Test other values against a type's validation function. _None_ of them should pass.
- * @param {string} type The type being tested. Must be a valid type and be in
- *  `validValues`.
+ * @param {(string|Array.<string>)} type The type being tested. Must be a valid
+ *  type and be in `validValues`. Can also be a list of types to exclude multiple
+ *  types from the test.
  * @param {function} valFn The type's validation function.
  * @param {boolean} [treatAsValid=false] If truthy, the tests are reversed (treats
  *  all other values as valid instead of invalid).
@@ -200,14 +206,19 @@ export const testValues = function(type, valFn, values, ...rest) {
  *  is true if `treatAsValid` is truthy.
  */
 export const testOtherValues = function(type, valFn, treatAsValid) {
-  types.verify(type);
+  const excludedTypes = _.isArray(type) ? type : [type];
   const validValues = getValidValues();
-  if (type !== types.ANY && type !== types.NULL &&
-      (!validValues.hasOwnProperty(type) || validValues[type].length === 0)) {
-    throw new Error(`Missing valid test values for type="${type}"`);
-  }
 
-  delete validValues[type]; // keep other (invalid) values
+  excludedTypes.forEach(function(excludedType) {
+    types.verify(excludedType);
+
+    if (excludedType !== types.ANY && excludedType !== types.NULL &&
+        (!validValues.hasOwnProperty(excludedType) || validValues[excludedType].length === 0)) {
+      throw new Error(`Missing valid test values for excludedType="${excludedType}"`);
+    }
+
+    delete validValues[excludedType]; // keep other (invalid) values
+  });
 
   const violations = [];
   _.forEach(validValues, function(otherValues, otherType) {

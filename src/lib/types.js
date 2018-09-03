@@ -623,6 +623,8 @@ const defs = {
    */
   REGEXP: def('regexp'),
 
+  // TODO[future] Consider DATE args for ranges, date values to be ISO8601 UTC strings so they are
+  //  easily serializable.
   /**
    * Date rules per qualifiers: Must be a `Date` instance.
    * @name rtvref.types.DATE
@@ -633,7 +635,8 @@ const defs = {
   DATE: def('date'),
 
   /**
-   * Error rules per qualifiers: Must be an `Error` instance.
+   * Error rules per qualifiers: Must be an `Error` instance, which includes `TypeError`,
+   *  `RangeError`, `ReferenceError`, etc.
    * @name rtvref.types.ERROR
    * @const {string}
    * @see {@link rtvref.qualifiers}
@@ -766,10 +769,11 @@ const defs = {
    *  {@link rtvref.types.ARRAY ARRAY} type. To test for a function, use the
    *  {@link rtvref.types.FUNCTION FUNCTION} type.
    *
-   * The following values are considered any objects:
+   * The following values __are considered__ any objects:
    *
    * - `{}`
    * - `new Object()`
+   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
    * - `new Number(1)`
@@ -777,9 +781,11 @@ const defs = {
    * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
    * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
    * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+   * - `new Date()` (also see {@link rtvref.types.DATE DATE})
+   * - `new Error()` (also see {@link rtvref.types.ERROR ERROR})
+   * - `new Promise()` (also see {@link rtvref.types.PROMISE PROMISE})
    * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
    * - `arguments` (function arguments)
-   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new Map()` (also see {@link rtvref.types.MAP MAP})
    * - `new WeakMap()` (also see {@link rtvref.types.WEAK_MAP WEAK_MAP})
    * - `new Set()` (also see {@link rtvref.types.SET SET})
@@ -811,7 +817,8 @@ const defs = {
    * An object is one that extends from `JavaScript.Object` (i.e. an _instance_
    *  of _something_ that extends from Object) and is not a
    *  {@link rtvref.types.FUNCTION function}, {@link rtvref.types.ARRAY array},
-   *  {@link rtvref.types.REGEXP regular expression}, function arguments object,
+   *  {@link rtvref.types.REGEXP regular expression}, {@link rtvref.types.DATE DATE},
+   *  function arguments object,
    *  {@link rtvref.types.MAP map}, {@link rtvref.types.WEAK_MAP weak map},
    *  {@link rtvref.types.SET set}, {@link rtvref.types.WEAK_SET weak set}, nor a
    *  {@link rtvref.types primitive}.
@@ -825,17 +832,20 @@ const defs = {
    *
    * - `{}`
    * - `new Object()`
-   * - `new String('')`
-   * - `new Boolean(true)`
-   * - `new Number(1)`
-   * - `new function() {}` (class instance)
+   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    *
    * The following values __are not__ considered objects:
    *
+   * - `new String('')`
+   * - `new Boolean(true)`
+   * - `new Number(1)`
    * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
    * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
    * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
    * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+   * - `new Date()` (also see {@link rtvref.types.DATE DATE})
+   * - `new Error()` (also see {@link rtvref.types.ERROR ERROR})
+   * - `new Promise()` (also see {@link rtvref.types.PROMISE PROMISE})
    * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
    * - `arguments` (function arguments)
    * - `new Map()` (also see {@link rtvref.types.MAP MAP})
@@ -872,14 +882,17 @@ const defs = {
    *
    * The following values __are not__ considered plain objects:
    *
-   * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
-   * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
+   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
    * - `new Number(1)`
-   * - `new function() {}` (class instance)
+   * - `[]` (also see {@link rtvref.types.ARRAY ARRAY})
+   * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
    * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
    * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+   * - `new Date()` (also see {@link rtvref.types.DATE DATE})
+   * - `new Error()` (also see {@link rtvref.types.ERROR ERROR})
+   * - `new Promise()` (also see {@link rtvref.types.PROMISE PROMISE})
    * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
    * - `arguments` (function arguments)
    * - `new Map()` (also see {@link rtvref.types.MAP MAP})
@@ -941,6 +954,9 @@ const defs = {
    * - `new Array()` (also see {@link rtvref.types.ARRAY ARRAY})
    * - `/re/` (also see {@link rtvref.types.REGEXP REGEXP})
    * - `new RegExp('re')` (also see {@link rtvref.types.REGEXP REGEXP})
+   * - `new Date()` (also see {@link rtvref.types.DATE DATE})
+   * - `new Error()` (also see {@link rtvref.types.ERROR ERROR})
+   * - `new Promise()` (also see {@link rtvref.types.PROMISE PROMISE})
    * - `function(){}` (also see {@link rtvref.types.FUNCTION FUNCTION})
    * - `arguments` (function arguments)
    * - `new Map()` (also see {@link rtvref.types.MAP MAP})

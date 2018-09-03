@@ -8,6 +8,9 @@ import isWeakMap from './isWeakMap';
 import isSet from './isSet';
 import isWeakSet from './isWeakSet';
 import isRegExp from './isRegExp';
+import isDate from './isDate';
+import isError from './isError';
+import isPromise from './isPromise';
 
 import types from '../types';
 
@@ -30,8 +33,14 @@ export const type = types.OBJECT;
  */
 export default function isObject(v) { // no qualifier rules, no args
   return _isObjectLike(v) && // excludes primitives and functions
+      !(v instanceof String) && // excludes `new String('foo')`
+      !(v instanceof Number) && // excludes `new Number(1)`
+      !(v instanceof Boolean) && // excludes `new Boolean(true)`
       !isArray(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
-      !isMap(v) && !isWeakMap(v) && // excludes weak/maps
-      !isSet(v) && !isWeakSet(v) && // excludes weak/sets
-      !isRegExp(v); // excludes regex
+      !isMap(v) && !isWeakMap(v) &&
+      !isSet(v) && !isWeakSet(v) &&
+      !isRegExp(v) &&
+      !isDate(v) &&
+      !isError(v) &&
+      !isPromise(v);
 }
