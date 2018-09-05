@@ -1,4 +1,4 @@
-////// isError validator
+////// valError validator
 
 import {type, default as isError} from '../validation/isError';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ERROR ERROR} type.
-  * @function rtvref.validator.valError.default
+ * @function rtvref.validator.valError.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

@@ -1,8 +1,8 @@
-////// valAnyObject validator
+////// valPlainObject validator
 
 import _forEach from 'lodash/forEach';
 
-import {type, default as isAnyObject} from '../validation/isAnyObject';
+import {type, default as isPlainObject} from '../validation/isPlainObject';
 
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
@@ -16,20 +16,20 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valAnyObject._impl
+ * @name rtvref.validator.valPlainObject._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
- * Type: {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
- * @const {string} rtvref.validator.valAnyObject.type
+ * Type: {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
+ * @const {string} rtvref.validator.valPlainObject.type
  */
 export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valAnyObject.config
+  * @function rtvref.validator.valPlainObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
@@ -38,20 +38,20 @@ export const config = function(settings) {
 
 /**
  * {@link rtvref.validator.type_validator Validator} for the
- *  {@link rtvref.types.ANY_OBJECT ANY_OBJECT} type.
- * @function rtvref.validator.valAnyObject.default
+ *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} type.
+ * @function rtvref.validator.valPlainObject.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valAnyObject(v, q = REQUIRED, args) {
+export default function valPlainObject(v, q = REQUIRED, args) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  if (!isAnyObject(v)) {
+  if (!isPlainObject(v)) {
     return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
   }
 

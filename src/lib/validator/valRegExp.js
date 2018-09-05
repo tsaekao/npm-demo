@@ -1,4 +1,4 @@
-////// isRegExp validator
+////// valRegExp validator
 
 import {type, default as isRegExp} from '../validation/isRegExp';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.REGEXP REGEXP} type.
-  * @function rtvref.validator.valRegExp.default
+ * @function rtvref.validator.valRegExp.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

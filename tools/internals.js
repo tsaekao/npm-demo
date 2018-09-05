@@ -18,15 +18,18 @@ import * as isAny from '../src/lib/validation/isAny';
 import * as isAnyObject from '../src/lib/validation/isAnyObject';
 import * as isArray from '../src/lib/validation/isArray';
 import * as isBoolean from '../src/lib/validation/isBoolean';
+import * as isClassObject from '../src/lib/validation/isClassObject';
 import * as isDate from '../src/lib/validation/isDate';
 import * as isError from '../src/lib/validation/isError';
 import * as isFinite from '../src/lib/validation/isFinite';
 import * as isFunction from '../src/lib/validation/isFunction';
+import * as isHashMap from '../src/lib/validation/isHashMap';
 import * as isInt from '../src/lib/validation/isInt';
 import * as isMap from '../src/lib/validation/isMap';
 import * as isNull from '../src/lib/validation/isNull';
 import * as isNumber from '../src/lib/validation/isNumber';
 import * as isObject from '../src/lib/validation/isObject';
+import * as isPlainObject from '../src/lib/validation/isPlainObject';
 import * as isPromise from '../src/lib/validation/isPromise';
 import * as isRegExp from '../src/lib/validation/isRegExp';
 import * as isSafeInt from '../src/lib/validation/isSafeInt';
@@ -41,15 +44,18 @@ import * as valAny from '../src/lib/validator/valAny';
 import * as valAnyObject from '../src/lib/validator/valAnyObject';
 import * as valArray from '../src/lib/validator/valArray';
 import * as valBoolean from '../src/lib/validator/valBoolean';
+import * as valClassObject from '../src/lib/validator/valClassObject';
 import * as valDate from '../src/lib/validator/valDate';
 import * as valError from '../src/lib/validator/valError';
 import * as valFinite from '../src/lib/validator/valFinite';
 import * as valFunction from '../src/lib/validator/valFunction';
+import * as valHashMap from '../src/lib/validator/valHashMap';
 import * as valInt from '../src/lib/validator/valInt';
 import * as valMap from '../src/lib/validator/valMap';
 import * as valNull from '../src/lib/validator/valNull';
 import * as valNumber from '../src/lib/validator/valNumber';
 import * as valObject from '../src/lib/validator/valObject';
+import * as valPlainObject from '../src/lib/validator/valPlainObject';
 import * as valPromise from '../src/lib/validator/valPromise';
 import * as valRegExp from '../src/lib/validator/valRegExp';
 import * as valSafeInt from '../src/lib/validator/valSafeInt';
@@ -86,15 +92,18 @@ global.rtvi = {
       isAnyObject,
       isArray,
       isBoolean,
+      isClassObject,
       isDate,
       isError,
       isFinite,
       isFunction,
+      isHashMap,
       isInt,
       isMap,
       isNull,
       isNumber,
       isObject,
+      isPlainObject,
       isPromise,
       isRegExp,
       isSafeInt,
@@ -111,15 +120,18 @@ global.rtvi = {
       valAnyObject,
       valArray,
       valBoolean,
+      valClassObject,
       valDate,
       valError,
       valFinite,
       valFunction,
+      valHashMap,
       valInt,
       valMap,
       valNull,
       valNumber,
       valObject,
+      valPlainObject,
       valPromise,
       valRegExp,
       valSafeInt,

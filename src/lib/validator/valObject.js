@@ -1,4 +1,4 @@
-////// isObject validator
+////// valObject validator
 
 import _forEach from 'lodash/forEach';
 
@@ -39,11 +39,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.OBJECT OBJECT} type.
- *
- * Determines if a value is an object that extends from `JavaScript.Object` and
- *  is not a function, array, regex, map, weak map, set, weak set, or primitive.
- *
-  * @function rtvref.validator.valObject.default
+ * @function rtvref.validator.valObject.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
@@ -61,7 +57,7 @@ export default function valObject(v, q = REQUIRED, args) {
 
   // args is the optional shape: ignore if it isn't a shape, like other validators
   //  ignore invalid args properties
-  const shape = isShape(args) ? args : undefined;
+  const shape = (args && isShape(args)) ? args : undefined;
   let err; // @type {(RtvError|undefined)}
 
   // only consider enumerable, own-properties of the shape

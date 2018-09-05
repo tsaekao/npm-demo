@@ -1209,7 +1209,8 @@ The following values __are considered__ any objects:
 
 - `{}`
 - `new Object()`
-- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
+- `new (function() {}) | new (class {})` (class instance) (also see
+  [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
 - `new Number(1)`
@@ -1272,7 +1273,8 @@ The following values are considered objects:
 
 - `{}`
 - `new Object()`
-- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
+- `new (function() {}) | new (class {})` (class instance) (also see
+  [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 
 The following values __are not__ considered objects:
 
@@ -1326,7 +1328,8 @@ The following values are considered plain objects:
 
 The following values __are not__ considered plain objects:
 
-- `new function() {}` (class instance) (also see [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
+- `new (function() {}) | new (class {})` (class instance) (also see
+  [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
 - `new Number(1)`
@@ -1375,7 +1378,8 @@ A _class_ object is one that is created by invoking the `new` operator on a
 
 The following values are considered class objects:
 
-- `new function() {}`
+- `new (function() {}) | new (class {})` (tip: use the `ctr`
+  [argument](#rtvref.types.CLASS_OBJECT_args) to test for a specific class)
 
 The following values __are not__ considered class objects:
 
@@ -1423,8 +1427,8 @@ Arguments (optional): [CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args)
 #### types.HASH_MAP : <code>string</code>
 A simple [OBJECT](#rtvref.types.OBJECT) that is treated as a hash map
  with an expected set of keys (forcibly strings due to the nature of the
- native JavaScript `Object` type) and values. Keys can be described
- using a regular expression, and values can be described using a
+ native JavaScript `Object` type) and values. Keys are __own-properties only__,
+ and can be described using a regular expression. Values can be described using a
  [typeset](#rtvref.types.typeset). Empty maps are permitted.
 
 Map object rules per qualifiers: Same as [OBJECT](#rtvref.types.OBJECT) rules.
@@ -1661,19 +1665,17 @@ The [WEAK_MAP](#rtvref.types.WEAK_MAP) and [WEAK_SET](#rtvref.types.WEAK_SET)
 
 - [HASH_MAP](#rtvref.types.HASH_MAP)
 - [MAP](#rtvref.types.MAP)
-- [WEAK_MAP](#rtvref.types.WEAK_MAP)
 - [SET](#rtvref.types.SET)
-- [WEAK_SET](#rtvref.types.WEAK_SET)
 
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
 | [length] | <code>number</code> | The exact number of elements required in  the collection. A negative value allows for any number of entries. Zero  requires an empty collection. Ignored if not a  [FINITE](#rtvref.types.FINITE) number.  Applies to: All collection types. |
-| [keys] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each key  in the collection.  If the type is [HASH_MAP](#rtvref.types.HASH_MAP), this argument is   hard set to the [STRING](#rtvref.types.STRING) type due to the nature of   its JavaScript `Object`-based implementation and does not need to be specified.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP) (with restrictions),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
-| [keyExp] | <code>string</code> | A string-based regular expression describing the  names of keys found in the collection. By default, there are no restrictions  on key names. Ignored if the key type is not [STRING](#rtvref.types.STRING),  as specified in `keys`.  For example, to require numerical keys, the following expression could be   used: `"^\\d+$"`.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
-| [keyFlagSpec] | <code>string</code> | A string specifying any flags to use with  the regular expression specified in `keyExp`. Ignored if _falsy_ or if  `keyExp` is not specified. See the  [RegExp#flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)  parameter for more information.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP),   [MAP](#rtvref.types.MAP), [WEAK_MAP](#rtvref.types.MAP). |
-| [values] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each value in  the collection. Defaults to the [ANY](#rtvref.types.ANY) type which allows  _anything_. All values must match this typeset (but the collection is not  required to have any elements to be considered valid, unless `length` is  specified).  For example, to require arrays of non-empty string values as values in the   collection, the following typeset could be used: `[[types.STRING]]`.  Applies to: All collection types. |
+| [keys] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each key  in the collection.  If the type is [HASH_MAP](#rtvref.types.HASH_MAP), this argument is ignored   due to the nature of its JavaScript `Object`-based implementation which   requires that all keys be non-empty [strings](#rtvref.types.STRING).  Applies to: [MAP](#rtvref.types.MAP). |
+| [keyExp] | <code>string</code> | A string-based regular expression describing the  names of keys found in the collection. By default, there are no restrictions  on key names. Ignored if the key type is not [STRING](#rtvref.types.STRING),  as specified in `keys` (when `keys` is applicable to the collection type).  For example, to require numerical keys, the following expression could be   used: `"^\\d+$"`.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP), [MAP](#rtvref.types.MAP). |
+| [keyFlagSpec] | <code>string</code> | A string specifying any flags to use with  the regular expression specified in `keyExp`. Ignored if _falsy_ or if  `keyExp` is not specified. See the  [RegExp#flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)  parameter for more information.  Applies to: [HASH_MAP](#rtvref.types.HASH_MAP), [MAP](#rtvref.types.MAP). |
+| [values] | [<code>typeset</code>](#rtvref.types.typeset) | A typeset describing each value in  the collection. If specified, all values must match this typeset (but the  collection is not required to have any elements to be considered valid, unless  `length` is specified). If not specified, no validation is performed on values.  For example, to require arrays of non-empty string values as values in the   collection, the following typeset could be used: `[[types.STRING]]`.  Applies to: All collection types. |
 
 
 * * *
@@ -1967,7 +1969,7 @@ Applicable to all numeric types.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctr === true`. Note that this  property is not serializable to JSON. If not specified, then the object  must be an [OBJECT](#rtvref.types.OBJECT) that is not a  [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) among the other values that  are not considered class objects. |
+| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctr === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION). |
 | [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. Ignored if not a valid shape descriptor. |
 
 

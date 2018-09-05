@@ -1,4 +1,4 @@
-////// isNumber validator
+////// valNumber validator
 
 import {default as _isNaN} from 'lodash/isNaN';
 
@@ -43,7 +43,7 @@ export const config = function(settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
-  * @function rtvref.validator.valNumber.default
+ * @function rtvref.validator.valNumber.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

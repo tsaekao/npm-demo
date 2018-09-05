@@ -1,4 +1,4 @@
-////// isAny validator
+////// valAny validator
 
 import {type, default as isAny} from '../validation/isAny';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ANY ANY} type.
-  * @function rtvref.validator.valAny.default
+ * @function rtvref.validator.valAny.default
  * @param {*} v Value to validate.
   * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

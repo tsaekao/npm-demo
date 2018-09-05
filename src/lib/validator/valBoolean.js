@@ -1,4 +1,4 @@
-////// isBoolean validator
+////// valBoolean validator
 
 import {type, default as isBoolean} from '../validation/isBoolean';
 
@@ -41,7 +41,7 @@ export const config = function(settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Boolean(true)`, which is an object that is a boolean.
  *
-  * @function rtvref.validator.valBoolean.default
+ * @function rtvref.validator.valBoolean.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

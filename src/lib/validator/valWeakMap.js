@@ -1,4 +1,4 @@
-////// isWeakMap validator
+////// valWeakMap validator
 
 import {type, default as isWeakMap} from '../validation/isWeakMap';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
-  * @function rtvref.validator.valWeakMap.default
+ * @function rtvref.validator.valWeakMap.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

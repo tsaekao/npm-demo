@@ -5,12 +5,12 @@ import _ from 'lodash';
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
-import * as val from '../../../src/lib/validator/valObject';
+import * as val from '../../../src/lib/validator/valPlainObject';
 
-describe('module: lib/validator/valObject', function() {
+describe('module: lib/validator/valPlainObject', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
-      expect(val.type).to.equal(types.OBJECT);
+      expect(val.type).to.equal(types.PLAIN_OBJECT);
     });
 
     it('succeeds with an RtvSuccess', function() {
@@ -45,7 +45,8 @@ describe('module: lib/validator/valObject', function() {
         new String('new-string'),
         new Boolean(true),
         new Boolean(false),
-        new Number(1)
+        new Number(1),
+        new (class {})
       ]);
 
       // nothing should pass

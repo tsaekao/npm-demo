@@ -1,4 +1,4 @@
-////// isNull validator
+////// valNull validator
 
 import {type, default as isNull} from '../validation/isNull';
 

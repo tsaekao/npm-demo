@@ -1,4 +1,4 @@
-////// isSymbol validator
+////// valSymbol validator
 
 import {type, default as isSymbol} from '../validation/isSymbol';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SYMBOL SYMBOL} type.
-  * @function rtvref.validator.valSymbol.default
+ * @function rtvref.validator.valSymbol.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

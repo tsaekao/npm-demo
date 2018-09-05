@@ -9,6 +9,8 @@ import * as util from '../../src/lib/util';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
 
+/* eslint-disable no-new-wrappers */
+
 /**
  * Get a fresh copy of the valid values type map, or just one valid value type array.
  * @param {string} [type] The valid value type array to get.
@@ -115,9 +117,35 @@ export const getValidValues = function(type) {
       new EvalError(), new SyntaxError()],
     [types.PROMISE]: [new Promise(function() {})],
     [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')],
-    [types.ANY_OBJECT]: [new String('new-string'), new Boolean(true), new Boolean(false), // eslint-disable-line no-new-wrappers
-      new Number(1)], // eslint-disable-line no-new-wrappers
-    [types.OBJECT]: [new Object(), {}, new (function() {})()] // eslint-disable-line no-new-wrappers
+
+    // while the JS type is objects, it's not an object type in this library
+    [types.HASH_MAP]: [new Object(), {}, new (function() {})()],
+
+    //
+    // object types
+    //
+
+    [types.ANY_OBJECT]: [
+      new String('new-string'),
+      new Boolean(true),
+      new Boolean(false),
+      new Number(1),
+      new Object(),
+      {},
+      new (class {})
+    ],
+    [types.OBJECT]: [
+      new Object(),
+      {},
+      new (class {})
+    ],
+    [types.PLAIN_OBJECT]: [
+      new Object(),
+      {}
+    ],
+    [types.CLASS_OBJECT]: [
+      new (class {})
+    ]
   };
 
   return type ? validValues[type] : validValues;

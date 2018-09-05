@@ -1,12 +1,13 @@
-////// valMap validator
+////// valHashMap validator
 
-import {type, default as isMap} from '../validation/isMap';
+import _forEach from 'lodash/forEach';
+
+import {type, default as isHashMap} from '../validation/isHashMap';
 
 import isFinite from '../validation/isFinite';
 import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
-import types from '../types';
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
@@ -19,99 +20,73 @@ let impl; // @type {rtvref.impl}
  * [Internal] __FOR UNIT TESTING ONLY:__ The {@link rtvref.impl} instance
  *  configured on this validator.
  * @private
- * @name rtvref.validator.valMap._impl
+ * @name rtvref.validator.valHashMap._impl
  * @type {rtvref.impl}
  */
 export {impl as _impl};
 
 /**
- * Type: {@link rtvref.types.MAP MAP}
- * @const {string} rtvref.validator.valMap.type
+ * Type: {@link rtvref.types.HASH_MAP HASH_MAP}
+ * @const {string} rtvref.validator.valHashMap.type
  */
 export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valMap.config
+  * @function rtvref.validator.valHashMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {
   impl = settings.impl;
 };
 
-//
-// Determines if a typeset represents a string, and only a string.
-// @param {rtvref.types.typeset} ts Typeset to check.
-// @return {boolean} `true` if so; `false` otherwise.
-//
-const isStringTypeset = function(ts) {
-  const fqts = impl.fullyQualify(ts);
-
-  // must be `[qualifier, STRING]`, otherwise no
-  return (fqts.length === 2 && fqts[1] === types.STRING);
-};
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
- *  {@link rtvref.types.MAP MAP} type.
- * @function rtvref.validator.valMap.default
+ *  {@link rtvref.types.HASH_MAP HASH_MAP} type.
+ * @function rtvref.validator.valHashMap.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valMap(v, q = REQUIRED, args) {
+export default function valHashMap(v, q = REQUIRED, args) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  let valid = isMap(v);
+  let valid = isHashMap(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) { // then check args
+    const keys = Object.keys(v);
+
     // start with the easiest/most efficient test: length
     if (valid && isFinite(args.length) && args.length >= 0) {
-      valid = (v.size === args.length);
+      valid = (keys.length === args.length);
     }
 
     // remaining args, if specified, require iterating potentially the entire map
     if (valid) {
-      // get the typeset for keys
-      const tsKeys = isTypeset(args.keys) ? args.keys : undefined;
-      // get the key expression only if the keys are expected to be strings
-      const tsKeysIsString = !!(tsKeys && isStringTypeset(tsKeys));
-      const keyExp = (tsKeysIsString && args.keyExp && isString(args.keyExp)) ?
-        args.keyExp : undefined;
+      // get the key expression
+      const keyExp = (args.keyExp && isString(args.keyExp)) ? args.keyExp : undefined;
       // get the key expression flags only if we have a key expression
       const keyFlagSpec = (keyExp && args.keyFlagSpec && isString(args.keyFlagSpec)) ?
         args.keyFlagSpec : undefined;
       // get the typeset for values
       const tsValues = isTypeset(args.values) ? args.values : undefined;
 
-      if (tsKeys || tsValues) {
+      if (keyExp || tsValues) {
         const reKeys = keyExp ? new RegExp(keyExp, keyFlagSpec) : undefined;
-        const it = v.entries(); // iterator
 
-        for (let elem of it) {
-          const [key, value] = elem;
+        _forEach(keys, function(key) {
+          const value = v[key];
 
-          if (tsKeys) {
-            result = impl.check(key, tsKeys); // check KEY against typeset
-            valid = result.valid;
-
-            if (!result.valid) {
-              // create a new error from the original, but with the KEY prepended to the path
+          if (reKeys) {
+            valid = reKeys.test(key); // check key against regex since it's a string
+            if (!valid) {
               result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`key=${print(key)}`].concat(result.path), result.cause);
-            }
-
-            if (valid && tsKeysIsString && reKeys) {
-              valid = reKeys.test(key); // check key against regex since it's a string
-              if (!valid) {
-                result = new RtvError(v, impl.toTypeset(type, q, args),
-                    [`key=${print(key)}`], impl.toTypeset(type, q, args, true));
-              }
+                  [`key=${print(key)}`], impl.toTypeset(type, q, args, true));
             }
           }
 
@@ -126,10 +101,8 @@ export default function valMap(v, q = REQUIRED, args) {
             }
           }
 
-          if (!valid) { // break on first invalid key or value
-            break;
-          }
-        }
+          return valid; // break on first invalid key or value
+        });
       }
     }
   }

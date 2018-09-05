@@ -1,4 +1,4 @@
-////// isSet validator
+////// valSet validator
 
 import {type, default as isSet} from '../validation/isSet';
 
@@ -40,7 +40,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SET SET} type.
-  * @function rtvref.validator.valSet.default
+ * @function rtvref.validator.valSet.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

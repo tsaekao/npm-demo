@@ -23,10 +23,6 @@ export const type = types.OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.OBJECT OBJECT} type.
- *
- * Determines if a value is an object that extends from `JavaScript.Object` and
- *  is not a function, array, regex, map, weak map, set, weak set, or primitive.
- *
  * @function rtvref.validation.isObject.default
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.

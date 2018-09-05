@@ -13,15 +13,18 @@ import * as valAny from './lib/validator/valAny';
 import * as valAnyObject from './lib/validator/valAnyObject';
 import * as valArray from './lib/validator/valArray';
 import * as valBoolean from './lib/validator/valBoolean';
+import * as valClassObject from './lib/validator/valClassObject';
 import * as valDate from './lib/validator/valDate';
 import * as valError from './lib/validator/valError';
 import * as valFinite from './lib/validator/valFinite';
 import * as valFunction from './lib/validator/valFunction';
+import * as valHashMap from './lib/validator/valHashMap';
 import * as valInt from './lib/validator/valInt';
 import * as valMap from './lib/validator/valMap';
 import * as valNull from './lib/validator/valNull';
 import * as valNumber from './lib/validator/valNumber';
 import * as valObject from './lib/validator/valObject';
+import * as valPlainObject from './lib/validator/valPlainObject';
 import * as valPromise from './lib/validator/valPromise';
 import * as valRegExp from './lib/validator/valRegExp';
 import * as valSafeInt from './lib/validator/valSafeInt';
@@ -280,15 +283,18 @@ export default rtv;
     valAnyObject,
     valArray,
     valBoolean,
+    valClassObject,
     valDate,
     valError,
     valFinite,
     valFunction,
+    valHashMap,
     valInt,
     valNull,
     valMap,
     valNumber,
     valObject,
+    valPlainObject,
     valPromise,
     valRegExp,
     valSafeInt,

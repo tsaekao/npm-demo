@@ -1,4 +1,4 @@
-////// isPromise validator
+////// valPromise validator
 
 import {type, default as isPromise} from '../validation/isPromise';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.PROMISE PROMISE} type.
-  * @function rtvref.validator.valPromise.default
+ * @function rtvref.validator.valPromise.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

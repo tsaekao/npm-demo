@@ -1,4 +1,4 @@
-////// isArray validator
+////// valArray validator
 
 import {default as _forEach} from 'lodash/forEach';
 
@@ -39,7 +39,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ARRAY ARRAY} type.
-  * @function rtvref.validator.valArray.default
+ * @function rtvref.validator.valArray.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

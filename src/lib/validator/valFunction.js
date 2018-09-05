@@ -1,4 +1,4 @@
-////// isFunction validator
+////// valFunction validator
 
 import {type, default as isFunction} from '../validation/isFunction';
 
@@ -27,7 +27,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.FUNCTION FUNCTION} type.
-  * @function rtvref.validator.valFunction.default
+ * @function rtvref.validator.valFunction.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

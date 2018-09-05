@@ -1,18 +1,19 @@
 import {expect} from 'chai';
+import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
-import * as val from '../../../src/lib/validator/valMap';
+import * as val from '../../../src/lib/validator/valHashMap';
 
-describe('module: lib/validator/valMap', function() {
+describe('module: lib/validator/valHashMap', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
-      expect(val.type).to.equal(types.MAP);
+      expect(val.type).to.equal(types.HASH_MAP);
     });
 
     it('succeeds with an RtvSuccess', function() {
-      vtu.expectValidatorSuccess(val, new Map());
+      vtu.expectValidatorSuccess(val, {foo: 'bar'});
     });
 
     it('valid values', function() {
@@ -20,7 +21,34 @@ describe('module: lib/validator/valMap', function() {
     });
 
     it('other types/values', function() {
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      const validValues = vtu.getValidValues(); // @type {Object}
+      const validTypes = Object.keys(validValues); // @type {Array}
+      const overlaps = [
+        types.ANY_OBJECT,
+        types.OBJECT,
+        types.PLAIN_OBJECT,
+        types.CLASS_OBJECT,
+        types.HASH_MAP
+      ];
+
+      // remove overlaps
+      _.pullAll(validTypes, overlaps);
+
+      let invalidValues = [];
+      _.forEach(validTypes, function(type) {
+        invalidValues = invalidValues.concat(validValues[type]);
+      });
+
+      // add some non-overlap values back in
+      invalidValues = invalidValues.concat([
+        new String('new-string'),
+        new Boolean(true),
+        new Boolean(false),
+        new Number(1)
+      ]);
+
+      // nothing should pass
+      expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);
     });
   });
 
@@ -62,10 +90,18 @@ describe('module: lib/validator/valMap', function() {
   });
 
   describe('arguments', function() {
-    it('checks for an exact length', function() {
-      const map = new Map([[1, 'one'], [2, 'two'], [3, 'three']]);
+    let map;
 
-      vtu.expectValidatorSuccess(val, new Map(), undefined, {length: 0});
+    beforeEach(function() {
+      map = {
+        '1': 'one',
+        '2': 'two',
+        '3': 'three'
+      };
+    });
+
+    it('checks for an exact length', function() {
+      vtu.expectValidatorSuccess(val, {}, undefined, {length: 0});
       vtu.expectValidatorSuccess(val, map, undefined, {length: 3});
 
       vtu.expectValidatorError(val, map, undefined, {length: 2});
@@ -82,98 +118,57 @@ describe('module: lib/validator/valMap', function() {
       vtu.expectValidatorSuccess(val, map, undefined, {length: Number.NEGATIVE_INFINITY});
     });
 
-    it('checks for keys with specified typeset', function() {
-      const map = new Map([[1, 'one'], [2, 'two'], [3, 'three']]);
-
-      vtu.expectValidatorSuccess(val, map, undefined, {keys: types.FINITE});
-
-      vtu.expectValidatorError(val, map, undefined, {keys: types.STRING}, {
-        path: ['key=1'],
-        cause: [qualifiers.REQUIRED, types.STRING]
-      });
-
-      vtu.expectValidatorSuccess(val, new Map(), undefined, {keys: types.REGEXP});
-    });
-
     it('checks for string keys that match a pattern', function() {
-      let map = new Map([[1, 'one'], [2, 'two']]);
+      map = {'key1': 1, 'key2': 2};
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.FINITE,
-        keyExp: 'key' // ignored: keys aren't expected to be strings
-      });
-
-      map = new Map([['key1', 1], ['key2', 2]]);
-      let args = {keys: types.FINITE};
-
-      vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.FINITE]
-      }); // keys are not numbers in this map
-
-      vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.STRING,
         keyExp: 'key\\d'
       });
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.STRING,
         keyExp: function() {} // ignored: not string
       });
-      vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [types.STRING],
-        keyExp: 'key\\d'
-      });
-      vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [qualifiers.EXPECTED, types.STRING],
-        keyExp: 'key\\d'
-      });
-
-      args = {
-        keys: [qualifiers.EXPECTED, types.STRING],
-        keyExp: 'KEY\\d'
-      };
-      vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.MAP, args]
-      }); // case-sensitive by default
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'KEY\\d',
         keyFlagSpec: 'i' // case-insensitive flag
       });
 
+      let args = {
+        keyExp: 'KEY\\d'
+      };
+      vtu.expectValidatorError(val, map, undefined, args, {
+        path: ['key="key1"'],
+        cause: [qualifiers.REQUIRED, types.HASH_MAP, args]
+      }); // case-sensitive by default
+
       args = {
-        keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'KEY\\d',
         keyFlagSpec: {} // ignored: not string (so still case-sensitive)
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.MAP, args]
+        cause: [qualifiers.REQUIRED, types.HASH_MAP, args]
       });
     });
 
     it('checks for values with specified typeset', function() {
-      let map = new Map([[1, 'one'], [2, 'two'], [3, 'three']]);
-
       vtu.expectValidatorSuccess(val, map, undefined, {
         values: types.STRING
       });
 
       let args = {values: types.BOOLEAN};
       vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['valueKey=1'],
+        path: ['valueKey="1"'],
         cause: [qualifiers.REQUIRED, types.BOOLEAN]
       });
 
-      map = new Map([[1, 'one'], [2, 'two'], [3, '']]);
+      map[3] = '';
 
       args = {
         values: types.STRING // required by default, so will fail
       };
       vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['valueKey=3'],
+        path: ['valueKey="3"'],
         cause: [qualifiers.REQUIRED, types.STRING]
       });
 
@@ -183,32 +178,30 @@ describe('module: lib/validator/valMap', function() {
     });
 
     it('checks for keys and values with specified typeset', function() {
-      const map = new Map([
-        [1, new Map([['1', true]])],
-        [2, new Map([['2', false]])],
-        [3, new Map([['3', true]])]
-      ]);
+      map[1] = {'a': true};
+      map[2] = {'b': false};
+      map[3] = {'c': true};
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.FINITE,
-        values: [types.MAP, {
-          keys: types.STRING,
+        keyExp: '\\d',
+        values: [types.HASH_MAP, {
+          keyExp: '\\w',
           values: types.BOOLEAN
         }]
       });
 
       // keys in nested maps are not strings of >= 2 chars
-      const valuesTypeset = [types.MAP, {
-        keys: [types.STRING, {min: 2}],
+      const valuesTypeset = [types.HASH_MAP, {
+        keyExp: '\\w{2,}',
         values: types.BOOLEAN
       }];
       const args = {
-        keys: types.FINITE,
+        keyExp: '\\d',
         values: valuesTypeset
       };
       vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['valueKey=1'],
-        cause: [qualifiers.REQUIRED, types.MAP, valuesTypeset[1]]
+        path: ['valueKey="1"'],
+        cause: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]]
       });
     });
   });

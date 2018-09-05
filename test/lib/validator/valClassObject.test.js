@@ -5,16 +5,34 @@ import _ from 'lodash';
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
-import * as val from '../../../src/lib/validator/valObject';
+import * as val from '../../../src/lib/validator/valClassObject';
 
-describe('module: lib/validator/valObject', function() {
+class Shape {
+  constructor(name = 'shape') {
+    this.name = name;
+  }
+}
+
+class Rectangle extends Shape {
+  constructor() {
+    super('rectangle');
+  }
+}
+
+describe('module: lib/validator/valClassObject', function() {
+  let classObject;
+
+  beforeEach(function() {
+    classObject = new Rectangle();
+  });
+
   describe('validator', function() { // module, and value only
     it('#type', function() {
-      expect(val.type).to.equal(types.OBJECT);
+      expect(val.type).to.equal(types.CLASS_OBJECT);
     });
 
     it('succeeds with an RtvSuccess', function() {
-      vtu.expectValidatorSuccess(val, {});
+      vtu.expectValidatorSuccess(val, classObject);
     });
 
     it('valid values', function() {
@@ -45,7 +63,9 @@ describe('module: lib/validator/valObject', function() {
         new String('new-string'),
         new Boolean(true),
         new Boolean(false),
-        new Number(1)
+        new Number(1),
+        new Object(),
+        {}
       ]);
 
       // nothing should pass
@@ -101,26 +121,49 @@ describe('module: lib/validator/valObject', function() {
       checkStub.restore();
     });
 
-    it('should ignore args if not a shape', function() {
-      val.default({foo: 3}, undefined, 3);
+    it('should ignore args.ctr if not a function', function() {
+      vtu.expectValidatorSuccess(val, classObject, undefined, {ctr: 3});
+    });
+
+    it('should require being an instanceof args.ctr', function() {
+      vtu.expectValidatorSuccess(val, classObject, undefined, {ctr: Shape});
+
+      vtu.expectValidatorError(val, classObject, undefined, {
+        ctr: class {}
+      });
+    });
+
+    it('should ignore args.shape if not a shape', function() {
+      val.default(classObject, undefined, {shape: 3});
       expect(checkStub.called).to.be.false;
     });
 
     it('should check value against shape', function() {
       checkStub.callThrough();
 
-      vtu.expectValidatorSuccess(val, {foo: 3}, undefined, {foo: types.FINITE});
+      vtu.expectValidatorSuccess(val, classObject, undefined, {
+        shape: {name: types.STRING}
+      });
       expect(checkStub.called).to.be.true;
 
       checkStub.reset();
       checkStub.callThrough();
 
-      vtu.expectValidatorError(val, {foo: 3}, undefined, {foo: types.STRING}, {
-        typeset: {foo: types.STRING},
-        cause: [qualifiers.REQUIRED, types.STRING],
-        path: ['foo']
+      vtu.expectValidatorError(val, classObject, undefined, {
+        shape: {name: types.INT}
+      }, {
+        cause: [qualifiers.REQUIRED, types.INT],
+        path: ['name']
       });
       expect(checkStub.called).to.be.true;
+    });
+
+    it('should not check args.shape if not an instanceof args.ctr', function() {
+      vtu.expectValidatorError(val, classObject, undefined, {
+        ctr: class{}, // this will fail
+        shape: {name: types.STRING} // shape would match
+      });
+      expect(checkStub.called).to.be.false;
     });
   });
 });

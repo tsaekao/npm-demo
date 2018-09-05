@@ -107,23 +107,21 @@ import Enumeration from './Enumeration';
  * @property {rtvref.types.typeset} [keys] A typeset describing each key
  *  in the collection.
  *
- *  If the type is {@link rtvref.types.HASH_MAP HASH_MAP}, this argument is
- *   hard set to the {@link rtvref.types.STRING STRING} type due to the nature of
- *   its JavaScript `Object`-based implementation and does not need to be specified.
+ *  If the type is {@link rtvref.types.HASH_MAP HASH_MAP}, this argument is ignored
+ *   due to the nature of its JavaScript `Object`-based implementation which
+ *   requires that all keys be non-empty {@link rtvref.types.STRING strings}.
  *
- *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP} (with restrictions),
- *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
+ *  Applies to: {@link rtvref.types.MAP MAP}.
  *
  * @property {string} [keyExp] A string-based regular expression describing the
  *  names of keys found in the collection. By default, there are no restrictions
  *  on key names. Ignored if the key type is not {@link rtvref.types.STRING STRING},
- *  as specified in `keys`.
+ *  as specified in `keys` (when `keys` is applicable to the collection type).
  *
  *  For example, to require numerical keys, the following expression could be
  *   used: `"^\\d+$"`.
  *
- *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP},
- *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP}, {@link rtvref.types.MAP MAP}.
  *
  * @property {string} [keyFlagSpec] A string specifying any flags to use with
  *  the regular expression specified in `keyExp`. Ignored if _falsy_ or if
@@ -131,14 +129,12 @@ import Enumeration from './Enumeration';
  *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp RegExp#flags}
  *  parameter for more information.
  *
- *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP},
- *   {@link rtvref.types.MAP MAP}, {@link rtvref.types.MAP WEAK_MAP}.
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP}, {@link rtvref.types.MAP MAP}.
  *
  * @property {rtvref.types.typeset} [values] A typeset describing each value in
- *  the collection. Defaults to the {@link rtvref.types.ANY ANY} type which allows
- *  _anything_. All values must match this typeset (but the collection is not
- *  required to have any elements to be considered valid, unless `length` is
- *  specified).
+ *  the collection. If specified, all values must match this typeset (but the
+ *  collection is not required to have any elements to be considered valid, unless
+ *  `length` is specified). If not specified, no validation is performed on values.
  *
  *  For example, to require arrays of non-empty string values as values in the
  *   collection, the following typeset could be used: `[[types.STRING]]`.
@@ -147,9 +143,7 @@ import Enumeration from './Enumeration';
  *
  * @see {@link rtvref.types.HASH_MAP}
  * @see {@link rtvref.types.MAP}
- * @see {@link rtvref.types.WEAK_MAP}
  * @see {@link rtvref.types.SET}
- * @see {@link rtvref.types.WEAK_SET}
  */
 
 /**
@@ -773,7 +767,8 @@ const defs = {
    *
    * - `{}`
    * - `new Object()`
-   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
+   * - `new (function() {}) | new (class {})` (class instance) (also see
+   *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
    * - `new Number(1)`
@@ -832,7 +827,8 @@ const defs = {
    *
    * - `{}`
    * - `new Object()`
-   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
+   * - `new (function() {}) | new (class {})` (class instance) (also see
+   *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    *
    * The following values __are not__ considered objects:
    *
@@ -882,7 +878,8 @@ const defs = {
    *
    * The following values __are not__ considered plain objects:
    *
-   * - `new function() {}` (class instance) (also see {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
+   * - `new (function() {}) | new (class {})` (class instance) (also see
+   *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
    * - `new Number(1)`
@@ -924,10 +921,8 @@ const defs = {
    * @property {function} [ctr] A reference to a constructor function. If specified,
    *  the class object (instance) must have this class function in its inheritance
    *  chain such that `<class_object> instanceof ctr === true`. Note that this
-   *  property is not serializable to JSON. If not specified, then the object
-   *  must be an {@link rtvref.types.OBJECT OBJECT} that is not a
-   *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} among the other values that
-   *  are not considered class objects.
+   *  property is not serializable to JSON. Ignored if not a
+   *  {@link rtvref.types.FUNCTION function}.
    * @property {rtvref.shape_descriptor} [shape] A description of the class object's
    *  shape. Ignored if not a valid shape descriptor.
    */
@@ -941,7 +936,8 @@ const defs = {
    *
    * The following values are considered class objects:
    *
-   * - `new function() {}`
+   * - `new (function() {}) | new (class {})` (tip: use the `ctr`
+   *   {@link rtvref.types.CLASS_OBJECT_args argument} to test for a specific class)
    *
    * The following values __are not__ considered class objects:
    *
@@ -985,8 +981,8 @@ const defs = {
   /**
    * A simple {@link rtvref.types.OBJECT OBJECT} that is treated as a hash map
    *  with an expected set of keys (forcibly strings due to the nature of the
-   *  native JavaScript `Object` type) and values. Keys can be described
-   *  using a regular expression, and values can be described using a
+   *  native JavaScript `Object` type) and values. Keys are __own-properties only__,
+   *  and can be described using a regular expression. Values can be described using a
    *  {@link rtvref.types.typeset typeset}. Empty maps are permitted.
    *
    * Map object rules per qualifiers: Same as {@link rtvref.types.OBJECT OBJECT} rules.

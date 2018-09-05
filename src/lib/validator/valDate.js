@@ -1,4 +1,4 @@
-////// isDate validator
+////// valDate validator
 
 import {type, default as isDate} from '../validation/isDate';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.DATE DATE} type.
-  * @function rtvref.validator.valDate.default
+ * @function rtvref.validator.valDate.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

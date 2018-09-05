@@ -3,26 +3,22 @@ import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
-import * as val from '../../../src/lib/validation/isShape';
+import * as val from '../../../src/lib/validation/isPlainObject';
 
-describe('module: lib/validation/isShape', function() {
+/* eslint-disable no-new-wrappers */
+
+describe('module: lib/validation/isPlainObject', function() {
   it('#type', function() {
-    expect(val.type).to.equal(undefined);
+    expect(val.type).to.equal(types.PLAIN_OBJECT);
   });
 
   describe('#default', function() {
-    let validValues;
-
-    beforeEach(function() {
-      validValues = vtu.getValidValues();
+    it('valid values', function() {
+      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
-    it('should validate shape descriptors', function() {
-      expect(vtu.testValues('isShape', val.default,
-          validValues[types.OBJECT]).failures).to.eql([]);
-    });
-
-    it('should not validate other values', function() {
+    it('other types/values', function() {
+      const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
       const overlaps = [
         types.ANY_OBJECT,
@@ -45,11 +41,12 @@ describe('module: lib/validation/isShape', function() {
         new String('new-string'),
         new Boolean(true),
         new Boolean(false),
-        new Number(1)
+        new Number(1),
+        new (class {})
       ]);
 
       // nothing should pass
-      expect(vtu.testValues('isShape', val.default, invalidValues).passes).to.eql([]);
+      expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);
     });
   });
 });

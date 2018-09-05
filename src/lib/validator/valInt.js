@@ -1,4 +1,4 @@
-////// isInt validator
+////// valInt validator
 
 import {type, default as isInt} from '../validation/isInt';
 
@@ -41,7 +41,7 @@ export const config = function(settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
-  * @function rtvref.validator.valInt.default
+ * @function rtvref.validator.valInt.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.

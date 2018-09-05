@@ -1,4 +1,4 @@
-////// isWeakSet validator
+////// valWeakSet validator
 
 import {type, default as isWeakSet} from '../validation/isWeakSet';
 
@@ -36,7 +36,7 @@ export const config = function(settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.WEAK_SET WEAK_SET} type.
-  * @function rtvref.validator.valWeakSet.default
+ * @function rtvref.validator.valWeakSet.default
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
