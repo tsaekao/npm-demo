@@ -25,6 +25,7 @@ import * as isFinite from '../src/lib/validation/isFinite';
 import * as isFunction from '../src/lib/validation/isFunction';
 import * as isHashMap from '../src/lib/validation/isHashMap';
 import * as isInt from '../src/lib/validation/isInt';
+import * as isJson from '../src/lib/validation/isJson';
 import * as isMap from '../src/lib/validation/isMap';
 import * as isNull from '../src/lib/validation/isNull';
 import * as isNumber from '../src/lib/validation/isNumber';
@@ -51,6 +52,7 @@ import * as valFinite from '../src/lib/validator/valFinite';
 import * as valFunction from '../src/lib/validator/valFunction';
 import * as valHashMap from '../src/lib/validator/valHashMap';
 import * as valInt from '../src/lib/validator/valInt';
+import * as valJson from '../src/lib/validator/valJson';
 import * as valMap from '../src/lib/validator/valMap';
 import * as valNull from '../src/lib/validator/valNull';
 import * as valNumber from '../src/lib/validator/valNumber';
@@ -99,6 +101,7 @@ global.rtvi = {
       isFunction,
       isHashMap,
       isInt,
+      isJson,
       isMap,
       isNull,
       isNumber,
@@ -127,6 +130,7 @@ global.rtvi = {
       valFunction,
       valHashMap,
       valInt,
+      valJson,
       valMap,
       valNull,
       valNumber,

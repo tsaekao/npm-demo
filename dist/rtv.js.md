@@ -1533,13 +1533,13 @@ Weak set rules per qualifiers: Must be a `WeakSet` instance.
 #### types.JSON : <code>string</code>
 JSON rules per qualifiers: Must be a JSON value:
 
+- [null](#rtvref.types.NULL)
 - [string](#rtvref.types.STRING), however __empty strings are permitted__,
-  even if the qualifier is `REQUIRED`;
-- [boolean](#rtvref.types.BOOLEAN);
-- [finite number](#rtvref.types.FINITE);
-- [plain object](#rtvref.types.PLAIN_OBJECT);
-- [array](#rtvref.types.ARRAY);
-- `null`
+  even if the qualifier is `REQUIRED`
+- [boolean](#rtvref.types.BOOLEAN)
+- [finite number](#rtvref.types.FINITE)
+- [plain object](#rtvref.types.PLAIN_OBJECT)
+- [array](#rtvref.types.ARRAY)
 
 Since this type checks for _any_ valid JSON value, empty string and `null`
  values are permitted, even when the typeset is qualified as `REQUIRED`.

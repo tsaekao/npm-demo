@@ -68,11 +68,11 @@ export default function valClassObject(v, q = REQUIRED, args) {
 
       // only consider enumerable, own-properties of the shape
       _forEach(shape, function(typeset, prop) {
-        const result = impl.check(v[prop], typeset); // check prop value against shape prop typeset
+        const propResult = impl.check(v[prop], typeset); // check prop value against shape prop typeset
 
-        if (!result.valid) {
+        if (!propResult.valid) {
           err = new RtvError(v, impl.toTypeset(type, q, args),
-              [prop].concat(result.path), result.cause);
+              [prop].concat(propResult.path), propResult.cause);
         }
 
         return !err; // break on first error

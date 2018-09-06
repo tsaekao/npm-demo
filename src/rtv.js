@@ -20,6 +20,7 @@ import * as valFinite from './lib/validator/valFinite';
 import * as valFunction from './lib/validator/valFunction';
 import * as valHashMap from './lib/validator/valHashMap';
 import * as valInt from './lib/validator/valInt';
+import * as valJson from './lib/validator/valJson';
 import * as valMap from './lib/validator/valMap';
 import * as valNull from './lib/validator/valNull';
 import * as valNumber from './lib/validator/valNumber';
@@ -290,6 +291,7 @@ export default rtv;
     valFunction,
     valHashMap,
     valInt,
+    valJson,
     valNull,
     valMap,
     valNumber,

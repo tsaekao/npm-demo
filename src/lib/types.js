@@ -1067,13 +1067,13 @@ const defs = {
   /**
    * JSON rules per qualifiers: Must be a JSON value:
    *
+   * - {@link rtvref.types.NULL null}
    * - {@link rtvref.types.STRING string}, however __empty strings are permitted__,
-   *   even if the qualifier is `REQUIRED`;
-   * - {@link rtvref.types.BOOLEAN boolean};
-   * - {@link rtvref.types.FINITE finite number};
-   * - {@link rtvref.types.PLAIN_OBJECT plain object};
-   * - {@link rtvref.types.ARRAY array};
-   * - `null`
+   *   even if the qualifier is `REQUIRED`
+   * - {@link rtvref.types.BOOLEAN boolean}
+   * - {@link rtvref.types.FINITE finite number}
+   * - {@link rtvref.types.PLAIN_OBJECT plain object}
+   * - {@link rtvref.types.ARRAY array}
    *
    * Since this type checks for _any_ valid JSON value, empty string and `null`
    *  values are permitted, even when the typeset is qualified as `REQUIRED`.

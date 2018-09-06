@@ -65,6 +65,7 @@ describe('module: lib/validator/valClassObject', function() {
         new Boolean(false),
         new Number(1),
         new Object(),
+        Object.create(null),
         {}
       ]);
 

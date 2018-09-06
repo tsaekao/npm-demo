@@ -43,6 +43,7 @@ describe('module: lib/validation/isClassObject', function() {
         new Boolean(false),
         new Number(1),
         new Object(),
+        Object.create(null),
         {}
       ]);
 

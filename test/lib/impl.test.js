@@ -22,7 +22,7 @@ describe('module: lib/impl', function() {
         value: impl._validatorMap
       });
       expect(isObject(impl._validatorMap)).to.be.true;
-      expect(Object.keys(impl._validatorMap).length).to.equal(24); // # of known types
+      expect(Object.keys(impl._validatorMap).length).to.equal(25); // # of known types
     });
   });
 

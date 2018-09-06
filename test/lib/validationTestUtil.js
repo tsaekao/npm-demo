@@ -26,9 +26,13 @@ export const getValidValues = function(type) {
     // primitives
     //
 
-    // NOTE: specific values for types.ANY would be [undefined, null], and for types.NULL
-    //  would be [null], but these would cause issues with testOtherValues() tests,
-    //  so we exclude them and special-case them in unit tests
+    // NOTE: we purposely __omit__ the following types and associated values because
+    //  they would cause a lot of issues with testOtherValues() due to overlap with
+    //  many types:
+    //  - types.ANY: [undefined, null]
+    //  - types.NULL: [null]
+    //  - types.JSON: [null, 'string', '', true, false, 1, [], {}] -- see
+    //    getJsonValues() and getInvalidJsonValues()
 
     [types.STRING]: ['literal-string'],
     [types.BOOLEAN]: [true, false],
@@ -119,7 +123,7 @@ export const getValidValues = function(type) {
     [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')],
 
     // while the JS type is objects, it's not an object type in this library
-    [types.HASH_MAP]: [new Object(), {}, new (function() {})()],
+    [types.HASH_MAP]: [new Object(), {}, new (class {})],
 
     //
     // object types
@@ -131,16 +135,19 @@ export const getValidValues = function(type) {
       new Boolean(false),
       new Number(1),
       new Object(),
+      Object.create(null),
       {},
       new (class {})
     ],
     [types.OBJECT]: [
       new Object(),
+      Object.create(null),
       {},
       new (class {})
     ],
     [types.PLAIN_OBJECT]: [
       new Object(),
+      Object.create(null),
       {}
     ],
     [types.CLASS_OBJECT]: [
@@ -164,6 +171,61 @@ export const getAllValues = function() {
   });
 
   return values;
+};
+
+/**
+ * Get valid JSON values.
+ * @returns {Array} Valid JSON values for testing.
+ */
+export const getJsonValues = function() {
+  return [
+    null,
+    'string',
+    '',
+    true,
+    false,
+    1,
+    [],
+    {},
+    Object.create(null),
+    new Object()
+  ];
+};
+
+/**
+ * Get invalid JSON values.
+ * @returns {Array} Invalid JSON values for testing.
+ */
+export const getInvalidJsonValues = function() {
+  const validTypeValues = getValidValues();
+
+  let invalidValues = [
+    undefined,
+    NaN,
+    Infinity,
+    Number.POSITIVE_INFINITY,
+    -Infinity,
+    Number.NEGATIVE_INFINITY,
+    new String('new-string'),
+    new Boolean(true),
+    new Boolean(false),
+    new Number(1),
+    new (class {})
+  ];
+
+  invalidValues = invalidValues.concat(
+      validTypeValues[types.SYMBOL],
+      validTypeValues[types.MAP],
+      validTypeValues[types.WEAK_MAP],
+      validTypeValues[types.SET],
+      validTypeValues[types.WEAK_SET],
+      validTypeValues[types.DATE],
+      validTypeValues[types.FUNCTION],
+      validTypeValues[types.REGEXP],
+      validTypeValues[types.ERROR],
+      validTypeValues[types.PROMISE]);
+
+  return invalidValues;
 };
 
 /**
