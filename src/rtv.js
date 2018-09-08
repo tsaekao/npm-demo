@@ -247,15 +247,6 @@ const rtv = {
    */
   get e() {
     return this.config.enabled;
-  },
-
-  /**
-   * Contextual RTV Generator // TODO[docs]
-   * @function rtv.Context
-   * @param {string} context
-   */
-  Context(context) {
-    // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
   }
 };
 

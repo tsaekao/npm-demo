@@ -112,7 +112,7 @@ describe('module: lib/validator/valObject', function() {
       vtu.expectValidatorSuccess(val, {foo: 3}, undefined, {foo: types.FINITE});
       expect(checkStub.called).to.be.true;
 
-      checkStub.reset();
+      checkStub.resetHistory();
       checkStub.callThrough();
 
       vtu.expectValidatorError(val, {foo: 3}, undefined, {foo: types.STRING}, {

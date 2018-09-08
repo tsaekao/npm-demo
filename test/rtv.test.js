@@ -159,8 +159,4 @@ describe('module: rtv', function() {
       });
     });
   });
-
-  describe('#Context()', function() {
-    it('should create contextual rtv verifiers'); // TODO
-  });
 });

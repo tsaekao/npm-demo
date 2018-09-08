@@ -764,7 +764,7 @@ describe('module: lib/impl', function() {
       expect(result.typeset).to.equal(typeset);
       expect(result.cause).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
 
-      validator.reset();
+      validator.resetHistory();
 
       typeset = [types.STRING, validator];
       result = impl.checkWithArray('foo', typeset);
@@ -781,7 +781,7 @@ describe('module: lib/impl', function() {
       expect(result.typeset).to.equal(typeset);
       expect(result.cause).to.eql([qualifiers.REQUIRED, types.STRING, validator]);
 
-      validator.reset();
+      validator.resetHistory();
       validator.returns(true);
 
       typeset = [types.STRING, validator];

@@ -147,7 +147,7 @@ describe('module: lib/validator/valClassObject', function() {
       });
       expect(checkStub.called).to.be.true;
 
-      checkStub.reset();
+      checkStub.resetHistory();
       checkStub.callThrough();
 
       vtu.expectValidatorError(val, classObject, undefined, {

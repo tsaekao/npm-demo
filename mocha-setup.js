@@ -2,7 +2,7 @@
 
 // auto-compile files on-the-fly as they are require()'d in Node by Mocha; this
 //  way, we can write our test files as ES6 modules instead of CJS modules
-require('babel-register');
+require('@babel/register');
 
 // TODO: Eventually, we could create integration tests where we setup a DOM
 //  instance here, using jsdomify or jsdom-globals, and also require the UMD

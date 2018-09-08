@@ -2180,7 +2180,6 @@ Runtime Verification Library for browsers and Node.js.
     * [.c(value, typeset)](#rtv.c) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.verify(value, typeset)](#rtv.verify) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
     * [.v(value, typeset)](#rtv.v) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
-    * [.Context(context)](#rtv.Context)
 
 
 * * *
@@ -2374,20 +2373,6 @@ Shortcut proxy to [verify](#rtv.verify).
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
-
-
-* * *
-
-<a name="rtv.Context"></a>
-
-### rtv.Context(context)
-Contextual RTV Generator // TODO[docs]
-
-**Kind**: static method of [<code>rtv</code>](#rtv)  
-
-| Param | Type |
-| --- | --- |
-| context | <code>string</code> | 
 
 
 * * *

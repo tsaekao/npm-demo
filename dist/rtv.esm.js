@@ -32,76 +32,81 @@ var isArray = Array.isArray;
 
 var isArray_1 = isArray;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
 
-var classCallCheck = function (instance, Constructor) {
+  return _typeof(obj);
+}
+
+function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
-};
+}
 
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
   }
+}
 
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
-var slicedToArray = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
 
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+function _iterableToArrayLimit(arr, i) {
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
     try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
+      if (!_n && _i["return"] != null) _i["return"]();
     } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
+      if (_d) throw _e;
     }
-
-    return _arr;
   }
 
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if (Symbol.iterator in Object(arr)) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
+  return _arr;
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
 
 ////// Utilities
-
 // NOTE: Ideally, this module has no dependencies. If it must, they should be
 //  third-party/external dependencies to avoid circular dependencies within
 //  this library.
@@ -128,23 +133,23 @@ var print = function print(printValue) {
     }
 
     if (typeof value === 'string') {
-      return stringifying ? value : '"' + value + '"';
+      return stringifying ? value : "\"".concat(value, "\"");
     }
 
     if (typeof value === 'number') {
       // also catches NaN
-      return stringifying ? value : '' + value;
+      return stringifying ? value : "".concat(value);
     }
 
     if (typeof value === 'boolean') {
-      return stringifying ? value : '' + value;
+      return stringifying ? value : "".concat(value);
     }
 
     if (typeof value === 'function') {
       return '<function>';
     }
 
-    if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'symbol') {
+    if (_typeof(value) === 'symbol') {
       return value.toString();
     }
 
@@ -159,8 +164,6 @@ var print = function print(printValue) {
 
   return JSON.stringify(result, replacer.bind(null, true)); // recursive
 };
-
-////// Enumeration
 
 /**
  * Simple enumeration type. Own-properties on an instance are the keys in the
@@ -194,41 +197,42 @@ var print = function print(printValue) {
  *  "$").
  */
 
-var Enumeration = function () {
+var Enumeration =
+/*#__PURE__*/
+function () {
   // JSDoc is provided at the @class level
   function Enumeration(map, name) {
     var _this = this;
 
-    classCallCheck(this, Enumeration);
+    _classCallCheck(this, Enumeration);
 
     map = map || {};
-
     var keys = Object.keys(map);
     var values = [];
 
     if (keys.length === 0) {
       throw new Error('map must contain at least one key');
-    }
+    } // shallow-clone each key in the map into this
 
-    // shallow-clone each key in the map into this
+
     keys.forEach(function (key) {
       if (key.indexOf('$') === 0) {
-        throw new Error('map key "' + key + '" cannot start with "$"');
+        throw new Error("map key \"".concat(key, "\" cannot start with \"$\""));
       }
 
       if (map[key] === undefined) {
-        throw new Error('map[' + key + '] cannot be undefined');
+        throw new Error("map[".concat(key, "] cannot be undefined"));
       }
 
       var value = map[key];
+
       if (values.indexOf(value) >= 0) {
-        throw new Error('map[' + key + '] is a duplicate value: ' + print(value));
+        throw new Error("map[".concat(key, "] is a duplicate value: ").concat(print(value)));
       }
 
       values.push(value);
       _this[key] = value;
     });
-
     /**
      * Friendly name (not necessarily unique among all enumeration instances)
      *  used to identify this enumeration, especially in validation error
@@ -237,12 +241,12 @@ var Enumeration = function () {
      * @name rtvref.Enumeration#$name
      * @type {string}
      */
+
     Object.defineProperty(this, '$name', {
       enumerable: false,
       configurable: true,
       value: name || ''
     });
-
     /**
      * List of enumeration values. Values are _references_ to values in this
      *  enumeration.
@@ -254,15 +258,15 @@ var Enumeration = function () {
      * @name rtvref.Enumeration#$values
      * @type {Array.<String>}
      */
+
     Object.defineProperty(this, '$values', {
       enumerable: false,
       configurable: true,
-      get: function get$$1() {
+      get: function get() {
         return values.concat(); // shallow clone
       }
     });
   }
-
   /**
    * Checks if a value is in this enumeration.
    * @method rtvref.Enumeration#check
@@ -273,8 +277,8 @@ var Enumeration = function () {
    */
 
 
-  createClass(Enumeration, [{
-    key: 'check',
+  _createClass(Enumeration, [{
+    key: "check",
     value: function check(value) {
       if (this.$values.indexOf(value) >= 0) {
         return value;
@@ -282,7 +286,6 @@ var Enumeration = function () {
 
       return undefined;
     }
-
     /**
      * Validates a value as being in this enumeration. Throws an exception if the value
      *  is not in this enumeration, unless `silent` is true.
@@ -297,17 +300,16 @@ var Enumeration = function () {
      */
 
   }, {
-    key: 'verify',
+    key: "verify",
     value: function verify(value, silent) {
       var result = this.check(value);
 
       if (result === undefined && !silent) {
-        throw new Error('Invalid value for ' + (this.$name ? print(this.$name) + ' ' : '') + 'enumeration (' + this.$values.map(print).join(', ') + '): ' + print(value));
+        throw new Error("Invalid value for ".concat(this.$name ? "".concat(print(this.$name), " ") : '', "enumeration (").concat(this.$values.map(print).join(', '), "): ").concat(print(value)));
       }
 
       return result;
     }
-
     /**
      * A string representation of this Enumeration.
      * @method rtvref.Enumeration#toString
@@ -315,21 +317,21 @@ var Enumeration = function () {
      */
 
   }, {
-    key: 'toString',
+    key: "toString",
     value: function toString() {
       var _this2 = this;
 
       var pairs = Object.keys(this).map(function (k) {
         return [k, _this2[k]];
       });
-      return '{rtvref.Enumeration $name=' + print(this.$name) + ' pairs=[' + pairs.map(print).join(', ') + ']}';
+      return "{rtvref.Enumeration $name=".concat(print(this.$name), " pairs=[").concat(pairs.map(print).join(', '), "]}");
     }
   }]);
+
   return Enumeration;
 }();
 
 ////// Type Definitions
-
 /**
  * <h2>Types</h2>
  * @namespace rtvref.types
@@ -692,7 +694,6 @@ var Enumeration = function () {
  * @returns {boolean} A _truthy_ value to verify, a _falsy_ value to reject.
  * @see {@link rtvref.validation.isValidator}
  */
-
 // Creates a definition object.
 // @param {string} value Type value. Must not be empty.
 // @param {boolean} [hasArgs=false] If the type takes arguments.
@@ -700,15 +701,16 @@ var Enumeration = function () {
 //  it describes a shape (either directly as its args object, e.g. PLAIN_OBJECT,
 //  or indirectly as a property inside it's args object, e.g. CLASS_OBJECT).
 // @returns {{value: boolean, hasArgs: boolean, isObject: boolean}} Type definition.
+
 var def = function def(value, hasArgs, isObject) {
   return {
     value: value,
     hasArgs: !!hasArgs,
     isObject: !!isObject
   };
-};
+}; // map of type key (string) to type definition (see def() for shape)
 
-// map of type key (string) to type definition (see def() for shape)
+
 var defs = {
   /**
    * The any type is special in that it allows _anything_, which includes `null`
@@ -746,10 +748,10 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    */
   NULL: def('NULL'),
-
   // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
   //  of JSON requirement...) for a regular expression test. Similar prop names
   //  to collection_args.
+
   /**
    * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
@@ -944,9 +946,9 @@ var defs = {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
    */
   REGEXP: def('REGEXP'),
-
   // TODO[future] Consider DATE args for ranges, date values to be ISO8601 UTC strings so they are
   //  easily serializable.
+
   /**
    * Date rules per qualifiers: Must be a `Date` instance.
    * @name rtvref.types.DATE
@@ -974,8 +976,8 @@ var defs = {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
    */
   PROMISE: def('PROMISE'),
-
   // TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
+
   /**
    * <h3>Array Arguments</h3>
    * @typedef {Object} rtvref.types.ARRAY_args
@@ -1327,7 +1329,8 @@ var defs = {
    * @see {@link rtvref.types.MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
-  HASH_MAP: def('MAP_OBJECT', true), // NOTE: NOT an object type (unrelated to shapes)
+  HASH_MAP: def('MAP_OBJECT', true),
+  // NOTE: NOT an object type (unrelated to shapes)
 
   /**
    * An ES6 map supports any value as its keys, unlike a
@@ -1361,7 +1364,8 @@ var defs = {
    * @see {@link rtvref.types.HASH_MAP}
    * @see {@link rtvref.types.MAP}
    */
-  WEAK_MAP: def('WEAK_MAP'), // not iterable, so does not accept any collection args
+  WEAK_MAP: def('WEAK_MAP'),
+  // not iterable, so does not accept any collection args
 
   /**
    * An ES6 set is a collection of _unique_ values without associated keys. Values can
@@ -1390,7 +1394,8 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.SET}
    */
-  WEAK_SET: def('WEAK_SET'), // not iterable, so does not accept any collection args
+  WEAK_SET: def('WEAK_SET'),
+  // not iterable, so does not accept any collection args
 
   /**
    * JSON rules per qualifiers: Must be a JSON value:
@@ -1413,9 +1418,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    */
   JSON: def('JSON')
-};
-
-//
+}; //
 // ^^^^^^^ INSERT NEW TYPES ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
 //
 
@@ -1423,8 +1426,8 @@ var defs = {
  * Default object type: {@link rtvref.types.OBJECT}
  * @const {string} rtvref.types.DEFAULT_OBJECT_TYPE
  */
-var DEFAULT_OBJECT_TYPE = defs.OBJECT.value;
 
+var DEFAULT_OBJECT_TYPE = defs.OBJECT.value;
 /**
  * Enumeration (`string -> string`) of __object__ {@link rtvref.types types}. These
  *  are all the types that describe values which are essentially maps of various
@@ -1432,6 +1435,7 @@ var DEFAULT_OBJECT_TYPE = defs.OBJECT.value;
  * @name rtvref.types.objTypes
  * @type {rtvref.Enumeration}
  */
+
 var objTypes = new Enumeration(function () {
   var types = {};
   Object.keys(defs).forEach(function (name) {
@@ -1441,13 +1445,13 @@ var objTypes = new Enumeration(function () {
   });
   return types;
 }(), 'objTypes');
-
 /**
  * Enumeration (`string -> string`) of {@link rtvref.types types} that accept
  *  arguments.
  * @name rtvref.types.argTypes
  * @type {rtvref.Enumeration}
  */
+
 var argTypes = new Enumeration(function () {
   var types = {};
   Object.keys(defs).forEach(function (name) {
@@ -1457,12 +1461,12 @@ var argTypes = new Enumeration(function () {
   });
   return types;
 }(), 'argTypes');
-
 /**
  * Enumeration (`string -> string`) of all {@link rtvref.types types}.
  * @name rtvref.types.types
  * @type {rtvref.Enumeration}
  */
+
 var types = new Enumeration(function () {
   var types = {};
   Object.keys(defs).forEach(function (name) {
@@ -1472,13 +1476,12 @@ var types = new Enumeration(function () {
 }(), 'types');
 
 ////// isArray validation
-
 /**
  * Type: {@link rtvref.types.ARRAY ARRAY}
  * @const {string} rtvref.validation.isArray.type
  */
-var type = types.ARRAY;
 
+var type = types.ARRAY;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.ARRAY ARRAY} type.
@@ -1486,6 +1489,7 @@ var type = types.ARRAY;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isArray$1(v) {
   return isArray_1(v);
 }
@@ -1573,11 +1577,10 @@ function getRawTag(value) {
 
   try {
     value[symToStringTag] = undefined;
-    var unmasked = true;
   } catch (e) {}
 
   var result = nativeObjectToString.call(value);
-  if (unmasked) {
+  {
     if (isOwn) {
       value[symToStringTag] = tag;
     } else {
@@ -1833,9 +1836,9 @@ var DataView = _getNative(_root, 'DataView');
 var _DataView = DataView;
 
 /* Built-in method references that are verified to be native. */
-var Map = _getNative(_root, 'Map');
+var Map$1 = _getNative(_root, 'Map');
 
-var _Map = Map;
+var _Map = Map$1;
 
 /* Built-in method references that are verified to be native. */
 var Promise$1 = _getNative(_root, 'Promise');
@@ -1936,7 +1939,7 @@ var _baseUnary = baseUnary;
 
 var _nodeUtil = createCommonjsModule(function (module, exports) {
 /** Detect free variable `exports`. */
-var freeExports = 'object' == 'object' && exports && !exports.nodeType && exports;
+var freeExports = exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
 var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
@@ -1950,6 +1953,14 @@ var freeProcess = moduleExports && _freeGlobal.process;
 /** Used to access faster Node.js helpers. */
 var nodeUtil = (function() {
   try {
+    // Use `util.types` for Node.js 10+.
+    var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+    if (types) {
+      return types;
+    }
+
+    // Legacy `process.binding('util')` for Node.js < 10.
     return freeProcess && freeProcess.binding && freeProcess.binding('util');
   } catch (e) {}
 }());
@@ -1982,13 +1993,12 @@ var isMap = nodeIsMap ? _baseUnary(nodeIsMap) : _baseIsMap;
 var isMap_1 = isMap;
 
 ////// isMap validation
-
 /**
  * Type: {@link rtvref.types.MAP MAP}
  * @const {string} rtvref.validation.isMap.type
  */
-var type$1 = types.MAP;
 
+var type$1 = types.MAP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.MAP MAP} type.
@@ -1996,6 +2006,7 @@ var type$1 = types.MAP;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isMap$1(v) {
   return isMap_1(v);
 }
@@ -2027,13 +2038,12 @@ function isWeakMap(value) {
 var isWeakMap_1 = isWeakMap;
 
 ////// isWeakMap validation
-
 /**
  * Type: {@link rtvref.types.WEAK_MAP WEAK_MAP}
  * @const {string} rtvref.validation.isWeakMap.type
  */
-var type$2 = types.WEAK_MAP;
 
+var type$2 = types.WEAK_MAP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
@@ -2041,6 +2051,7 @@ var type$2 = types.WEAK_MAP;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isWeakMap$1(v) {
   return isWeakMap_1(v);
 }
@@ -2086,13 +2097,12 @@ var isSet = nodeIsSet ? _baseUnary(nodeIsSet) : _baseIsSet;
 var isSet_1 = isSet;
 
 ////// isSet validation
-
 /**
  * Type: {@link rtvref.types.SET SET}
  * @const {string} rtvref.validation.isSet.type
  */
-var type$3 = types.SET;
 
+var type$3 = types.SET;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.SET SET} type.
@@ -2100,6 +2110,7 @@ var type$3 = types.SET;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isSet$1(v) {
   return isSet_1(v);
 }
@@ -2131,13 +2142,12 @@ function isWeakSet(value) {
 var isWeakSet_1 = isWeakSet;
 
 ////// isWeakSet validation
-
 /**
  * Type: {@link rtvref.types.WEAK_SET WEAK_SET}
  * @const {string} rtvref.validation.isWeakSet.type
  */
-var type$4 = types.WEAK_SET;
 
+var type$4 = types.WEAK_SET;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.WEAK_SET WEAK_SET} type.
@@ -2145,6 +2155,7 @@ var type$4 = types.WEAK_SET;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isWeakSet$1(v) {
   return isWeakSet_1(v);
 }
@@ -2190,13 +2201,12 @@ var isRegExp = nodeIsRegExp ? _baseUnary(nodeIsRegExp) : _baseIsRegExp;
 var isRegExp_1 = isRegExp;
 
 ////// isRegExp validation
-
 /**
  * Type: {@link rtvref.types.REGEXP REGEXP}
  * @const {string} rtvref.validation.isRegExp.type
  */
-var type$5 = types.REGEXP;
 
+var type$5 = types.REGEXP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.REGEXP REGEXP} type.
@@ -2204,6 +2214,7 @@ var type$5 = types.REGEXP;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isRegExp$1(v) {
   return isRegExp_1(v);
 }
@@ -2249,13 +2260,12 @@ var isDate = nodeIsDate ? _baseUnary(nodeIsDate) : _baseIsDate;
 var isDate_1 = isDate;
 
 ////// isDate validation
-
 /**
  * Type: {@link rtvref.types.DATE DATE}
  * @const {string} rtvref.validation.isDate.type
  */
-var type$6 = types.DATE;
 
+var type$6 = types.DATE;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.DATE DATE} type.
@@ -2263,6 +2273,7 @@ var type$6 = types.DATE;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isDate$1(v) {
   return isDate_1(v);
 }
@@ -2381,13 +2392,12 @@ function isError(value) {
 var isError_1 = isError;
 
 ////// isError validation
-
 /**
  * Type: {@link rtvref.types.ERROR ERROR}
  * @const {string} rtvref.validation.isError.type
  */
-var type$7 = types.ERROR;
 
+var type$7 = types.ERROR;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.ERROR ERROR} type.
@@ -2395,18 +2405,18 @@ var type$7 = types.ERROR;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isError$1(v) {
   return isError_1(v);
 }
 
 ////// isPromise validation
-
 /**
  * Type: {@link rtvref.types.PROMISE PROMISE}
  * @const {string} rtvref.validation.isPromise.type
  */
-var type$8 = types.PROMISE;
 
+var type$8 = types.PROMISE;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.PROMISE PROMISE} type.
@@ -2414,18 +2424,18 @@ var type$8 = types.PROMISE;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isPromise(v) {
   return v instanceof Promise;
 }
 
 ////// isObject validation
-
 /**
  * Type: {@link rtvref.types.OBJECT OBJECT}
  * @const {string} rtvref.validation.isObject.type
  */
-var type$9 = types.OBJECT;
 
+var type$9 = types.OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.OBJECT OBJECT} type.
@@ -2433,6 +2443,7 @@ var type$9 = types.OBJECT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isObject$1(v) {
   // no qualifier rules, no args
   return isObjectLike_1(v) && // excludes primitives and functions
@@ -2444,13 +2455,12 @@ function isObject$1(v) {
 }
 
 ////// isString validation
-
 /**
  * Type: {@link rtvref.types.STRING STRING}
  * @const {string} rtvref.validation.isString.type
  */
-var type$10 = types.STRING;
 
+var type$a = types.STRING;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.STRING STRING} type.
@@ -2467,22 +2477,22 @@ var type$10 = types.STRING;
  *  permitted.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isString(v) {
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
       _ref$allowEmpty = _ref.allowEmpty,
-      allowEmpty = _ref$allowEmpty === undefined ? false : _ref$allowEmpty;
+      allowEmpty = _ref$allowEmpty === void 0 ? false : _ref$allowEmpty;
 
   return typeof v === 'string' && (v !== '' || allowEmpty);
 }
 
 ////// isFunction validation
-
 /**
  * Type: {@link rtvref.types.FUNCTION FUNCTION}
  * @const {string} rtvref.validation.isFunction.type
  */
-var type$11 = types.FUNCTION;
 
+var type$b = types.FUNCTION;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.FUNCTION FUNCTION} type.
@@ -2490,18 +2500,18 @@ var type$11 = types.FUNCTION;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isFunction$1(v) {
   return isFunction_1(v);
 }
 
 ////// isBoolean validation
-
 /**
  * Type: {@link rtvref.types.BOOLEAN BOOLEAN}
  * @const {string} rtvref.validation.isBoolean.type
  */
-var type$12 = types.BOOLEAN;
 
+var type$c = types.BOOLEAN;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
@@ -2514,6 +2524,7 @@ var type$12 = types.BOOLEAN;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isBoolean(v) {
   return v === true || v === false;
 }
@@ -2674,7 +2685,7 @@ var stubFalse_1 = stubFalse;
 
 var isBuffer_1 = createCommonjsModule(function (module, exports) {
 /** Detect free variable `exports`. */
-var freeExports = 'object' == 'object' && exports && !exports.nodeType && exports;
+var freeExports = exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
 var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
@@ -3143,19 +3154,18 @@ function forEach(collection, iteratee) {
 var forEach_1 = forEach;
 
 ////// isShape validation module
-
 /**
  * Determines if a value is a {@link rtvref.shape_descriptor shape}.
  * @function rtvref.validation.isShape.default
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
+
 function isShape(v) {
   return isObject$1(v);
 }
 
 ////// isTypeArgs validation module
-
 /**
  * Determines if a value is a {@link rtvref.types.type_arguments type arguments}
  *  object.
@@ -3163,6 +3173,7 @@ function isShape(v) {
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
+
 function isTypeArgs(v) {
   // NOTE: Since shapes are also type args, this check must always validate a
   //  shape; and since at this time, OBJECT === shape === type args, we just
@@ -3171,13 +3182,13 @@ function isTypeArgs(v) {
 }
 
 ////// isValidator validation module
-
 /**
  * Determines if a value is a {@link rtvref.types.custom_validator custom validator}.
  * @function rtvref.validation.isValidator.default
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
+
 function isValidator(v) {
   // TODO[plugins]: should this module be renamed to isCustomValidator since it's
   //  perhaps overloaded with 'validator' concept for plugins @see rtvref.validator?
@@ -3185,7 +3196,6 @@ function isValidator(v) {
 }
 
 ////// Qualifier Definitions
-
 /**
  * <h2>Qualifiers</h2>
  *
@@ -3215,8 +3225,8 @@ function isValidator(v) {
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.STRING}
  */
-var REQUIRED = '!';
 
+var REQUIRED = '!';
 /**
  * Expected qualifier: The value _should_ be of the expected type. Depending on
  *  the type, additional requirements may be enforced.
@@ -3238,8 +3248,8 @@ var REQUIRED = '!';
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.STRING}
  */
-var EXPECTED = '+';
 
+var EXPECTED = '+';
 /**
  * Optional qualifier: The value _may_ be of the expected type. Depending on
  *  the type, additional requirements may be enforced.
@@ -3257,9 +3267,8 @@ var EXPECTED = '+';
  * @const {string}
  * @see {@link rtvref.types}
  */
-var OPTIONAL = '?';
 
-//
+var OPTIONAL = '?'; //
 // ^^^^^^^ INSERT NEW QUALIFIERS ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
 //
 
@@ -3267,8 +3276,8 @@ var OPTIONAL = '?';
  * Default qualifier: {@link rtvref.qualifiers.REQUIRED}
  * @const {string} rtvref.qualifiers.DEFAULT_QUALIFIER
  */
-var DEFAULT_QUALIFIER = REQUIRED;
 
+var DEFAULT_QUALIFIER = REQUIRED;
 /**
  * Convenience function to check if a nil value (either `undefined` or `null`)
  *  is permitted under basic qualifier rules:
@@ -3288,6 +3297,7 @@ var DEFAULT_QUALIFIER = REQUIRED;
  *   `nilPermitted(null, EXPECTED) === true`. Also, `nilPermitted(1, *) === false`
  *   because the value `1` is not _nil_
  */
+
 var nilPermitted = function nilPermitted(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED;
 
@@ -3301,12 +3311,12 @@ var nilPermitted = function nilPermitted(v) {
 
   return v === undefined || v === null;
 };
-
 /**
  * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
  * @name rtvref.qualifiers.qualifiers
  * @type {rtvref.Enumeration}
  */
+
 var qualifiers = new Enumeration({
   REQUIRED: REQUIRED,
   EXPECTED: EXPECTED,
@@ -3314,8 +3324,6 @@ var qualifiers = new Enumeration({
 }, 'qualifiers');
 
 ////// isTypeset validation module
-
-// Deep-verify a shape.
 // @param {string} type The in-scope type (should be an object type from types.objTypes).
 // @param {Object} rule The rule from the typeset being evaluated. This should be the args
 //  for the `type`, which is either the shape itself, or an args object containing a
@@ -3325,33 +3333,34 @@ var qualifiers = new Enumeration({
 // @param {number} [idx=-1] The position of `rule` within an Array typeset (if the
 //  shape is nested), or a negative value if the typeset is not an Array.
 // @returns {boolean} True if the shape is valid, false otherwise.
+
 var deepVerifyShape = function deepVerifyShape(type$$1, rule, options, failurePrefix) {
   var idx = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : -1;
-
-  var valid = true;
-
-  // if it's a class object, the shape is an optional sub-property of the object;
+  var valid = true; // if it's a class object, the shape is an optional sub-property of the object;
   //  if it's a map object, there is no shape (the args are rtvref.types.collection_args);
   //  otherwise, the shape is the rule/object itself
-  var shape = void 0;
+
+  var shape;
 
   if (type$$1 === types.CLASS_OBJECT && rule.hasOwnProperty('shape')) {
     // shape must be valid descriptor
     valid = isShape(rule.shape);
+
     if (valid) {
       shape = rule.shape;
     } else {
       // NOTE: since the type is CLASS_OBJECT, `idx` _must_ be >= 0 because an
       //  Array typeset is required to specify this object type along with a shape:
       //  [CLASS_OBJECT, {shape: {...}}]
-      options.failure = failurePrefix + ': Expecting a valid shape descriptor in "shape" property of args for type=' + print(type$$1) + ' at index=' + idx;
+      options.failure = "".concat(failurePrefix, ": Expecting a valid shape descriptor in \"shape\" property of args for type=").concat(print(type$$1), " at index=").concat(idx);
     }
   } else {
     valid = isShape(rule);
+
     if (valid) {
       shape = rule;
     } else {
-      options.failure = failurePrefix + ': Expecting a valid shape descriptor for type=' + print(type$$1) + (idx >= 0 ? ' at index=' + idx : '');
+      options.failure = "".concat(failurePrefix, ": Expecting a valid shape descriptor for type=").concat(print(type$$1)).concat(idx >= 0 ? " at index=".concat(idx) : '');
     }
   }
 
@@ -3360,27 +3369,30 @@ var deepVerifyShape = function deepVerifyShape(type$$1, rule, options, failurePr
     // validate all of the shape's typesets (each own-prop should be a typeset)
     forEach_1(shape, function (ts, prop) {
       var opts = Object.assign({}, options); // options.failure should not exist at this point
+
       valid = isTypeset(ts, opts); // eslint-disable-line no-use-before-define
-      options.failure = opts.failure && failurePrefix + ' (' + (idx >= 0 ? 'index=' + idx + ', ' : '') + 'prop="' + prop + '"): ' + opts.failure;
+
+      options.failure = opts.failure && "".concat(failurePrefix, " (").concat(idx >= 0 ? "index=".concat(idx, ", ") : '', "prop=\"").concat(prop, "\"): ").concat(opts.failure);
       return valid; // break on first invalid
     });
   }
 
   return valid;
-};
-
-// Deep-verify a nested Array typeset.
+}; // Deep-verify a nested Array typeset.
 // @param {rtvref.types.typeset} typeset The nested Array typeset to verify.
 // @param {Object} options The options object originally given to isTypeset().
 // @param {string} failurePrefix The prefix to use if a failure message is generated.
 // @param {number} [idx] The position of `typeset` within the parent Array typeset.
+
+
 var deepVerifyArray = function deepVerifyArray(typeset, options, failurePrefix, idx) {
   var opts = Object.assign({}, options); // options.failure should not exist at this point
+
   var valid = isTypeset(typeset, opts); // eslint-disable-line no-use-before-define
-  options.failure = opts.failure && failurePrefix + ' (index=' + idx + '): ' + opts.failure;
+
+  options.failure = opts.failure && "".concat(failurePrefix, " (index=").concat(idx, "): ").concat(opts.failure);
   return valid;
 };
-
 /**
  * Determines if a value is a typeset.
  * @function rtvref.validation.isTypeset.default
@@ -3396,33 +3408,36 @@ var deepVerifyArray = function deepVerifyArray(typeset, options, failurePrefix, 
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.typeset}
  */
+
 function isTypeset(v) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { deep: false, fullyQualified: false };
-
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+    deep: false,
+    fullyQualified: false
+  };
   var deep = !!options.deep;
-  var fullyQualified = !!options.fullyQualified;
-
-  // FIRST: make sure it's an acceptable type for a typeset: shape, string
+  var fullyQualified = !!options.fullyQualified; // FIRST: make sure it's an acceptable type for a typeset: shape, string
   //  (just a plain type name), function (validator), or array (non-empty)
+
   var valid = !!(v && (isShape(v) || isString(v) && types.check(v) || isValidator(v) || isArray$1(v) && v.length > 0));
 
   if (!valid) {
-    options.failure = 'Value v=' + print(v) + ' is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)';
-  }
+    options.failure = "Value v=".concat(print(v), " is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)");
+  } // THEN: check if needs to be fully-qualified, and check deep within if requested
 
-  // THEN: check if needs to be fully-qualified, and check deep within if requested
+
   if (valid && fullyQualified) {
-    var failurePrefix = 'Fully-qualified ' + (deep ? 'deep' : 'shallow') + ' typeset=' + print(v);
+    var failurePrefix = "Fully-qualified ".concat(deep ? 'deep' : 'shallow', " typeset=").concat(print(v)); // must now be an array with at least 2 elements: [qualifier, type]
 
-    // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray$1(v) && v.length >= 2) {
       var usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
-      var curType = void 0; // @type {string} current in-scope type
-      var argType = void 0; // @type {(string|undefined)} current in-scope type IIF it accepts args
 
+      var curType; // @type {string} current in-scope type
+
+      var argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
       // Updates the current in-scope type (curType) and marks it as used in usedTypes.
       //  If the type has already been used, it sets valid to false.
       // @param {string} newType New in-scope type.
+
       var updateCurType = function updateCurType(newType) {
         // set the rule as the current in-scope type
         curType = newType;
@@ -3430,14 +3445,14 @@ function isTypeset(v) {
         if (usedTypes[curType]) {
           // a type cannot appear more than once in a typeset (but nested is OK)
           valid = false;
-          options.failure = failurePrefix + ': Type "' + curType + '" may not be included more than once in the typeset (but may appear again in a nested typeset)';
+          options.failure = "".concat(failurePrefix, ": Type \"").concat(curType, "\" may not be included more than once in the typeset (but may appear again in a nested typeset)");
         }
 
         usedTypes[curType] = true;
-      };
-
-      // iterate through each element in the typeset array to make sure all required
+      }; // iterate through each element in the typeset array to make sure all required
       //  rules/properties of a fully-qualified typeset are specified
+
+
       forEach_1(v, function (rule, idx) {
         if (idx === 0) {
           // first position must always be the qualifier
@@ -3445,8 +3460,9 @@ function isTypeset(v) {
           //  all qualifiers (or all types, below) when it isn't since we know
           //  they're always strings
           valid = isString(rule) && !!qualifiers.check(rule);
+
           if (!valid) {
-            options.failure = failurePrefix + ': Expected a qualifier at index=' + idx + ', found ' + print(rule);
+            options.failure = "".concat(failurePrefix, ": Expected a qualifier at index=").concat(idx, ", found ").concat(print(rule));
           }
         } else if (isString(rule)) {
           // additional qualifier, or simple type
@@ -3454,19 +3470,18 @@ function isTypeset(v) {
             // cannot have more than one qualifier and qualifier must be in first position
             //  (and this is not the first position because that's handled specially, above)
             valid = false;
-            options.failure = failurePrefix + ': Cannot have more than one qualifier, and qualifier must be in first position, index=' + idx;
+            options.failure = "".concat(failurePrefix, ": Cannot have more than one qualifier, and qualifier must be in first position, index=").concat(idx);
           } else if (!types.check(rule)) {
             // if not a qualifier, it must be a valid type (since it's a string)
             valid = false;
-            options.failure = failurePrefix + ': Expected a valid type in ' + types + ' at index=' + idx + ', found ' + print(rule);
+            options.failure = "".concat(failurePrefix, ": Expected a valid type in ").concat(types, " at index=").concat(idx, ", found ").concat(print(rule));
           } else {
             // set the rule as the current in-scope type
-            updateCurType(rule);
-
-            // update the in-scope arg type: reset to undefined if it doesn't take
+            updateCurType(rule); // update the in-scope arg type: reset to undefined if it doesn't take
             //  args; otherwise, update it (NOTE: currently, there are no types that
             //  _require_ args, only ones that optionally have args, so we don't
             //  have to ensure that args were given when we change the type)
+
             argType = argTypes.check(rule);
           }
         } else if (isValidator(rule)) {
@@ -3475,8 +3490,9 @@ function isTypeset(v) {
           //  qualifier, and since the typeset must be FQ'd, we must have an
           //  in-scope type
           valid = !!(curType && idx + 1 === v.length);
+
           if (!valid) {
-            options.failure = failurePrefix + ': Unexpected custom validator at index=' + idx + ': Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type';
+            options.failure = "".concat(failurePrefix, ": Unexpected custom validator at index=").concat(idx, ": Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type");
           }
         } else if (isTypeArgs(rule)) {
           // could be a shape, or type args (either way, it's a single object)
@@ -3495,25 +3511,25 @@ function isTypeset(v) {
             // since the typeset must be fully-qualified and we don't already
             //  have an in-scope arg type, the typeset is invalid
             valid = false;
-            options.failure = failurePrefix + ': Expecting a type that takes arguments at index=' + (idx - 1);
-          }
-
-          // only go deep if the rule is a shape (which means the current in-scope
+            options.failure = "".concat(failurePrefix, ": Expecting a type that takes arguments at index=").concat(idx - 1);
+          } // only go deep if the rule is a shape (which means the current in-scope
           //  type must be an object type) or ARRAY args with `typeset` specified
+
+
           if (valid && deep && objTypes.check(curType)) {
             valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
           } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
             // ARRAY type with args.typeset specified, and we're deep-validating
             valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
-          }
-          // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+          } // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
           //  the rule (object) needs no further validation
+
         } else {
           // any other type in a fully-qualified array typeset is not supported
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = failurePrefix + ': Unexpected value at index=' + idx + ': Expecting object (shape), non-empty string (single type), or function (custom validator)';
+          options.failure = "".concat(failurePrefix, ": Unexpected value at index=").concat(idx, ": Expecting object (shape), non-empty string (single type), or function (custom validator)");
         }
 
         return valid; // break if no longer valid
@@ -3522,21 +3538,26 @@ function isTypeset(v) {
       // automatically invalid if not an array because a typeset must be in the
       //  array form in order to be FQ'd
       valid = false;
-      options.failure = failurePrefix + ': Typeset cannot be fully-qualified unless it is an Array of minimum length=2';
-    }
-
-    // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
+      options.failure = "".concat(failurePrefix, ": Typeset cannot be fully-qualified unless it is an Array of minimum length=2");
+    } // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
     //  definition, and deep (if requested)
-  } else if (valid && !fullyQualified && isArray$1(v)) {
-    var _failurePrefix = 'Non-qualified ' + (deep ? 'deep' : 'shallow') + ' typeset=' + print(v);
-    var _usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
-    var _curType = void 0; // @type {string} current in-scope type
-    var _argType = void 0; // @type {(string|undefined)} current in-scope type IIF it accepts args
-    var hasQualifier = false; // true if a qualifier is specified (not implied)
 
+  } else if (valid && !fullyQualified && isArray$1(v)) {
+    var _failurePrefix = "Non-qualified ".concat(deep ? 'deep' : 'shallow', " typeset=").concat(print(v));
+
+    var _usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
+
+    var _curType; // @type {string} current in-scope type
+
+
+    var _argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
+
+
+    var hasQualifier = false; // true if a qualifier is specified (not implied)
     // Updates the current in-scope type (curType) and marks it as used in usedTypes.
     //  If the type has already been used, it sets valid to false.
     // @param {string} newType New in-scope type.
+
     var _updateCurType = function _updateCurType(newType) {
       // set the rule as the current in-scope type
       _curType = newType;
@@ -3544,45 +3565,48 @@ function isTypeset(v) {
       if (_usedTypes[_curType]) {
         // a type cannot appear more than once in a typeset (but nested is OK)
         valid = false;
-        options.failure = _failurePrefix + ': Type "' + _curType + '" may not be included more than once in the typeset (but may appear again in a nested typeset)';
+        options.failure = "".concat(_failurePrefix, ": Type \"").concat(_curType, "\" may not be included more than once in the typeset (but may appear again in a nested typeset)");
       }
 
       _usedTypes[_curType] = true;
-    };
-
-    // iterate through each element in the typeset array to make sure all required
+    }; // iterate through each element in the typeset array to make sure all required
     //  rules/properties of a typeset are specified
+
+
     forEach_1(v, function (rule, idx) {
       if (isString(rule)) {
         if (qualifiers.check(rule)) {
           hasQualifier = true;
           valid = idx === 0; // must be in the first position
+
           if (!valid) {
-            options.failure = _failurePrefix + ': Unexpected qualifier at index=' + idx + ': There must be at most one qualifier and it may only be in the first position';
+            options.failure = "".concat(_failurePrefix, ": Unexpected qualifier at index=").concat(idx, ": There must be at most one qualifier and it may only be in the first position");
           }
         } else if (types.check(rule)) {
           // set the rule as the current in-scope type
-          _updateCurType(rule);
-          // update current in-scope arg type IIF it accepts args
+          _updateCurType(rule); // update current in-scope arg type IIF it accepts args
           // NOTE: currently, there are no types that _require_ args, only ones
           //  that optionally have args, so we don't have to ensure that args
           //  were given when we change the type
+
+
           _argType = argTypes.check(rule);
         } else {
           // some unknown/invalid qualifier or type
           valid = false;
-          options.failure = _failurePrefix + ': Unknown/invalid qualifier/type=' + print(rule) + ' at index=' + idx;
+          options.failure = "".concat(_failurePrefix, ": Unknown/invalid qualifier/type=").concat(print(rule), " at index=").concat(idx);
         }
       } else if (isValidator(rule)) {
         // must be a validator, but there can't be more than 1, and it must be
         //  in the last position (which enforces the 1 count), and always after
         //  the qualifier (if any)
         valid = idx + 1 === v.length;
+
         if (valid && !_curType) {
           // if we have a validator but no in-scope type, ANY is implied
           _updateCurType(types.ANY);
         } else if (!valid) {
-          options.failure = _failurePrefix + ': Unexpected custom validator at index=' + idx + ': Must be at the last position';
+          options.failure = "".concat(_failurePrefix, ": Unexpected custom validator at index=").concat(idx, ": Must be at the last position");
         }
       } else if (isTypeArgs(rule)) {
         // could be a shape, or type args (either way, it's just one object)
@@ -3599,12 +3623,13 @@ function isTypeset(v) {
           //  rule is the type and args all in one, therefore we consume the
           //  rule/object as the in-scope arg type's arguments
           _updateCurType(DEFAULT_OBJECT_TYPE);
+
           if (valid) {
-            valid = idx === 0 || hasQualifier && idx === 1;
-            // NOTE: do not set argType because the shape is the default object type's
+            valid = idx === 0 || hasQualifier && idx === 1; // NOTE: do not set argType because the shape is the default object type's
             //  args, so they should be consumed by the in-scope arg type
+
             if (!valid) {
-              options.failure = _failurePrefix + ': Shape at index=' + idx + ' is missing an object type in ' + objTypes + ': Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "' + DEFAULT_OBJECT_TYPE + '"';
+              options.failure = "".concat(_failurePrefix, ": Shape at index=").concat(idx, " is missing an object type in ").concat(objTypes, ": Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of \"").concat(DEFAULT_OBJECT_TYPE, "\"");
             }
           }
         } else {
@@ -3613,65 +3638,68 @@ function isTypeset(v) {
           //  that optionally have args, so we don't have to ensure that args
           //  were given when we change the type
           _argType = undefined;
-        }
-
-        // only go deep if the rule is a shape, which means the current in-scope
+        } // only go deep if the rule is a shape, which means the current in-scope
         //  type must be an object type, or ARRAY args with `typeset` specified
+
+
         if (valid && deep && objTypes.check(_curType)) {
           valid = deepVerifyShape(_curType, rule, options, _failurePrefix, idx);
         } else if (valid && deep && _curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
           // ARRAY type with args.typeset specified, and we're deep-validating
           valid = deepVerifyArray(rule.typeset, options, _failurePrefix, idx);
-        }
-        // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+        } // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
         //  the rule (object) needs no further validation
+
       } else if (isArray$1(rule)) {
         // a nested array implies the ARRAY type in shorthand notation
-        _updateCurType(types.ARRAY);
-
-        // in this case, the in-scope arg type should be updated to ARRAY since
+        _updateCurType(types.ARRAY); // in this case, the in-scope arg type should be updated to ARRAY since
         //  arrays accept optional args, but since this rule is a short-hand ARRAY
         //  notation, which means args cannot be specified, we update argType to
         //  undefined to clear it from the previous type (if it was set) and clear
         //  it from this type as well
+
+
         _argType = undefined;
 
         if (valid && deep) {
-          var opts = { deep: deep, fullyQualified: fullyQualified };
+          var opts = {
+            deep: deep,
+            fullyQualified: fullyQualified
+          };
           valid = isTypeset(rule, opts); // recursive
-          options.failure = opts.failure && _failurePrefix + ' (index=' + idx + '): ' + opts.failure;
+
+          options.failure = opts.failure && "".concat(_failurePrefix, " (index=").concat(idx, "): ").concat(opts.failure);
         }
       } else {
         // any other type in a non-qualified array typeset is not supported
         // NOTE: ARRAY shorthand notation is permitted in non-qualified typesets,
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
-        options.failure = _failurePrefix + ': Unexpected value at index=' + idx + ': Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)';
+        options.failure = "".concat(_failurePrefix, ": Unexpected value at index=").concat(idx, ": Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)");
       }
 
       return valid; // break if no longer valid
-    });
+    }); // make sure at least one type was specified
 
-    // make sure at least one type was specified
+
     if (valid) {
       valid = !!_curType;
-      if (!valid) {
-        options.failure = _failurePrefix + ': Failed to find a type in the typeset';
-      }
-    }
 
-    // NEXT: if it's a shape descriptor, check if deep is requested as long as it's
+      if (!valid) {
+        options.failure = "".concat(_failurePrefix, ": Failed to find a type in the typeset");
+      }
+    } // NEXT: if it's a shape descriptor, check if deep is requested as long as it's
     //  valid and does not need to be FQ'd (otherwise, 'v' must be an array and
     //  would be invalid as a FQ'd typeset)
+
   } else if (valid && deep && !fullyQualified && isShape(v)) {
-    var _failurePrefix2 = 'Non-qualified deep shape=' + print(v);
-
-    // we need to deep-validate a shape descriptor, which means each one of its
+    var _failurePrefix2 = "Non-qualified deep shape=".concat(print(v)); // we need to deep-validate a shape descriptor, which means each one of its
     //  own-properties must be a valid typeset
-    valid = deepVerifyShape(DEFAULT_OBJECT_TYPE, v, options, _failurePrefix2);
-  }
 
-  // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid
+
+    valid = deepVerifyShape(DEFAULT_OBJECT_TYPE, v, options, _failurePrefix2);
+  } // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid
+
 
   return valid;
 }
@@ -3687,10 +3715,12 @@ function isTypeset(v) {
  *
  * @class rtvref.RtvSuccess
  */
-var RtvSuccess = function () {
+var RtvSuccess =
+/*#__PURE__*/
+function () {
   // JSDoc is provided at the @class level
   function RtvSuccess() {
-    classCallCheck(this, RtvSuccess);
+    _classCallCheck(this, RtvSuccess);
 
     Object.defineProperties(this, {
       /**
@@ -3707,7 +3737,6 @@ var RtvSuccess = function () {
       }
     });
   }
-
   /**
    * A string representation of this instance.
    * @method rtvref.RtvSuccess#toString
@@ -3715,32 +3744,30 @@ var RtvSuccess = function () {
    */
 
 
-  createClass(RtvSuccess, [{
-    key: 'toString',
+  _createClass(RtvSuccess, [{
+    key: "toString",
     value: function toString() {
       return '{rtvref.RtvSuccess}';
     }
   }]);
+
   return RtvSuccess;
 }();
 
 ////// RtvError Class
 
-// @type {function} The super class.
-var extendsFrom = Error;
-
-// Renders a path array as a string.
+var extendsFrom = Error; // Renders a path array as a string.
 // @param {Array.<string>} path
 // @returns {string}
+
 var renderPath = function renderPath(path) {
   // returns '/' if the path is empty
   return path.reduce(function (strPath, elem) {
     // cast `elem` to string rather than print() to avoid quotes (should be a
     //  string anyway)
-    return '' + strPath + (strPath === '/' ? '' : '/') + (elem + '');
+    return "".concat(strPath).concat(strPath === '/' ? '' : '/').concat(elem + '');
   }, '/');
 };
-
 /**
  * @external JS_Error
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
@@ -3765,6 +3792,8 @@ var renderPath = function renderPath(path) {
  *  {@link rtvref.shape_descriptor shape descriptor}.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.
  */
+
+
 var RtvError = function RtvError(value, typeset, path, cause) {
   // NOTE: We're using the old ES5 way of doing classical inheritance rather than
   //  an ES6 'class' because extending from Error doesn't appear to work very well,
@@ -3773,27 +3802,27 @@ var RtvError = function RtvError(value, typeset, path, cause) {
   //  override `toString()` does not work. Calls to this method, whether direct
   //  or implicit, continue to call `Error.prototype.toString()`, as confirmed
   //  by checking the prototype chain, which isn't properly constructed.
-
   if (!isTypeset(typeset)) {
-    throw new Error('Invalid typeset: ' + print(typeset));
+    throw new Error("Invalid typeset: ".concat(print(typeset)));
   }
 
   if (!isArray$1(path)) {
-    throw new Error('Invalid path: ' + print(path));
+    throw new Error("Invalid path: ".concat(print(path)));
   }
 
-  if (!isTypeset(cause, { fullyQualified: true })) {
-    throw new Error('Invalid cause (expecting a fully-qualified typeset): ' + print(cause));
-  }
-
-  // NOTE: For some reason, calling `extendsFrom.call(this, message)` has
+  if (!isTypeset(cause, {
+    fullyQualified: true
+  })) {
+    throw new Error("Invalid cause (expecting a fully-qualified typeset): ".concat(print(cause)));
+  } // NOTE: For some reason, calling `extendsFrom.call(this, message)` has
   //  no effect on `this` whatsoever, perhaps because it's calling native code,
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
-  extendsFrom.call(this);
-  this.message = 'Verification failed: value=' + print(value) + ', path="' + renderPath(path) + '", cause=' + print(cause);
-  this.name = 'RtvError';
 
+
+  extendsFrom.call(this);
+  this.message = "Verification failed: value=".concat(print(value), ", path=\"").concat(renderPath(path), "\", cause=").concat(print(cause));
+  this.name = 'RtvError';
   Object.defineProperties(this, {
     /**
      * Flag indicating the validation failed. Always `false`.
@@ -3877,18 +3906,17 @@ var RtvError = function RtvError(value, typeset, path, cause) {
 
 RtvError.prototype = Object.create(extendsFrom.prototype);
 RtvError.prototype.constructor = RtvError;
-
 /**
  * A string representation of this instance.
  * @method rtvref.RtvError#toString
  * @returns {string} String representation.
  */
+
 RtvError.prototype.toString = function () {
-  return '{rtvref.RtvError value=' + print(this.value) + ', path="' + renderPath(this.path) + '", cause=' + print(this.cause) + '}';
+  return "{rtvref.RtvError value=".concat(print(this.value), ", path=\"").concat(renderPath(this.path), "\", cause=").concat(print(this.cause), "}");
 };
 
 ////// Main Implementation Module
-
 /**
  * <h2>RTV Implementation Module</h2>
  *
@@ -3904,8 +3932,8 @@ RtvError.prototype.toString = function () {
  * @name rtvref.impl._validatorMap
  * @type {Object.<string,rtvref.validator.type_validator>}
  */
-var _validatorMap = {};
 
+var _validatorMap = {};
 /**
  * Get the qualifier given any kind of typeset.
  *
@@ -3918,6 +3946,7 @@ var _validatorMap = {};
  * @returns {string} The applicable {@link rtvref.qualifiers qualifier} for the
  *  specified typeset, which is assumed to be valid.
  */
+
 var getQualifier = function getQualifier(typeset) {
   var qualifier = DEFAULT_QUALIFIER;
 
@@ -3927,13 +3956,12 @@ var getQualifier = function getQualifier(typeset) {
     if (isString(typeset[0]) && qualifiers.check(typeset[0])) {
       qualifier = typeset[0];
     }
-  }
-  // else, it's either an object, function, or string, which implies the default
+  } // else, it's either an object, function, or string, which implies the default
   //  qualifier
+
 
   return qualifier;
 };
-
 /**
  * Convert a type, qualifier, and args into a typeset.
  *
@@ -3963,8 +3991,10 @@ var getQualifier = function getQualifier(typeset) {
  *  fully-qualified.
  * @throws {Error} If `type`, `qualifier`, or `args` is invalid.
  */
+
+
 var toTypeset = function toTypeset(type$$1) {
-  for (var _len = arguments.length, rest = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+  for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     rest[_key - 1] = arguments[_key];
   }
 
@@ -3972,7 +4002,7 @@ var toTypeset = function toTypeset(type$$1) {
     return p !== undefined;
   });
   var qualifier = DEFAULT_QUALIFIER;
-  var typeArgs = void 0;
+  var typeArgs;
   var typeArgsGiven = false;
   var fullyQualified = false;
 
@@ -4001,6 +4031,7 @@ var toTypeset = function toTypeset(type$$1) {
       if (typeArgs) {
         throw new Error('args parameter already specified');
       }
+
       typeArgsGiven = true;
       typeArgs = params[1];
     } else {
@@ -4014,19 +4045,22 @@ var toTypeset = function toTypeset(type$$1) {
   }
 
   types.verify(type$$1); // catches the falsy value case too
+
   qualifiers.verify(qualifier); // catches the falsy value case too
 
   if (typeArgsGiven) {
     argTypes.verify(type$$1);
+
     if (!isTypeArgs(typeArgs)) {
-      throw new Error('Invalid type args=' + print(typeArgs));
+      throw new Error("Invalid type args=".concat(print(typeArgs)));
     }
   }
 
-  var typeset = void 0;
+  var typeset;
 
   if (fullyQualified) {
     typeset = [qualifier, type$$1];
+
     if (typeArgs) {
       typeset.push(typeArgs);
     }
@@ -4039,6 +4073,7 @@ var toTypeset = function toTypeset(type$$1) {
       }
     } else {
       typeset = [qualifier, type$$1];
+
       if (typeArgs) {
         typeset.push(typeArgs);
       }
@@ -4047,7 +4082,6 @@ var toTypeset = function toTypeset(type$$1) {
 
   return typeset;
 };
-
 /**
  * Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
  *  are not fully-qualified).
@@ -4073,51 +4107,53 @@ var toTypeset = function toTypeset(type$$1) {
  *  to elements within the input typeset.
  * @throws {Error} If `typeset` or `qualifier` is not a valid.
  */
+
+
 var fullyQualify = function fullyQualify(typeset, qualifier) {
   if (!isTypeset(typeset)) {
     // start by validating so we can be confident later
-    throw new Error('Invalid typeset=' + print(typeset));
+    throw new Error("Invalid typeset=".concat(print(typeset)));
   }
 
   if (qualifier) {
     qualifiers.verify(qualifier);
-  }
-
-  // NOTE: from this point on, we ASSUME that the typeset is valid, which lets
+  } // NOTE: from this point on, we ASSUME that the typeset is valid, which lets
   //  us make assumptions about what we find within it; without this knowledge,
   //  the algorithm below would not work
 
-  if (!isArray$1(typeset)) {
-    qualifier = qualifier || DEFAULT_QUALIFIER;
 
-    // must be either a string, shape, or function with an implied qualifier
+  if (!isArray$1(typeset)) {
+    qualifier = qualifier || DEFAULT_QUALIFIER; // must be either a string, shape, or function with an implied qualifier
+
     if (isShape(typeset)) {
       // must be a nested shape descriptor with default object type
       return [qualifier, DEFAULT_OBJECT_TYPE, typeset];
-    }
+    } // if a validator, it has an implied type of ANY
 
-    // if a validator, it has an implied type of ANY
+
     if (isValidator(typeset)) {
       return [qualifier, types.ANY, typeset];
-    }
+    } // string (basic type)
 
-    // string (basic type)
+
     return [qualifier, typeset];
   }
 
   var fqts = []; // ALWAYS a new array
-  var curType = void 0; // @type {(string|undefined)} current type in scope or undefined if none
 
+  var curType; // @type {(string|undefined)} current type in scope or undefined if none
   // typeset is an array: iterate its elements and build fqts iteratively
+
   typeset.forEach(function (rule, i) {
     // qualifiers are non-empty strings and must appear in the first element, if specified
     if (i === 0) {
       if (isString(rule) && qualifiers.check(rule)) {
         fqts.push(qualifier || rule); // qualifier overrides the one in the typeset
-        return; // next rule
-      }
 
-      // rule isn't a qualifier: use override or the default, and keep processing the rule
+        return; // next rule
+      } // rule isn't a qualifier: use override or the default, and keep processing the rule
+
+
       fqts.push(qualifier || DEFAULT_QUALIFIER);
     }
 
@@ -4143,13 +4179,13 @@ var fullyQualify = function fullyQualify(typeset, qualifier) {
     } else {
       // must be an array: add implied ARRAY type and move Array typeset into args
       curType = types.ARRAY;
-      fqts.push(curType, { typeset: rule });
+      fqts.push(curType, {
+        typeset: rule
+      });
     }
   });
-
   return fqts;
 };
-
 /**
  * Extracts (modifies) the next complete type from an Array typeset.
  *
@@ -4201,14 +4237,16 @@ var fullyQualify = function fullyQualify(typeset, qualifier) {
  * @throws {Error} If `typeset` is not empty and not a valid Array typeset.
  * @throws {Error} If `qualifier` is specified but not valid.
  */
+
+
 var extractNextType = function extractNextType(typeset, qualifier) {
   if (qualifier && !isBoolean(qualifier)) {
     qualifiers.verify(qualifier);
-  }
+  } // check for an array first since that's much faster than isTypeset()
 
-  // check for an array first since that's much faster than isTypeset()
+
   if (!isArray$1(typeset) || typeset.length > 0 && !isTypeset(typeset)) {
-    throw new Error('Invalid Array typeset=' + print(typeset));
+    throw new Error("Invalid Array typeset=".concat(print(typeset)));
   }
 
   if (typeset.length === 0) {
@@ -4216,16 +4254,17 @@ var extractNextType = function extractNextType(typeset, qualifier) {
   }
 
   var subtype = []; // subset type of `typeset`
-  var type$$1 = typeset.shift(); // NOTE: [].shift() === undefined
 
+  var type$$1 = typeset.shift(); // NOTE: [].shift() === undefined
   // FIRST: check for the qualifier, which must be the first element, if specified
+
   if (qualifiers.check(type$$1)) {
     if (qualifier !== false) {
       subtype.push(type$$1); // include, and ignore the specified qualifier
-    }
-
-    // next type: typeset cannot be empty because it's valid and since
+    } // next type: typeset cannot be empty because it's valid and since
     //  there's a qualifier, there must be at least one type in it too
+
+
     type$$1 = typeset.shift();
   } else {
     // must be a type or the validator, which we'll check for below
@@ -4237,10 +4276,9 @@ var extractNextType = function extractNextType(typeset, qualifier) {
 
   if (isString(type$$1)) {
     // simple type
-    subtype.push(type$$1);
-
-    // check for args if applicable to type (as of now, there are no types that
+    subtype.push(type$$1); // check for args if applicable to type (as of now, there are no types that
     //  require args)
+
     if (argTypes.check(type$$1) && typeset.length > 0 && isTypeArgs(typeset[0])) {
       subtype.push(typeset.shift());
     }
@@ -4256,7 +4294,6 @@ var extractNextType = function extractNextType(typeset, qualifier) {
 
   return subtype;
 };
-
 /**
  * [Internal] Common options for the various `check*()` functions.
  * @private
@@ -4293,26 +4330,27 @@ var extractNextType = function extractNextType(typeset, qualifier) {
  * @see {@link rtvref.impl.checkType}
  * @throws {Error} If `current.path` or `override.path` is specified and not an array.
  */
+
+
 var _getCheckOptions = function _getCheckOptions() {
   var current = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (current.path && !isArray$1(current.path)) {
-    throw new Error('current.path must be an Array when specified, current.path=' + print(current.path));
+    throw new Error("current.path must be an Array when specified, current.path=".concat(print(current.path)));
   }
 
   if (override.path && !isArray$1(override.path)) {
-    throw new Error('override.path must be an Array when specified, override.path=' + print(override.path));
+    throw new Error("override.path must be an Array when specified, override.path=".concat(print(override.path)));
   }
 
   var options = {
     path: override.path || current.path || [],
     isTypeset: false,
     qualifier: override.qualifier || current.qualifier || undefined
-  };
-
-  // careful with isTypeset since it's a boolean: check for property existence
+  }; // careful with isTypeset since it's a boolean: check for property existence
   //  so we don't misinterpret undefined as a falsy value we should use
+
   if (override.hasOwnProperty('isTypeset')) {
     options.isTypeset = !!override.isTypeset;
   } else if (current.hasOwnProperty('isTypeset')) {
@@ -4321,7 +4359,6 @@ var _getCheckOptions = function _getCheckOptions() {
 
   return options;
 };
-
 /**
  * Checks a value using a single type.
  * @function rtvref.impl.checkType
@@ -4349,39 +4386,42 @@ var _getCheckOptions = function _getCheckOptions() {
  * @see {@link rtvref.types}
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkWithType = function checkWithType(value, singleType /*, options*/) {
+
+
+var checkWithType = function checkWithType(value, singleType
+/*, options*/
+) {
   var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
   if (!options.isTypeset && !isTypeset(singleType)) {
-    throw new Error('Invalid typeset in singleType=' + print(singleType));
+    throw new Error("Invalid typeset in singleType=".concat(print(singleType)));
   }
 
   options.isTypeset = true;
-
   var qualifier = options.qualifier || getQualifier(singleType);
+  var type$$1; // @type {string}
 
-  var type$$1 = void 0; // @type {string}
-  var args = void 0; // @type {Object}
+  var args; // @type {Object}
 
   if (isString(singleType)) {
-    type$$1 = singleType;
-    // simple type: no args
+    type$$1 = singleType; // simple type: no args
   } else if (isShape(singleType)) {
     type$$1 = DEFAULT_OBJECT_TYPE;
     args = singleType;
   } else if (isArray$1(singleType)) {
     var singleTypeCopy = fullyQualify(singleType); // make any implied types concrete
+
     var typeset = extractNextType(singleTypeCopy, false);
 
     if (singleTypeCopy.length > 0) {
       // if singleType was just one type, copy should be empty now
-      throw new Error('Specified singleType=' + print(singleType) + ' typeset must represent a single type');
+      throw new Error("Specified singleType=".concat(print(singleType), " typeset must represent a single type"));
     }
 
     type$$1 = typeset[0];
     args = typeset.length > 1 ? typeset[1] : undefined;
   } else {
-    throw new Error('Specified singleType=' + print(singleType) + ' must be a string, shape, or Array');
+    throw new Error("Specified singleType=".concat(print(singleType), " must be a string, shape, or Array"));
   }
 
   if (_validatorMap[type$$1]) {
@@ -4397,9 +4437,8 @@ var checkWithType = function checkWithType(value, singleType /*, options*/) {
     return result;
   }
 
-  throw new Error('Missing validator for type=' + print(type$$1));
+  throw new Error("Missing validator for type=".concat(print(type$$1)));
 };
-
 /**
  * Checks a value using a {@link rtvref.shape_descriptor shape descriptor} and
  *  ensure the value's type is the default object type.
@@ -4413,17 +4452,20 @@ var checkWithType = function checkWithType(value, singleType /*, options*/) {
  * @throws {Error} If `shape` is not an {@link rtvref.types.OBJECT OBJECT}.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkWithShape = function checkWithShape(value, shape /*, options*/) {
+
+
+var checkWithShape = function checkWithShape(value, shape
+/*, options*/
+) {
   if (!isShape(shape)) {
-    throw new Error('Invalid shape=' + print(shape));
+    throw new Error("Invalid shape=".concat(print(shape)));
   }
 
-  var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+  var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined); // type validators are ultimately responsible for checking values against shapes
 
-  // type validators are ultimately responsible for checking values against shapes
+
   return checkWithType(value, shape, _getCheckOptions(options));
 };
-
 /**
  * Checks a value using an Array typeset.
  * @function rtvref.impl.checkTypeset
@@ -4435,27 +4477,32 @@ var checkWithShape = function checkWithShape(value, shape /*, options*/) {
  * @throws {Error} If `typeset` is not a valid Array typeset.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
-  var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
-  // check for an array first since that's must faster than isTypeset()
+
+var checkWithArray = function checkWithArray(value, typeset
+/*, options*/
+) {
+  var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined); // check for an array first since that's must faster than isTypeset()
+
+
   if (!isArray$1(typeset) || !(options.isTypeset || isTypeset(typeset))) {
-    throw new Error('Invalid Array typeset=' + print(typeset));
+    throw new Error("Invalid Array typeset=".concat(print(typeset)));
   }
 
   options.isTypeset = true;
+  var match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
 
-  var match = void 0; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
-  var qualifier = options.qualifier || getQualifier(typeset);
-
-  // consider each type in the typeset until we find one that matches the value
+  var qualifier = options.qualifier || getQualifier(typeset); // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
   //  using a short-circuit OR conjunction
   // NOTE: due to the isTypeset check above, we can assume that each 'type' is
   //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
   //  assume that itself is valid because the isTypeset check was just shallow)
+
   var typesetCopy = typeset.concat(); // shallow clone so we can modify the array locally
+
   var subtype = extractNextType(typesetCopy, false); // exclude qualifier we already have
+
   while (subtype.length > 0) {
     // check for the validator, which will always come alone, and since the validator
     //  must be at the end of an Array typeset, it also signals the end of all subtypes
@@ -4475,31 +4522,33 @@ var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
         path: options.path,
         qualifier: qualifier,
         isTypeset: true // subtype must be valid per extractNextType()
+
       }));
 
       if (result.valid) {
         match = fullyQualify(subtype, qualifier);
         break; // break on first match
       }
-    }
+    } // next subtype
 
-    // next subtype
+
     subtype = extractNextType(typesetCopy);
   }
 
-  var err = void 0; // @type {(RtvError|undefined)}
+  var err; // @type {(RtvError|undefined)}
 
   if (match) {
     // check for a validator at the end of the Array typeset and invoke it
     var lastType = typeset[typeset.length - 1];
+
     if (isValidator(lastType)) {
       if (!lastType(value, match, typeset)) {
         // invalid in spite of the match since the validator said no
         err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier));
-      }
-      // else, valid!
-    }
-    // else, valid, since we have a match
+      } // else, valid!
+
+    } // else, valid, since we have a match
+
   } else {
     // no match
     err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier));
@@ -4507,7 +4556,6 @@ var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
 
   return err || new RtvSuccess();
 };
-
 /**
  * Checks a value against a typeset.
  * @function rtvref.impl.check
@@ -4519,7 +4567,11 @@ var checkWithArray = function checkWithArray(value, typeset /*, options*/) {
  * @throws {Error} If `typeset` is not a valid typeset.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-var check = function check(value, typeset /*, options*/) {
+
+
+var check = function check(value, typeset
+/*, options*/
+) {
   var options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
   try {
@@ -4534,15 +4586,15 @@ var check = function check(value, typeset /*, options*/) {
       if (isValidator(typeset)) {
         // custom validator: bare function implies the ANY type
         var match = types.ANY;
-        var fqMatch = fullyQualify(match, options.qualifier);
+        var fqMatch = fullyQualify(match, options.qualifier); // value must be ANY type, and custom validator must return true
 
-        // value must be ANY type, and custom validator must return true
         var result = checkWithType(value, match, options);
+
         if (!result.valid) {
           return result;
-        }
+        } // call the custom validator
 
-        // call the custom validator
+
         if (typeset(value, fqMatch, match)) {
           return new RtvSuccess();
         }
@@ -4560,17 +4612,16 @@ var check = function check(value, typeset /*, options*/) {
         return checkWithArray(value, typeset, options);
       }
 
-      throw new Error('Invalid JavaScript type for typeset=' + print(typeset));
+      throw new Error("Invalid JavaScript type for typeset=".concat(print(typeset)));
     } else {
-      throw new Error('Invalid typeset=' + print(typeset) + ' specified');
+      throw new Error("Invalid typeset=".concat(print(typeset), " specified"));
     }
   } catch (checkErr) {
-    var err = new Error('Cannot check value: ' + checkErr.message);
+    var err = new Error("Cannot check value: ".concat(checkErr.message));
     err.rootCause = checkErr;
     throw err;
   }
 };
-
 /**
  * [Internal] Registers a validator, adding a new type that can be
  *  {@link rtvref.impl.check checked}.
@@ -4584,25 +4635,26 @@ var check = function check(value, typeset /*, options*/) {
  *  registered.
  * @throws {Error} if `validator` does not have the expected interface.
  */
+
+
 var _registerType = function _registerType(validator) {
   // NOTE: we can't dogfood and describe a shape to check() because the types
   //  needed may not have been registered yet
   if (!isObject$1(validator) || !types.check(validator.type) || !isFunction$1(validator.config) || !isFunction$1(validator.default)) {
-
-    throw new Error('Cannot register an invalid validator for type=' + print(validator && validator.type) + ': missing at least one required property in [type, config, default]');
+    throw new Error("Cannot register an invalid validator for type=".concat(print(validator && validator.type), ": missing at least one required property in [type, config, default]"));
   }
 
   _validatorMap[validator.type] = validator.default;
-};
-
-////////////////////////////////////////////////////////////////////////////////
+}; ////////////////////////////////////////////////////////////////////////////////
 // Define and export the module
-
 // define the module to be exported: properties/methods with an underscore prefix
 //  will be converted to non-enumerable properties/methods
+
+
 var impl = {
   // internal
-  _validatorMap: _validatorMap, // exposed mainly to support unit testing
+  _validatorMap: _validatorMap,
+  // exposed mainly to support unit testing
   _registerType: _registerType,
   _getCheckOptions: _getCheckOptions,
   // public
@@ -4614,10 +4666,9 @@ var impl = {
   checkWithShape: checkWithShape,
   checkWithArray: checkWithArray,
   check: check
-};
-
-// make properties/methods with underscore prefix internal by making them
+}; // make properties/methods with underscore prefix internal by making them
 //  non-enumerable (but otherwise, a normal property)
+
 Object.keys(impl).forEach(function (prop) {
   if (prop.indexOf('_') === 0) {
     Object.defineProperty(impl, prop, {
@@ -4630,39 +4681,25 @@ Object.keys(impl).forEach(function (prop) {
 });
 
 ////// isAny validation
-
 /**
  * Type: {@link rtvref.types.ANY ANY}
  * @const {string} rtvref.validation.isAny.type
  */
-var type$17 = types.ANY;
 
-/**
- * {@link rtvref.validation.method Validation} for the
- *  {@link rtvref.types.ANY ANY} type.
- * @function rtvref.validation.isAny.default
- * @param {*} v Value to validate.
- * @returns {boolean} `true` if validated; `false` otherwise.
- */
-function isAny(v) {
-  return true; // anything goes, even undefined and null
-}
+var type$h = types.ANY;
 
 ////// valAny validator
-
 var REQUIRED$1 = qualifiers.REQUIRED;
-
-var impl$1 = void 0; // @type {rtvref.impl}
-
+var impl$1; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valAny.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config = function config(settings) {
   impl$1 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ANY ANY} type.
@@ -4672,34 +4709,33 @@ var config = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
 * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valAny(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$1;
 
   // NOTE: no point checking basic qualifier rules since this type allows both
   //  undefined and null regardless of the qualifier
-
-  if (isAny(v)) {
+  {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$1.toTypeset(type$17, q), [], impl$1.toTypeset(type$17, q, true));
+  return new RtvError(v, impl$1.toTypeset(type$h, q), [], impl$1.toTypeset(type$h, q, true));
 }
 
-var valAny$1 = Object.freeze({
-	get _impl () { return impl$1; },
-	type: type$17,
-	config: config,
-	default: valAny
+var valAny$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$1; },
+  type: type$h,
+  config: config,
+  default: valAny
 });
 
 ////// isAnyObject validation
-
 /**
  * Type: {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
  * @const {string} rtvref.validation.isAnyObject.type
  */
-var type$18 = types.ANY_OBJECT;
 
+var type$i = types.ANY_OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.ANY_OBJECT ANY_OBJECT} type.
@@ -4707,25 +4743,23 @@ var type$18 = types.ANY_OBJECT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isAnyObject(v) {
   return isObject_1(v);
 }
 
 ////// valAnyObject validator
-
 var REQUIRED$2 = qualifiers.REQUIRED;
-
-var impl$2 = void 0; // @type {rtvref.impl}
-
+var impl$2; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valAnyObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$1 = function config(settings) {
   impl$2 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ANY_OBJECT ANY_OBJECT} type.
@@ -4736,24 +4770,25 @@ var config$1 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valAnyObject(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$2;
-  var args = arguments[2];
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   if (!isAnyObject(v)) {
-    return new RtvError(v, impl$2.toTypeset(type$18, q), [], impl$2.toTypeset(type$18, q, true));
-  }
-
-  // args is the optional shape: ignore if it isn't a shape, like other validators
+    return new RtvError(v, impl$2.toTypeset(type$i, q), [], impl$2.toTypeset(type$i, q, true));
+  } // args is the optional shape: ignore if it isn't a shape, like other validators
   //  ignore invalid args properties
-  var shape = args && isShape(args) ? args : undefined;
-  var err = void 0; // @type {(RtvError|undefined)}
 
+
+  var shape = args && isShape(args) ? args : undefined;
+  var err; // @type {(RtvError|undefined)}
   // only consider enumerable, own-properties of the shape
+
   forEach_1(shape, function (typeset, prop) {
     var result = impl$2.check(v[prop], typeset); // check prop value against shape prop typeset
 
@@ -4767,11 +4802,11 @@ function valAnyObject(v) {
   return err || new RtvSuccess();
 }
 
-var valAnyObject$1 = Object.freeze({
-	get _impl () { return impl$2; },
-	type: type$18,
-	config: config$1,
-	default: valAnyObject
+var valAnyObject$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$2; },
+  type: type$i,
+  config: config$1,
+  default: valAnyObject
 });
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -4810,13 +4845,12 @@ function isFinite(value) {
 var _isFinite = isFinite;
 
 ////// isFinite validation
-
 /**
  * Type: {@link rtvref.types.FINITE FINITE}
  * @const {string} rtvref.validation.isFinite.type
  */
-var type$19 = types.FINITE;
 
+var type$j = types.FINITE;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.FINITE FINITE} type.
@@ -4829,25 +4863,23 @@ var type$19 = types.FINITE;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isFinite$1(v) {
   return _isFinite(v); // eliminates NaN, +/-Infinity
 }
 
 ////// valArray validator
-
 var REQUIRED$3 = qualifiers.REQUIRED;
-
-var impl$3 = void 0; // @type {rtvref.impl}
-
+var impl$3; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valArray.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$2 = function config(settings) {
   impl$3 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ARRAY ARRAY} type.
@@ -4858,23 +4890,25 @@ var config$2 = function config(settings) {
  * @param {rtvref.types.ARRAY_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valArray(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$3;
-  var args = arguments[2];
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   var valid = isArray$1(v);
-  var result = void 0; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  var result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) {
     // then check args
     if (isFinite$1(args.length) && args.length >= 0) {
       valid = v.length === args.length;
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isFinite$1(args.min) && args.min >= 0) {
         min = args.min;
         valid = v.length >= min;
@@ -4884,6 +4918,7 @@ function valArray(v) {
         if (min === undefined || args.max >= min) {
           valid = v.length <= args.max;
         } // else, ignore
+
       }
     }
 
@@ -4914,28 +4949,25 @@ function valArray(v) {
   return result;
 }
 
-var valArray$1 = Object.freeze({
-	get _impl () { return impl$3; },
-	type: type,
-	config: config$2,
-	default: valArray
+var valArray$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$3; },
+  type: type,
+  config: config$2,
+  default: valArray
 });
 
 ////// valBoolean validator
-
 var REQUIRED$4 = qualifiers.REQUIRED;
-
-var impl$4 = void 0; // @type {rtvref.impl}
-
+var impl$4; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valBoolean.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$3 = function config(settings) {
   impl$4 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.BOOLEAN BOOLEAN} type.
@@ -4950,6 +4982,7 @@ var config$3 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valBoolean(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$4;
 
@@ -4961,24 +4994,23 @@ function valBoolean(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$4.toTypeset(type$12, q), [], impl$4.toTypeset(type$12, q, true));
+  return new RtvError(v, impl$4.toTypeset(type$c, q), [], impl$4.toTypeset(type$c, q, true));
 }
 
-var valBoolean$1 = Object.freeze({
-	get _impl () { return impl$4; },
-	type: type$12,
-	config: config$3,
-	default: valBoolean
+var valBoolean$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$4; },
+  type: type$c,
+  config: config$3,
+  default: valBoolean
 });
 
 ////// isPlainObject validation
-
 /**
  * Type: {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
  * @const {string} rtvref.validation.isPlainObject.type
  */
-var type$20 = types.PLAIN_OBJECT;
 
+var type$k = types.PLAIN_OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} type.
@@ -4986,18 +5018,18 @@ var type$20 = types.PLAIN_OBJECT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isPlainObject$1(v) {
   return isPlainObject_1(v);
 }
 
 ////// isClassObject validation
-
 /**
  * Type: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
  * @const {string} rtvref.validation.isClassObject.type
  */
-var type$21 = types.CLASS_OBJECT;
 
+var type$l = types.CLASS_OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} type.
@@ -5005,25 +5037,23 @@ var type$21 = types.CLASS_OBJECT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isClassObject(v) {
   return isObject$1(v) && !isPlainObject$1(v);
 }
 
 ////// valClassObject validator
-
 var REQUIRED$5 = qualifiers.REQUIRED;
-
-var impl$5 = void 0; // @type {rtvref.impl}
-
+var impl$5; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valClassObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$4 = function config(settings) {
   impl$5 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} type.
@@ -5034,16 +5064,17 @@ var config$4 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valClassObject(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$5;
-  var args = arguments[2];
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   var valid = isClassObject(v);
-  var result = void 0; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  var result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) {
     // then check args
@@ -5055,14 +5086,14 @@ function valClassObject(v) {
     if (valid) {
       // now validate the shape, if any
       var shape = args.shape && isShape(args.shape) ? args.shape : undefined;
-      var err = void 0; // @type {(RtvError|undefined)}
-
+      var err; // @type {(RtvError|undefined)}
       // only consider enumerable, own-properties of the shape
+
       forEach_1(shape, function (typeset, prop) {
         var propResult = impl$5.check(v[prop], typeset); // check prop value against shape prop typeset
 
         if (!propResult.valid) {
-          err = new RtvError(v, impl$5.toTypeset(type$21, q, args), [prop].concat(propResult.path), propResult.cause);
+          err = new RtvError(v, impl$5.toTypeset(type$l, q, args), [prop].concat(propResult.path), propResult.cause);
         }
 
         return !err; // break on first error
@@ -5077,35 +5108,32 @@ function valClassObject(v) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl$5.toTypeset(type$21, q, args), [], impl$5.toTypeset(type$21, q, args, true));
+      result = new RtvError(v, impl$5.toTypeset(type$l, q, args), [], impl$5.toTypeset(type$l, q, args, true));
     }
   }
 
   return result;
 }
 
-var valClassObject$1 = Object.freeze({
-	get _impl () { return impl$5; },
-	type: type$21,
-	config: config$4,
-	default: valClassObject
+var valClassObject$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$5; },
+  type: type$l,
+  config: config$4,
+  default: valClassObject
 });
 
 ////// valDate validator
-
 var REQUIRED$6 = qualifiers.REQUIRED;
-
-var impl$6 = void 0; // @type {rtvref.impl}
-
+var impl$6; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valDate.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$5 = function config(settings) {
   impl$6 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.DATE DATE} type.
@@ -5115,6 +5143,7 @@ var config$5 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valDate(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$6;
 
@@ -5129,28 +5158,25 @@ function valDate(v) {
   return new RtvError(v, impl$6.toTypeset(type$6, q), [], impl$6.toTypeset(type$6, q, true));
 }
 
-var valDate$1 = Object.freeze({
-	get _impl () { return impl$6; },
-	type: type$6,
-	config: config$5,
-	default: valDate
+var valDate$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$6; },
+  type: type$6,
+  config: config$5,
+  default: valDate
 });
 
 ////// valError validator
-
 var REQUIRED$7 = qualifiers.REQUIRED;
-
-var impl$7 = void 0; // @type {rtvref.impl}
-
+var impl$7; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valError.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$6 = function config(settings) {
   impl$7 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.ERROR ERROR} type.
@@ -5160,6 +5186,7 @@ var config$6 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valError(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$7;
 
@@ -5174,28 +5201,25 @@ function valError(v) {
   return new RtvError(v, impl$7.toTypeset(type$7, q), [], impl$7.toTypeset(type$7, q, true));
 }
 
-var valError$1 = Object.freeze({
-	get _impl () { return impl$7; },
-	type: type$7,
-	config: config$6,
-	default: valError
+var valError$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$7; },
+  type: type$7,
+  config: config$6,
+  default: valError
 });
 
 ////// valFinite validator
-
 var REQUIRED$8 = qualifiers.REQUIRED;
-
-var impl$8 = void 0; // @type {rtvref.impl}
-
+var impl$8; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valFinite.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$7 = function config(settings) {
   impl$8 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.FINITE FINITE} type.
@@ -5211,9 +5235,10 @@ var config$7 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valFinite(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$8;
-  var args = arguments[2];
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -5226,7 +5251,8 @@ function valFinite(v) {
     if (isFinite$1(args.exact)) {
       valid = v === args.exact;
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isFinite$1(args.min)) {
         min = args.min;
         valid = v >= min;
@@ -5236,6 +5262,7 @@ function valFinite(v) {
         if (min === undefined || args.max >= min) {
           valid = v <= args.max;
         } // else, ignore
+
       }
     }
   }
@@ -5244,31 +5271,28 @@ function valFinite(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$8.toTypeset(type$19, q, args), [], impl$8.toTypeset(type$19, q, args, true));
+  return new RtvError(v, impl$8.toTypeset(type$j, q, args), [], impl$8.toTypeset(type$j, q, args, true));
 }
 
-var valFinite$1 = Object.freeze({
-	get _impl () { return impl$8; },
-	type: type$19,
-	config: config$7,
-	default: valFinite
+var valFinite$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$8; },
+  type: type$j,
+  config: config$7,
+  default: valFinite
 });
 
 ////// valFunction validator
-
 var REQUIRED$9 = qualifiers.REQUIRED;
-
-var impl$9 = void 0; // @type {rtvref.impl}
-
+var impl$9; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valFunction.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
+
 var config$8 = function config(settings) {
   impl$9 = settings.impl;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.FUNCTION FUNCTION} type.
@@ -5278,6 +5302,7 @@ var config$8 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valFunction(v) {
   var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$9;
 
@@ -5289,23 +5314,22 @@ function valFunction(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$9.toTypeset(type$11, q), [], impl$9.toTypeset(type$11, q, true));
+  return new RtvError(v, impl$9.toTypeset(type$b, q), [], impl$9.toTypeset(type$b, q, true));
 }
 
-var valFunction$1 = Object.freeze({
-	type: type$11,
-	config: config$8,
-	default: valFunction
+var valFunction$1 = /*#__PURE__*/Object.freeze({
+  type: type$b,
+  config: config$8,
+  default: valFunction
 });
 
 ////// isHashMap validation
-
 /**
  * Type: {@link rtvref.types.HASH_MAP HASH_MAP}
  * @const {string} rtvref.validation.isHashMap.type
  */
-var type$22 = types.HASH_MAP;
 
+var type$m = types.HASH_MAP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.HASH_MAP HASH_MAP} type.
@@ -5313,25 +5337,23 @@ var type$22 = types.HASH_MAP;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isHashMap(v) {
   return isObject$1(v); // same rules as OBJECT
 }
 
 ////// valHashMap validator
-
-var REQUIRED$10 = qualifiers.REQUIRED;
-
-var impl$10 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$a = qualifiers.REQUIRED;
+var impl$a; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valHashMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$9 = function config(settings) {
-  impl$10 = settings.impl;
-};
 
+var config$9 = function config(settings) {
+  impl$a = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.HASH_MAP HASH_MAP} type.
@@ -5342,33 +5364,33 @@ var config$9 = function config(settings) {
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valHashMap(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$10;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$a;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   var valid = isHashMap(v);
-  var result = void 0; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  var result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) {
     // then check args
-    var keys = Object.keys(v);
+    var keys = Object.keys(v); // start with the easiest/most efficient test: length
 
-    // start with the easiest/most efficient test: length
     if (valid && isFinite$1(args.length) && args.length >= 0) {
       valid = keys.length === args.length;
-    }
+    } // remaining args, if specified, require iterating potentially the entire map
 
-    // remaining args, if specified, require iterating potentially the entire map
+
     if (valid) {
       // get the key expression
-      var keyExp = args.keyExp && isString(args.keyExp) ? args.keyExp : undefined;
-      // get the key expression flags only if we have a key expression
-      var keyFlagSpec = keyExp && args.keyFlagSpec && isString(args.keyFlagSpec) ? args.keyFlagSpec : undefined;
-      // get the typeset for values
+      var keyExp = args.keyExp && isString(args.keyExp) ? args.keyExp : undefined; // get the key expression flags only if we have a key expression
+
+      var keyFlagSpec = keyExp && args.keyFlagSpec && isString(args.keyFlagSpec) ? args.keyFlagSpec : undefined; // get the typeset for values
+
       var tsValues = isTypeset(args.values) ? args.values : undefined;
 
       if (keyExp || tsValues) {
@@ -5379,18 +5401,20 @@ function valHashMap(v) {
 
           if (reKeys) {
             valid = reKeys.test(key); // check key against regex since it's a string
+
             if (!valid) {
-              result = new RtvError(v, impl$10.toTypeset(type$22, q, args), ['key=' + print(key)], impl$10.toTypeset(type$22, q, args, true));
+              result = new RtvError(v, impl$a.toTypeset(type$m, q, args), ["key=".concat(print(key))], impl$a.toTypeset(type$m, q, args, true));
             }
           }
 
           if (valid && tsValues) {
-            result = impl$10.check(value, tsValues); // check VALUE against typeset
+            result = impl$a.check(value, tsValues); // check VALUE against typeset
+
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but still with the KEY added to the path
-              result = new RtvError(v, impl$10.toTypeset(type$22, q, args), ['valueKey=' + print(key)].concat(result.path), result.cause);
+              result = new RtvError(v, impl$a.toTypeset(type$m, q, args), ["valueKey=".concat(print(key))].concat(result.path), result.cause);
             }
           }
 
@@ -5404,18 +5428,18 @@ function valHashMap(v) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl$10.toTypeset(type$22, q, args), [], impl$10.toTypeset(type$22, q, args, true));
+      result = new RtvError(v, impl$a.toTypeset(type$m, q, args), [], impl$a.toTypeset(type$m, q, args, true));
     }
   }
 
   return result;
 }
 
-var valHashMap$1 = Object.freeze({
-	get _impl () { return impl$10; },
-	type: type$22,
-	config: config$9,
-	default: valHashMap
+var valHashMap$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$a; },
+  type: type$m,
+  config: config$9,
+  default: valHashMap
 });
 
 /** `Object#toString` result references. */
@@ -5618,13 +5642,12 @@ function isInteger(value) {
 var isInteger_1 = isInteger;
 
 ////// isInt validation
-
 /**
  * Type: {@link rtvref.types.INT INT}
  * @const {string} rtvref.validation.isInt.type
  */
-var type$23 = types.INT;
 
+var type$n = types.INT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.INT INT} type.
@@ -5637,25 +5660,23 @@ var type$23 = types.INT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isInt(v) {
   return isInteger_1(v); // eliminates NaN, +/-Infinity, floats
 }
 
 ////// valInt validator
-
-var REQUIRED$11 = qualifiers.REQUIRED;
-
-var impl$11 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$b = qualifiers.REQUIRED;
+var impl$b; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valInt.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$10 = function config(settings) {
-  impl$11 = settings.impl;
-};
 
+var config$a = function config(settings) {
+  impl$b = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.INT INT} type.
@@ -5671,9 +5692,10 @@ var config$10 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valInt(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$11;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$b;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -5686,7 +5708,8 @@ function valInt(v) {
     if (isInt(args.exact)) {
       valid = v === args.exact;
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isInt(args.min)) {
         min = args.min;
         valid = v >= min;
@@ -5696,6 +5719,7 @@ function valInt(v) {
         if (min === undefined || args.max >= min) {
           valid = v <= args.max;
         } // else, ignore
+
       }
     }
   }
@@ -5704,24 +5728,23 @@ function valInt(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$11.toTypeset(type$23, q, args), [], impl$11.toTypeset(type$23, q, args, true));
+  return new RtvError(v, impl$b.toTypeset(type$n, q, args), [], impl$b.toTypeset(type$n, q, args, true));
 }
 
-var valInt$1 = Object.freeze({
-	get _impl () { return impl$11; },
-	type: type$23,
-	config: config$10,
-	default: valInt
+var valInt$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$b; },
+  type: type$n,
+  config: config$a,
+  default: valInt
 });
 
 ////// isNull validation
-
 /**
  * Type: {@link rtvref.types.NULL NULL}
  * @const {string} rtvref.validation.isFunction.type
  */
-var type$24 = types.NULL;
 
+var type$o = types.NULL;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.NULL NULL} type.
@@ -5729,18 +5752,18 @@ var type$24 = types.NULL;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isNull(v) {
   return v === null;
 }
 
 ////// isJson validation
-
 /**
  * Type: {@link rtvref.types.JSON JSON}
  * @const {string} rtvref.validation.isJson.type
  */
-var type$25 = types.JSON;
 
+var type$p = types.JSON;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.JSON JSON} type.
@@ -5748,25 +5771,25 @@ var type$25 = types.JSON;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isJson(v) {
-  return isNull(v) || isString(v, { allowEmpty: true }) || isBoolean(v) || isFinite$1(v) || isPlainObject$1(v) || isArray$1(v);
+  return isNull(v) || isString(v, {
+    allowEmpty: true
+  }) || isBoolean(v) || isFinite$1(v) || isPlainObject$1(v) || isArray$1(v);
 }
 
 ////// valJson validator
-
-var REQUIRED$12 = qualifiers.REQUIRED;
-
-var impl$12 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$c = qualifiers.REQUIRED;
+var impl$c; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valJson.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$11 = function config(settings) {
-  impl$12 = settings.impl;
-};
 
+var config$b = function config(settings) {
+  impl$c = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.JSON JSON} type.
@@ -5776,8 +5799,9 @@ var config$11 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valJson(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$12;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$c;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -5787,43 +5811,37 @@ function valJson(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$12.toTypeset(type$25, q), [], impl$12.toTypeset(type$25, q, true));
+  return new RtvError(v, impl$c.toTypeset(type$p, q), [], impl$c.toTypeset(type$p, q, true));
 }
 
-var valJson$1 = Object.freeze({
-	get _impl () { return impl$12; },
-	type: type$25,
-	config: config$11,
-	default: valJson
+var valJson$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$c; },
+  type: type$p,
+  config: config$b,
+  default: valJson
 });
 
-////// valMap validator
-
-var REQUIRED$13 = qualifiers.REQUIRED;
-
-var impl$13 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$d = qualifiers.REQUIRED;
+var impl$d; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$12 = function config(settings) {
-  impl$13 = settings.impl;
-};
 
-//
+var config$c = function config(settings) {
+  impl$d = settings.impl;
+}; //
 // Determines if a typeset represents a string, and only a string.
 // @param {rtvref.types.typeset} ts Typeset to check.
 // @return {boolean} `true` if so; `false` otherwise.
 //
-var isStringTypeset = function isStringTypeset(ts) {
-  var fqts = impl$13.fullyQualify(ts);
 
-  // must be `[qualifier, STRING]`, otherwise no
+var isStringTypeset = function isStringTypeset(ts) {
+  var fqts = impl$d.fullyQualify(ts); // must be `[qualifier, STRING]`, otherwise no
+
   return fqts.length === 2 && fqts[1] === types.STRING;
 };
-
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.MAP MAP} type.
@@ -5834,34 +5852,36 @@ var isStringTypeset = function isStringTypeset(ts) {
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
+
 function valMap(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$13;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$d;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   var valid = isMap$1(v);
-  var result = void 0; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  var result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) {
     // then check args
     // start with the easiest/most efficient test: length
     if (valid && isFinite$1(args.length) && args.length >= 0) {
       valid = v.size === args.length;
-    }
+    } // remaining args, if specified, require iterating potentially the entire map
 
-    // remaining args, if specified, require iterating potentially the entire map
+
     if (valid) {
       // get the typeset for keys
-      var tsKeys = isTypeset(args.keys) ? args.keys : undefined;
-      // get the key expression only if the keys are expected to be strings
+      var tsKeys = isTypeset(args.keys) ? args.keys : undefined; // get the key expression only if the keys are expected to be strings
+
       var tsKeysIsString = !!(tsKeys && isStringTypeset(tsKeys));
-      var keyExp = tsKeysIsString && args.keyExp && isString(args.keyExp) ? args.keyExp : undefined;
-      // get the key expression flags only if we have a key expression
-      var keyFlagSpec = keyExp && args.keyFlagSpec && isString(args.keyFlagSpec) ? args.keyFlagSpec : undefined;
-      // get the typeset for values
+      var keyExp = tsKeysIsString && args.keyExp && isString(args.keyExp) ? args.keyExp : undefined; // get the key expression flags only if we have a key expression
+
+      var keyFlagSpec = keyExp && args.keyFlagSpec && isString(args.keyFlagSpec) ? args.keyFlagSpec : undefined; // get the typeset for values
+
       var tsValues = isTypeset(args.values) ? args.values : undefined;
 
       if (tsKeys || tsValues) {
@@ -5876,34 +5896,37 @@ function valMap(v) {
           for (var _iterator = it[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var elem = _step.value;
 
-            var _elem = slicedToArray(elem, 2),
+            var _elem = _slicedToArray(elem, 2),
                 key = _elem[0],
                 value = _elem[1];
 
             if (tsKeys) {
-              result = impl$13.check(key, tsKeys); // check KEY against typeset
+              result = impl$d.check(key, tsKeys); // check KEY against typeset
+
               valid = result.valid;
 
               if (!result.valid) {
                 // create a new error from the original, but with the KEY prepended to the path
-                result = new RtvError(v, impl$13.toTypeset(type$1, q, args), ['key=' + print(key)].concat(result.path), result.cause);
+                result = new RtvError(v, impl$d.toTypeset(type$1, q, args), ["key=".concat(print(key))].concat(result.path), result.cause);
               }
 
               if (valid && tsKeysIsString && reKeys) {
                 valid = reKeys.test(key); // check key against regex since it's a string
+
                 if (!valid) {
-                  result = new RtvError(v, impl$13.toTypeset(type$1, q, args), ['key=' + print(key)], impl$13.toTypeset(type$1, q, args, true));
+                  result = new RtvError(v, impl$d.toTypeset(type$1, q, args), ["key=".concat(print(key))], impl$d.toTypeset(type$1, q, args, true));
                 }
               }
             }
 
             if (valid && tsValues) {
-              result = impl$13.check(value, tsValues); // check VALUE against typeset
+              result = impl$d.check(value, tsValues); // check VALUE against typeset
+
               valid = result.valid;
 
               if (!result.valid) {
                 // create a new error from the original, but still with the KEY added to the path
-                result = new RtvError(v, impl$13.toTypeset(type$1, q, args), ['valueKey=' + print(key)].concat(result.path), result.cause);
+                result = new RtvError(v, impl$d.toTypeset(type$1, q, args), ["valueKey=".concat(print(key))].concat(result.path), result.cause);
               }
             }
 
@@ -5917,7 +5940,7 @@ function valMap(v) {
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
               _iterator.return();
             }
           } finally {
@@ -5934,36 +5957,32 @@ function valMap(v) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl$13.toTypeset(type$1, q, args), [], impl$13.toTypeset(type$1, q, args, true));
+      result = new RtvError(v, impl$d.toTypeset(type$1, q, args), [], impl$d.toTypeset(type$1, q, args, true));
     }
   }
 
   return result;
 }
 
-
-var valMap$1 = Object.freeze({
-	get _impl () { return impl$13; },
-	type: type$1,
-	config: config$12,
-	default: valMap
+var valMap$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$d; },
+  type: type$1,
+  config: config$c,
+  default: valMap
 });
 
 ////// valNull validator
-
-var REQUIRED$14 = qualifiers.REQUIRED;
-
-var impl$14 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$e = qualifiers.REQUIRED;
+var impl$e; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valNull.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$13 = function config(settings) {
-  impl$14 = settings.impl;
-};
 
+var config$d = function config(settings) {
+  impl$e = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.NULL NULL} type.
@@ -5973,8 +5992,9 @@ var config$13 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valNull(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$14;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$e;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -5984,14 +6004,14 @@ function valNull(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$14.toTypeset(type$24, q), [], impl$14.toTypeset(type$24, q, true));
+  return new RtvError(v, impl$e.toTypeset(type$o, q), [], impl$e.toTypeset(type$o, q, true));
 }
 
-var valNull$1 = Object.freeze({
-	get _impl () { return impl$14; },
-	type: type$24,
-	config: config$13,
-	default: valNull
+var valNull$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$e; },
+  type: type$o,
+  config: config$d,
+  default: valNull
 });
 
 /** `Object#toString` result references. */
@@ -6068,13 +6088,12 @@ function isNaN(value) {
 var _isNaN = isNaN;
 
 ////// isNumber validation
-
 /**
  * Type: {@link rtvref.types.NUMBER NUMBER}
  * @const {string} rtvref.validation.isNumber.type
  */
-var type$26 = types.NUMBER;
 
+var type$q = types.NUMBER;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.NUMBER NUMBER} type.
@@ -6088,25 +6107,23 @@ var type$26 = types.NUMBER;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isNumber$1(v) {
   return typeof v === 'number' && !_isNaN(v); // allows +/-Infinity
 }
 
 ////// valNumber validator
-
-var REQUIRED$15 = qualifiers.REQUIRED;
-
-var impl$15 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$f = qualifiers.REQUIRED;
+var impl$f; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valNumber.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$14 = function config(settings) {
-  impl$15 = settings.impl;
-};
 
+var config$e = function config(settings) {
+  impl$f = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.NUMBER NUMBER} type.
@@ -6122,18 +6139,18 @@ var config$14 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valNumber(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$15;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$f;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  var valid = isNumber$1(v);
+  var valid = isNumber$1(v); // all qualifiers other than REQUIRED allow NaN
 
-  // all qualifiers other than REQUIRED allow NaN
-  if (q !== REQUIRED$15 && _isNaN(v)) {
+  if (q !== REQUIRED$f && _isNaN(v)) {
     valid = true;
   }
 
@@ -6143,7 +6160,8 @@ function valNumber(v) {
     if (isNumber$1(args.exact) || _isNaN(args.exact)) {
       valid = v === args.exact || _isNaN(v) && _isNaN(args.exact);
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isNumber$1(args.min)) {
         min = args.min;
         valid = v >= min;
@@ -6153,6 +6171,7 @@ function valNumber(v) {
         if (min === undefined || args.max >= min) {
           valid = v <= args.max;
         } // else, ignore
+
       }
     }
   }
@@ -6161,31 +6180,28 @@ function valNumber(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$15.toTypeset(type$26, q, args), [], impl$15.toTypeset(type$26, q, args, true));
+  return new RtvError(v, impl$f.toTypeset(type$q, q, args), [], impl$f.toTypeset(type$q, q, args, true));
 }
 
-var valNumber$1 = Object.freeze({
-	get _impl () { return impl$15; },
-	type: type$26,
-	config: config$14,
-	default: valNumber
+var valNumber$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$f; },
+  type: type$q,
+  config: config$e,
+  default: valNumber
 });
 
 ////// valObject validator
-
-var REQUIRED$16 = qualifiers.REQUIRED;
-
-var impl$16 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$g = qualifiers.REQUIRED;
+var impl$g; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$15 = function config(settings) {
-  impl$16 = settings.impl;
-};
 
+var config$f = function config(settings) {
+  impl$g = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.OBJECT OBJECT} type.
@@ -6196,26 +6212,27 @@ var config$15 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valObject(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$16;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$g;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   if (!isObject$1(v)) {
-    return new RtvError(v, impl$16.toTypeset(type$9, q), [], impl$16.toTypeset(type$9, q, true));
-  }
-
-  // args is the optional shape: ignore if it isn't a shape, like other validators
+    return new RtvError(v, impl$g.toTypeset(type$9, q), [], impl$g.toTypeset(type$9, q, true));
+  } // args is the optional shape: ignore if it isn't a shape, like other validators
   //  ignore invalid args properties
-  var shape = args && isShape(args) ? args : undefined;
-  var err = void 0; // @type {(RtvError|undefined)}
 
+
+  var shape = args && isShape(args) ? args : undefined;
+  var err; // @type {(RtvError|undefined)}
   // only consider enumerable, own-properties of the shape
+
   forEach_1(shape, function (typeset, prop) {
-    var result = impl$16.check(v[prop], typeset); // check prop value against shape prop typeset
+    var result = impl$g.check(v[prop], typeset); // check prop value against shape prop typeset
 
     if (!result.valid) {
       err = new RtvError(v, shape, [prop].concat(result.path), result.cause);
@@ -6227,28 +6244,25 @@ function valObject(v) {
   return err || new RtvSuccess();
 }
 
-var valObject$1 = Object.freeze({
-	get _impl () { return impl$16; },
-	type: type$9,
-	config: config$15,
-	default: valObject
+var valObject$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$g; },
+  type: type$9,
+  config: config$f,
+  default: valObject
 });
 
 ////// valPlainObject validator
-
-var REQUIRED$17 = qualifiers.REQUIRED;
-
-var impl$17 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$h = qualifiers.REQUIRED;
+var impl$h; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valPlainObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$16 = function config(settings) {
-  impl$17 = settings.impl;
-};
 
+var config$g = function config(settings) {
+  impl$h = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} type.
@@ -6259,26 +6273,27 @@ var config$16 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valPlainObject(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$17;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$h;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   if (!isPlainObject$1(v)) {
-    return new RtvError(v, impl$17.toTypeset(type$20, q), [], impl$17.toTypeset(type$20, q, true));
-  }
-
-  // args is the optional shape: ignore if it isn't a shape, like other validators
+    return new RtvError(v, impl$h.toTypeset(type$k, q), [], impl$h.toTypeset(type$k, q, true));
+  } // args is the optional shape: ignore if it isn't a shape, like other validators
   //  ignore invalid args properties
-  var shape = args && isShape(args) ? args : undefined;
-  var err = void 0; // @type {(RtvError|undefined)}
 
+
+  var shape = args && isShape(args) ? args : undefined;
+  var err; // @type {(RtvError|undefined)}
   // only consider enumerable, own-properties of the shape
+
   forEach_1(shape, function (typeset, prop) {
-    var result = impl$17.check(v[prop], typeset); // check prop value against shape prop typeset
+    var result = impl$h.check(v[prop], typeset); // check prop value against shape prop typeset
 
     if (!result.valid) {
       err = new RtvError(v, shape, [prop].concat(result.path), result.cause);
@@ -6290,28 +6305,25 @@ function valPlainObject(v) {
   return err || new RtvSuccess();
 }
 
-var valPlainObject$1 = Object.freeze({
-	get _impl () { return impl$17; },
-	type: type$20,
-	config: config$16,
-	default: valPlainObject
+var valPlainObject$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$h; },
+  type: type$k,
+  config: config$g,
+  default: valPlainObject
 });
 
 ////// valPromise validator
-
-var REQUIRED$18 = qualifiers.REQUIRED;
-
-var impl$18 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$i = qualifiers.REQUIRED;
+var impl$i; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valPromise.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$17 = function config(settings) {
-  impl$18 = settings.impl;
-};
 
+var config$h = function config(settings) {
+  impl$i = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.PROMISE PROMISE} type.
@@ -6321,8 +6333,9 @@ var config$17 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valPromise(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$18;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$i;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6332,31 +6345,28 @@ function valPromise(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$18.toTypeset(type$8, q), [], impl$18.toTypeset(type$8, q, true));
+  return new RtvError(v, impl$i.toTypeset(type$8, q), [], impl$i.toTypeset(type$8, q, true));
 }
 
-var valPromise$1 = Object.freeze({
-	get _impl () { return impl$18; },
-	type: type$8,
-	config: config$17,
-	default: valPromise
+var valPromise$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$i; },
+  type: type$8,
+  config: config$h,
+  default: valPromise
 });
 
 ////// valRegExp validator
-
-var REQUIRED$19 = qualifiers.REQUIRED;
-
-var impl$19 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$j = qualifiers.REQUIRED;
+var impl$j; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valRegExp.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$18 = function config(settings) {
-  impl$19 = settings.impl;
-};
 
+var config$i = function config(settings) {
+  impl$j = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.REGEXP REGEXP} type.
@@ -6366,8 +6376,9 @@ var config$18 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valRegExp(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$19;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$j;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6377,14 +6388,14 @@ function valRegExp(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$19.toTypeset(type$5, q), [], impl$19.toTypeset(type$5, q, true));
+  return new RtvError(v, impl$j.toTypeset(type$5, q), [], impl$j.toTypeset(type$5, q, true));
 }
 
-var valRegExp$1 = Object.freeze({
-	get _impl () { return impl$19; },
-	type: type$5,
-	config: config$18,
-	default: valRegExp
+var valRegExp$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$j; },
+  type: type$5,
+  config: config$i,
+  default: valRegExp
 });
 
 /** Used as references for various `Number` constants. */
@@ -6424,13 +6435,12 @@ function isSafeInteger(value) {
 var isSafeInteger_1 = isSafeInteger;
 
 ////// isSafeInt validation
-
 /**
  * Type: {@link rtvref.types.SAFE_INT SAFE_INT}
  * @const {string} rtvref.validation.isSafeInt.type
  */
-var type$27 = types.SAFE_INT;
 
+var type$r = types.SAFE_INT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.SAFE_INT SAFE_INT} type.
@@ -6443,25 +6453,23 @@ var type$27 = types.SAFE_INT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isSafeInt(v) {
   return isSafeInteger_1(v); // eliminates NaN, +/-Infinity, floats, unsafe ints
 }
 
 ////// valSafeInt validator
-
-var REQUIRED$20 = qualifiers.REQUIRED;
-
-var impl$20 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$k = qualifiers.REQUIRED;
+var impl$k; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valSafeInt.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$19 = function config(settings) {
-  impl$20 = settings.impl;
-};
 
+var config$j = function config(settings) {
+  impl$k = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SAFE_INT SAFE_INT} type.
@@ -6477,9 +6485,10 @@ var config$19 = function config(settings) {
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valSafeInt(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$20;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$k;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6492,7 +6501,8 @@ function valSafeInt(v) {
     if (isSafeInt(args.exact)) {
       valid = v === args.exact;
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isSafeInt(args.min)) {
         min = args.min;
         valid = v >= min;
@@ -6502,6 +6512,7 @@ function valSafeInt(v) {
         if (min === undefined || args.max >= min) {
           valid = v <= args.max;
         } // else, ignore
+
       }
     }
   }
@@ -6510,31 +6521,28 @@ function valSafeInt(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$20.toTypeset(type$27, q, args), [], impl$20.toTypeset(type$27, q, args, true));
+  return new RtvError(v, impl$k.toTypeset(type$r, q, args), [], impl$k.toTypeset(type$r, q, args, true));
 }
 
-var valSafeInt$1 = Object.freeze({
-	get _impl () { return impl$20; },
-	type: type$27,
-	config: config$19,
-	default: valSafeInt
+var valSafeInt$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$k; },
+  type: type$r,
+  config: config$j,
+  default: valSafeInt
 });
 
 ////// valSet validator
-
-var REQUIRED$21 = qualifiers.REQUIRED;
-
-var impl$21 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$l = qualifiers.REQUIRED;
+var impl$l; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valSet.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$20 = function config(settings) {
-  impl$21 = settings.impl;
-};
 
+var config$k = function config(settings) {
+  impl$l = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SET SET} type.
@@ -6545,25 +6553,26 @@ var config$20 = function config(settings) {
  * @param {rtvref.types.collection_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valSet(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$21;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$l;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
   var valid = isSet$1(v);
-  var result = void 0; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  var result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) {
     // then check args
     // start with the easiest/most efficient test: length
     if (valid && isFinite$1(args.length) && args.length >= 0) {
       valid = v.size === args.length;
-    }
+    } // remaining args, if specified, require iterating potentially the entire set
 
-    // remaining args, if specified, require iterating potentially the entire set
+
     if (valid) {
       // get the typeset for values
       var tsValues = isTypeset(args.values) ? args.values : undefined;
@@ -6578,14 +6587,14 @@ function valSet(v) {
         try {
           for (var _iterator = it[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var elem = _step.value;
+            result = impl$l.check(elem, tsValues); // check value against typeset
 
-            result = impl$21.check(elem, tsValues); // check value against typeset
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but with the value prepended to
               //  the path (since sets don't have indexes; they just have unique values)
-              result = new RtvError(v, impl$21.toTypeset(type$3, q, args), [print(elem)].concat(result.path), result.cause);
+              result = new RtvError(v, impl$l.toTypeset(type$3, q, args), [print(elem)].concat(result.path), result.cause);
             }
 
             if (!valid) {
@@ -6598,7 +6607,7 @@ function valSet(v) {
           _iteratorError = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
               _iterator.return();
             }
           } finally {
@@ -6615,35 +6624,32 @@ function valSet(v) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl$21.toTypeset(type$3, q, args), [], impl$21.toTypeset(type$3, q, args, true));
+      result = new RtvError(v, impl$l.toTypeset(type$3, q, args), [], impl$l.toTypeset(type$3, q, args, true));
     }
   }
 
   return result;
 }
 
-var valSet$1 = Object.freeze({
-	get _impl () { return impl$21; },
-	type: type$3,
-	config: config$20,
-	default: valSet
+var valSet$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$l; },
+  type: type$3,
+  config: config$k,
+  default: valSet
 });
 
 ////// valString validator
-
-var REQUIRED$22 = qualifiers.REQUIRED;
-
-var impl$22 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$m = qualifiers.REQUIRED;
+var impl$m; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valString.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$21 = function config(settings) {
-  impl$22 = settings.impl;
-};
 
+var config$l = function config(settings) {
+  impl$m = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.STRING STRING} type.
@@ -6659,15 +6665,16 @@ var config$21 = function config(settings) {
  * @param {rtvref.types.STRING_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valString(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$22;
-  var args = arguments[2];
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$m;
+  var args = arguments.length > 2 ? arguments[2] : undefined;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
 
-  var valid = isString(v) || q !== REQUIRED$22 && v === '';
+  var valid = isString(v) || q !== REQUIRED$m && v === '';
 
   if (valid && args) {
     // then check args
@@ -6675,7 +6682,8 @@ function valString(v) {
       // empty string OK
       valid = v === args.exact;
     } else {
-      var min = void 0;
+      var min;
+
       if (valid && isFinite$1(args.min) && args.min >= 0) {
         min = args.min;
         valid = v.length >= min;
@@ -6685,6 +6693,7 @@ function valString(v) {
         if (min === undefined || args.max >= min) {
           valid = v.length <= args.max;
         } // else, ignore
+
       }
 
       if (valid && args.partial) {
@@ -6697,24 +6706,23 @@ function valString(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$22.toTypeset(type$10, q, args), [], impl$22.toTypeset(type$10, q, args, true));
+  return new RtvError(v, impl$m.toTypeset(type$a, q, args), [], impl$m.toTypeset(type$a, q, args, true));
 }
 
-var valString$1 = Object.freeze({
-	get _impl () { return impl$22; },
-	type: type$10,
-	config: config$21,
-	default: valString
+var valString$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$m; },
+  type: type$a,
+  config: config$l,
+  default: valString
 });
 
 ////// isSymbol validation
-
 /**
  * Type: {@link rtvref.types.SYMBOL SYMBOL}
  * @const {string} rtvref.validation.isSymbol.type
  */
-var type$28 = types.SYMBOL;
 
+var type$s = types.SYMBOL;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.SYMBOL SYMBOL} type.
@@ -6722,25 +6730,23 @@ var type$28 = types.SYMBOL;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
+
 function isSymbol$1(v) {
   return isSymbol_1(v);
 }
 
 ////// valSymbol validator
-
-var REQUIRED$23 = qualifiers.REQUIRED;
-
-var impl$23 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$n = qualifiers.REQUIRED;
+var impl$n; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valSymbol.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$22 = function config(settings) {
-  impl$23 = settings.impl;
-};
 
+var config$m = function config(settings) {
+  impl$n = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.SYMBOL SYMBOL} type.
@@ -6750,8 +6756,9 @@ var config$22 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valSymbol(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$23;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$n;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6761,31 +6768,28 @@ function valSymbol(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$23.toTypeset(type$28, q), [], impl$23.toTypeset(type$28, q, true));
+  return new RtvError(v, impl$n.toTypeset(type$s, q), [], impl$n.toTypeset(type$s, q, true));
 }
 
-var valSymbol$1 = Object.freeze({
-	get _impl () { return impl$23; },
-	type: type$28,
-	config: config$22,
-	default: valSymbol
+var valSymbol$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$n; },
+  type: type$s,
+  config: config$m,
+  default: valSymbol
 });
 
 ////// valWeakMap validator
-
-var REQUIRED$24 = qualifiers.REQUIRED;
-
-var impl$24 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$o = qualifiers.REQUIRED;
+var impl$o; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valWeakMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$23 = function config(settings) {
-  impl$24 = settings.impl;
-};
 
+var config$n = function config(settings) {
+  impl$o = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
@@ -6795,8 +6799,9 @@ var config$23 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valWeakMap(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$24;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$o;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6806,31 +6811,28 @@ function valWeakMap(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$24.toTypeset(type$2, q), [], impl$24.toTypeset(type$2, q, true));
+  return new RtvError(v, impl$o.toTypeset(type$2, q), [], impl$o.toTypeset(type$2, q, true));
 }
 
-var valWeakMap$1 = Object.freeze({
-	get _impl () { return impl$24; },
-	type: type$2,
-	config: config$23,
-	default: valWeakMap
+var valWeakMap$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$o; },
+  type: type$2,
+  config: config$n,
+  default: valWeakMap
 });
 
 ////// valWeakSet validator
-
-var REQUIRED$25 = qualifiers.REQUIRED;
-
-var impl$25 = void 0; // @type {rtvref.impl}
-
+var REQUIRED$p = qualifiers.REQUIRED;
+var impl$p; // @type {rtvref.impl}
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
   * @function rtvref.validator.valWeakSet.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-var config$24 = function config(settings) {
-  impl$25 = settings.impl;
-};
 
+var config$o = function config(settings) {
+  impl$p = settings.impl;
+};
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.WEAK_SET WEAK_SET} type.
@@ -6840,8 +6842,9 @@ var config$24 = function config(settings) {
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
+
 function valWeakSet(v) {
-  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$25;
+  var q = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : REQUIRED$p;
 
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
@@ -6851,18 +6854,17 @@ function valWeakSet(v) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl$25.toTypeset(type$4, q), [], impl$25.toTypeset(type$4, q, true));
+  return new RtvError(v, impl$p.toTypeset(type$4, q), [], impl$p.toTypeset(type$4, q, true));
 }
 
-var valWeakSet$1 = Object.freeze({
-	get _impl () { return impl$25; },
-	type: type$4,
-	config: config$24,
-	default: valWeakSet
+var valWeakSet$1 = /*#__PURE__*/Object.freeze({
+  get _impl () { return impl$p; },
+  type: type$4,
+  config: config$o,
+  default: valWeakSet
 });
 
 ////// Main entry point
-
 /**
  * <h1>RTV.js Reference</h1>
  *
@@ -6897,6 +6899,7 @@ var valWeakSet$1 = Object.freeze({
  * Runtime Verification Library for browsers and Node.js.
  * @namespace rtv
  */
+
 var rtv = {
   /**
    * Enumeration of {@link rtvref.types types}.
@@ -6954,7 +6957,6 @@ var rtv = {
     return new RtvSuccess();
   },
 
-
   /**
    * Shortcut proxy to {@link rtv.check}.
    * @function rtv.c
@@ -6972,7 +6974,6 @@ var rtv = {
   c: function c(value, typeset) {
     return this.check(value, typeset);
   },
-
 
   /**
    * __Requires__ a value to be compliant to a shape.
@@ -6997,6 +6998,7 @@ var rtv = {
   verify: function verify(value, typeset) {
     if (this.config.enabled) {
       var result = this.check(value, typeset);
+
       if (result instanceof RtvSuccess) {
         return result;
       }
@@ -7006,7 +7008,6 @@ var rtv = {
 
     return new RtvSuccess();
   },
-
 
   /**
    * Shortcut proxy to {@link rtv.verify}.
@@ -7022,7 +7023,6 @@ var rtv = {
   v: function v(value, typeset) {
     return this.verify(value, typeset);
   },
-
 
   /**
    * RTV Library Configuration
@@ -7079,48 +7079,40 @@ var rtv = {
    */
   get e() {
     return this.config.enabled;
-  },
-
-  /**
-   * Contextual RTV Generator // TODO[docs]
-   * @function rtv.Context
-   * @param {string} context
-   */
-  Context: function Context(context) {
-    // TODO: a version with same API (less 'config') that will include 'context' in errors thrown
   }
-};
 
+};
 /**
  * [Internal] Library version.
  * @private
  * @name rtv._version
  * @type {string}
  */
+
 Object.defineProperty(rtv, '_version', {
-  enumerable: false, // internal
+  enumerable: false,
+  // internal
   configurable: true,
   writable: true,
   value: version
 });
-
-////////////////////////////////////////////////////////////////////////////////
 // Register all known types with impl
 
 (function () {
   // put in an IIFE so there's nothing unnecessarily retained in any closures
   // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
   var validators = [valAny$1, valAnyObject$1, valArray$1, valBoolean$1, valClassObject$1, valDate$1, valError$1, valFinite$1, valFunction$1, valHashMap$1, valInt$1, valJson$1, valNull$1, valMap$1, valNumber$1, valObject$1, valPlainObject$1, valPromise$1, valRegExp$1, valSafeInt$1, valSet$1, valString$1, valSymbol$1, valWeakMap$1, valWeakSet$1];
-
   var publicImpl = {}; // impl for validators, excluding any internal parts
 
   Object.keys(impl).forEach(function (k) {
     // only enumerable methods/properties
     publicImpl[k] = impl[k];
   });
-
   validators.forEach(function (val) {
-    val.config({ impl: publicImpl });
+    val.config({
+      impl: publicImpl
+    });
+
     impl._registerType(val);
   });
 })();
