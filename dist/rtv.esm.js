@@ -732,7 +732,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  ANY: def('any'),
+  ANY: def('ANY'),
 
   /**
    * Null rules per qualifiers: must be the `null` {@link rtvref.types.primitives primitive}.
@@ -745,7 +745,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  NULL: def('null'),
+  NULL: def('NULL'),
 
   // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
   //  of JSON requirement...) for a regular expression test. Similar prop names
@@ -786,7 +786,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  STRING: def('string', true),
+  STRING: def('STRING', true),
 
   /**
    * Boolean rules per qualifiers: Must be a boolean {@link rtvref.types.primitives primitive}.
@@ -795,7 +795,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  BOOLEAN: def('boolean'),
+  BOOLEAN: def('BOOLEAN'),
 
   /**
    * Symbol rules per qualifiers: Must be a symbol {@link rtvref.types.primitives primitive}.
@@ -803,7 +803,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  SYMBOL: def('symbol'),
+  SYMBOL: def('SYMBOL'),
 
   /**
    * <h3>Numeric Value Arguments</h3>
@@ -849,7 +849,7 @@ var defs = {
    * @see {@link rtvref.types.SAFE_INT}
    * @see {@link rtvref.types.FLOAT}
    */
-  NUMBER: def('number', true),
+  NUMBER: def('NUMBER', true),
 
   /**
    * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
@@ -870,7 +870,7 @@ var defs = {
    * @see {@link rtvref.types.SAFE_INT}
    * @see {@link rtvref.types.FLOAT}
    */
-  FINITE: def('finite', true),
+  FINITE: def('FINITE', true),
 
   /**
    * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number,
@@ -889,7 +889,7 @@ var defs = {
    * @see {@link rtvref.types.SAFE_INT}
    * @see {@link rtvref.types.FLOAT}
    */
-  INT: def('int', true),
+  INT: def('INT', true),
 
   /**
    * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number, a
@@ -910,7 +910,7 @@ var defs = {
    * @see {@link rtvref.types.INT}
    * @see {@link rtvref.types.FLOAT}
    */
-  SAFE_INT: def('safeInt', true),
+  SAFE_INT: def('SAFE_INT', true),
 
   /**
    * Float rules per qualifiers: Must be a {@link rtvref.types.FINITE finite}
@@ -926,7 +926,7 @@ var defs = {
    * @see {@link rtvref.types.INT}
    * @see {@link rtvref.types.SAFE_INT}
    */
-  FLOAT: def('float', true),
+  FLOAT: def('FLOAT', true),
 
   /**
    * Function rules per qualifiers: Must be a `function`.
@@ -934,7 +934,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  FUNCTION: def('function'),
+  FUNCTION: def('FUNCTION'),
 
   /**
    * RegExp rules per qualifiers: Must be a `RegExp` instance.
@@ -943,7 +943,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp
    */
-  REGEXP: def('regexp'),
+  REGEXP: def('REGEXP'),
 
   // TODO[future] Consider DATE args for ranges, date values to be ISO8601 UTC strings so they are
   //  easily serializable.
@@ -954,7 +954,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
    */
-  DATE: def('date'),
+  DATE: def('DATE'),
 
   /**
    * Error rules per qualifiers: Must be an `Error` instance, which includes `TypeError`,
@@ -964,7 +964,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
    */
-  ERROR: def('error'),
+  ERROR: def('ERROR'),
 
   /**
    * Promise rules per qualifiers: Must be a `Promise` instance.
@@ -973,7 +973,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
    */
-  PROMISE: def('promise'),
+  PROMISE: def('PROMISE'),
 
   // TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
   /**
@@ -1082,7 +1082,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  ARRAY: def('array', true),
+  ARRAY: def('ARRAY', true),
 
   /**
    * An _any_ object is anything that is __not__ a {@link rtvref.types primitive}, which
@@ -1134,7 +1134,7 @@ var defs = {
    * @see {@link rtvref.types.PLAIN_OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
    */
-  ANY_OBJECT: def('anyObject', true, true),
+  ANY_OBJECT: def('ANY_OBJECT', true, true),
 
   /**
    * An object is one that extends from `JavaScript.Object` (i.e. an _instance_
@@ -1193,7 +1193,7 @@ var defs = {
    * @see {@link rtvref.types.PLAIN_OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
    */
-  OBJECT: def('object', true, true),
+  OBJECT: def('OBJECT', true, true),
 
   /**
    * A _plain_ object is one that is created directly from the `Object` constructor,
@@ -1241,7 +1241,7 @@ var defs = {
    * @see {@link rtvref.types.OBJECT}
    * @see {@link rtvref.types.CLASS_OBJECT}
    */
-  PLAIN_OBJECT: def('plainObject', true, true),
+  PLAIN_OBJECT: def('PLAIN_OBJECT', true, true),
 
   /**
    * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
@@ -1304,7 +1304,7 @@ var defs = {
    * @see {@link rtvref.types.OBJECT}
    * @see {@link rtvref.types.PLAIN_OBJECT}
    */
-  CLASS_OBJECT: def('classObject', true, true),
+  CLASS_OBJECT: def('CLASS_OBJECT', true, true),
 
   /**
    * A simple {@link rtvref.types.OBJECT OBJECT} that is treated as a hash map
@@ -1327,7 +1327,7 @@ var defs = {
    * @see {@link rtvref.types.MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
-  HASH_MAP: def('mapObject', true), // NOTE: NOT an object type (unrelated to shapes)
+  HASH_MAP: def('MAP_OBJECT', true), // NOTE: NOT an object type (unrelated to shapes)
 
   /**
    * An ES6 map supports any value as its keys, unlike a
@@ -1346,7 +1346,7 @@ var defs = {
    * @see {@link rtvref.types.HASH_MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
-  MAP: def('map', true),
+  MAP: def('MAP', true),
 
   /**
    * An ES6 weak map supports any _object_ as its keys, unlike a
@@ -1361,7 +1361,7 @@ var defs = {
    * @see {@link rtvref.types.HASH_MAP}
    * @see {@link rtvref.types.MAP}
    */
-  WEAK_MAP: def('weakMap'), // not iterable, so does not accept any collection args
+  WEAK_MAP: def('WEAK_MAP'), // not iterable, so does not accept any collection args
 
   /**
    * An ES6 set is a collection of _unique_ values without associated keys. Values can
@@ -1377,7 +1377,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.WEAK_SET}
    */
-  SET: def('set', true),
+  SET: def('SET', true),
 
   /**
    * An ES6 weak set is a collection of weakly held _unique_ _objects_ without
@@ -1390,7 +1390,7 @@ var defs = {
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.SET}
    */
-  WEAK_SET: def('weakSet'), // not iterable, so does not accept any collection args
+  WEAK_SET: def('WEAK_SET'), // not iterable, so does not accept any collection args
 
   /**
    * JSON rules per qualifiers: Must be a JSON value:
@@ -1412,7 +1412,7 @@ var defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  JSON: def('json')
+  JSON: def('JSON')
 };
 
 //

@@ -346,7 +346,7 @@ describe('module: lib/validation/isTypeset', function() {
 
             const options = {deep: true};
             expect(isTypeset({}, options)).to.be.false;
-            expect(options.failure).to.include('Expecting a valid shape descriptor for type="object"');
+            expect(options.failure).to.include(`Expecting a valid shape descriptor for type="${types.OBJECT}"`);
 
             isShapeStub.restore();
           });
