@@ -49,8 +49,7 @@
     "test:unit:debug": "npm run test:unit -- --inspect-brk",
     "test:coverage": "nyc npm run test:unit",
     "test": "npm run lint && npm run test:coverage",
-    "prepare": "npm run build && npm run docs",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test && npm run build && npm run docs"
   },
   "repository": {
     "type": "git",
