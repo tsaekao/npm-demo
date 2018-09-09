@@ -7,6 +7,8 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valPlainObject';
 
+/* eslint-disable no-new-wrappers */
+
 describe('module: lib/validator/valPlainObject', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
@@ -46,7 +48,7 @@ describe('module: lib/validator/valPlainObject', function() {
         new Boolean(true),
         new Boolean(false),
         new Number(1),
-        new (class {})
+        new (class {})()
       ]);
 
       // nothing should pass

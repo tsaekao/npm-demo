@@ -42,7 +42,7 @@ describe('module: lib/validation/isPlainObject', function() {
         new Boolean(true),
         new Boolean(false),
         new Number(1),
-        new (class {})
+        new (class {})()
       ]);
 
       // nothing should pass

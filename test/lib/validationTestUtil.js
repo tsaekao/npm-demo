@@ -117,13 +117,13 @@ export const getValidValues = function(type) {
     }()),
     [types.REGEXP]: [/regexp/, new RegExp('regexp')],
     [types.DATE]: [new Date()],
-    [types.ERROR]: [new Error(), new TypeError(), new URIError(), new ReferenceError(), new RangeError(),
-      new EvalError(), new SyntaxError()],
+    [types.ERROR]: [new Error(), new TypeError(), new URIError(), new ReferenceError(),
+      new RangeError(), new EvalError(), new SyntaxError()],
     [types.PROMISE]: [new Promise(function() {})],
-    [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')],
+    [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')], // eslint-disable-line no-new-func
 
     // while the JS type is objects, it's not an object type in this library
-    [types.HASH_MAP]: [new Object(), {}, new (class {})],
+    [types.HASH_MAP]: [new Object(), {}, new (class {})()],
 
     //
     // object types
@@ -137,13 +137,13 @@ export const getValidValues = function(type) {
       new Object(),
       Object.create(null),
       {},
-      new (class {})
+      new (class {})()
     ],
     [types.OBJECT]: [
       new Object(),
       Object.create(null),
       {},
-      new (class {})
+      new (class {})()
     ],
     [types.PLAIN_OBJECT]: [
       new Object(),
@@ -151,7 +151,7 @@ export const getValidValues = function(type) {
       {}
     ],
     [types.CLASS_OBJECT]: [
-      new (class {})
+      new (class {})()
     ]
   };
 
@@ -210,7 +210,7 @@ export const getInvalidJsonValues = function() {
     new Boolean(true),
     new Boolean(false),
     new Number(1),
-    new (class {})
+    new (class {})()
   ];
 
   invalidValues = invalidValues.concat(

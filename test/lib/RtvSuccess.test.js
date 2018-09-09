@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import _ from 'lodash';
 
 import types from '../../src/lib/types';
 import qualifiers from '../../src/lib/qualifiers';

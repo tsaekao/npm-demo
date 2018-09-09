@@ -7,6 +7,8 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valClassObject';
 
+/* eslint-disable no-new-wrappers */
+
 class Shape {
   constructor(name = 'shape') {
     this.name = name;
@@ -161,7 +163,7 @@ describe('module: lib/validator/valClassObject', function() {
 
     it('should not check args.shape if not an instanceof args.ctr', function() {
       vtu.expectValidatorError(val, classObject, undefined, {
-        ctr: class{}, // this will fail
+        ctr: class {}, // this will fail
         shape: {name: types.STRING} // shape would match
       });
       expect(checkStub.called).to.be.false;

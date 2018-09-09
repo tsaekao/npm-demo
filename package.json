@@ -31,21 +31,26 @@
       "html"
     ]
   },
+  "pre-commit": ["precommit:msg", "lint", "docs", "precommit:docs"],
   "scripts": {
+    "precommit:msg": "echo 'Running pre-commit checks...'",
+    "precommit:docs": "git add API.md",
     "clean": "rm -rf ./build",
     "start": "npm run build:lib && npm run node",
     "node": "node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
     "node:internals": "rollup -c tools/rollup.internals.js && node -r ./dist_tools/internals.js --inspect",
-    "build:docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --separators > dist/rtv.js.md",
     "build:lib": "BABEL_ENV=build rollup -c",
-    "build": "npm run clean && npm run build:lib && npm run build:docs",
-    "lint": "eslint rollup.config.js \"src/**/*.js\" \"tools/**/*.js\"",
+    "build": "npm run clean && npm run build:lib",
+    "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --separators > API.md",
+    "lint": "eslint ./*.js \"src/**/*.js\" \"test/**/*.js\" \"tools/**/*.js\"",
     "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
     "test:unit:watch": "npm run test:unit -- -w",
     "test:unit:debug": "npm run test:unit -- --inspect-brk",
     "test:coverage": "nyc npm run test:unit",
-    "test": "npm run lint && npm run test:coverage"
+    "test": "npm run lint && npm run test:coverage",
+    "prepare": "npm run build && npm run docs",
+    "prepublishOnly": "npm test"
   },
   "repository": {
     "type": "git",
@@ -71,14 +76,23 @@
     "url": "https://gitlab.com/stefcameron/rtvjs/issues"
   },
   "homepage": "https://gitlab.com/stefcameron/rtvjs#README",
-  "dependencies": {
-    "lodash": "^4.17.10"
-  },
+  "files": [
+    "API.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package-lock.json",
+    "package.json",
+    "README.md",
+    "dist/"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
     "jsdoc-to-markdown": "^4.0.1",
+    "lodash": "^4.17.10",
+    "pre-commit": "^1.2.2",
     "rollup": "^0.65.2",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.1.6",

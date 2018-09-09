@@ -1209,7 +1209,7 @@ The following values __are considered__ any objects:
 
 - `{}`
 - `new Object()`
-- `new (function() {}) | new (class {})` (class instance) (also see
+- `new (function() {}) | new (class {})()` (class instance) (also see
   [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
@@ -1273,7 +1273,7 @@ The following values are considered objects:
 
 - `{}`
 - `new Object()`
-- `new (function() {}) | new (class {})` (class instance) (also see
+- `new (function() {}) | new (class {})()` (class instance) (also see
   [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 
 The following values __are not__ considered objects:
@@ -1328,7 +1328,7 @@ The following values are considered plain objects:
 
 The following values __are not__ considered plain objects:
 
-- `new (function() {}) | new (class {})` (class instance) (also see
+- `new (function() {}) | new (class {})()` (class instance) (also see
   [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT))
 - `new String('')`
 - `new Boolean(true)`
@@ -1378,7 +1378,7 @@ A _class_ object is one that is created by invoking the `new` operator on a
 
 The following values are considered class objects:
 
-- `new (function() {}) | new (class {})` (tip: use the `ctr`
+- `new (function() {}) | new (class {})()` (tip: use the `ctr`
   [argument](#rtvref.types.CLASS_OBJECT_args) to test for a specific class)
 
 The following values __are not__ considered class objects:

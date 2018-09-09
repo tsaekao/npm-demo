@@ -60,7 +60,8 @@ typings/
 # IDE files
 .vscode/
 
-# Tools Builds
+# Builds
+dist/
 dist_tools/
 
 # OS files

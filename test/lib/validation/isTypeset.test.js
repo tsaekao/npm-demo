@@ -136,7 +136,8 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[15].unshift(DEFAULT_QUALIFIER);
         goodValues[16] = [DEFAULT_QUALIFIER, types.ARRAY, {typeset: goodValues[16][0]}];
         goodValues[17] = [DEFAULT_QUALIFIER, types.ARRAY, {typeset: goodValues[17][0]}];
-        goodValues[18] = [DEFAULT_QUALIFIER, goodValues[18][0], types.ARRAY, {typeset: goodValues[18][1]}];
+        goodValues[18] = [DEFAULT_QUALIFIER, goodValues[18][0], types.ARRAY,
+          {typeset: goodValues[18][1]}];
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {fullyQualified: true});
         expect(results.failures).to.eql([]);
@@ -181,8 +182,7 @@ describe('module: lib/validation/isTypeset', function() {
 
         const shapeWithProtoProp = Object.create({
           invalid: null // invalid typeset, but on prototype so shouldn't cause failure
-        })
-        .foo = types.JSON;
+        }).foo = types.JSON;
 
         goodValues = [
           {foo: types.FINITE},
@@ -230,7 +230,7 @@ describe('module: lib/validation/isTypeset', function() {
           {foo: {bar: ['invalid-type']}},
 
           // validator is not last element in deep-nested typeset
-          [{foo: [{bar: [{baz: [types.STRING, function() {}, types.REGEXP]}] }] }],
+          [{foo: [{bar: [{baz: [types.STRING, function() {}, types.REGEXP]}] }] }], // eslint-disable-line object-curly-spacing
 
           // for class object, we should be going deep into the shape property of
           //  the args object and finding the invalid typeset
@@ -362,9 +362,11 @@ describe('module: lib/validation/isTypeset', function() {
         expect(isTypeset([function() {}, function() {}])).to.be.false;
         expect(isTypeset([types.STRING, function() {}, function() {}])).to.be.false;
         expect(isTypeset([types.STRING, [function() {}, function() {}]], {deep: true})).to.be.false;
-        expect(isTypeset([DEFAULT_QUALIFIER, types.STRING,
-          [DEFAULT_QUALIFIER, function() {}, function() {}]],
-          {deep: true, fullyQualified: true})).to.be.false;
+        expect(isTypeset([
+          DEFAULT_QUALIFIER,
+          types.STRING,
+          [DEFAULT_QUALIFIER, function() {}, function() {}]
+        ], {deep: true, fullyQualified: true})).to.be.false;
       });
 
       it('should not validate with only the qualifier', function() {

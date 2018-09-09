@@ -7,6 +7,8 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valObject';
 
+/* eslint-disable no-new-wrappers */
+
 describe('module: lib/validator/valObject', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {

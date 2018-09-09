@@ -767,7 +767,7 @@ const defs = {
    *
    * - `{}`
    * - `new Object()`
-   * - `new (function() {}) | new (class {})` (class instance) (also see
+   * - `new (function() {}) | new (class {})()` (class instance) (also see
    *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
@@ -827,7 +827,7 @@ const defs = {
    *
    * - `{}`
    * - `new Object()`
-   * - `new (function() {}) | new (class {})` (class instance) (also see
+   * - `new (function() {}) | new (class {})()` (class instance) (also see
    *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    *
    * The following values __are not__ considered objects:
@@ -878,7 +878,7 @@ const defs = {
    *
    * The following values __are not__ considered plain objects:
    *
-   * - `new (function() {}) | new (class {})` (class instance) (also see
+   * - `new (function() {}) | new (class {})()` (class instance) (also see
    *   {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT})
    * - `new String('')`
    * - `new Boolean(true)`
@@ -936,7 +936,7 @@ const defs = {
    *
    * The following values are considered class objects:
    *
-   * - `new (function() {}) | new (class {})` (tip: use the `ctr`
+   * - `new (function() {}) | new (class {})()` (tip: use the `ctr`
    *   {@link rtvref.types.CLASS_OBJECT_args argument} to test for a specific class)
    *
    * The following values __are not__ considered class objects:

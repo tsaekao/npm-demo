@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';

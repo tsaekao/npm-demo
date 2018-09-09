@@ -15,7 +15,7 @@ Shapes must be:
 
 # Documentation
 
-[Documentation](dist/rtv.js.md)
+[API](API.md)
 
 # Changes
 
@@ -27,7 +27,7 @@ Shapes must be:
 
 # License
 
-[MIT](LICENSE.md)
+[MIT](LICENSE)
 
 # TODO
 

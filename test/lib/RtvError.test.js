@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import _ from 'lodash';
 
 import types from '../../src/lib/types';
 import qualifiers from '../../src/lib/qualifiers';
@@ -133,7 +132,7 @@ describe('module: lib/RtvError', function() {
     const path = [];
     const cause = [qualifiers.REQUIRED, types.STRING];
     const err = new RtvError(value, typeset, path, cause);
-    expect(err.message).to.contain(`path="/"`);
+    expect(err.message).to.contain('path="/"');
   });
 
   it('should extend Error', function() {
@@ -198,7 +197,7 @@ describe('module: lib/RtvError', function() {
     const path = ['the', 'path'];
     const err = new RtvError(value, types.STRING, path, [qualifiers.REQUIRED, types.STRING]);
     const str = err + '';
-    expect(str.match(/^Error\: /)).to.equal(null); // not the default serialization
+    expect(str.match(/^Error: /)).to.equal(null); // not the default serialization
     expect(str).to.contain('RtvError');
     expect(str).to.contain(`value=${value}`);
     expect(str).to.contain(`path="/${path.join('/')}"`);

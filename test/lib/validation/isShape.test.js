@@ -5,6 +5,8 @@ import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isShape';
 
+/* eslint-disable no-new-wrappers */
+
 describe('module: lib/validation/isShape', function() {
   it('#type', function() {
     expect(val.type).to.equal(undefined);

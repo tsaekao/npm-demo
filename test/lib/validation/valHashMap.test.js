@@ -6,6 +6,8 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valHashMap';
 
+/* eslint-disable no-new-wrappers */
+
 describe('module: lib/validator/valHashMap', function() {
   describe('validator', function() { // module, and value only
     it('#type', function() {
@@ -119,7 +121,7 @@ describe('module: lib/validator/valHashMap', function() {
     });
 
     it('checks for string keys that match a pattern', function() {
-      map = {'key1': 1, 'key2': 2};
+      map = {key1: 1, key2: 2};
 
       vtu.expectValidatorSuccess(val, map, undefined, {
         keyExp: 'key\\d'
@@ -178,9 +180,9 @@ describe('module: lib/validator/valHashMap', function() {
     });
 
     it('checks for keys and values with specified typeset', function() {
-      map[1] = {'a': true};
-      map[2] = {'b': false};
-      map[3] = {'c': true};
+      map[1] = {a: true};
+      map[2] = {b: false};
+      map[3] = {c: true};
 
       vtu.expectValidatorSuccess(val, map, undefined, {
         keyExp: '\\d',

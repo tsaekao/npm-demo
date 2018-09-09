@@ -376,7 +376,7 @@ describe('module: lib/impl', function() {
       expect(impl.fullyQualify(types.STRING, qualifiers.EXPECTED))
         .to.eql([qualifiers.EXPECTED, types.STRING]);
 
-      const shape = {foo: 1}
+      const shape = {foo: 1};
       expect(impl.fullyQualify(shape, qualifiers.OPTIONAL))
         .to.eql([qualifiers.OPTIONAL, DEFAULT_OBJECT_TYPE, shape]);
 
@@ -423,7 +423,6 @@ describe('module: lib/impl', function() {
       expect(nextType).to.eql([types.STRING]);
 
       const args = {};
-      const arr = [];
       const val = function() {};
 
       typeset = [types.ARRAY, args, val];
