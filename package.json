@@ -9,28 +9,6 @@
   "main": "dist/rtv.umd.js",
   "module": "dist/rtv.esm.js",
   "jsnext:main": "dist/rtv.esm.js",
-  "nyc": {
-    "require": [
-      "@babel/register"
-    ],
-    "sourceMap": false,
-    "instrument": false,
-    "include": [
-      "src/**/*.js"
-    ],
-    "check-coverage": true,
-    "per-file": true,
-    "lines": 100,
-    "statements": 100,
-    "functions": 100,
-    "branches": 100,
-    "report-dir": "./coverage",
-    "reporter": [
-      "text",
-      "text-summary",
-      "html"
-    ]
-  },
   "pre-commit": ["precommit:msg", "lint", "docs", "precommit:docs"],
   "scripts": {
     "precommit:msg": "echo 'Running pre-commit checks...'",
