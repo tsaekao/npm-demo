@@ -124,15 +124,15 @@ describe('module: lib/validator/valClassObject', function() {
       checkStub.restore();
     });
 
-    it('should ignore args.ctr if not a function', function() {
-      vtu.expectValidatorSuccess(val, classObject, undefined, {ctr: 3});
+    it('should ignore args.ctor if not a function', function() {
+      vtu.expectValidatorSuccess(val, classObject, undefined, {ctor: 3});
     });
 
-    it('should require being an instanceof args.ctr', function() {
-      vtu.expectValidatorSuccess(val, classObject, undefined, {ctr: Shape});
+    it('should require being an instanceof args.ctor', function() {
+      vtu.expectValidatorSuccess(val, classObject, undefined, {ctor: Shape});
 
       vtu.expectValidatorError(val, classObject, undefined, {
-        ctr: class {}
+        ctor: class {}
       });
     });
 
@@ -161,9 +161,9 @@ describe('module: lib/validator/valClassObject', function() {
       expect(checkStub.called).to.be.true;
     });
 
-    it('should not check args.shape if not an instanceof args.ctr', function() {
+    it('should not check args.shape if not an instanceof args.ctor', function() {
       vtu.expectValidatorError(val, classObject, undefined, {
-        ctr: class {}, // this will fail
+        ctor: class {}, // this will fail
         shape: {name: types.STRING} // shape would match
       });
       expect(checkStub.called).to.be.false;

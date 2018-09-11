@@ -57,8 +57,8 @@ export default function valClassObject(v, q = REQUIRED, args) {
 
   if (valid && args) { // then check args
     // check constructor first since it's more efficient than the shape
-    if (args.ctr && isFunction(args.ctr)) {
-      valid = (v instanceof args.ctr);
+    if (args.ctor && isFunction(args.ctor)) {
+      valid = (v instanceof args.ctor);
     }
 
     if (valid) {

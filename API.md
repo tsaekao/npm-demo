@@ -1378,7 +1378,7 @@ A _class_ object is one that is created by invoking the `new` operator on a
 
 The following values are considered class objects:
 
-- `new (function() {}) | new (class {})()` (tip: use the `ctr`
+- `new (function() {}) | new (class {})()` (tip: use the `ctor`
   [argument](#rtvref.types.CLASS_OBJECT_args) to test for a specific class)
 
 The following values __are not__ considered class objects:
@@ -1757,6 +1757,22 @@ All typesets use an _implied_ [REQUIRED](#rtvref.qualifiers.REQUIRED)
  typeset as other than required, and the qualifier applies to all immediate
  types in the typeset (which means each nested typeset can have its own qualifier).
 
+<h4>JSON Serialization</h4>
+
+__ALL__ typesets should be fully JSON-serializable (via `JSON.stringify()` and
+ `JSON.parse()`) with the following unavoidable exceptions:
+
+- [Custom validators](#rtvref.types.custom_validator)
+- [CLASS_OBJECT arguments](#rtvref.types.CLASS_OBJECT_args) 'ctor' property
+
+Those exceptions are due to the fact that these represent functions, and functions
+ are not serializable to JSON. They will be ignored in the stringification process,
+ unless a custom _replacer_ is provided which, _somehow_ (up to you), handles them.
+
+This could, among other possibilities, enable the transmission of typesets
+ over network requests, perhaps embedded in JSON payloads, similar to
+ [JSON-LD](https://json-ld.org/) schemas.
+
 <h4>Example: Object</h4>
 
 <pre><code>const contactShape = {
@@ -1969,7 +1985,7 @@ Applicable to all numeric types.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [ctr] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctr === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION). |
+| [ctor] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctor === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION). |
 | [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. Ignored if not a valid shape descriptor. |
 
 

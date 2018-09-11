@@ -221,6 +221,22 @@ import Enumeration from './Enumeration';
  *  typeset as other than required, and the qualifier applies to all immediate
  *  types in the typeset (which means each nested typeset can have its own qualifier).
  *
+ * <h4>JSON Serialization</h4>
+ *
+ * __ALL__ typesets should be fully JSON-serializable (via `JSON.stringify()` and
+ *  `JSON.parse()`) with the following unavoidable exceptions:
+ *
+ * - {@link rtvref.types.custom_validator Custom validators}
+ * - {@link rtvref.types.CLASS_OBJECT_args CLASS_OBJECT arguments} 'ctor' property
+ *
+ * Those exceptions are due to the fact that these represent functions, and functions
+ *  are not serializable to JSON. They will be ignored in the stringification process,
+ *  unless a custom _replacer_ is provided which, _somehow_ (up to you), handles them.
+ *
+ * This could, among other possibilities, enable the transmission of typesets
+ *  over network requests, perhaps embedded in JSON payloads, similar to
+ *  {@link https://json-ld.org/ JSON-LD} schemas.
+ *
  * <h4>Example: Object</h4>
  *
  * <pre><code>const contactShape = {
@@ -918,9 +934,9 @@ const defs = {
   /**
    * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
    * @typedef {Object} rtvref.types.CLASS_OBJECT_args
-   * @property {function} [ctr] A reference to a constructor function. If specified,
+   * @property {function} [ctor] A reference to a constructor function. If specified,
    *  the class object (instance) must have this class function in its inheritance
-   *  chain such that `<class_object> instanceof ctr === true`. Note that this
+   *  chain such that `<class_object> instanceof ctor === true`. Note that this
    *  property is not serializable to JSON. Ignored if not a
    *  {@link rtvref.types.FUNCTION function}.
    * @property {rtvref.shape_descriptor} [shape] A description of the class object's
@@ -936,7 +952,7 @@ const defs = {
    *
    * The following values are considered class objects:
    *
-   * - `new (function() {}) | new (class {})()` (tip: use the `ctr`
+   * - `new (function() {}) | new (class {})()` (tip: use the `ctor`
    *   {@link rtvref.types.CLASS_OBJECT_args argument} to test for a specific class)
    *
    * The following values __are not__ considered class objects:
