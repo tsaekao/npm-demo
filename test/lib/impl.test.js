@@ -22,7 +22,7 @@ describe('module: lib/impl', function() {
         value: impl._validatorMap
       });
       expect(isObject(impl._validatorMap)).to.be.true;
-      expect(Object.keys(impl._validatorMap).length).to.equal(25); // # of known types
+      expect(Object.keys(impl._validatorMap).length).to.equal(26); // # of known types
     });
   });
 
@@ -740,7 +740,7 @@ describe('module: lib/impl', function() {
         types.REGEXP,
         types.FUNCTION,
         types.FINITE, {min: 8},
-        types.NUMBER, {exact: 7} // match
+        types.NUMBER, {oneOf: 7} // match
       ]);
       expect(result).to.be.an.instanceof(RtvSuccess);
     });
@@ -879,7 +879,7 @@ describe('module: lib/impl', function() {
       typeset = {
         foo: {
           bar: {
-            baz: [types.STRING, types.FINITE, {exact: 0}]
+            baz: [types.STRING, types.FINITE, {oneOf: 0}]
           }
         }
       };
@@ -888,7 +888,7 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql(['foo', 'bar', 'baz']);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING, types.FINITE, {exact: 0}]);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING, types.FINITE, {oneOf: 0}]);
 
       value = 1;
       typeset = [types.STRING];

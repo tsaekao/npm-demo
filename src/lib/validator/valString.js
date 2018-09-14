@@ -3,6 +3,7 @@
 import {type, default as isString} from '../validation/isString';
 
 import isFinite from '../validation/isFinite';
+import isArray from '../validation/isArray';
 
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
@@ -58,8 +59,14 @@ export default function valString(v, q = REQUIRED, args) {
   let valid = isString(v) || (q !== REQUIRED && v === '');
 
   if (valid && args) { // then check args
-    if (isString(args.exact)) { // empty string OK
-      valid = (v === args.exact);
+    // empty string is OK for 'oneOf'
+    if (isString(args.oneOf) || (isArray(args.oneOf) && args.oneOf.length > 0)) {
+      const possibilities = [].concat(args.oneOf);
+      // flip the result so that valid is set to false if no values match
+      valid = !possibilities.every(function(possibility) {
+        // return false on first match to break the loop
+        return !(isString(possibility) && v === possibility);
+      });
     } else {
       let min;
       if (valid && isFinite(args.min) && args.min >= 0) {

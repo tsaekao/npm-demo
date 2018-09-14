@@ -17,6 +17,7 @@ import * as valClassObject from './lib/validator/valClassObject';
 import * as valDate from './lib/validator/valDate';
 import * as valError from './lib/validator/valError';
 import * as valFinite from './lib/validator/valFinite';
+import * as valFloat from './lib/validator/valFloat';
 import * as valFunction from './lib/validator/valFunction';
 import * as valHashMap from './lib/validator/valHashMap';
 import * as valInt from './lib/validator/valInt';
@@ -279,6 +280,7 @@ export default rtv;
     valDate,
     valError,
     valFinite,
+    valFloat,
     valFunction,
     valHashMap,
     valInt,

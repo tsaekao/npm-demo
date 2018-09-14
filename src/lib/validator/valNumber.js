@@ -4,6 +4,8 @@ import {default as _isNaN} from 'lodash/isNaN';
 
 import {type, default as isNumber} from '../validation/isNumber';
 
+import isArray from '../validation/isArray';
+
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
@@ -63,9 +65,17 @@ export default function valNumber(v, q = REQUIRED, args) {
   }
 
   if (valid && args) { // then check args against normal type range
-    // NOTE: NaN is OK for the exact arg (careful: NaN !== NaN...)
-    if (isNumber(args.exact) || _isNaN(args.exact)) {
-      valid = (v === args.exact) || (_isNaN(v) && _isNaN(args.exact));
+    // NOTE: NaN is OK for the oneOf arg (careful: NaN !== NaN...)
+    if (isNumber(args.oneOf) || _isNaN(args.oneOf) ||
+        (isArray(args.oneOf) && args.oneOf.length > 0)) {
+      const possibilities = [].concat(args.oneOf);
+      // flip the result so that valid is set to false if no values match
+      valid = !possibilities.every(function(possibility) {
+        // special allowance for NaN, and ignore any possibility that is not a NUMBER
+        // return false on first match to break the loop
+        return !((_isNaN(possibility) && _isNaN(v)) ||
+            (isNumber(possibility) && v === possibility));
+      });
     } else {
       let min;
       if (valid && isNumber(args.min)) {

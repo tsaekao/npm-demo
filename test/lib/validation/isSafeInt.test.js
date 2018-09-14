@@ -19,8 +19,8 @@ describe('module: lib/validation/isSafeInt', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
-      // remove subset types: keep FLOAT since it isn't a subset
-      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT);
+      // remove subset types (FLOAT is a subset because of zero)
+      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT);
 
       // build a list of all remaining invalid values
       let invalidValues = [
@@ -30,10 +30,13 @@ describe('module: lib/validation/isSafeInt', function() {
         Number.POSITIVE_INFINITY,
         -Infinity,
         Number.NEGATIVE_INFINITY,
+        Number.EPSILON,
         Number.MIN_VALUE, // float, number closest to zero
         Number.MAX_VALUE, // int, unsafe
-        Number.MIN_SAFE_INTEGER - 1, // unsafe
-        Number.MAX_SAFE_INTEGER + 1 // unsafe
+        Number.MIN_SAFE_INTEGER - 1, // int, unsafe
+        Number.MAX_SAFE_INTEGER + 1, // int, unsafe
+        -1.1,
+        1.1
       ];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);

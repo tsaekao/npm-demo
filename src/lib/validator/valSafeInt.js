@@ -2,6 +2,8 @@
 
 import {type, default as isSafeInt} from '../validation/isSafeInt';
 
+import isArray from '../validation/isArray';
+
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
@@ -56,8 +58,13 @@ export default function valSafeInt(v, q = REQUIRED, args) {
   let valid = isSafeInt(v);
 
   if (valid && args) { // then check args against normal type range
-    if (isSafeInt(args.exact)) {
-      valid = (v === args.exact);
+    if (isSafeInt(args.oneOf) || (isArray(args.oneOf) && args.oneOf.length > 0)) {
+      const possibilities = [].concat(args.oneOf);
+      // flip the result so that valid is set to false if no values match
+      valid = !possibilities.every(function(possibility) {
+        // return false on first match to break the loop
+        return !(isSafeInt(possibility) && v === possibility);
+      });
     } else {
       let min;
       if (valid && isSafeInt(args.min)) {

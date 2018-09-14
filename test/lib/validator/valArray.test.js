@@ -146,11 +146,11 @@ describe('module: lib/validator/valArray', function() {
       });
 
       arr = [1, 'a'];
-      args = {typeset: [types.FINITE, {min: 1}, types.STRING, {exact: 'a'}]};
+      args = {typeset: [types.FINITE, {min: 1}, types.STRING, {oneOf: 'a'}]};
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
       arr = [1, 'a'];
-      args = {typeset: [types.FINITE, {min: 2}, types.STRING, {exact: 'a'}]};
+      args = {typeset: [types.FINITE, {min: 2}, types.STRING, {oneOf: 'a'}]};
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: [0],
         cause: (function() {

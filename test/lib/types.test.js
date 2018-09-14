@@ -44,6 +44,7 @@ describe('module: lib/types', function() {
     // types known to take arguments
     const knownTypes = [
       types.STRING,
+      types.SYMBOL,
       types.NUMBER,
       types.FINITE,
       types.INT,

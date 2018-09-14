@@ -194,7 +194,7 @@ describe('module: lib/validation/isTypeset', function() {
 
           // a shape with property 'foo' that's either an array of strings (maybe empty)
           //  or a finite number that is exactly 7
-          {foo: [[types.STRING], types.FINITE, {exact: 7}]},
+          {foo: [[types.STRING], types.FINITE, {oneOf: 7}]},
 
           shapeWithNonEnumerable,
           shapeWithProtoProp,

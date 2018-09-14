@@ -25,11 +25,13 @@ describe('module: lib/validator/valNumber', function() {
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
       // remove subset types
-      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT,
-          types.FLOAT);
+      _.pull(invalidTypes, types.NUMBER, types.FINITE, types.INT, types.SAFE_INT, types.FLOAT);
 
-      // build a list of all remaining invalid values, along with NaN
-      let invalidValues = [NaN];
+      // build a list of all remaining invalid values
+      let invalidValues = [
+        // put some NUMBER values back in which aren't overlaps
+        NaN
+      ];
       _.forEach(invalidTypes, function(type) {
         invalidValues = invalidValues.concat(validValues[type]);
       });
@@ -98,21 +100,37 @@ describe('module: lib/validator/valNumber', function() {
 
     it('checks for an exact number', function() {
       validTypeValues.forEach(function(value) {
-        vtu.expectValidatorSuccess(val, value, undefined, {exact: value});
+        vtu.expectValidatorSuccess(val, value, undefined, {oneOf: value});
       });
 
       // qualifier takes precedence
-      vtu.expectValidatorError(val, NaN, undefined, {exact: NaN});
+      vtu.expectValidatorError(val, NaN, undefined, {oneOf: NaN});
       // EXPECTED allows NaN and NaN is permitted for exact
-      vtu.expectValidatorSuccess(val, NaN, qualifiers.EXPECTED, {exact: NaN});
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.EXPECTED, {oneOf: NaN});
+      // zero is in type range
+      vtu.expectValidatorError(val, 7, undefined, {oneOf: 0});
       // ignored: invalid type
-      vtu.expectValidatorSuccess(val, 7, undefined, {exact: '6'});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: '6'});
+    });
+
+    it('checks for an exact number in a list', function() {
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: [6, 7, 8]});
+      vtu.expectValidatorError(val, 7, undefined, {oneOf: [6, 8]});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: [7]});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: []}); // ignored
+
+      // ignores non-type values in a list
+      vtu.expectValidatorError(val, 7, undefined, {oneOf: [null, '7', true]});
+
+      // ignores non-arrays
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: new Set(null, '7', true)});
     });
 
     it('exact takes precedence over min/max', function() {
-      vtu.expectValidatorSuccess(val, 7, undefined, {exact: 7, min: 8});
-      vtu.expectValidatorSuccess(val, 7, undefined, {exact: 7, max: 6});
-      vtu.expectValidatorSuccess(val, 7, undefined, {exact: 7, min: 8, max: 6});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: 7, min: 8});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: 7, max: 6});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: 7, min: 8, max: 6});
+      vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: [7], min: 8, max: 6});
     });
 
     it('checks for a minimum number', function() {
@@ -120,13 +138,15 @@ describe('module: lib/validator/valNumber', function() {
         vtu.expectValidatorSuccess(val, value, undefined, {min: value});
       });
 
-      vtu.expectValidatorSuccess(val, 7, undefined, {min: 0});
       vtu.expectValidatorError(val, -8, undefined, {min: -7});
       vtu.expectValidatorSuccess(val, 7, undefined, {min: 6});
       vtu.expectValidatorSuccess(val, 7, undefined, {min: -Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {min: Number.NEGATIVE_INFINITY});
       vtu.expectValidatorError(val, 7, undefined, {min: Infinity});
       vtu.expectValidatorError(val, 7, undefined, {min: Number.POSITIVE_INFINITY});
+
+      // zero is in type range
+      vtu.expectValidatorError(val, -7, undefined, {min: 0});
 
       // these are all ignored min values
       vtu.expectValidatorSuccess(val, 7, undefined, {min: '8'});
@@ -138,13 +158,15 @@ describe('module: lib/validator/valNumber', function() {
         vtu.expectValidatorSuccess(val, value, undefined, {max: value});
       });
 
-      vtu.expectValidatorError(val, 7, undefined, {max: 0});
       vtu.expectValidatorError(val, -7, undefined, {max: -8});
       vtu.expectValidatorError(val, 7, undefined, {max: 6});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.POSITIVE_INFINITY});
       vtu.expectValidatorError(val, 7, undefined, {max: -Infinity});
       vtu.expectValidatorError(val, 7, undefined, {max: Number.NEGATIVE_INFINITY});
+
+      // zero is in type range
+      vtu.expectValidatorError(val, 7, undefined, {max: 0});
 
       // these are all ignored max values
       vtu.expectValidatorSuccess(val, 7, undefined, {max: '6'});

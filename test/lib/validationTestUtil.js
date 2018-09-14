@@ -39,12 +39,12 @@ export const getValidValues = function(type) {
     [types.SYMBOL]: [Symbol(), Symbol('symbol'), Symbol(1), Symbol.for('other')],
 
     [types.NUMBER]: [
+      -1.1,
       -1,
       -0,
       0,
       1,
-      7.7,
-      -7.7,
+      1.1,
       Number.EPSILON,
       Number.MIN_VALUE, // float, number closest to zero
       Number.MAX_VALUE, // int, unsafe
@@ -52,25 +52,25 @@ export const getValidValues = function(type) {
       Number.POSITIVE_INFINITY,
       -Infinity,
       Number.NEGATIVE_INFINITY,
-      Number.MIN_SAFE_INTEGER - 1, // unsafe
-      Number.MIN_SAFE_INTEGER,
+      Number.MIN_SAFE_INTEGER - 1, // int, unsafe
+      Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // unsafe
+      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
     ],
     [types.FINITE]: [
+      -1.1,
       -1,
       -0,
       0,
       1,
-      7.7,
-      -7.7,
+      1.1,
       Number.EPSILON,
       Number.MIN_VALUE, // float, number closest to zero
       Number.MAX_VALUE, // int, unsafe
-      Number.MIN_SAFE_INTEGER - 1, // unsafe
-      Number.MIN_SAFE_INTEGER,
+      Number.MIN_SAFE_INTEGER - 1, // int, unsafe
+      Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // unsafe
+      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
     ],
     [types.INT]: [
       -1,
@@ -78,10 +78,10 @@ export const getValidValues = function(type) {
       0,
       1,
       Number.MAX_VALUE, // int, unsafe
-      Number.MIN_SAFE_INTEGER - 1, // unsafe
-      Number.MIN_SAFE_INTEGER,
+      Number.MIN_SAFE_INTEGER - 1, // int, unsafe
+      Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // unsafe
+      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
     ],
     [types.SAFE_INT]: [
       -1,
@@ -92,8 +92,10 @@ export const getValidValues = function(type) {
       Number.MAX_SAFE_INTEGER
     ],
     [types.FLOAT]: [
-      7.7,
-      -7.7,
+      -1.1,
+      -0,
+      0,
+      1.1,
       Number.EPSILON,
       Number.MIN_VALUE // float, number closest to zero
     ],

@@ -77,13 +77,31 @@ describe('module: lib/validator/valString', function() {
 
   describe('arguments', function() {
     it('checks for an exact value', function() {
-      vtu.expectValidatorSuccess(val, 'foo', undefined, {exact: 'foo'});
-      vtu.expectValidatorError(val, 'bar', undefined, {exact: 'foo'});
+      vtu.expectValidatorSuccess(val, 'foo', undefined, {oneOf: 'foo'});
+      vtu.expectValidatorError(val, 'bar', undefined, {oneOf: 'foo'});
 
       // empty string is OK with the right qualifier
-      vtu.expectValidatorError(val, '', undefined, {exact: ''});
-      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {exact: ''});
-      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {exact: ''});
+      vtu.expectValidatorError(val, '', undefined, {oneOf: ''});
+      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {oneOf: ''});
+      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {oneOf: ''});
+    });
+
+    it('checks for an exact string in a list', function() {
+      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: ['6', '7', '8']});
+      vtu.expectValidatorError(val, '7', undefined, {oneOf: ['6', '8']});
+      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: ['7']});
+      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: []}); // ignored
+
+      // if qualifier allows empty string as a value, empty string works in a list
+      vtu.expectValidatorError(val, '', undefined, {oneOf: ['']});
+      vtu.expectValidatorError(val, '', qualifiers.EXPECTED, {oneOf: ['']});
+      vtu.expectValidatorError(val, '', qualifiers.OPTIONAL, {oneOf: ['']});
+
+      // ignores non-type values in a list
+      vtu.expectValidatorError(val, '7', undefined, {oneOf: [null, 7, true]});
+
+      // ignores non-arrays
+      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: new Set(null, 7, true)});
     });
 
     it('checks for a partial value if "exact" is not specified', function() {
@@ -92,7 +110,7 @@ describe('module: lib/validator/valString', function() {
       let args = {partial: 'foo'};
       vtu.expectValidatorError(val, 'partial', undefined, args);
 
-      args = {exact: 'art', partial: 'art'};
+      args = {oneOf: 'art', partial: 'art'};
       vtu.expectValidatorError(val, 'partial', undefined, args);
     });
 

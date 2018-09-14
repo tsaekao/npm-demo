@@ -441,10 +441,11 @@ const defs = {
   /**
    * <h3>String Arguments</h3>
    * @typedef {Object} rtvref.types.STRING_args
-   * @property {string} [exact] An exact string to match. Can be an empty string.
-   *  Note, however, that the {@link rtvref.qualifiers qualifier} must not be
-   *  `REQUIRED` because that will disallow an empty string as the value being
-   *  checked (i.e. this argument will be ignored).
+   * @property {(string|Array.<string>)} [oneOf] An exact string to match (`===`).
+   *  Can also be a list of strings, one of which must be an exact match. An empty
+   *  string is allowed. Note, however, that the {@link rtvref.qualifiers qualifier}
+   *  must not be `REQUIRED` because that will disallow an empty string as the value
+   *  being checked regardless of this value/list.
    * @property {string} [partial] A partial value to match (must be somewhere
    *  within the string). Ignored if empty string, or `exact` is specified. `min`
    *  and `max` take __precedence__ over this argument (the length will be
@@ -486,12 +487,23 @@ const defs = {
   BOOLEAN: def('BOOLEAN'),
 
   /**
+   * {@link rtvref.types.SYMBOL SYMBOL} arguments.
+   * @typedef {Object} rtvref.types.SYMBOL_args
+   * @property {(symbol|Array.<symbol>)} [oneOf] An exact symbol to match (`===`).
+   *  Can also be a list of symbols, one of which must be an exact match. Values to
+   *  match are ignored if they are not symbols.
+   */
+
+  /**
    * Symbol rules per qualifiers: Must be a symbol {@link rtvref.types.primitives primitive}.
+   *
+   * Arguments (optional): {@link rtvref.types.SYMBOL_args}.
+   *
    * @name rtvref.types.SYMBOL
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  SYMBOL: def('SYMBOL'),
+  SYMBOL: def('SYMBOL', true),
 
   /**
    * <h3>Numeric Value Arguments</h3>
@@ -499,10 +511,15 @@ const defs = {
    * Applicable to all numeric types.
    *
    * @typedef {Object} rtvref.types.numeric_args
-   * @property {string} [exact] An exact number to match. Ignored if not
-   *  within normal range of the type (e.g. for `NUMBER`, could be `+Infinity`,
-   *  or even `NaN` if the qualifier is not `REQUIRED`; but these values would be
-   *  ignored by `FINITE` since they aren't part of the `FINITE` range).
+   * @property {(number|Array.<number>)} [oneOf] An exact number to match (`===`).
+   *  Can also be a list of numbers, one of which must be an exact match. An empty
+   *  list will be ignored.
+   *
+   *  Values to match are ignored if they are not within normal range of the type
+   *   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is
+   *   not `REQUIRED`; but these values would be ignored by `FINITE` since they
+   *   aren't part of the `FINITE` range), or not numbers at all.
+   *
    * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
    *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
    * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
@@ -603,6 +620,7 @@ const defs = {
   /**
    * Float rules per qualifiers: Must be a {@link rtvref.types.FINITE finite}
    *  floating point number, and a number {@link rtvref.types.primitives primitive}.
+   *  Per IEEE 754, zero is considered a float.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *

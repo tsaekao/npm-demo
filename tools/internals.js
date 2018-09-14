@@ -22,6 +22,7 @@ import * as isClassObject from '../src/lib/validation/isClassObject';
 import * as isDate from '../src/lib/validation/isDate';
 import * as isError from '../src/lib/validation/isError';
 import * as isFinite from '../src/lib/validation/isFinite';
+import * as isFloat from '../src/lib/validation/isFloat';
 import * as isFunction from '../src/lib/validation/isFunction';
 import * as isHashMap from '../src/lib/validation/isHashMap';
 import * as isInt from '../src/lib/validation/isInt';
@@ -49,6 +50,7 @@ import * as valClassObject from '../src/lib/validator/valClassObject';
 import * as valDate from '../src/lib/validator/valDate';
 import * as valError from '../src/lib/validator/valError';
 import * as valFinite from '../src/lib/validator/valFinite';
+import * as valFloat from '../src/lib/validator/valFloat';
 import * as valFunction from '../src/lib/validator/valFunction';
 import * as valHashMap from '../src/lib/validator/valHashMap';
 import * as valInt from '../src/lib/validator/valInt';
@@ -98,6 +100,7 @@ global.rtvi = {
       isDate,
       isError,
       isFinite,
+      isFloat,
       isFunction,
       isHashMap,
       isInt,
@@ -127,6 +130,7 @@ global.rtvi = {
       valDate,
       valError,
       valFinite,
+      valFloat,
       valFunction,
       valHashMap,
       valInt,

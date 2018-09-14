@@ -97,6 +97,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
         * [.custom_validator](#rtvref.types.custom_validator) ⇒ <code>boolean</code>
         * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+        * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
         * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
         * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
         * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
@@ -800,6 +801,7 @@ Convenience function to check if a nil value (either `undefined` or `null`)
     * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
     * [.custom_validator](#rtvref.types.custom_validator) ⇒ <code>boolean</code>
     * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+    * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
     * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
     * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
     * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
@@ -909,6 +911,8 @@ Boolean rules per qualifiers: Must be a boolean [primitive](#rtvref.types.primit
 
 #### types.SYMBOL : <code>string</code>
 Symbol rules per qualifiers: Must be a symbol [primitive](#rtvref.types.primitives).
+
+Arguments (optional): [SYMBOL_args](#rtvref.types.SYMBOL_args).
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
@@ -1021,6 +1025,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 #### types.FLOAT : <code>string</code>
 Float rules per qualifiers: Must be a [finite](#rtvref.types.FINITE)
  floating point number, and a number [primitive](#rtvref.types.primitives).
+ Per IEEE 754, zero is considered a float.
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
@@ -1921,10 +1926,25 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [exact] | <code>string</code> | An exact string to match. Can be an empty string.  Note, however, that the [qualifier](#rtvref.qualifiers) must not be  `REQUIRED` because that will disallow an empty string as the value being  checked (i.e. this argument will be ignored). |
+| [oneOf] | <code>string</code> \| <code>Array.&lt;string&gt;</code> | An exact string to match (`===`).  Can also be a list of strings, one of which must be an exact match. An empty  string is allowed. Note, however, that the [qualifier](#rtvref.qualifiers)  must not be `REQUIRED` because that will disallow an empty string as the value  being checked regardless of this value/list. |
 | [partial] | <code>string</code> | A partial value to match (must be somewhere  within the string). Ignored if empty string, or `exact` is specified. `min`  and `max` take __precedence__ over this argument (the length will be  validated first, then a partial match will be attempted). |
 | [min] | <code>number</code> | Minimum inclusive length. Defaults to 1 for a  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if  `exact` is specified, or `min` is not a [FINITE](#rtvref.types.FINITE)  number >= 0. |
 | [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
+
+
+* * *
+
+<a name="rtvref.types.SYMBOL_args"></a>
+
+#### types.SYMBOL_args : <code>Object</code>
+[SYMBOL](#rtvref.types.SYMBOL) arguments.
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [oneOf] | <code>symbol</code> \| <code>Array.&lt;symbol&gt;</code> | An exact symbol to match (`===`).  Can also be a list of symbols, one of which must be an exact match. Values to  match are ignored if they are not symbols. |
 
 
 * * *
@@ -1949,7 +1969,7 @@ Applicable to all numeric types.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [exact] | <code>string</code> | An exact number to match. Ignored if not  within normal range of the type (e.g. for `NUMBER`, could be `+Infinity`,  or even `NaN` if the qualifier is not `REQUIRED`; but these values would be  ignored by `FINITE` since they aren't part of the `FINITE` range). |
+| [oneOf] | <code>number</code> \| <code>Array.&lt;number&gt;</code> | An exact number to match (`===`).  Can also be a list of numbers, one of which must be an exact match. An empty  list will be ignored.  Values to match are ignored if they are not within normal range of the type   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is   not `REQUIRED`; but these values would be ignored by `FINITE` since they   aren't part of the `FINITE` range), or not numbers at all. |
 | [min] | <code>number</code> | Minimum inclusive value. Ignored if `exact` is  specified, `min` is `NaN`, or `min` is not within normal range of the type. |
 | [max] | <code>number</code> | Maximum inclusive value. Ignored if `exact` is  specified, `max` is `NaN`, `max` is not within normal range of the type,  or `max` is less than `min`. |
 
