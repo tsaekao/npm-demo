@@ -1184,6 +1184,7 @@ The `value` property must be an array (possibly empty) of finite numbers of
 <pre><code>{
   value: [REQUIRED, ARRAY, {typeset: [FINITE]}]
 }
+</code></pre>
 
 <h4>Example: Fully-qualified, mixed types</h4>
 

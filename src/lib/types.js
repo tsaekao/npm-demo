@@ -772,6 +772,7 @@ const defs = {
    * <pre><code>{
    *   value: [REQUIRED, ARRAY, {typeset: [FINITE]}]
    * }
+   * </code></pre>
    *
    * <h4>Example: Fully-qualified, mixed types</h4>
    *
