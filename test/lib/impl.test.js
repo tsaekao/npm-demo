@@ -746,7 +746,8 @@ describe('module: lib/impl', function() {
     });
 
     it('should invoke a custom validator if present', function() {
-      const validator = sinon.stub().returns(false);
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.stub().throws(cvError);
 
       let typeset = [validator];
       let result = impl.checkWithArray('foo', typeset);
@@ -762,6 +763,7 @@ describe('module: lib/impl', function() {
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
       expect(result.cause).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.failure).to.equal(cvError);
 
       validator.resetHistory();
 
@@ -779,6 +781,7 @@ describe('module: lib/impl', function() {
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
       expect(result.cause).to.eql([qualifiers.REQUIRED, types.STRING, validator]);
+      expect(result.failure).to.equal(cvError);
 
       validator.resetHistory();
       validator.returns(true);
@@ -795,7 +798,7 @@ describe('module: lib/impl', function() {
     });
 
     it('should not invoke a custom validator if no types matched', function() {
-      const validator = sinon.stub().returns(true);
+      const validator = sinon.stub().throws(new Error('failure'));
       const typeset = [types.FINITE, validator];
       const result = impl.checkWithArray('foo', typeset);
       expect(validator.callCount).to.equal(0);
@@ -805,6 +808,7 @@ describe('module: lib/impl', function() {
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
       expect(result.cause).to.eql([qualifiers.REQUIRED, types.FINITE, validator]);
+      expect(result.failure).to.equal(undefined);
     });
 
     describe('Options', function() {

@@ -2,6 +2,7 @@
 
 import isTypeset from './validation/isTypeset';
 import isArray from './validation/isArray';
+import isError from './validation/isError';
 
 import {print} from './util';
 
@@ -42,9 +43,11 @@ const renderPath = function(path) {
  *  that caused the failure. This is normally the fully-qualified version of `typeset`,
  *  but could be a sub-type if `typeset` is an Array typeset or a
  *  {@link rtvref.shape_descriptor shape descriptor}.
+ * @param {Error} [failure] {@link rtvref.types.custom_validator Custom Validator}
+ *  error, if the `RtvError` is a result of a failed custom validation.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.
  */
-const RtvError = function(value, typeset, path, cause) {
+const RtvError = function(value, typeset, path, cause, failure) {
   // NOTE: We're using the old ES5 way of doing classical inheritance rather than
   //  an ES6 'class' because extending from Error doesn't appear to work very well,
   //  at least not with Babel 6.x. It seems OK in Node 9.x, however. Anyway,
@@ -65,13 +68,23 @@ const RtvError = function(value, typeset, path, cause) {
     throw new Error(`Invalid cause (expecting a fully-qualified typeset): ${print(cause)}`);
   }
 
+  if (failure && !isError(failure)) {
+    throw new Error(`Invalid failure (expecting JavaScript Error): ${print(failure)}`);
+  } else if (!failure) {
+    failure = undefined; // normalize falsy values
+  }
+
   // NOTE: For some reason, calling `extendsFrom.call(this, message)` has
   //  no effect on `this` whatsoever, perhaps because it's calling native code,
   //  or there's something strange about the built-in Error type, so we just
   //  call the super's constructor as a formality.
   extendsFrom.call(this);
-  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}", cause=${print(cause)}`;
+
   this.name = 'RtvError';
+  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}", cause=${print(cause)}`;
+  if (failure) {
+    this.message += `, failure="${failure.message}"`;
+  }
 
   Object.defineProperties(this, {
     /**
@@ -150,6 +163,22 @@ const RtvError = function(value, typeset, path, cause) {
       get() {
         return cause;
       }
+    },
+
+    /**
+     * Validation error thrown by a {@link rtvref.types.custom_validator Custom Validator},
+     *  which resulted in this `RtvError`. `undefined` if this error was not the result
+     *  of a failed custom validation.
+     * @readonly
+     * @name rtvref.RtvError#failure
+     * @type {(Error|undefined)}
+     */
+    failure: {
+      enumerable: true,
+      configurable: true,
+      get() {
+        return failure;
+      }
     }
   });
 };
@@ -163,7 +192,15 @@ RtvError.prototype.constructor = RtvError;
  * @returns {string} String representation.
  */
 RtvError.prototype.toString = function() {
-  return `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
+  let str = `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
+
+  if (this.failure) {
+    str += `, failure="${this.failure.message}"`;
+  } else {
+    str += ', failure=<none>';
+  }
+
+  return str;
 };
 
 export default RtvError;

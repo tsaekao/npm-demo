@@ -377,7 +377,11 @@ import Enumeration from './Enumeration';
  *  be part of a larger parent typeset (though there would be no reference to
  *  the parent typeset, if any). This typeset is as it was specified in the
  *  parent shape, and therefore it may not be fully-qualified.
- * @returns {boolean} A _truthy_ value to verify, a _falsy_ value to reject.
+ * @throws {Error} If the validation fails. This error will fail the overall
+ *  validation check, and will be included in the resulting `RtvError` as its
+ *  {@link rtvref.RtvError#failure failure} property, as well as part of its
+ *  `message`. Therefore, it's recommended to throw an error with a message that
+ *  will help the developer determine why the custom validation failed.
  * @see {@link rtvref.validation.isValidator}
  */
 

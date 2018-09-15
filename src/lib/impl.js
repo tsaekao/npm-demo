@@ -613,11 +613,12 @@ const checkWithArray = function(value, typeset /*, options*/) {
     // check for a validator at the end of the Array typeset and invoke it
     const lastType = typeset[typeset.length - 1];
     if (isValidator(lastType)) {
-      if (!lastType(value, match, typeset)) {
+      try {
+        lastType(value, match, typeset);
+      } catch (cvErr) {
         // invalid in spite of the match since the validator said no
-        err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier));
+        err = new RtvError(value, typeset, options.path, fullyQualify(typeset, qualifier), cvErr);
       }
-      // else, valid!
     }
     // else, valid, since we have a match
   } else {

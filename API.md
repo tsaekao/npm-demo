@@ -31,12 +31,13 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
         * [.toString()](#rtvref.Enumeration+toString) ⇒ <code>string</code>
     * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
-        * [new RtvError(value, typeset, path, cause)](#new_rtvref.RtvError_new)
+        * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
         * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
         * [.value](#rtvref.RtvError+value) : <code>\*</code>
         * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
         * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
         * [.cause](#rtvref.RtvError+cause) : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+        * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
     * [.RtvSuccess](#rtvref.RtvSuccess)
         * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
@@ -95,7 +96,7 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
         * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
-        * [.custom_validator](#rtvref.types.custom_validator) ⇒ <code>boolean</code>
+        * [.custom_validator](#rtvref.types.custom_validator) : <code>function</code>
         * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
         * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
         * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
@@ -250,12 +251,13 @@ A string representation of this Enumeration.
 **Extends**: [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)  
 
 * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
-    * [new RtvError(value, typeset, path, cause)](#new_rtvref.RtvError_new)
+    * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
     * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
     * [.value](#rtvref.RtvError+value) : <code>\*</code>
     * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
     * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
     * [.cause](#rtvref.RtvError+cause) : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+    * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
     * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
 
 
@@ -263,7 +265,7 @@ A string representation of this Enumeration.
 
 <a name="new_rtvref.RtvError_new"></a>
 
-#### new RtvError(value, typeset, path, cause)
+#### new RtvError(value, typeset, path, cause, [failure])
 Runtime Verification Error Indicator
 
 Describes a failed runtime verification of a value against a given
@@ -281,6 +283,7 @@ Describes a failed runtime verification of a value against a given
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>Array.&lt;string&gt;</code> | The path deep into `value` where the failure occurred.  An empty array signifies the _root_ (top-level) value that was checked. |
 | cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.shape_descriptor). |
+| [failure] | <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation. |
 
 
 * * *
@@ -338,6 +341,18 @@ If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
  and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
  because the failure would ultimately have been caused by the nested `rtv.t.STRING`
  typeset.
+
+**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
+**Read only**: true  
+
+* * *
+
+<a name="rtvref.RtvError+failure"></a>
+
+#### rtvError.failure : <code>Error</code> \| <code>undefined</code>
+Validation error thrown by a [Custom Validator](#rtvref.types.custom_validator),
+ which resulted in this `RtvError`. `undefined` if this error was not the result
+ of a failed custom validation.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
@@ -799,7 +814,7 @@ Convenience function to check if a nil value (either `undefined` or `null`)
     * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
     * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
-    * [.custom_validator](#rtvref.types.custom_validator) ⇒ <code>boolean</code>
+    * [.custom_validator](#rtvref.types.custom_validator) : <code>function</code>
     * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
     * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
     * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
@@ -1879,7 +1894,7 @@ For example:
 
 <a name="rtvref.types.custom_validator"></a>
 
-#### types.custom_validator ⇒ <code>boolean</code>
+#### types.custom_validator : <code>function</code>
 <h3>Custom Validator</h3>
 
 A function used as a [typeset](#rtvref.types.typeset), or as a subset to
@@ -1904,7 +1919,14 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
  on how to reconstruct the validator dynamically.
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**Returns**: <code>boolean</code> - A _truthy_ value to verify, a _falsy_ value to reject.  
+**Throws**:
+
+- <code>Error</code> If the validation fails. This error will fail the overall
+ validation check, and will be included in the resulting `RtvError` as its
+ [failure](#rtvref.RtvError+failure) property, as well as part of its
+ `message`. Therefore, it's recommended to throw an error with a message that
+ will help the developer determine why the custom validation failed.
+
 **See**: [rtvref.validation.isValidator](rtvref.validation.isValidator)  
 
 | Param | Type | Description |
