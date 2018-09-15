@@ -139,7 +139,7 @@ describe('module: lib/validator/valFloat', function() {
       vtu.expectValidatorError(val, 7.7, undefined, {oneOf: [null, '7.7', true]});
 
       // ignores non-arrays
-      vtu.expectValidatorSuccess(val, 7.7, undefined, {oneOf: new Set(null, '7.7', true)});
+      vtu.expectValidatorSuccess(val, 7.7, undefined, {oneOf: new Set([6.1, 8.1])});
     });
 
     it('exact takes precedence over min/max', function() {

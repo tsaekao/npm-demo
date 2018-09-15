@@ -60,4 +60,40 @@ describe('module: lib/validator/valSymbol', function() {
       });
     });
   });
+
+  describe('arguments', function() {
+    const sym6 = Symbol(6);
+    const sym7 = Symbol(7);
+    const sym8 = Symbol(8);
+    let validTypeValues;
+
+    beforeEach(function() {
+      validTypeValues = vtu.getValidValues(val.type);
+    });
+
+    it('checks for an exact symbol', function() {
+      validTypeValues.forEach(function(value) {
+        vtu.expectValidatorSuccess(val, value, undefined, {oneOf: value});
+      });
+
+      // ignored: invalid type
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: null});
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: '7'});
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: 7});
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: /7/});
+    });
+
+    it('checks for an exact symbol in a list', function() {
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: [sym6, sym7, sym8]});
+      vtu.expectValidatorError(val, sym7, undefined, {oneOf: [sym6, sym8]});
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: [sym7]});
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: []}); // ignored
+
+      // ignores non-type values in a list
+      vtu.expectValidatorError(val, sym7, undefined, {oneOf: [null, '7', true]});
+
+      // ignores non-arrays
+      vtu.expectValidatorSuccess(val, sym7, undefined, {oneOf: new Set([sym6, sym8])});
+    });
+  });
 });

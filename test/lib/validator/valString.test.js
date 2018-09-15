@@ -101,7 +101,7 @@ describe('module: lib/validator/valString', function() {
       vtu.expectValidatorError(val, '7', undefined, {oneOf: [null, 7, true]});
 
       // ignores non-arrays
-      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: new Set(null, 7, true)});
+      vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: new Set(['6', '8'])});
     });
 
     it('checks for a partial value if "exact" is not specified', function() {

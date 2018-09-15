@@ -445,7 +445,7 @@ const defs = {
    *  Can also be a list of strings, one of which must be an exact match. An empty
    *  string is allowed. Note, however, that the {@link rtvref.qualifiers qualifier}
    *  must not be `REQUIRED` because that will disallow an empty string as the value
-   *  being checked regardless of this value/list.
+   *  being checked regardless of this value/list. An empty list will be ignored.
    * @property {string} [partial] A partial value to match (must be somewhere
    *  within the string). Ignored if empty string, or `exact` is specified. `min`
    *  and `max` take __precedence__ over this argument (the length will be
@@ -491,7 +491,7 @@ const defs = {
    * @typedef {Object} rtvref.types.SYMBOL_args
    * @property {(symbol|Array.<symbol>)} [oneOf] An exact symbol to match (`===`).
    *  Can also be a list of symbols, one of which must be an exact match. Values to
-   *  match are ignored if they are not symbols.
+   *  match are ignored if they are not symbols. An empty list will be ignored.
    */
 
   /**
