@@ -30,7 +30,7 @@ const renderPath = function(path) {
  * Runtime Verification Error Indicator
  *
  * Describes a failed runtime verification of a value against a given
- *  {@link rtvref.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
+ *  {@link rtvref.types.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
  *  (note that a shape is a type of typeset).
  *
  * @class rtvref.RtvError
@@ -42,7 +42,7 @@ const renderPath = function(path) {
  * @param {rtvref.types.fully_qualified_typeset} cause The fully qualified typeset
  *  that caused the failure. This is normally the fully-qualified version of `typeset`,
  *  but could be a sub-type if `typeset` is an Array typeset or a
- *  {@link rtvref.shape_descriptor shape descriptor}.
+ *  {@link rtvref.types.shape_descriptor shape descriptor}.
  * @param {Error} [failure] {@link rtvref.types.custom_validator Custom Validator}
  *  error, if the `RtvError` is a result of a failed custom validation.
  * @throws {Error} If `typeset`, `path`, or `cause` is invalid.

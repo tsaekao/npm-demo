@@ -34,17 +34,17 @@ describe('module: lib/validation/isTypeset', function() {
           [DEFAULT_QUALIFIER, {foo: types.STRING}],
 
           // object type specified before shape that is not in first position after qualifier
-          [DEFAULT_QUALIFIER, types.ANY, DEFAULT_OBJECT_TYPE, {foo: types.STRING}],
+          [DEFAULT_QUALIFIER, types.ANY, DEFAULT_OBJECT_TYPE, {$: {foo: types.STRING}}],
 
           {}, // empty shapes are OK
-          [types.PLAIN_OBJECT, {}], // shape is type's args
+          [types.PLAIN_OBJECT, {$: {}}],
 
           // an array with args
           [types.ARRAY, {min: 1, typeset: [types.FINITE]}],
 
           // since we aren't going deep, we should ignore the fact that the shape
           //  of the class object has a property with an invalid typeset
-          [types.CLASS_OBJECT, {shape: {foo: ['invalid-type']}}],
+          [types.CLASS_OBJECT, {$: {foo: ['invalid-type']}}],
 
           // should be fine as a class object without args (or a shape)
           types.CLASS_OBJECT,
@@ -84,7 +84,7 @@ describe('module: lib/validation/isTypeset', function() {
           [types.STRING, DEFAULT_QUALIFIER],
 
           // second object/shape is un-typed since it's not first in the array typeset
-          [types.PLAIN_OBJECT, {}, {}],
+          [types.PLAIN_OBJECT, {$: {}}, {$: {}}],
 
           // duplicate type
           [DEFAULT_QUALIFIER, types.FUNCTION, types.FUNCTION],
@@ -166,6 +166,36 @@ describe('module: lib/validation/isTypeset', function() {
         results = vtu.testValues('isTypeset', isTypeset, badValues, {fullyQualified: true});
         expect(results.passes).to.eql([]);
       });
+
+      it('should indicate shape in failure message if failure at index 0', function() {
+        const options = {};
+        isTypeset([1], options);
+        expect(options.failure).to.contain('Unexpected value at index=0: Expecting object (shape)');
+      });
+
+      it('should indicate shape in failure message if failure at index 1 with qualifier',
+          function() {
+            const options = {};
+            isTypeset([DEFAULT_QUALIFIER, 1], options);
+            expect(options.failure).to.contain(
+                'Unexpected value at index=1: Expecting object (shape)');
+          });
+
+      // eslint is being ridiculous about the indent here, maybe it's a bug?
+      /* eslint-disable indent */
+      it('should indicate type args in failure message if failure at index >1 or index 1 ' +
+          'without qualifier', function() {
+            let options = {};
+            isTypeset([types.CLASS_OBJECT, 1], options);
+            expect(options.failure).to.contain(
+                'Unexpected value at index=1: Expecting object (type args)');
+
+            options = {};
+            isTypeset([DEFAULT_QUALIFIER, types.PLAIN_OBJECT, 1], options);
+            expect(options.failure).to.contain(
+                'Unexpected value at index=2: Expecting object (type args)');
+          });
+      /* eslint-enable indent */
     });
 
     describe('deep', function() {
@@ -198,7 +228,7 @@ describe('module: lib/validation/isTypeset', function() {
 
           shapeWithNonEnumerable,
           shapeWithProtoProp,
-          [types.CLASS_OBJECT, {shape: {foo: [types.PLAIN_OBJECT]}}],
+          [types.CLASS_OBJECT, {$: {foo: [types.PLAIN_OBJECT]}}],
 
           // should be fine deep as a class object without args (or a shape)
           types.CLASS_OBJECT,
@@ -220,7 +250,7 @@ describe('module: lib/validation/isTypeset', function() {
           [[]], // outer array typeset is OK, but inner one is not
 
           // 2 ARRAY types in one, and missing object type since object would
-          //  be considered a shape, not ARRAY args
+          //  be considered other args, not ARRAY args
           [types.ARRAY, [types.STRING], {typeset: types.FINITE}],
 
           // STRING type appears more than once in the nested (array) typeset
@@ -234,10 +264,10 @@ describe('module: lib/validation/isTypeset', function() {
 
           // for class object, we should be going deep into the shape property of
           //  the args object and finding the invalid typeset
-          [types.CLASS_OBJECT, {shape: {foo: [types.STRING, DEFAULT_QUALIFIER]}}],
+          [types.CLASS_OBJECT, {$: {foo: [types.STRING, DEFAULT_QUALIFIER]}}],
 
           // nested shape is not a shape
-          [types.CLASS_OBJECT, {shape: false}],
+          [types.CLASS_OBJECT, {$: false}],
 
           // nested typeset has invalid value
           [types.ARRAY, {typeset: false}]
@@ -279,7 +309,7 @@ describe('module: lib/validation/isTypeset', function() {
 
         goodValues[8] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[8]];
 
-        goodValues[9][1].shape.foo.unshift(DEFAULT_QUALIFIER);
+        goodValues[9][1].$.foo.unshift(DEFAULT_QUALIFIER);
         goodValues[9].unshift(DEFAULT_QUALIFIER);
 
         goodValues[10] = [DEFAULT_QUALIFIER, goodValues[10]];
@@ -296,18 +326,24 @@ describe('module: lib/validation/isTypeset', function() {
         badValues.push(
             // foo has invalid typeset
             [DEFAULT_QUALIFIER, types.CLASS_OBJECT, {
-              shape: {
+              $: {
                 foo: [types.STRING, DEFAULT_QUALIFIER]
               }
             }],
 
             [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
-              foo: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
-                bar: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
-                  // validator is not last element here
-                  baz: [DEFAULT_QUALIFIER, types.STRING, function() {}, types.REGEXP]
+              $: {
+                foo: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
+                  $: {
+                    bar: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
+                      // validator is not last element here
+                      $: {
+                        baz: [DEFAULT_QUALIFIER, types.STRING, function() {}, types.REGEXP]
+                      }
+                    }]
+                  }
                 }]
-              }]
+              }
             }],
 
             [DEFAULT_QUALIFIER, types.ARRAY, {typeset: [DEFAULT_QUALIFIER, 'invalid-type']}]
@@ -319,16 +355,7 @@ describe('module: lib/validation/isTypeset', function() {
       });
 
       it('should fail if the given type args are not a valid shape', function() {
-        // NOTE: this can't be an entry in 'badValues' in the previous spec because
-        //  at this time, shape === type args, so there would never be a real case
-        //  where shape !== type args; for the sake of unit testing that future
-        //  possibility in the code, we have to fabricate it
-        const isShapeStub = sinon.stub(isShapeMod, 'default').returns(false);
-
-        expect(isTypeset([types.PLAIN_OBJECT, {invalidShape: DEFAULT_OBJECT_TYPE}], {deep: true}))
-          .to.be.false;
-
-        isShapeStub.restore();
+        expect(isTypeset([types.PLAIN_OBJECT, {$: 1}], {deep: true})).to.be.false;
       });
 
       it('should fail without index in failure message when deep-validating a non-qualified shape',

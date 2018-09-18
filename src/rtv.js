@@ -44,27 +44,6 @@ import * as valWeakSet from './lib/validator/valWeakSet';
  */
 
 /**
- * <h2>Shape Descriptor</h2>
- *
- * Describes the shape (i.e. interface) of an object as a map of properties to
- *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
- *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
- *  along with possible types. Only enumerable, own-properties of the shape are
- *  considered part of the shape.
- *
- * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
- *  a given shape, _properties on the value that are not part of the shape are
- *  ignored_. If successfully checked/verified, the value is guaranteed to provide
- *  the properties described in the shape, and each property is guaranteed to be
- *  assigned to a value of at least one type described in each property's typeset.
- *
- * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
- *
- * @typedef {Object} rtvref.shape_descriptor
- * @see {@link rtvref.validation.isShape}
- */
-
-/**
  * <h1>RTV.js</h1>
  *
  * Runtime Verification Library for browsers and Node.js.
@@ -98,7 +77,7 @@ const rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
    *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.shape_descriptor shape descriptor}.
+   *  {@link rtvref.types.shape_descriptor shape descriptor}.
    * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
    *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
    *  {@link rtv.verify verify()}, an exception is not thrown__ if the
@@ -117,7 +96,7 @@ const rtv = {
    * @see {@link rtv.verify}
    * @see {@link rtv.config.enabled}
    * @see {@link rtvref.types}
-   * @see {@link rtvref.shape_descriptor}
+   * @see {@link rtvref.types.shape_descriptor}
    */
   check(value, typeset) {
     if (this.config.enabled) {
@@ -133,7 +112,7 @@ const rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
    *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.shape_descriptor shape descriptor}.
+   *  {@link rtvref.types.shape_descriptor shape descriptor}.
    * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
    *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
    *  {@link rtv.verify verify()}, an exception is not thrown__ if the
@@ -155,7 +134,7 @@ const rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
    *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.shape_descriptor shape descriptor}.
+   *  {@link rtvref.types.shape_descriptor shape descriptor}.
    * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
    *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
    * @throws {RtvError} If the `value` is not compliant to the `shape`.
@@ -163,7 +142,7 @@ const rtv = {
    * @see {@link rtv.check}
    * @see {@link rtv.config.enabled}
    * @see {@link rtvref.types}
-   * @see {@link rtvref.shape_descriptor}
+   * @see {@link rtvref.types.shape_descriptor}
    */
   verify(value, typeset) {
     if (this.config.enabled) {
@@ -183,7 +162,7 @@ const rtv = {
    * @param {*} value Value to check.
    * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
    *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.shape_descriptor shape descriptor}.
+   *  {@link rtvref.types.shape_descriptor shape descriptor}.
    * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
    *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
    * @throws {RtvError} If the `value` is not compliant to the `shape`.

@@ -18,7 +18,7 @@ import Enumeration from './Enumeration';
  *  allow the value to be `null` or `undefined`.
  *
  * Note the fact the value cannot be `undefined` implicitly requires a
- *  {@link rtvref.shape_descriptor shape}'s property to be defined _somewhere_
+ *  {@link rtvref.types.shape_descriptor shape}'s property to be defined _somewhere_
  *  its prototype chain (if it weren't, then its value would be `undefined`,
  *  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  *  would require the `name` property to exist and not be `undefined`, but would
@@ -41,7 +41,7 @@ const REQUIRED = '!';
  *  the value to be `undefined`, but does _allow_ it to be `null`.
  *
  * Note the fact the value cannot be `undefined` implicitly requires a
- *  {@link rtvref.shape_descriptor shape}'s property to be defined _somewhere_
+ *  {@link rtvref.types.shape_descriptor shape}'s property to be defined _somewhere_
  *  its prototype chain (if it weren't, then its value would be `undefined`,
  *  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  *  would require the `name` property to exist and not be `undefined`, but would
@@ -64,7 +64,7 @@ const EXPECTED = '+';
  *  the value to be `null` as well as `undefined`,
  *
  * Note the fact the value can be `undefined` implies it does _not_ require a
- *  {@link rtvref.shape_descriptor shape}'s property to be defined anywhere in
+ *  {@link rtvref.types.shape_descriptor shape}'s property to be defined anywhere in
  *  its prototype chain.
  *
  * See specific type for additional rules.

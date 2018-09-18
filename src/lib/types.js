@@ -43,7 +43,31 @@ import Enumeration from './Enumeration';
  */
 
 /**
- * <h3>Type Arguments</a></h3>
+ * <h3>Shape Descriptor</h3>
+ *
+ * Describes the shape (i.e. interface) of an object as a map of properties to
+ *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
+ *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
+ *  along with possible types. Only enumerable, own-properties of the shape are
+ *  considered part of the shape.
+ *
+ * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
+ *  a given shape, _properties on the value that are not part of the shape are
+ *  ignored_ (this is to stay true to the concept of an _interface_ whereby an object
+ *  may have other functionality, but remains _compatible_ or _usable_ as long as it
+ *  meets the specified contract as a subset of its properties and methods). If
+ *  successfully checked/verified, the value is guaranteed to provide the properties
+ *  described in the shape, and each property is guaranteed to be assigned to a value
+ *  of at least one type described in each property's typeset.
+ *
+ * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
+ *
+ * @typedef {Object} rtvref.types.shape_descriptor
+ * @see {@link rtvref.validation.isShape}
+ */
+
+/**
+ * <h3>Type Arguments</h3>
  *
  * Some types will accept, or may even expect, one or more arguments. Each type
  *  will specify whether it has arguments, and if they're optional or required.
@@ -53,7 +77,7 @@ import Enumeration from './Enumeration';
  *  a type).
  *
  * An arguments object immediately follows its type in a typeset, such as
- *  `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
+ *  `[PLAIN_OBJECT, {$: {hello: STRING}}]`. This would specify the value must be a
  *  {@link rtvref.types.PLAIN_OBJECT plain object} with a shape that includes a
  *  property named 'hello', that property being a
  *  {@link rtvref.qualifiers.REQUIRED required} {@link rtvref.types.STRING string}.
@@ -69,6 +93,124 @@ import Enumeration from './Enumeration';
  *
  * @typedef {Object} rtvref.types.type_arguments
  * @see {@link rtvref.validation.isTypeArgs}
+ */
+
+// TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
+//  of JSON requirement...) for a regular expression test. Similar prop names
+//  to collection_args.
+/**
+ * <h3>String Arguments</h3>
+ * @typedef {Object} rtvref.types.STRING_args
+ * @property {(string|Array.<string>)} [oneOf] An exact string to match (`===`).
+ *  Can also be a list of strings, one of which must be an exact match. An empty
+ *  string is allowed. Note, however, that the {@link rtvref.qualifiers qualifier}
+ *  must not be `REQUIRED` because that will disallow an empty string as the value
+ *  being checked regardless of this value/list. An empty list will be ignored.
+ * @property {string} [partial] A partial value to match (must be somewhere
+ *  within the string). Ignored if empty string, or `exact` is specified. `min`
+ *  and `max` take __precedence__ over this argument (the length will be
+ *  validated first, then a partial match will be attempted).
+ * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
+ *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
+ *  `exact` is specified, or `min` is not a {@link rtvref.types.FINITE FINITE}
+ *  number >= 0.
+ * @property {number} [max] Maximum inclusive length. Negative means no maximum.
+ *  Ignored if `exact` is specified, `max` is not a
+ *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
+ * @see {@link rtvref.types.STRING}
+ */
+
+/**
+ * <h3>Symbol Arguments</h3>
+ * @typedef {Object} rtvref.types.SYMBOL_args
+ * @property {(symbol|Array.<symbol>)} [oneOf] An exact symbol to match (`===`).
+ *  Can also be a list of symbols, one of which must be an exact match. Values to
+ *  match are ignored if they are not symbols. An empty list will be ignored.
+ * @see {@link rtvref.types.SYMBOL}
+ */
+
+/**
+ * <h3>Numeric Value Arguments</h3>
+ *
+ * Applicable to all numeric types:
+ *
+ * - {@link rtvref.types.NUMBER NUMBER}
+ * - {@link rtvref.types.FINITE FINITE}
+ * - {@link rtvref.types.INT INT}
+ * - {@link rtvref.types.SAFE_INT SAFE_INT}
+ * - {@link rtvref.types.FLOAT FLOAT}
+ *
+ * @typedef {Object} rtvref.types.numeric_args
+ * @property {(number|Array.<number>)} [oneOf] An exact number to match (`===`).
+ *  Can also be a list of numbers, one of which must be an exact match. An empty
+ *  list will be ignored.
+ *
+ *  Values to match are ignored if they are not within normal range of the type
+ *   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is
+ *   not `REQUIRED`; but these values would be ignored by `FINITE` since they
+ *   aren't part of the `FINITE` range), or not numbers at all.
+ *
+ * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
+ *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
+ * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
+ *  specified, `max` is `NaN`, `max` is not within normal range of the type,
+ *  or `max` is less than `min`.
+ * @see {@link rtvref.types.NUMBER}
+ * @see {@link rtvref.types.FINITE}
+ * @see {@link rtvref.types.INT}
+ * @see {@link rtvref.types.SAFE_INT}
+ * @see {@link rtvref.types.FLOAT}
+ * @see {@link rtvref.qualifiers}
+ */
+
+/**
+ * <h3>Shape Object Arguments</h3>
+ *
+ * Applicable to all object types that may have a shape:
+ *
+ * - {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
+ * - {@link rtvref.types.OBJECT OBJECT}
+ * - {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
+ * - {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
+ *
+ * @typedef {Object} rtvref.types.shape_object_args
+ * @property {Object} [$] The {@link rtvref.types.shape_descriptor shape descriptor}
+ *  describing the expected interface of the value being verified. If not specified,
+ *  none of the value's properties will be verified.
+ *
+ *  Applies to all shape object types.
+ *
+ * @property {function} [ctor] A reference to a constructor function. If specified,
+ *  the class object (instance) must have this class function in its inheritance
+ *  chain such that `<class_object> instanceof ctor === true`. Note that this
+ *  property is not serializable to JSON. Ignored if not a
+ *  {@link rtvref.types.FUNCTION function}.
+ *
+ * Applies to: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}.
+ *
+ * @see {@link rtvref.types.ANY_OBJECT}
+ * @see {@link rtvref.types.OBJECT}
+ * @see {@link rtvref.types.PLAIN_OBJECT}
+ * @see {@link rtvref.types.CLASS_OBJECT}
+ */
+
+// TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
+//  IIF this becomes such a common thing to expect an exact length; otherwise, don't
+//  optimize for an infrequent case.
+/**
+ * <h3>Array Arguments</h3>
+ * @typedef {Object} rtvref.types.ARRAY_args
+ * @property {rtvref.types.typeset} [typeset] The typeset which every value in
+ *  the array must match. Defaults to {@link rtvref.types.ANY} which means any
+ *  value will match.
+ * @property {number} [length] Exact length. Ignored if not a
+ *  {@link rtvref.types.FINITE FINITE} number >= 0.
+ * @property {number} [min] Minimum inclusive length. Ignored if `exact` is
+ *  specified, or `min` is not a {@link rtvref.types.FINITE FINITE} number >= 0.
+ * @property {number} [max] Maximum inclusive length. Negative means no maximum.
+ *  Ignored if `exact` is specified, `max` is not a
+ *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
+ * @see {@link rtvref.types.ARRAY}
  */
 
 /**
@@ -153,7 +295,7 @@ import Enumeration from './Enumeration';
  *  JavaScript types:
  *
  * - {@link rtvref.types.OBJECT Object}: For the root or a nested
- *   {@link rtvref.shape_descriptor shape descriptor} of _implied_
+ *   {@link rtvref.types.shape_descriptor shape descriptor} of _implied_
  *   {@link rtvref.types.OBJECT OBJECT} type (unless paired with a specific object type
  *   like {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, for example, when using the
  *   Array notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty (has no properties),
@@ -180,25 +322,26 @@ import Enumeration from './Enumeration';
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is necessary if a type needs or requires
  *     {@link rtvref.types.type_arguments arguments}.
- *   - If the __first__ (or second, if a {@link rtvref.types.qualifiers qualifier}
- *     is provided, and this, in a typeset that is _not_
- *     {@link rtvref.types.fully_qualified_typeset fully-qualified}), element is an `Object`,
- *     it's treated as a nested {@link rtvref.shape_descriptor shape descriptor}
- *     describing an object of the default {@link rtvref.types.OBJECT OBJECT} type.
+ *   - If the __first__ element is an `Object` (or second, if a
+ *     {@link rtvref.types.qualifiers qualifier} is provided, and this, in a typeset that
+ *     is _not_ {@link rtvref.types.fully_qualified_typeset fully-qualified}),
+ *     it's treated as a nested {@link rtvref.types.shape_descriptor shape descriptor}
+ *     describing an object of the {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type}.
  *     To include a shape descriptor at any other position within the array, it
- *     __must__ be preceded by a type, even if the default `OBJECT` type is being
+ *     __must__ be preceded by a type, even if the default object type is being
  *     used (i.e. `OBJECT` must be specified as the type). For example, all
  *     these typesets are equivalent (and equivalent to just `{name: STRING}`
  *     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
- *     `[REQUIRED, OBJECT, {name: STRING}]`, describing an object that has a name
- *     property which is a non-empty string. Changing it to `[STRING, {name: STRING}]`,
+ *     `[REQUIRED, OBJECT, {$: {name: STRING}}]`, describing an object that has a name
+ *     property which is a non-empty string. Changing it to `[STRING, {$: name: STRING}}]`,
  *     however, does __not__ mean, "a non-empty string, or an object with a name
- *     property which is a non-empty string". In this case, `{name: STRING}` would
+ *     property which is a non-empty string". In this case, the
+ *     {@link rtvref.types.object_args object arguments} `{$: {name: STRING}}` would
  *     be treated as {@link rtvref.types.STRING_args STRING arguments}, which is
- *     likely not the desired intent. The object would have to be preceded by an
+ *     likely not the desired intent. The arguments would have to be preceded by an
  *     object type (e.g. {@link rtvref.types.OBJECT OBJECT},
  *     {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, etc.) to have it interpreted
- *     as in the OR case.
+ *     as in the former "OR" case.
  *   - If an element is an `Array` (any position), it's treated as a __nested list__
  *     with an implied {@link rtvref.types.ARRAY ARRAY} type, e.g.
  *     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
@@ -227,7 +370,7 @@ import Enumeration from './Enumeration';
  *  `JSON.parse()`) with the following unavoidable exceptions:
  *
  * - {@link rtvref.types.custom_validator Custom validators}
- * - {@link rtvref.types.CLASS_OBJECT_args CLASS_OBJECT arguments} 'ctor' property
+ * - {@link rtvref.types.shape_object_args CLASS_OBJECT arguments} 'ctor' property
  *
  * Those exceptions are due to the fact that these represent functions, and functions
  *  are not serializable to JSON. They will be ignored in the stringification process,
@@ -247,7 +390,10 @@ import Enumeration from './Enumeration';
  *     birthday: [rtv.q.EXPECTED, rtv.t.DATE] // Date (could be null)
  *   },
  *   notes: [rtv.q.OPTIONAL, rtv.t.STRING, function(value) { // optional string...
- *     return !value || value.length < 500; // ...less than 500 characters long, if specified
+ *     if (value && !value.test(/^[A-Z].+\.$/)) {
+ *       throw new Error('Note must start with a capital letter, end with a ' +
+ *           period, and have something in between, if specified.');
+ *     }
  *   }]
  * };
  *
@@ -292,15 +438,25 @@ import Enumeration from './Enumeration';
  *
  * <h4>Example: Function</h4>
  *
- * <pre><code>rtv.verify(123, (v) => v > 100); // OK
- * rtv.verify('123', [rtv.t.STRING, (v) => parseInt(v) > 100); // OK
+ * <pre><code>const validator = (v) => {
+ *   if (v % 10) {
+ *     throw new Error('Number must be a factor of 10.');
+ *   }
+ * };
+ *
+ * rtv.verify(100, validator); // OK
+ * rtv.verify(120, [rtv.t.INT, validator]); // OK
  * </code></pre>
  *
  * <h4>Example: Alternate Qualifier</h4>
  *
  * <pre><code>const person = {
  *   name: rtv.t.STRING, // required, non-empty
- *   age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => v >= 18] // 18 or older, if specified
+ *   age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => { // 18 or older, if specified
+ *     if (v < 18) {
+ *       throw new Error('Must be 18 or older.');
+ *     }
+ *   }]
  * };
  * rtv.verify({name: 'Bob'}, person); // OK
  * rtv.verify({name: ''}, person); // ERROR
@@ -324,9 +480,9 @@ import Enumeration from './Enumeration';
  * For example:
  *
  * - `STRING` -> `[REQUIRED, STRING]`
- * - `{note: STRING}` -> `[REQUIRED, OBJECT, {note: [REQUIRED, STRING]}]`
+ * - `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
  * - `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
- * - `(v) => !!v` -> `[REQUIRED, ANY, (v) => !!v]`
+ * - `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
  *
  * @typedef {Array} rtvref.types.fully_qualified_typeset
  */
@@ -361,12 +517,12 @@ import Enumeration from './Enumeration';
  *  {@link rtvref.types.fully_qualified_typeset fully-qualified} typeset describing
  *  the type that matched. This means the first level of this subset of `typeset`
  *  (the 3rd parameter) is fully-qualified, but any nested
- *  {@link rtvref.shape_descriptor shape descriptors} or arrays will not be (they
+ *  {@link rtvref.types.shape_descriptor shape descriptors} or arrays will not be (they
  *  will remain references to the same shapes/arrays in `typeset`).
  *
- * For example, if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this
- *  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,
- *  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`.
+ * For example, if the given typeset was `[PLAIN_OBJECT, {$: {note: STRING}}]`, this
+ *  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,
+ *  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}]`.
  *
  * If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter
  *  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the
@@ -416,7 +572,7 @@ const defs = {
    *
    * Since this type removes the property's need for existence in the prototype
    *  chain, it renders the verification moot (i.e. the property of this type might
-   *  as well not be included in a {@link rtvref.shape_descriptor shape descriptor}
+   *  as well not be included in a {@link rtvref.types.shape_descriptor shape descriptor}
    *  unless a {@link rtvref.types.custom_validator custom validator} is being
    *  used to do customized verification.
    *
@@ -430,7 +586,7 @@ const defs = {
    * Null rules per qualifiers: must be the `null` {@link rtvref.types.primitives primitive}.
    *
    * Use this special type to explicitly test for a `null` value. For example,
-   *  a {@link rtvref.shape_descriptor shape}'s property may be required to be
+   *  a {@link rtvref.types.shape_descriptor shape}'s property may be required to be
    *  `null` under certain circumstances.
    *
    * @name rtvref.types.NULL
@@ -438,31 +594,6 @@ const defs = {
    * @see {@link rtvref.qualifiers}
    */
   NULL: def('NULL'),
-
-  // TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
-  //  of JSON requirement...) for a regular expression test. Similar prop names
-  //  to collection_args.
-  /**
-   * <h3>String Arguments</h3>
-   * @typedef {Object} rtvref.types.STRING_args
-   * @property {(string|Array.<string>)} [oneOf] An exact string to match (`===`).
-   *  Can also be a list of strings, one of which must be an exact match. An empty
-   *  string is allowed. Note, however, that the {@link rtvref.qualifiers qualifier}
-   *  must not be `REQUIRED` because that will disallow an empty string as the value
-   *  being checked regardless of this value/list. An empty list will be ignored.
-   * @property {string} [partial] A partial value to match (must be somewhere
-   *  within the string). Ignored if empty string, or `exact` is specified. `min`
-   *  and `max` take __precedence__ over this argument (the length will be
-   *  validated first, then a partial match will be attempted).
-   * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
-   *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
-   *  `exact` is specified, or `min` is not a {@link rtvref.types.FINITE FINITE}
-   *  number >= 0.
-   * @property {number} [max] Maximum inclusive length. Negative means no maximum.
-   *  Ignored if `exact` is specified, `max` is not a
-   *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
-   * @see {@link rtvref.types.STRING}
-   */
 
   /**
    * String rules per qualifiers:
@@ -491,14 +622,6 @@ const defs = {
   BOOLEAN: def('BOOLEAN'),
 
   /**
-   * {@link rtvref.types.SYMBOL SYMBOL} arguments.
-   * @typedef {Object} rtvref.types.SYMBOL_args
-   * @property {(symbol|Array.<symbol>)} [oneOf] An exact symbol to match (`===`).
-   *  Can also be a list of symbols, one of which must be an exact match. Values to
-   *  match are ignored if they are not symbols. An empty list will be ignored.
-   */
-
-  /**
    * Symbol rules per qualifiers: Must be a symbol {@link rtvref.types.primitives primitive}.
    *
    * Arguments (optional): {@link rtvref.types.SYMBOL_args}.
@@ -508,33 +631,6 @@ const defs = {
    * @see {@link rtvref.qualifiers}
    */
   SYMBOL: def('SYMBOL', true),
-
-  /**
-   * <h3>Numeric Value Arguments</h3>
-   *
-   * Applicable to all numeric types.
-   *
-   * @typedef {Object} rtvref.types.numeric_args
-   * @property {(number|Array.<number>)} [oneOf] An exact number to match (`===`).
-   *  Can also be a list of numbers, one of which must be an exact match. An empty
-   *  list will be ignored.
-   *
-   *  Values to match are ignored if they are not within normal range of the type
-   *   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is
-   *   not `REQUIRED`; but these values would be ignored by `FINITE` since they
-   *   aren't part of the `FINITE` range), or not numbers at all.
-   *
-   * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
-   *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
-   * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
-   *  specified, `max` is `NaN`, `max` is not within normal range of the type,
-   *  or `max` is less than `min`.
-   * @see {@link rtvref.types.NUMBER}
-   * @see {@link rtvref.types.FINITE}
-   * @see {@link rtvref.types.INT}
-   * @see {@link rtvref.types.FLOAT}
-   * @see {@link rtvref.qualifiers}
-   */
 
   /**
    * Number rules per qualifiers:
@@ -685,23 +781,6 @@ const defs = {
    */
   PROMISE: def('PROMISE'),
 
-  // TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
-  /**
-   * <h3>Array Arguments</h3>
-   * @typedef {Object} rtvref.types.ARRAY_args
-   * @property {rtvref.types.typeset} [typeset] The typeset which every value in
-   *  the array must match. Defaults to {@link rtvref.types.ANY} which means any
-   *  value will match.
-   * @property {number} [length] Exact length. Ignored if not a
-   *  {@link rtvref.types.FINITE FINITE} number >= 0.
-   * @property {number} [min] Minimum inclusive length. Ignored if `exact` is
-   *  specified, or `min` is not a {@link rtvref.types.FINITE FINITE} number >= 0.
-   * @property {number} [max] Maximum inclusive length. Negative means no maximum.
-   *  Ignored if `exact` is specified, `max` is not a
-   *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
-   * @see {@link rtvref.types.ARRAY}
-   */
-
   /**
    * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
    *  unless arguments prevent them.
@@ -836,7 +915,7 @@ const defs = {
    * - EXPECTED: `null` is allowed.
    * - OPTIONAL: `undefined` is allowed.
    *
-   * Arguments (optional): {@link rtvref.shape_descriptor}
+   * Arguments (optional): {@link rtvref.types.shape_object_args}
    *
    * @name rtvref.types.ANY_OBJECT
    * @const {string}
@@ -858,7 +937,7 @@ const defs = {
    *  {@link rtvref.types primitive}.
    *
    * This is the __default__ (imputed) type for
-   *  {@link rtvref.shape_descriptor shape descriptors}, which means the object itself
+   *  {@link rtvref.types.shape_descriptor shape descriptors}, which means the object itself
    *  (the value being tested), prior to being checked against its shape, will be
    *  tested according to this type.
    *
@@ -895,7 +974,7 @@ const defs = {
    * - EXPECTED: `null` is allowed.
    * - OPTIONAL: `undefined` is allowed.
    *
-   * Arguments (optional): {@link rtvref.shape_descriptor}
+   * Arguments (optional): {@link rtvref.types.shape_object_args}
    *
    * @name rtvref.types.OBJECT
    * @const {string}
@@ -943,7 +1022,7 @@ const defs = {
    * - EXPECTED: `null` is allowed.
    * - OPTIONAL: `undefined` is allowed.
    *
-   * Arguments (optional): {@link rtvref.shape_descriptor}
+   * Arguments (optional): {@link rtvref.types.shape_object_args}
    *
    * @name rtvref.types.PLAIN_OBJECT
    * @const {string}
@@ -955,18 +1034,6 @@ const defs = {
   PLAIN_OBJECT: def('PLAIN_OBJECT', true, true),
 
   /**
-   * {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} arguments.
-   * @typedef {Object} rtvref.types.CLASS_OBJECT_args
-   * @property {function} [ctor] A reference to a constructor function. If specified,
-   *  the class object (instance) must have this class function in its inheritance
-   *  chain such that `<class_object> instanceof ctor === true`. Note that this
-   *  property is not serializable to JSON. Ignored if not a
-   *  {@link rtvref.types.FUNCTION function}.
-   * @property {rtvref.shape_descriptor} [shape] A description of the class object's
-   *  shape. Ignored if not a valid shape descriptor.
-   */
-
-  /**
    * A _class_ object is one that is created by invoking the `new` operator on a
    *  function (other than a primitive type function), generating a new object,
    *  commonly referred to as a _class instance_. This object's prototype
@@ -976,7 +1043,7 @@ const defs = {
    * The following values are considered class objects:
    *
    * - `new (function() {}) | new (class {})()` (tip: use the `ctor`
-   *   {@link rtvref.types.CLASS_OBJECT_args argument} to test for a specific class)
+   *   {@link rtvref.types.shape_object_args argument} to test for a specific class)
    *
    * The following values __are not__ considered class objects:
    *
@@ -1006,7 +1073,7 @@ const defs = {
    * - EXPECTED: `null` is allowed.
    * - OPTIONAL: `undefined` is allowed.
    *
-   * Arguments (optional): {@link rtvref.types.CLASS_OBJECT_args}
+   * Arguments (optional): {@link rtvref.types.shape_object_args}
    *
    * @name rtvref.types.CLASS_OBJECT
    * @const {string}

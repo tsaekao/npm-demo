@@ -92,23 +92,23 @@ Members herein are _indirectly_ exposed through the [rtv](#rtv) object.
         * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
         * [.primitives](#rtvref.types.primitives) : <code>\*</code>
         * [.rules](#rtvref.types.rules) : <code>\*</code>
+        * [.shape_descriptor](#rtvref.types.shape_descriptor) : <code>Object</code>
         * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
+        * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+        * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
+        * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
+        * [.shape_object_args](#rtvref.types.shape_object_args) : <code>Object</code>
+        * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
         * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
         * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
         * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
         * [.custom_validator](#rtvref.types.custom_validator) : <code>function</code>
-        * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
-        * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
-        * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
-        * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
-        * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
     * [.validation](#rtvref.validation) : <code>object</code>
         * [.method(value)](#rtvref.validation.method) ⇒ <code>boolean</code>
     * [.validator](#rtvref.validator) : <code>object</code>
         * [.type_validator(value, [qualifier], [args])](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.validator_config(settings)](#rtvref.validator.validator_config)
         * [.validator_config_settings](#rtvref.validator.validator_config_settings) : <code>Object</code>
-    * [.shape_descriptor](#rtvref.shape_descriptor) : <code>Object</code>
 
 
 * * *
@@ -269,7 +269,7 @@ A string representation of this Enumeration.
 Runtime Verification Error Indicator
 
 Describes a failed runtime verification of a value against a given
- [shape](#rtvref.shape_descriptor) or [typeset](#rtvref.types.typeset)
+ [shape](#rtvref.types.shape_descriptor) or [typeset](#rtvref.types.typeset)
  (note that a shape is a type of typeset).
 
 **Throws**:
@@ -282,7 +282,7 @@ Describes a failed runtime verification of a value against a given
 | value | <code>\*</code> | The value being verified. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>Array.&lt;string&gt;</code> | The path deep into `value` where the failure occurred.  An empty array signifies the _root_ (top-level) value that was checked. |
-| cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.shape_descriptor). |
+| cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
 | [failure] | <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation. |
 
 
@@ -388,7 +388,7 @@ A string representation of this instance.
 Runtime Verification Success Indicator
 
 Describes a successful runtime verification of a value against a given
- [shape](#rtvref.shape_descriptor) or [typeset](#rtvref.types.typeset)
+ [shape](#rtvref.types.shape_descriptor) or [typeset](#rtvref.types.typeset)
  (note that a shape is a type of typeset).
 
 
@@ -509,7 +509,7 @@ This function does not modify the input `typeset`.
 | Param | Type | Description |
 | --- | --- | --- |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Typeset to fully-qualify. |
-| [qualifier] | [<code>qualifiers</code>](#rtvref.qualifiers) | Optional qualifier to be used.  If the typeset is a simple [type](#rtvref.types),   a [shape](#rtvref.shape_descriptor), or   a [custom validator](#rtvref.types.custom_validator) that was   cherry-picked out of a typeset whose qualifier should be used instead of   the [default](#rtvref.qualifiers.DEFAULT_QUALIFIER) one.  If `typeset` is an Array typeset, specifying this parameter will __override__   the typeset's qualifier (otherwise, its own qualifier will be used). |
+| [qualifier] | [<code>qualifiers</code>](#rtvref.qualifiers) | Optional qualifier to be used.  If the typeset is a simple [type](#rtvref.types),   a [shape](#rtvref.types.shape_descriptor), or   a [custom validator](#rtvref.types.custom_validator) that was   cherry-picked out of a typeset whose qualifier should be used instead of   the [default](#rtvref.qualifiers.DEFAULT_QUALIFIER) one.  If `typeset` is an Array typeset, specifying this parameter will __override__   the typeset's qualifier (otherwise, its own qualifier will be used). |
 
 
 * * *
@@ -561,7 +561,7 @@ Checks a value using a single type.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| singleType | [<code>typeset</code>](#rtvref.types.typeset) | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.shape_descriptor),  or an Array typeset which represents a single type.  A [custom validator](#rtvref.types.custom_validator) is not considered  a valid single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied. |
+| singleType | [<code>typeset</code>](#rtvref.types.typeset) | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array typeset which represents a single type.  A [custom validator](#rtvref.types.custom_validator) is not considered  a valid single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied. |
 
 
 * * *
@@ -569,7 +569,7 @@ Checks a value using a single type.
 <a name="rtvref.impl.checkShape"></a>
 
 #### impl.checkShape(value, shape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-Checks a value using a [shape descriptor](#rtvref.shape_descriptor) and
+Checks a value using a [shape descriptor](#rtvref.types.shape_descriptor) and
  ensure the value's type is the default object type.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -671,7 +671,7 @@ Unless otherwise stated in type-specific rules, this qualifier does not
  allow the value to be `null` or `undefined`.
 
 Note the fact the value cannot be `undefined` implicitly requires a
- [shape](#rtvref.shape_descriptor)'s property to be defined _somewhere_
+ [shape](#rtvref.types.shape_descriptor)'s property to be defined _somewhere_
  its prototype chain (if it weren't, then its value would be `undefined`,
  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  would require the `name` property to exist and not be `undefined`, but would
@@ -698,7 +698,7 @@ Unless otherwise stated in type-specific rules, this qualifier does _not_ allow
  the value to be `undefined`, but does _allow_ it to be `null`.
 
 Note the fact the value cannot be `undefined` implicitly requires a
- [shape](#rtvref.shape_descriptor)'s property to be defined _somewhere_
+ [shape](#rtvref.types.shape_descriptor)'s property to be defined _somewhere_
  its prototype chain (if it weren't, then its value would be `undefined`,
  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  would require the `name` property to exist and not be `undefined`, but would
@@ -725,7 +725,7 @@ Unless otherwise stated in type-specific rules, this qualifier _allows_ a
  the value to be `null` as well as `undefined`,
 
 Note the fact the value can be `undefined` implies it does _not_ require a
- [shape](#rtvref.shape_descriptor)'s property to be defined anywhere in
+ [shape](#rtvref.types.shape_descriptor)'s property to be defined anywhere in
  its prototype chain.
 
 See specific type for additional rules.
@@ -810,16 +810,17 @@ Convenience function to check if a nil value (either `undefined` or `null`)
     * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
     * [.primitives](#rtvref.types.primitives) : <code>\*</code>
     * [.rules](#rtvref.types.rules) : <code>\*</code>
+    * [.shape_descriptor](#rtvref.types.shape_descriptor) : <code>Object</code>
     * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
+    * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
+    * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
+    * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
+    * [.shape_object_args](#rtvref.types.shape_object_args) : <code>Object</code>
+    * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
     * [.collection_args](#rtvref.types.collection_args) : <code>Object</code>
     * [.typeset](#rtvref.types.typeset) : <code>Object</code> \| <code>string</code> \| <code>Array</code> \| <code>function</code>
     * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
     * [.custom_validator](#rtvref.types.custom_validator) : <code>function</code>
-    * [.STRING_args](#rtvref.types.STRING_args) : <code>Object</code>
-    * [.SYMBOL_args](#rtvref.types.SYMBOL_args) : <code>Object</code>
-    * [.numeric_args](#rtvref.types.numeric_args) : <code>Object</code>
-    * [.ARRAY_args](#rtvref.types.ARRAY_args) : <code>Object</code>
-    * [.CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args) : <code>Object</code>
 
 
 * * *
@@ -870,7 +871,7 @@ Any rules per qualifiers:
 
 Since this type removes the property's need for existence in the prototype
  chain, it renders the verification moot (i.e. the property of this type might
- as well not be included in a [shape descriptor](#rtvref.shape_descriptor)
+ as well not be included in a [shape descriptor](#rtvref.types.shape_descriptor)
  unless a [custom validator](#rtvref.types.custom_validator) is being
  used to do customized verification.
 
@@ -885,7 +886,7 @@ Since this type removes the property's need for existence in the prototype
 Null rules per qualifiers: must be the `null` [primitive](#rtvref.types.primitives).
 
 Use this special type to explicitly test for a `null` value. For example,
- a [shape](#rtvref.shape_descriptor)'s property may be required to be
+ a [shape](#rtvref.types.shape_descriptor)'s property may be required to be
  `null` under certain circumstances.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
@@ -1260,7 +1261,7 @@ Any object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
+Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -1286,7 +1287,7 @@ An object is one that extends from `JavaScript.Object` (i.e. an _instance_
  [primitive](#rtvref.types).
 
 This is the __default__ (imputed) type for
- [shape descriptors](#rtvref.shape_descriptor), which means the object itself
+ [shape descriptors](#rtvref.types.shape_descriptor), which means the object itself
  (the value being tested), prior to being checked against its shape, will be
  tested according to this type.
 
@@ -1323,7 +1324,7 @@ Object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
+Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -1375,7 +1376,7 @@ Plain object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional): [shape_descriptor](#rtvref.shape_descriptor)
+Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -1400,7 +1401,7 @@ A _class_ object is one that is created by invoking the `new` operator on a
 The following values are considered class objects:
 
 - `new (function() {}) | new (class {})()` (tip: use the `ctor`
-  [argument](#rtvref.types.CLASS_OBJECT_args) to test for a specific class)
+  [argument](#rtvref.types.shape_object_args) to test for a specific class)
 
 The following values __are not__ considered class objects:
 
@@ -1430,7 +1431,7 @@ Class object rules per qualifiers:
 - EXPECTED: `null` is allowed.
 - OPTIONAL: `undefined` is allowed.
 
-Arguments (optional): [CLASS_OBJECT_args](#rtvref.types.CLASS_OBJECT_args)
+Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**
@@ -1622,10 +1623,37 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
 
 * * *
 
+<a name="rtvref.types.shape_descriptor"></a>
+
+#### types.shape_descriptor : <code>Object</code>
+<h3>Shape Descriptor</h3>
+
+Describes the shape (i.e. interface) of an object as a map of properties to
+ [typesets](#rtvref.types.typeset). Each typeset indicates whether the
+ property is required, expected, or optional, using [qualifiers](#rtvref.qualifiers),
+ along with possible types. Only enumerable, own-properties of the shape are
+ considered part of the shape.
+
+When a value is [checked](#rtv.check) or [verified](#rtv.verify) against
+ a given shape, _properties on the value that are not part of the shape are
+ ignored_ (this is to stay true to the concept of an _interface_ whereby an object
+ may have other functionality, but remains _compatible_ or _usable_ as long as it
+ meets the specified contract as a subset of its properties and methods). If
+ successfully checked/verified, the value is guaranteed to provide the properties
+ described in the shape, and each property is guaranteed to be assigned to a value
+ of at least one type described in each property's typeset.
+
+The shape descriptor itself must be an [OBJECT](#rtvref.types.OBJECT).
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [rtvref.validation.isShape](rtvref.validation.isShape)  
+
+* * *
+
 <a name="rtvref.types.type_arguments"></a>
 
 #### types.type_arguments : <code>Object</code>
-<h3>Type Arguments</a></h3>
+<h3>Type Arguments</h3>
 
 Some types will accept, or may even expect, one or more arguments. Each type
  will specify whether it has arguments, and if they're optional or required.
@@ -1635,7 +1663,7 @@ Some types will accept, or may even expect, one or more arguments. Each type
  a type).
 
 An arguments object immediately follows its type in a typeset, such as
- `[PLAIN_OBJECT, {hello: STRING}]`. This would specify the value must be a
+ `[PLAIN_OBJECT, {$: {hello: STRING}}]`. This would specify the value must be a
  [plain object](#rtvref.types.PLAIN_OBJECT) with a shape that includes a
  property named 'hello', that property being a
  [required](#rtvref.qualifiers.REQUIRED) [string](#rtvref.types.STRING).
@@ -1651,6 +1679,124 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **See**: [rtvref.validation.isTypeArgs](rtvref.validation.isTypeArgs)  
+
+* * *
+
+<a name="rtvref.types.STRING_args"></a>
+
+#### types.STRING_args : <code>Object</code>
+<h3>String Arguments</h3>
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [STRING](#rtvref.types.STRING)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [oneOf] | <code>string</code> \| <code>Array.&lt;string&gt;</code> | An exact string to match (`===`).  Can also be a list of strings, one of which must be an exact match. An empty  string is allowed. Note, however, that the [qualifier](#rtvref.qualifiers)  must not be `REQUIRED` because that will disallow an empty string as the value  being checked regardless of this value/list. An empty list will be ignored. |
+| [partial] | <code>string</code> | A partial value to match (must be somewhere  within the string). Ignored if empty string, or `exact` is specified. `min`  and `max` take __precedence__ over this argument (the length will be  validated first, then a partial match will be attempted). |
+| [min] | <code>number</code> | Minimum inclusive length. Defaults to 1 for a  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if  `exact` is specified, or `min` is not a [FINITE](#rtvref.types.FINITE)  number >= 0. |
+| [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
+
+
+* * *
+
+<a name="rtvref.types.SYMBOL_args"></a>
+
+#### types.SYMBOL_args : <code>Object</code>
+<h3>Symbol Arguments</h3>
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [SYMBOL](#rtvref.types.SYMBOL)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [oneOf] | <code>symbol</code> \| <code>Array.&lt;symbol&gt;</code> | An exact symbol to match (`===`).  Can also be a list of symbols, one of which must be an exact match. Values to  match are ignored if they are not symbols. An empty list will be ignored. |
+
+
+* * *
+
+<a name="rtvref.types.numeric_args"></a>
+
+#### types.numeric_args : <code>Object</code>
+<h3>Numeric Value Arguments</h3>
+
+Applicable to all numeric types:
+
+- [NUMBER](#rtvref.types.NUMBER)
+- [FINITE](#rtvref.types.FINITE)
+- [INT](#rtvref.types.INT)
+- [SAFE_INT](rtvref.types.SAFE_INT)
+- [FLOAT](#rtvref.types.FLOAT)
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**
+
+- [NUMBER](#rtvref.types.NUMBER)
+- [FINITE](#rtvref.types.FINITE)
+- [INT](#rtvref.types.INT)
+- [rtvref.types.SAFE_INT](rtvref.types.SAFE_INT)
+- [FLOAT](#rtvref.types.FLOAT)
+- [qualifiers](#rtvref.qualifiers)
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [oneOf] | <code>number</code> \| <code>Array.&lt;number&gt;</code> | An exact number to match (`===`).  Can also be a list of numbers, one of which must be an exact match. An empty  list will be ignored.  Values to match are ignored if they are not within normal range of the type   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is   not `REQUIRED`; but these values would be ignored by `FINITE` since they   aren't part of the `FINITE` range), or not numbers at all. |
+| [min] | <code>number</code> | Minimum inclusive value. Ignored if `exact` is  specified, `min` is `NaN`, or `min` is not within normal range of the type. |
+| [max] | <code>number</code> | Maximum inclusive value. Ignored if `exact` is  specified, `max` is `NaN`, `max` is not within normal range of the type,  or `max` is less than `min`. |
+
+
+* * *
+
+<a name="rtvref.types.shape_object_args"></a>
+
+#### types.shape_object_args : <code>Object</code>
+<h3>Shape Object Arguments</h3>
+
+Applicable to all object types that may have a shape:
+
+- [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
+- [OBJECT](#rtvref.types.OBJECT)
+- [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
+- [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**
+
+- [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
+- [OBJECT](#rtvref.types.OBJECT)
+- [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
+- [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
+
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [$] | <code>Object</code> | The [shape descriptor](#rtvref.types.shape_descriptor)  describing the expected interface of the value being verified. If not specified,  none of the value's properties will be verified.  Applies to all shape object types. |
+| [ctor] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctor === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION). Applies to: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT). |
+
+
+* * *
+
+<a name="rtvref.types.ARRAY_args"></a>
+
+#### types.ARRAY_args : <code>Object</code>
+<h3>Array Arguments</h3>
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [ARRAY](#rtvref.types.ARRAY)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [typeset] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in  the array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
+| [length] | <code>number</code> | Exact length. Ignored if not a  [FINITE](#rtvref.types.FINITE) number >= 0. |
+| [min] | <code>number</code> | Minimum inclusive length. Ignored if `exact` is  specified, or `min` is not a [FINITE](#rtvref.types.FINITE) number >= 0. |
+| [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
+
 
 * * *
 
@@ -1710,7 +1856,7 @@ Describes the possible types for a given value. It can be any one of the followi
  JavaScript types:
 
 - [Object](#rtvref.types.OBJECT): For the root or a nested
-  [shape descriptor](#rtvref.shape_descriptor) of _implied_
+  [shape descriptor](#rtvref.types.shape_descriptor) of _implied_
   [OBJECT](#rtvref.types.OBJECT) type (unless paired with a specific object type
   like [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), for example, when using the
   Array notation, e.g. `[PLAIN_OBJECT, {...}]`). If the object is empty (has no properties),
@@ -1737,25 +1883,26 @@ Describes the possible types for a given value. It can be any one of the followi
     required (see _Typeset Qualifiers_ below).
   - An Array is necessary if a type needs or requires
     [arguments](#rtvref.types.type_arguments).
-  - If the __first__ (or second, if a [qualifier](rtvref.types.qualifiers)
-    is provided, and this, in a typeset that is _not_
-    [fully-qualified](#rtvref.types.fully_qualified_typeset)), element is an `Object`,
-    it's treated as a nested [shape descriptor](#rtvref.shape_descriptor)
-    describing an object of the default [OBJECT](#rtvref.types.OBJECT) type.
+  - If the __first__ element is an `Object` (or second, if a
+    [qualifier](rtvref.types.qualifiers) is provided, and this, in a typeset that
+    is _not_ [fully-qualified](#rtvref.types.fully_qualified_typeset)),
+    it's treated as a nested [shape descriptor](#rtvref.types.shape_descriptor)
+    describing an object of the [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE).
     To include a shape descriptor at any other position within the array, it
-    __must__ be preceded by a type, even if the default `OBJECT` type is being
+    __must__ be preceded by a type, even if the default object type is being
     used (i.e. `OBJECT` must be specified as the type). For example, all
     these typesets are equivalent (and equivalent to just `{name: STRING}`
     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
-    `[REQUIRED, OBJECT, {name: STRING}]`, describing an object that has a name
-    property which is a non-empty string. Changing it to `[STRING, {name: STRING}]`,
+    `[REQUIRED, OBJECT, {$: {name: STRING}}]`, describing an object that has a name
+    property which is a non-empty string. Changing it to `[STRING, {$: name: STRING}}]`,
     however, does __not__ mean, "a non-empty string, or an object with a name
-    property which is a non-empty string". In this case, `{name: STRING}` would
+    property which is a non-empty string". In this case, the
+    [object arguments](rtvref.types.object_args) `{$: {name: STRING}}` would
     be treated as [STRING arguments](#rtvref.types.STRING_args), which is
-    likely not the desired intent. The object would have to be preceded by an
+    likely not the desired intent. The arguments would have to be preceded by an
     object type (e.g. [OBJECT](#rtvref.types.OBJECT),
     [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT), etc.) to have it interpreted
-    as in the OR case.
+    as in the former "OR" case.
   - If an element is an `Array` (any position), it's treated as a __nested list__
     with an implied [ARRAY](#rtvref.types.ARRAY) type, e.g.
     `[BOOLEAN, [STRING, FINITE]]` would describe a property that should be a boolean,
@@ -1784,7 +1931,7 @@ __ALL__ typesets should be fully JSON-serializable (via `JSON.stringify()` and
  `JSON.parse()`) with the following unavoidable exceptions:
 
 - [Custom validators](#rtvref.types.custom_validator)
-- [CLASS_OBJECT arguments](#rtvref.types.CLASS_OBJECT_args) 'ctor' property
+- [CLASS_OBJECT arguments](#rtvref.types.shape_object_args) 'ctor' property
 
 Those exceptions are due to the fact that these represent functions, and functions
  are not serializable to JSON. They will be ignored in the stringification process,
@@ -1804,7 +1951,10 @@ This could, among other possibilities, enable the transmission of typesets
     birthday: [rtv.q.EXPECTED, rtv.t.DATE] // Date (could be null)
   },
   notes: [rtv.q.OPTIONAL, rtv.t.STRING, function(value) { // optional string...
-    return !value || value.length < 500; // ...less than 500 characters long, if specified
+    if (value && !value.test(/^[A-Z].+\.$/)) {
+      throw new Error('Note must start with a capital letter, end with a ' +
+          period, and have something in between, if specified.');
+    }
   }]
 };
 
@@ -1849,15 +1999,25 @@ rtv.verify(1, typeset); // OK
 
 <h4>Example: Function</h4>
 
-<pre><code>rtv.verify(123, (v) => v > 100); // OK
-rtv.verify('123', [rtv.t.STRING, (v) => parseInt(v) > 100); // OK
+<pre><code>const validator = (v) => {
+  if (v % 10) {
+    throw new Error('Number must be a factor of 10.');
+  }
+};
+
+rtv.verify(100, validator); // OK
+rtv.verify(120, [rtv.t.INT, validator]); // OK
 </code></pre>
 
 <h4>Example: Alternate Qualifier</h4>
 
 <pre><code>const person = {
   name: rtv.t.STRING, // required, non-empty
-  age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => v >= 18] // 18 or older, if specified
+  age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => { // 18 or older, if specified
+    if (v < 18) {
+      throw new Error('Must be 18 or older.');
+    }
+  }]
 };
 rtv.verify({name: 'Bob'}, person); // OK
 rtv.verify({name: ''}, person); // ERROR
@@ -1884,9 +2044,9 @@ A [typeset](#rtvref.types.typeset) expressed without any shortcut notations
 For example:
 
 - `STRING` -> `[REQUIRED, STRING]`
-- `{note: STRING}` -> `[REQUIRED, OBJECT, {note: [REQUIRED, STRING]}]`
+- `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
 - `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
-- `(v) => !!v` -> `[REQUIRED, ANY, (v) => !!v]`
+- `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 
@@ -1932,104 +2092,8 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being verified. |
-| match | <code>Array</code> | A __first-level__,  [fully-qualified](#rtvref.types.fully_qualified_typeset) typeset describing  the type that matched. This means the first level of this subset of `typeset`  (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example, if the given typeset was `[PLAIN_OBJECT, {note: STRING}]`, this  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {note: STRING}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {note: STRING}]`. If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the  original `[STRING, FINITE]`. |
+| match | <code>Array</code> | A __first-level__,  [fully-qualified](#rtvref.types.fully_qualified_typeset) typeset describing  the type that matched. This means the first level of this subset of `typeset`  (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.types.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example, if the given typeset was `[PLAIN_OBJECT, {$: {note: STRING}}]`, this  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}]`. If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the  original `[STRING, FINITE]`. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). This typeset is as it was specified in the  parent shape, and therefore it may not be fully-qualified. |
-
-
-* * *
-
-<a name="rtvref.types.STRING_args"></a>
-
-#### types.STRING_args : <code>Object</code>
-<h3>String Arguments</h3>
-
-**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**See**: [STRING](#rtvref.types.STRING)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [oneOf] | <code>string</code> \| <code>Array.&lt;string&gt;</code> | An exact string to match (`===`).  Can also be a list of strings, one of which must be an exact match. An empty  string is allowed. Note, however, that the [qualifier](#rtvref.qualifiers)  must not be `REQUIRED` because that will disallow an empty string as the value  being checked regardless of this value/list. An empty list will be ignored. |
-| [partial] | <code>string</code> | A partial value to match (must be somewhere  within the string). Ignored if empty string, or `exact` is specified. `min`  and `max` take __precedence__ over this argument (the length will be  validated first, then a partial match will be attempted). |
-| [min] | <code>number</code> | Minimum inclusive length. Defaults to 1 for a  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if  `exact` is specified, or `min` is not a [FINITE](#rtvref.types.FINITE)  number >= 0. |
-| [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
-
-
-* * *
-
-<a name="rtvref.types.SYMBOL_args"></a>
-
-#### types.SYMBOL_args : <code>Object</code>
-[SYMBOL](#rtvref.types.SYMBOL) arguments.
-
-**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [oneOf] | <code>symbol</code> \| <code>Array.&lt;symbol&gt;</code> | An exact symbol to match (`===`).  Can also be a list of symbols, one of which must be an exact match. Values to  match are ignored if they are not symbols. An empty list will be ignored. |
-
-
-* * *
-
-<a name="rtvref.types.numeric_args"></a>
-
-#### types.numeric_args : <code>Object</code>
-<h3>Numeric Value Arguments</h3>
-
-Applicable to all numeric types.
-
-**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**See**
-
-- [NUMBER](#rtvref.types.NUMBER)
-- [FINITE](#rtvref.types.FINITE)
-- [INT](#rtvref.types.INT)
-- [FLOAT](#rtvref.types.FLOAT)
-- [qualifiers](#rtvref.qualifiers)
-
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [oneOf] | <code>number</code> \| <code>Array.&lt;number&gt;</code> | An exact number to match (`===`).  Can also be a list of numbers, one of which must be an exact match. An empty  list will be ignored.  Values to match are ignored if they are not within normal range of the type   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is   not `REQUIRED`; but these values would be ignored by `FINITE` since they   aren't part of the `FINITE` range), or not numbers at all. |
-| [min] | <code>number</code> | Minimum inclusive value. Ignored if `exact` is  specified, `min` is `NaN`, or `min` is not within normal range of the type. |
-| [max] | <code>number</code> | Maximum inclusive value. Ignored if `exact` is  specified, `max` is `NaN`, `max` is not within normal range of the type,  or `max` is less than `min`. |
-
-
-* * *
-
-<a name="rtvref.types.ARRAY_args"></a>
-
-#### types.ARRAY_args : <code>Object</code>
-<h3>Array Arguments</h3>
-
-**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**See**: [ARRAY](#rtvref.types.ARRAY)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [typeset] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in  the array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
-| [length] | <code>number</code> | Exact length. Ignored if not a  [FINITE](#rtvref.types.FINITE) number >= 0. |
-| [min] | <code>number</code> | Minimum inclusive length. Ignored if `exact` is  specified, or `min` is not a [FINITE](#rtvref.types.FINITE) number >= 0. |
-| [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
-
-
-* * *
-
-<a name="rtvref.types.CLASS_OBJECT_args"></a>
-
-#### types.CLASS_OBJECT_args : <code>Object</code>
-[CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) arguments.
-
-**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [ctor] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctor === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION). |
-| [shape] | [<code>shape_descriptor</code>](#rtvref.shape_descriptor) | A description of the class object's  shape. Ignored if not a valid shape descriptor. |
 
 
 * * *
@@ -2195,30 +2259,6 @@ The settings provided to the
 
 * * *
 
-<a name="rtvref.shape_descriptor"></a>
-
-### rtvref.shape_descriptor : <code>Object</code>
-<h2>Shape Descriptor</h2>
-
-Describes the shape (i.e. interface) of an object as a map of properties to
- [typesets](#rtvref.types.typeset). Each typeset indicates whether the
- property is required, expected, or optional, using [qualifiers](#rtvref.qualifiers),
- along with possible types. Only enumerable, own-properties of the shape are
- considered part of the shape.
-
-When a value is [checked](#rtv.check) or [verified](#rtv.verify) against
- a given shape, _properties on the value that are not part of the shape are
- ignored_. If successfully checked/verified, the value is guaranteed to provide
- the properties described in the shape, and each property is guaranteed to be
- assigned to a value of at least one type described in each property's typeset.
-
-The shape descriptor itself must be an [OBJECT](#rtvref.types.OBJECT).
-
-**Kind**: static typedef of [<code>rtvref</code>](#rtvref)  
-**See**: [rtvref.validation.isShape](rtvref.validation.isShape)  
-
-* * *
-
 <a name="rtv"></a>
 
 ## rtv : <code>object</code>
@@ -2347,13 +2387,13 @@ Checks a value against a typeset for compliance.
 - [verify](#rtv.verify)
 - [enabled](#rtv.config.enabled)
 - [types](#rtvref.types)
-- [shape_descriptor](#rtvref.shape_descriptor)
+- [shape_descriptor](#rtvref.types.shape_descriptor)
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.types.shape_descriptor). |
 
 
 * * *
@@ -2377,7 +2417,7 @@ Shortcut proxy to [check](#rtv.check).
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.types.shape_descriptor). |
 
 
 * * *
@@ -2403,13 +2443,13 @@ NOTE: This method does nothing if RTV.js is currently
 - [check](#rtv.check)
 - [enabled](#rtv.config.enabled)
 - [types](#rtvref.types)
-- [shape_descriptor](#rtvref.shape_descriptor)
+- [shape_descriptor](#rtvref.types.shape_descriptor)
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.types.shape_descriptor). |
 
 
 * * *
@@ -2431,7 +2471,7 @@ Shortcut proxy to [verify](#rtv.verify).
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.shape_descriptor). |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape of (or typeset describing)  the `value`. A shape is a kind of typeset. Normally, this is a  [shape descriptor](#rtvref.types.shape_descriptor). |
 
 
 * * *

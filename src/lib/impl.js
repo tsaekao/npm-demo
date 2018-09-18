@@ -183,7 +183,7 @@ const toTypeset = function(type, ...rest) {
  * @param {rtvref.qualifiers} [qualifier] Optional qualifier to be used.
  *
  *  If the typeset is a simple {@link rtvref.types type},
- *   a {@link rtvref.shape_descriptor shape}, or
+ *   a {@link rtvref.types.shape_descriptor shape}, or
  *   a {@link rtvref.types.custom_validator custom validator} that was
  *   cherry-picked out of a typeset whose qualifier should be used instead of
  *   the {@link rtvref.qualifiers.DEFAULT_QUALIFIER default} one.
@@ -447,7 +447,7 @@ const _getCheckOptions = function(current = {}, override = {}) {
  * @function rtvref.impl.checkType
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} singleType Either a simple type name (one of
- *  {@link rtvref.types.types}), a {@link rtvref.shape_descriptor shape descriptor},
+ *  {@link rtvref.types.types}), a {@link rtvref.types.shape_descriptor shape descriptor},
  *  or an Array typeset which represents a single type.
  *  A {@link rtvref.types.custom_validator custom validator} is not considered
  *  a valid single type.
@@ -521,7 +521,7 @@ const checkWithType = function(value, singleType /*, options*/) {
 };
 
 /**
- * Checks a value using a {@link rtvref.shape_descriptor shape descriptor} and
+ * Checks a value using a {@link rtvref.types.shape_descriptor shape descriptor} and
  *  ensure the value's type is the default object type.
  * @function rtvref.impl.checkShape
  * @param {Object} value Value to check. Must be of the

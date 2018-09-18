@@ -4,7 +4,7 @@
  * Runtime Verification Success Indicator
  *
  * Describes a successful runtime verification of a value against a given
- *  {@link rtvref.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
+ *  {@link rtvref.types.shape_descriptor shape} or {@link rtvref.types.typeset typeset}
  *  (note that a shape is a type of typeset).
  *
  * @class rtvref.RtvSuccess

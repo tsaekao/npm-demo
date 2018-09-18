@@ -14,43 +14,19 @@ import {print} from '../util';
 
 // Deep-verify a shape.
 // @param {string} type The in-scope type (should be an object type from types.objTypes).
-// @param {Object} rule The rule from the typeset being evaluated. This should be the args
-//  for the `type`, which is either the shape itself, or an args object containing a
-//  property that provides the shape.
+// @param {Object} args The {@link rtvref.types.shape_object_args} for the `type`
+//  containing the `$` property that provides the shape. The shape will first be
+//  validated with the isShape() validation.
 // @param {Object} options The options object originally given to isTypeset().
 // @param {string} failurePrefix The prefix to use if a failure message is generated.
 // @param {number} [idx=-1] The position of `rule` within an Array typeset (if the
 //  shape is nested), or a negative value if the typeset is not an Array.
 // @returns {boolean} True if the shape is valid, false otherwise.
-const deepVerifyShape = function(type, rule, options, failurePrefix, idx = -1) {
-  let valid = true;
+const deepVerifyShape = function(type, args, options, failurePrefix, idx = -1) {
+  const shape = args.$;
+  let valid = isShape(shape); // shape must be valid descriptor
 
-  // if it's a class object, the shape is an optional sub-property of the object;
-  //  if it's a map object, there is no shape (the args are rtvref.types.collection_args);
-  //  otherwise, the shape is the rule/object itself
-  let shape;
-
-  if (type === types.CLASS_OBJECT && rule.hasOwnProperty('shape')) {
-    // shape must be valid descriptor
-    valid = isShape(rule.shape);
-    if (valid) {
-      shape = rule.shape;
-    } else {
-      // NOTE: since the type is CLASS_OBJECT, `idx` _must_ be >= 0 because an
-      //  Array typeset is required to specify this object type along with a shape:
-      //  [CLASS_OBJECT, {shape: {...}}]
-      options.failure = `${failurePrefix}: Expecting a valid shape descriptor in "shape" property of args for type=${print(type)} at index=${idx}`;
-    }
-  } else {
-    valid = isShape(rule);
-    if (valid) {
-      shape = rule;
-    } else {
-      options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type)}${idx >= 0 ? ` at index=${idx}` : ''}`;
-    }
-  }
-
-  if (shape) { // undefined if not valid or not provided
+  if (valid) {
     // validate all of the shape's typesets (each own-prop should be a typeset)
     _forEach(shape, function(ts, prop) {
       const opts = Object.assign({}, options); // options.failure should not exist at this point
@@ -58,6 +34,17 @@ const deepVerifyShape = function(type, rule, options, failurePrefix, idx = -1) {
       options.failure = opts.failure && `${failurePrefix} (${idx >= 0 ? `index=${idx}, ` : ''}prop="${prop}"): ${opts.failure}`;
       return valid; // break on first invalid
     });
+  } else {
+    options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type)}`;
+
+    // NOTE: the only case where idx would be negative/not specified should be
+    //  when the typeset is a shape descriptor with an implied type of DEFAULT_OBJECT_TYPE,
+    //  or when its the first/second element in an Array typeset like `[{shape}]` or
+    //  `[qualifier, {shape}]`; otherwise, the index should always be specified since all
+    //  object types take args that specify the shape: [CLASS_OBJECT, {$: {...}}]
+    if (idx >= 0) {
+      options.failure += ` at index=${idx}`;
+    }
   }
 
   return valid;
@@ -178,14 +165,10 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type`;
           }
         } else if (isTypeArgs(rule)) {
-          // could be a shape, or type args (either way, it's a single object)
           // since the typeset must be fully-qualified, argType must already be
           //  a type that takes arguments, since arguments are always provided
           //  via objects
-          // NOTE: for object types, the args are the shapes themselves, except
-          //  for CLASS_OBJECT where the shape is specified within the args;
-          //  still, there is always only ever at most one object per type that
-          //  accepts args, never more
+          // NOTE: for shape object types, the shape is specified within the args
           // NOTE: for the ARRAY type, the typeset is specified within the args
           if (argType) {
             // consume the object as the in-scope arg type's arguments
@@ -197,22 +180,23 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             options.failure = `${failurePrefix}: Expecting a type that takes arguments at index=${idx - 1}`;
           }
 
-          // only go deep if the rule is a shape (which means the current in-scope
-          //  type must be an object type) or ARRAY args with `typeset` specified
-          if (valid && deep && objTypes.check(curType)) {
+          // only go deep if the rule is shape object args with `$` specified (which
+          //  means the current in-scope type must be an object type) or ARRAY args with
+          //  `typeset` specified
+          if (valid && deep && objTypes.check(curType) && rule.hasOwnProperty('$')) {
             valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
           } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
             // ARRAY type with args.typeset specified, and we're deep-validating
             valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
           }
-          // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+          // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
           //  the rule (object) needs no further validation
         } else {
           // any other type in a fully-qualified array typeset is not supported
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), or function (custom validator)`;
+          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting shape object args, ${types.ARRAY} args, non-empty string (single type), or function (custom validator)`;
         }
 
         return valid; // break if no longer valid
@@ -284,11 +268,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be at the last position`;
         }
       } else if (isTypeArgs(rule)) {
-        // could be a shape, or type args (either way, it's just one object)
-        // NOTE: for object types, the args are the shapes themselves, except
-        //  for CLASS_OBJECT where the shape is specified within the args; still,
-        //  there is always only ever at most one object per type that accepts
-        //  args, never more
+        let soArgs; // shape object args
+
+        // NOTE: for shape object types, the shape is specified within the args
         // NOTE: for the ARRAY type, the typeset is specified within the args
         if (!argType) {
           // since there's no in-scope arg type, the object must be a shape using
@@ -299,11 +281,12 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  rule/object as the in-scope arg type's arguments
           updateCurType(DEFAULT_OBJECT_TYPE);
           if (valid) {
+            soArgs = {$: rule}; // build default args since the rule is the shape itself
             valid = (idx === 0 || (hasQualifier && idx === 1));
             // NOTE: do not set argType because the shape is the default object type's
             //  args, so they should be consumed by the in-scope arg type
             if (!valid) {
-              options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
+              options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}, and should be wrapped in shape object args: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
             }
           }
         } else {
@@ -312,17 +295,21 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  that optionally have args, so we don't have to ensure that args
           //  were given when we change the type
           argType = undefined;
+          // since we had an in-scope arg type, the rule must be shape object args
+          soArgs = rule;
         }
 
-        // only go deep if the rule is a shape, which means the current in-scope
-        //  type must be an object type, or ARRAY args with `typeset` specified
-        if (valid && deep && objTypes.check(curType)) {
-          valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
+        // only go deep if we have a shape (i.e. the current in-scope type must be
+        //  an object type, and the rule is either the shape itself, or shape object
+        //  args with a `$` property that specifies the shape) or ARRAY args with
+        //  `typeset` specified
+        if (valid && deep && objTypes.check(curType) && soArgs.hasOwnProperty('$')) {
+          valid = deepVerifyShape(curType, soArgs, options, failurePrefix, idx);
         } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
           // ARRAY type with args.typeset specified, and we're deep-validating
           valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
         }
-        // else, either not valid, not deep, or neither shape nor ARRAY args, so assume
+        // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
         //  the rule (object) needs no further validation
       } else if (isArray(rule)) {
         // a nested array implies the ARRAY type in shorthand notation
@@ -345,7 +332,11 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         // NOTE: ARRAY shorthand notation is permitted in non-qualified typesets,
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
-        options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
+        if (idx === 0 || (idx === 1 && hasQualifier)) {
+          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
+        } else {
+          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (type args), non-empty string (single type), function (custom validator), or array (typeset)`;
+        }
       }
 
       return valid; // break if no longer valid
@@ -367,7 +358,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
     // we need to deep-validate a shape descriptor, which means each one of its
     //  own-properties must be a valid typeset
-    valid = deepVerifyShape(DEFAULT_OBJECT_TYPE, v, options, failurePrefix);
+    valid = deepVerifyShape(DEFAULT_OBJECT_TYPE, {$: v}, options, failurePrefix);
   }
 
   // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid
