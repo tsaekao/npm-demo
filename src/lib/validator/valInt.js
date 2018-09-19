@@ -8,6 +8,11 @@ import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
+/**
+ * Validator Module: valInt
+ * @typedef {Module} rtvref.validator.valInt
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -28,7 +33,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valInt.config
+ * @function rtvref.validator.valInt.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

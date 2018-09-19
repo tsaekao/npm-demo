@@ -5,6 +5,11 @@ import {default as _isSymbol} from 'lodash/isSymbol';
 import types from '../types';
 
 /**
+ * Validation Module: isSymbol
+ * @typedef {Module} rtvref.validation.isSymbol
+ */
+
+/**
  * Type: {@link rtvref.types.SYMBOL SYMBOL}
  * @const {string} rtvref.validation.isSymbol.type
  */

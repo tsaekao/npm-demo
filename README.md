@@ -1,8 +1,8 @@
 # RTV.js
 
-__Runtime Type Verification Isomorphic JavaScript Library__
+Runtime Verification Library for browsers and Node.js.
 
-This library runs equally well in modern browsers and on the server with Node.js.
+This library is isomorphic: It runs equally well in modern browsers and on the server with Node.js.
 
 # Goals
 
@@ -31,12 +31,9 @@ Shapes must be:
 
 # TODO
 
-- [ ] Implement the library...
-    - [ ] Debug the generated docs (including private docs), checking for broken links...
 - [ ] Unit tests must be run both in the browser and in Node.js -- in the browser via Gitlab CI
 - [ ] Add Gitlab CI config, or use TravisCI?
 - [ ] Publish to npm
-    - [ ] Add `.npmignore`
 - [ ] Make sure 'Goals' section is complete and accurate, add some links
 - [ ] Make sure `CONTRIBUTING.md` is filled-out
 

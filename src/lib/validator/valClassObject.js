@@ -10,6 +10,11 @@ import RtvError from '../RtvError';
 import isShape from '../validation/isShape';
 import isFunction from '../validation/isFunction';
 
+/**
+ * Validator Module: valClassObject
+ * @typedef {Module} rtvref.validator.valClassObject
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -30,7 +35,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valClassObject.config
+ * @function rtvref.validator.valClassObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

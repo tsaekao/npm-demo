@@ -5,6 +5,11 @@ import isObject from './isObject';
 import types from '../types';
 
 /**
+ * Validation Module: isHashMap
+ * @typedef {Module} rtvref.validation.isHashMap
+ */
+
+/**
  * Type: {@link rtvref.types.HASH_MAP HASH_MAP}
  * @const {string} rtvref.validation.isHashMap.type
  */

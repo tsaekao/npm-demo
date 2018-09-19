@@ -5,6 +5,11 @@ import {default as _isFinite} from 'lodash/isFinite';
 import types from '../types';
 
 /**
+ * Validation Module: isFinite
+ * @typedef {Module} rtvref.validation.isFinite
+ */
+
+/**
  * Type: {@link rtvref.types.FINITE FINITE}
  * @const {string} rtvref.validation.isFinite.type
  */

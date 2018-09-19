@@ -10,6 +10,11 @@ import isArray from './isArray';
 import types from '../types';
 
 /**
+ * Validation Module: isJson
+ * @typedef {Module} rtvref.validation.isJson
+ */
+
+/**
  * Type: {@link rtvref.types.JSON JSON}
  * @const {string} rtvref.validation.isJson.type
  */

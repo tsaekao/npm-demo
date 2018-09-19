@@ -255,7 +255,7 @@ describe('module: lib/RtvError', function() {
     expect(err.failure).to.equal(failure);
   });
 
-  it('should have custom string serialization', function() { // TODO fix this test
+  it('should have custom string serialization', function() {
     const value = null;
     const path = ['the', 'path'];
     const failure = new Error('custom validator failed');

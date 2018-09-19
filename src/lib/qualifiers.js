@@ -3,7 +3,7 @@
 import Enumeration from './Enumeration';
 
 /**
- * <h2>Qualifiers</h2>
+ * <h3>Qualifiers</h3>
  *
  * Qualifiers determine the degree at which a value must be of a given type.
  *
@@ -93,7 +93,7 @@ export const DEFAULT_QUALIFIER = REQUIRED;
  * - EXPECTED: Can be `null`.
  * - OPTIONAL: Can be either `undefined` or `null`.
  *
- * @function rtvref.qualifiers.checkBasicRules
+ * @function rtvref.qualifiers.nilPermitted
  * @param {*} v Value to check.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
@@ -117,7 +117,12 @@ export const nilPermitted = function(v, q = REQUIRED) {
 };
 
 /**
- * Enumeration (`string -> string`) of {@link rtvref.qualifiers qualifiers}.
+ * Enumeration (`string -> string`) of all qualifiers:
+ *
+ * - {@link rtvref.qualifiers.REQUIRED REQUIRED}
+ * - {@link rtvref.qualifiers.EXPECTED EXPECTED}
+ * - {@link rtvref.qualifiers.OPTIONAL OPTIONAL}
+ *
  * @name rtvref.qualifiers.qualifiers
  * @type {rtvref.Enumeration}
  */

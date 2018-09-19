@@ -20,7 +20,7 @@
     "node:internals": "rollup -c tools/rollup.internals.js && node -r ./dist_tools/internals.js --inspect",
     "build:lib": "BABEL_ENV=build rollup -c",
     "build": "npm run clean && npm run build:lib",
-    "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --separators > API.md",
+    "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "lint": "eslint ./*.js \"src/**/*.js\" \"test/**/*.js\" \"tools/**/*.js\"",
     "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
     "test:unit:watch": "npm run test:unit -- -w",

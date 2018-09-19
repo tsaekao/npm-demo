@@ -3,8 +3,13 @@
 import types from '../types';
 
 /**
+ * Validation Module: isNull
+ * @typedef {Module} rtvref.validation.isNull
+ */
+
+/**
  * Type: {@link rtvref.types.NULL NULL}
- * @const {string} rtvref.validation.isFunction.type
+ * @const {string} rtvref.validation.isNull.type
  */
 export const type = types.NULL;
 

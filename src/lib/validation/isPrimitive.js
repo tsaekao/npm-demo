@@ -6,6 +6,11 @@ import isNumber from './isNumber';
 import isSymbol from './isSymbol';
 
 /**
+ * Validation Module: isPrimitive
+ * @typedef {Module} rtvref.validation.isPrimitive
+ */
+
+/**
  * Type: `undefined`, {@link rtvref.types.primitives primitive} pseudo-type.
  * @const {string} rtvref.validation.isPrimitive.type
  */

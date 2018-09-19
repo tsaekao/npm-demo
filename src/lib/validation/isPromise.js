@@ -3,6 +3,11 @@
 import types from '../types';
 
 /**
+ * Validation Module: isPromise
+ * @typedef {Module} rtvref.validation.isPromise
+ */
+
+/**
  * Type: {@link rtvref.types.PROMISE PROMISE}
  * @const {string} rtvref.validation.isPromise.type
  */

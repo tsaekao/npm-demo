@@ -15,6 +15,11 @@ import isPromise from './isPromise';
 import types from '../types';
 
 /**
+ * Validation Module: isObject
+ * @typedef {Module} rtvref.validation.isObject
+ */
+
+/**
  * Type: {@link rtvref.types.OBJECT OBJECT}
  * @const {string} rtvref.validation.isObject.type
  */

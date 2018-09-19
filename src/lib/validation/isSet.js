@@ -5,6 +5,11 @@ import {default as _isSet} from 'lodash/isSet';
 import types from '../types';
 
 /**
+ * Validation Module: isSet
+ * @typedef {Module} rtvref.validation.isSet
+ */
+
+/**
  * Type: {@link rtvref.types.SET SET}
  * @const {string} rtvref.validation.isSet.type
  */

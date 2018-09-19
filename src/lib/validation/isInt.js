@@ -5,6 +5,11 @@ import {default as _isInteger} from 'lodash/isInteger';
 import types from '../types';
 
 /**
+ * Validation Module: isInt
+ * @typedef {Module} rtvref.validation.isInt
+ */
+
+/**
  * Type: {@link rtvref.types.INT INT}
  * @const {string} rtvref.validation.isInt.type
  */

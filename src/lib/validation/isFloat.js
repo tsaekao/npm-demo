@@ -6,6 +6,11 @@ import isInt from './isInt';
 import types from '../types';
 
 /**
+ * Validation Module: isFloat
+ * @typedef {Module} rtvref.validation.isFloat
+ */
+
+/**
  * Type: {@link rtvref.types.FLOAT FLOAT}
  * @const {string} rtvref.validation.isFloat.type
  */

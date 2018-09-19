@@ -1,7 +1,7 @@
 ////// Validator Module
 
 /**
- * <h2>RTV Type Validators</h2>
+ * <h3>RTV.js Type Validators</h3>
  *
  * This namespace provides validators for each supported {@link rtvref.types type},
  *  capable of fully validating a value against that type. Validators differ from
@@ -42,8 +42,8 @@
  * <h3>Type Validator Function</h3>
  *
  * NOTE: A validator must always give __precedence__ to
- *  {@link rtvref.types.rules qualifier rules} for the type it's validating, over
- *  any arguments specified. For example,
+ *  {@link rtvref.types.qualifier_rules qualifier rules} for the type it's
+ *  validating, over any arguments specified. For example,
  *
  * __NOTE:__ A validator must support all its qualifier rules, including proper
  *  handling of `null` values when {@link rtvref.qualifiers.EXPECTED EXPECTED}
@@ -66,6 +66,8 @@
  *  `RtvError` if not.
  */
 
+// TODO[plugins]: Plugins should also be given access to the types and qualifiers
+//  __modules__ which they don't have access to via impl.
 /**
  * <h3>Type Validator Configuration Settings</h3>
  *

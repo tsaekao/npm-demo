@@ -6,6 +6,11 @@ import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
+/**
+ * Validator Module: valJson
+ * @typedef {Module} rtvref.validator.valJson
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -26,7 +31,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valJson.config
+ * @function rtvref.validator.valJson.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

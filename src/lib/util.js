@@ -5,14 +5,13 @@
 //  this library.
 
 /**
- * RTV Utilities Module
- * @private
- * @namespace rtv.util
+ * <h3>RTV.js Utilities</h3>
+ * @namespace rtvref.util
  */
 
 /**
  * Pretty-print a value.
- * @function rtv.util.print
+ * @function rtvref.util.print
  * @param {*} printValue Value to print.
  * @returns {string} Pretty-printed value. It's not perfect and may not catch
  *  all types, but attempts to be good enough.

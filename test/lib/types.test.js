@@ -36,6 +36,7 @@ describe('module: lib/types', function() {
       types.CLASS_OBJECT
     ];
 
+    expect(mod.objTypes.$values.length).to.equal(knownTypes.length);
     expect(_.difference(mod.objTypes.$values, knownTypes)).to.eql([]);
     expect(mod.objTypes.$name).to.equal('objTypes');
   });
@@ -57,11 +58,10 @@ describe('module: lib/types', function() {
       types.CLASS_OBJECT,
       types.HASH_MAP,
       types.MAP,
-      types.WEAK_MAP,
-      types.SET,
-      types.WEAK_SET
+      types.SET
     ];
 
+    expect(mod.argTypes.$values.length).to.equal(knownTypes.length);
     expect(_.difference(mod.argTypes.$values, knownTypes)).to.eql([]);
     expect(mod.argTypes.$name).to.equal('argTypes');
   });

@@ -5,6 +5,11 @@ import {default as _isWeakSet} from 'lodash/isWeakSet';
 import types from '../types';
 
 /**
+ * Validation Module: isWeakSet
+ * @typedef {Module} rtvref.validation.isWeakSet
+ */
+
+/**
  * Type: {@link rtvref.types.WEAK_SET WEAK_SET}
  * @const {string} rtvref.validation.isWeakSet.type
  */

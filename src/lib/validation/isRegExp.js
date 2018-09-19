@@ -5,6 +5,11 @@ import {default as _isRegExp} from 'lodash/isRegExp';
 import types from '../types';
 
 /**
+ * Validation Module: isRegExp
+ * @typedef {Module} rtvref.validation.isRegExp
+ */
+
+/**
  * Type: {@link rtvref.types.REGEXP REGEXP}
  * @const {string} rtvref.validation.isRegExp.type
  */

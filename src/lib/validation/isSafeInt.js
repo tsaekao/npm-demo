@@ -5,6 +5,11 @@ import {default as _isSafeInteger} from 'lodash/isSafeInteger';
 import types from '../types';
 
 /**
+ * Validation Module: isSafeInt
+ * @typedef {Module} rtvref.validation.isSafeInt
+ */
+
+/**
  * Type: {@link rtvref.types.SAFE_INT SAFE_INT}
  * @const {string} rtvref.validation.isSafeInt.type
  */

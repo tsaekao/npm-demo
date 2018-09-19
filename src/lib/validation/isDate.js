@@ -5,6 +5,11 @@ import {default as _isDate} from 'lodash/isDate';
 import types from '../types';
 
 /**
+ * Validation Module: isDate
+ * @typedef {Module} rtvref.validation.isDate
+ */
+
+/**
  * Type: {@link rtvref.types.DATE DATE}
  * @const {string} rtvref.validation.isDate.type
  */

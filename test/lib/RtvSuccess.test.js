@@ -23,7 +23,7 @@ describe('module: lib/RtvSuccess', function() {
     expect(succ.valid).to.equal(true);
   });
 
-  it('should have custom string serialization', function() { // TODO fix this test
+  it('should have custom string serialization', function() {
     const succ = new RtvSuccess();
     const str = succ + '';
     expect(str).to.contain('RtvSuccess');

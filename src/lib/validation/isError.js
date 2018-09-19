@@ -5,6 +5,11 @@ import {default as _isError} from 'lodash/isError';
 import types from '../types';
 
 /**
+ * Validation Module: isError
+ * @typedef {Module} rtvref.validation.isError
+ */
+
+/**
  * Type: {@link rtvref.types.ERROR ERROR}
  * @const {string} rtvref.validation.isError.type
  */

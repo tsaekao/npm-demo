@@ -836,13 +836,13 @@ describe('module: lib/impl', function() {
       it('should throw if the typeset is not an Array', function() {
         expect(function() {
           impl.checkWithArray(1, {});
-        }).to.throw(/Invalid Array typeset/);
+        }).to.throw(/Invalid typeset in array/);
       });
 
       it('should throw if the typeset is not valid', function() {
         expect(function() {
           impl.checkWithArray(1, ['invalid-type']);
-        }).to.throw(/Invalid Array typeset/);
+        }).to.throw(/Invalid typeset in array/);
       });
     });
   });

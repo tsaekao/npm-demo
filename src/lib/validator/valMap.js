@@ -12,6 +12,11 @@ import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import {print} from '../util';
 
+/**
+ * Validator Module: valMap
+ * @typedef {Module} rtvref.validator.valMap
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -32,7 +37,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valMap.config
+ * @function rtvref.validator.valMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

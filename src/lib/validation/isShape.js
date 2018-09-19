@@ -3,6 +3,11 @@
 import isObject from './isObject';
 
 /**
+ * Validation Module: isShape
+ * @typedef {Module} rtvref.validation.isShape
+ */
+
+/**
  * Type: `undefined`, {@link rtvref.types.shape_descriptor shape} pseudo-type.
  * @const {string} rtvref.validation.isShape.type
  */

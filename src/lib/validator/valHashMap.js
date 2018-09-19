@@ -13,6 +13,11 @@ import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import {print} from '../util';
 
+/**
+ * Validator Module: valHashMap
+ * @typedef {Module} rtvref.validator.valHashMap
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -33,7 +38,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valHashMap.config
+ * @function rtvref.validator.valHashMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

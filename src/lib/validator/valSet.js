@@ -10,6 +10,11 @@ import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import {print} from '../util';
 
+/**
+ * Validator Module: valSet
+ * @typedef {Module} rtvref.validator.valSet
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -30,7 +35,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valSet.config
+ * @function rtvref.validator.valSet.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

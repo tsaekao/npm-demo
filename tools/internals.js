@@ -11,7 +11,7 @@ import * as isPrimitive from '../src/lib/validation/isPrimitive';
 import * as isShape from '../src/lib/validation/isShape';
 import * as isTypeArgs from '../src/lib/validation/isTypeArgs';
 import * as isTypeset from '../src/lib/validation/isTypeset';
-import * as isValidator from '../src/lib/validation/isValidator';
+import * as isCustomValidator from '../src/lib/validation/isCustomValidator';
 
 // validations
 import * as isAny from '../src/lib/validation/isAny';
@@ -89,7 +89,7 @@ global.rtvi = {
       isShape,
       isTypeArgs,
       isTypeset,
-      isValidator,
+      isCustomValidator,
 
       // validations
       isAny,

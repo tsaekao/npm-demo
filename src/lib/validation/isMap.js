@@ -5,6 +5,11 @@ import {default as _isMap} from 'lodash/isMap';
 import types from '../types';
 
 /**
+ * Validation Module: isMap
+ * @typedef {Module} rtvref.validation.isMap
+ */
+
+/**
  * Type: {@link rtvref.types.MAP MAP}
  * @const {string} rtvref.validation.isMap.type
  */

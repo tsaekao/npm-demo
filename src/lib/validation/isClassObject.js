@@ -6,6 +6,11 @@ import isPlainObject from './isPlainObject';
 import types from '../types';
 
 /**
+ * Validation Module: isClassObject
+ * @typedef {Module} rtvref.validation.isClassObject
+ */
+
+/**
  * Type: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
  * @const {string} rtvref.validation.isClassObject.type
  */

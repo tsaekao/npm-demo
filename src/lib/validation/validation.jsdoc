@@ -1,7 +1,7 @@
 ////// Validation Module
 
 /**
- * <h2>RTV Validation</h2>
+ * <h3>RTV.js Validation</h3>
  *
  * This namespace provides _type validations_ which verify values to be of
  *  the {@link rtvref.types types} defined in this library. If permitted values

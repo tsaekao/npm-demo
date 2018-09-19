@@ -9,6 +9,11 @@ import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import isShape from '../validation/isShape';
 
+/**
+ * Validator Module: valAnyObject
+ * @typedef {Module} rtvref.validator.valAnyObject
+ */
+
 const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
@@ -29,7 +34,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valAnyObject.config
+ * @function rtvref.validator.valAnyObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

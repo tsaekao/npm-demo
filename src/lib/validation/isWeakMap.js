@@ -5,6 +5,11 @@ import {default as _isWeakMap} from 'lodash/isWeakMap';
 import types from '../types';
 
 /**
+ * Validation Module: isWeakMap
+ * @typedef {Module} rtvref.validation.isWeakMap
+ */
+
+/**
  * Type: {@link rtvref.types.WEAK_MAP WEAK_MAP}
  * @const {string} rtvref.validation.isWeakMap.type
  */

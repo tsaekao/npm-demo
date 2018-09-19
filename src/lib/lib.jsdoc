@@ -1,0 +1,8 @@
+/**
+ * <h3>RTV.js Reference</h3>
+ *
+ * Members herein are _indirectly_ accessed and/or exposed through the
+ *  {@link rtv RTV.js Public Interface}.
+ *
+ * @namespace rtvref
+ */

@@ -5,6 +5,11 @@ import {default as _isPlainObject} from 'lodash/isPlainObject';
 import types from '../types';
 
 /**
+ * Validation Module: isPlainObject
+ * @typedef {Module} rtvref.validation.isPlainObject
+ */
+
+/**
  * Type: {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
  * @const {string} rtvref.validation.isPlainObject.type
  */

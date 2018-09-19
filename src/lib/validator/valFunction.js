@@ -10,6 +10,11 @@ const {REQUIRED} = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
+ * Validator Module: valFunction
+ * @typedef {Module} rtvref.validator.valFunction
+ */
+
+/**
  * Type: {@link rtvref.types.FUNCTION FUNCTION}
  * @const {string} rtvref.validator.valFunction.type
  */
@@ -17,7 +22,7 @@ export {type};
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
-  * @function rtvref.validator.valFunction.config
+ * @function rtvref.validator.valFunction.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
 export const config = function(settings) {

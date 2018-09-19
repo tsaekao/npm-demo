@@ -5,6 +5,11 @@ import {default as _isArray} from 'lodash/isArray';
 import types from '../types';
 
 /**
+ * Validation Module: isArray
+ * @typedef {Module} rtvref.validation.isArray
+ */
+
+/**
  * Type: {@link rtvref.types.ARRAY ARRAY}
  * @const {string} rtvref.validation.isArray.type
  */

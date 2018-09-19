@@ -5,6 +5,11 @@ import {default as _isNaN} from 'lodash/isNaN';
 import types from '../types';
 
 /**
+ * Validation Module: isNumber
+ * @typedef {Module} rtvref.validation.isNumber
+ */
+
+/**
  * Type: {@link rtvref.types.NUMBER NUMBER}
  * @const {string} rtvref.validation.isNumber.type
  */

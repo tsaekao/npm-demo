@@ -3,7 +3,7 @@
 import Enumeration from './Enumeration';
 
 /**
- * <h2>Types</h2>
+ * <h3>Types</h3>
  * @namespace rtvref.types
  */
 
@@ -23,7 +23,7 @@ import Enumeration from './Enumeration';
  *   it produces an {@link rtvref.types.OBJECT object}, and __should be avoided__).
  * - `Symbol`
  *
- * @typedef {*} rtvref.types.primitives
+ * @typedef {void} rtvref.types.primitives
  * @see {@link rtvref.validation.isPrimitive}
  */
 
@@ -39,7 +39,7 @@ import Enumeration from './Enumeration';
  *  the qualifier used is `EXPECTED`; and it could be `undefined` if the qualifier
  *  used is `OPTIONAL`.
  *
- * @typedef {*} rtvref.types.rules
+ * @typedef {void} rtvref.types.qualifier_rules
  */
 
 /**
@@ -85,7 +85,7 @@ import Enumeration from './Enumeration';
  *  of at least 5 characters in length.
  *
  * Since {@link rtvref.qualifiers qualifiers} may affect how a value is validated
- *  against a type, {@link rtvref.types.rules qualifier rules} always take
+ *  against a type, {@link rtvref.types.qualifier_rules qualifier rules} always take
  *  __precedence__ over any argument specified. For example, `[STRING, {min: 0}]`
  *  would fail to validate an empty string because the _implied_ qualifier
  *  is `REQUIRED`, and per {@link rtvref.types.STRING STRING} qualifier rules,
@@ -386,7 +386,7 @@ import Enumeration from './Enumeration';
  *  over network requests, perhaps embedded in JSON payloads, similar to
  *  {@link https://json-ld.org/ JSON-LD} schemas.
  *
- * <h4>Example: Object</h4>
+ * <h4>Typeset Example: Object</h4>
  *
  * <pre><code>const contactShape = {
  *   name: rtv.t.STRING, // required, non-empty, string
@@ -429,20 +429,20 @@ import Enumeration from './Enumeration';
  * }, walletShape); // OK
  * </code></pre>
  *
- * <h4>Example: String</h4>
+ * <h4>Typeset Example: String</h4>
  *
  * <pre><code>rtv.verify('foo', rtv.t.STRING); // OK
  * rtv.verify('foo', rtv.t.FINITE); // ERROR
  * </code></pre>
  *
- * <h4>Example: Array</h4>
+ * <h4>Typeset Example: Array</h4>
  *
  * <pre><code>const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
  * rtv.verify('foo', typeset); // OK
  * rtv.verify(1, typeset); // OK
  * </code></pre>
  *
- * <h4>Example: Function</h4>
+ * <h4>Typeset Example: Function</h4>
  *
  * <pre><code>const validator = (v) => {
  *   if (v % 10) {
@@ -454,7 +454,7 @@ import Enumeration from './Enumeration';
  * rtv.verify(120, [rtv.t.INT, validator]); // OK
  * </code></pre>
  *
- * <h4>Example: Alternate Qualifier</h4>
+ * <h4>Typeset Example: Alternate Qualifier</h4>
  *
  * <pre><code>const person = {
  *   name: rtv.t.STRING, // required, non-empty
@@ -544,7 +544,7 @@ import Enumeration from './Enumeration';
  *  {@link rtvref.RtvError#failure failure} property, as well as part of its
  *  `message`. Therefore, it's recommended to throw an error with a message that
  *  will help the developer determine why the custom validation failed.
- * @see {@link rtvref.validation.isValidator}
+ * @see {@link rtvref.validation.isCustomValidator}
  */
 
 // Creates a definition object.
@@ -713,7 +713,7 @@ const defs = {
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
-   * @name rtvref.types.INT
+   * @name rtvref.types.SAFE_INT
    * @const {string}
    * @see {@link rtvref.qualifiers}
    * @see {@link rtvref.types.NUMBER}
@@ -809,7 +809,7 @@ const defs = {
    *  They represent a set of types that will be used to validate each element
    *  of an array using a short-circuit OR conjunction, looking for the first type that matches.
    *
-   * <h4>Example: Simple array</h4>
+   * <h4>Array Example: Simple array</h4>
    *
    * The `value` property must be an array (possibly empty) of any type of value.
    *
@@ -824,7 +824,7 @@ const defs = {
    *  to indicate what could be the equivalent: `[[]]`. The inner Array typeset
    *  would be deemed _invalid_.
    *
-   * <h4>Example: Shorthand notation</h4>
+   * <h4>Array Example: Shorthand notation</h4>
    *
    * The `value` property must be an array (possibly empty) of finite numbers of
    *  any value.
@@ -834,7 +834,7 @@ const defs = {
    * }
    * </code></pre>
    *
-   * <h4>Example: Shorthand, mixed types</h4>
+   * <h4>Array Example: Shorthand, mixed types</h4>
    *
    * The `value` property must be either a boolean; or an array (possibly empty) of
    *  finite numbers of any value, or non-empty strings, or a mix of both.
@@ -844,7 +844,7 @@ const defs = {
    * }
    * </code></pre>
    *
-   * <h4>Example: Fully-qualified notation, no typeset</h4>
+   * <h4>Array Example: Fully-qualified notation, no typeset</h4>
    *
    * The `value` property must be a non-empty array of any type of value.
    *
@@ -853,7 +853,7 @@ const defs = {
    * }
    * </code></pre>
    *
-   * <h4>Example: Fully-qualified notation</h4>
+   * <h4>Array Example: Fully-qualified notation</h4>
    *
    * The `value` property must be an array (possibly empty) of finite numbers of
    *  any value (nested typeset is not fully-qualified).
@@ -863,7 +863,7 @@ const defs = {
    * }
    * </code></pre>
    *
-   * <h4>Example: Fully-qualified, mixed types</h4>
+   * <h4>Array Example: Fully-qualified, mixed types</h4>
    *
    * The `value` property must be either a boolean; or an array (possibly empty) of
    *  finite numbers of any value, or non-empty strings, or a mix of both
@@ -1210,9 +1210,13 @@ const defs = {
 export const DEFAULT_OBJECT_TYPE = defs.OBJECT.value;
 
 /**
- * Enumeration (`string -> string`) of __object__ {@link rtvref.types types}. These
- *  are all the types that describe values which are essentially maps of various
- *  keys to values.
+ * Enumeration (`string -> string`) of __object__ types:
+ *
+ * - {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
+ * - {@link rtvref.types.OBJECT OBJECT}
+ * - {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
+ * - {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
+ *
  * @name rtvref.types.objTypes
  * @type {rtvref.Enumeration}
  */
@@ -1227,8 +1231,24 @@ export const objTypes = new Enumeration(function() {
 }(), 'objTypes');
 
 /**
- * Enumeration (`string -> string`) of {@link rtvref.types types} that accept
- *  arguments.
+ * Enumeration (`string -> string`) of types that accept arguments:
+ *
+ * - {@link rtvref.types.STRING STRING}
+ * - {@link rtvref.types.SYMBOL SYMBOL}
+ * - {@link rtvref.types.NUMBER NUMBER}
+ * - {@link rtvref.types.FINITE FINITE}
+ * - {@link rtvref.types.INT INT}
+ * - {@link rtvref.types.SAFE_INT SAFE_INT}
+ * - {@link rtvref.types.FLOAT FLOAT}
+ * - {@link rtvref.types.ARRAY ARRAY}
+ * - {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
+ * - {@link rtvref.types.OBJECT OBJECT}
+ * - {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
+ * - {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
+ * - {@link rtvref.types.HASH_MAP HASH_MAP}
+ * - {@link rtvref.types.MAP MAP}
+ * - {@link rtvref.types.SET SET}
+ *
  * @name rtvref.types.argTypes
  * @type {rtvref.Enumeration}
  */
@@ -1243,7 +1263,35 @@ export const argTypes = new Enumeration(function() {
 }(), 'argTypes');
 
 /**
- * Enumeration (`string -> string`) of all {@link rtvref.types types}.
+ * Enumeration (`string -> string`) of all types:
+ *
+ * - {@link rtvref.types.ANY ANY}
+ * - {@link rtvref.types.NULL NULL}
+ * - {@link rtvref.types.STRING STRING}
+ * - {@link rtvref.types.BOOLEAN BOOLEAN}
+ * - {@link rtvref.types.SYMBOL SYMBOL}
+ * - {@link rtvref.types.NUMBER NUMBER}
+ * - {@link rtvref.types.FINITE FINITE}
+ * - {@link rtvref.types.INT INT}
+ * - {@link rtvref.types.SAFE_INT SAFE_INT}
+ * - {@link rtvref.types.FLOAT FLOAT}
+ * - {@link rtvref.types.FUNCTION FUNCTION}
+ * - {@link rtvref.types.REGEXP REGEXP}
+ * - {@link rtvref.types.DATE DATE}
+ * - {@link rtvref.types.ERROR ERROR}
+ * - {@link rtvref.types.PROMISE PROMISE}
+ * - {@link rtvref.types.ARRAY ARRAY}
+ * - {@link rtvref.types.ANY_OBJECT ANY_OBJECT}
+ * - {@link rtvref.types.OBJECT OBJECT}
+ * - {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}
+ * - {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
+ * - {@link rtvref.types.HASH_MAP HASH_MAP}
+ * - {@link rtvref.types.MAP MAP}
+ * - {@link rtvref.types.WEAK_MAP WEAK_MAP}
+ * - {@link rtvref.types.SET SET}
+ * - {@link rtvref.types.WEAK_SET WEAK_SET}
+ * - {@link rtvref.types.JSON JSON}
+ *
  * @name rtvref.types.types
  * @type {rtvref.Enumeration}
  */

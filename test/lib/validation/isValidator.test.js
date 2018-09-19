@@ -2,9 +2,9 @@ import {expect} from 'chai';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
-import * as val from '../../../src/lib/validation/isValidator';
+import * as val from '../../../src/lib/validation/isCustomValidator';
 
-describe('module: lib/validation/isValidator', function() {
+describe('module: lib/validation/isCustomValidator', function() {
   it('#type', function() {
     expect(val.type).to.equal(undefined);
   });
@@ -17,7 +17,7 @@ describe('module: lib/validation/isValidator', function() {
     });
 
     it('should validate custom validators', function() {
-      expect(vtu.testValues('isValidator', val.default,
+      expect(vtu.testValues('isCustomValidator', val.default,
           validValues[types.FUNCTION]).failures).to.eql([]);
       expect(vtu.testOtherValues(types.FUNCTION, val.default)).to.eql([]);
     });

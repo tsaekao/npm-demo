@@ -6,7 +6,7 @@ import isArray from './isArray';
 import isShape from './isShape';
 import isTypeArgs from './isTypeArgs';
 import isString from './isString';
-import isValidator from './isValidator';
+import isCustomValidator from './isCustomValidator';
 
 import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from '../types';
 import qualifiers from '../qualifiers';
@@ -63,6 +63,11 @@ const deepVerifyArray = function(typeset, options, failurePrefix, idx) {
 };
 
 /**
+ * Validation Module: isTypeset
+ * @typedef {Module} rtvref.validation.isTypeset
+ */
+
+/**
  * Type: `undefined`, {@link rtvref.types.typeset typeset} pseudo-type.
  * @const {string} rtvref.validation.isTypeset.type
  */
@@ -89,7 +94,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
   // FIRST: make sure it's an acceptable type for a typeset: shape, string
   //  (just a plain type name), function (validator), or array (non-empty)
-  let valid = !!(v && (isShape(v) || (isString(v) && types.check(v)) || isValidator(v) ||
+  let valid = !!(v && (isShape(v) || (isString(v) && types.check(v)) || isCustomValidator(v) ||
       (isArray(v) && v.length > 0)));
 
   if (!valid) {
@@ -155,7 +160,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             //  have to ensure that args were given when we change the type)
             argType = argTypes.check(rule);
           }
-        } else if (isValidator(rule)) {
+        } else if (isCustomValidator(rule)) {
           // must be a validator, but there can't be more than 1, it must be
           //  in the last position (which enforces the 1 count), always after the
           //  qualifier, and since the typeset must be FQ'd, we must have an
@@ -256,7 +261,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           valid = false;
           options.failure = `${failurePrefix}: Unknown/invalid qualifier/type=${print(rule)} at index=${idx}`;
         }
-      } else if (isValidator(rule)) {
+      } else if (isCustomValidator(rule)) {
         // must be a validator, but there can't be more than 1, and it must be
         //  in the last position (which enforces the 1 count), and always after
         //  the qualifier (if any)

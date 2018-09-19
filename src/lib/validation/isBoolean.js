@@ -3,6 +3,11 @@
 import types from '../types';
 
 /**
+ * Validation Module: isBoolean
+ * @typedef {Module} rtvref.validation.isBoolean
+ */
+
+/**
  * Type: {@link rtvref.types.BOOLEAN BOOLEAN}
  * @const {string} rtvref.validation.isBoolean.type
  */

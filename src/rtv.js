@@ -36,40 +36,70 @@ import * as valSymbol from './lib/validator/valSymbol';
 import * as valWeakMap from './lib/validator/valWeakMap';
 import * as valWeakSet from './lib/validator/valWeakSet';
 
+// TODO[future]: Consider making 'rtv' a function object rather than a plain object.
+//  Invoking it as a function would call rtv.verify(), so rtv.verify(...) could be
+//  shortened to rtv(...), and `rtv.e && rtv.verify(...)` would be shortened to just
+//  `rtv.e && rtv(...)`. This could easily be done in the future, but is not easily
+//  undone, so best to see how people use it first, and if `rtv.verify()` really
+//  is too much typing or not.
 /**
- * <h1>RTV.js Reference</h1>
+ * <h3>RTV.js Public Interface</h3>
  *
- * Members herein are _indirectly_ exposed through the {@link rtv} object.
- * @namespace rtvref
- */
-
-/**
- * <h1>RTV.js</h1>
+ * Provides the externally-facing API. It wraps the
+ *  {@link rtvref.impl implementation}, adding a bit of syntactic sugar, and
+ *  adds the {@link rtv.config configuration} facilities.
  *
- * Runtime Verification Library for browsers and Node.js.
  * @namespace rtv
  */
 const rtv = {
   /**
-   * Enumeration of {@link rtvref.types types}.
+   * Enumeration of {@link rtvref.types.types types}.
+   * @readonly
    * @name rtv.t
-   * @type {rtvref.Enumeration.<String,String>}
+   * @type {rtvref.Enumeration}
    */
-  t: types,
+  get t() {
+    return types;
+  },
 
   /**
-   * Enumeration of {@link rtvref.qualifiers qualifiers}.
+   * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
+   * @readonly
    * @name rtv.q
-   * @type {rtvref.Enumeration.<String,String>}
+   * @type {rtvref.Enumeration}
    */
-  q: qualifiers,
+  get q() {
+    return qualifiers;
+  },
 
   /**
    * Determines if a value is a typeset.
    * @function rtv.isTypeset
-   * @see {@link rtvref.validation.isTypeset.default}
+   * @see {@link rtvref.validation.isTypeset}
    */
-  isTypeset,
+  get isTypeset() {
+    return isTypeset;
+  },
+
+  /**
+   * Shortcut proxy for reading {@link rtv.config.enabled}.
+   * @readonly
+   * @name rtv.e
+   * @type {boolean}
+   */
+  get e() {
+    return this.config.enabled;
+  },
+
+  /**
+   * Library version.
+   * @readonly
+   * @name rtv.version
+   * @type {string}
+   */
+  get version() {
+    return VERSION;
+  },
 
   /**
    * Checks a value against a typeset for compliance.
@@ -107,24 +137,6 @@ const rtv = {
   },
 
   /**
-   * Shortcut proxy to {@link rtv.check}.
-   * @function rtv.c
-   * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
-   *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.types.shape_descriptor shape descriptor}.
-   * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
-   *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
-   *  {@link rtv.verify verify()}, an exception is not thrown__ if the
-   *  `value` is non-compliant.
-   * @throws {Error} If `typeset` is not a valid typeset.
-   * @see {@link rtv.check}
-   */
-  c(value, typeset) {
-    return this.check(value, typeset);
-  },
-
-  /**
    * __Requires__ a value to be compliant to a shape.
    *
    * NOTE: This method does nothing if RTV.js is currently
@@ -158,22 +170,7 @@ const rtv = {
   },
 
   /**
-   * Shortcut proxy to {@link rtv.verify}.
-   * @param {*} value Value to check.
-   * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
-   *  the `value`. A shape is a kind of typeset. Normally, this is a
-   *  {@link rtvref.types.shape_descriptor shape descriptor}.
-   * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
-   *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
-   * @throws {RtvError} If the `value` is not compliant to the `shape`.
-   * @see {@link rtv.verify}
-   */
-  v(value, typeset) {
-    return this.verify(value, typeset);
-  },
-
-  /**
-   * RTV Library Configuration
+   * <h3>RTV.js Configuration</h3>
    * @namespace rtv.config
    */
   config: Object.defineProperties({}, {
@@ -181,23 +178,53 @@ const rtv = {
      * Globally enables or disables {@link rtv.verify} and {@link rtv.check}.
      *
      * Use this, or the shortcut {@link rtv.e}, to enable code optimization
-     *  when building source with a bundler that supports _tree shaking_ like
+     *  when building source with a bundler that supports _tree shaking_, like
      *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
      *
-     * <h4>Example</h4>
+     * The following plugins can redefine the statement `rtv.e` or `rtv.config.enabled`
+     *  as `false` prior to code optimizations that remove unreachable code:
+     *
+     * - Rollup: {@link https://github.com/rollup/rollup-plugin-replace rollup-plugin-replace}
+     * - Webpack: {@link https://webpack.js.org/plugins/define-plugin/ DefinePlugin}
+     *
+     * <h4>Enabled Example: Rollup</h4>
      *
      * By conditionally calling {@link rtv.verify} based on the state of
      *  {@link rtv.config.enabled}, a bundler can be configured to completely
      *  remove the code from a production build.
      *
-     * // TODO: Add Rollup and Webpack examples.
+     * Given this module code snippet:
      *
-     * <pre><code>if (rtv.config.enabled) {
+     * <pre><code>...
+     *
+     * if (rtv.config.enabled) {
      *  rtv.verify(jsonResult, expectedShape);
      * }
      *
-     * rtv.e && rtv.v(jsonResult, expectedShape); // even shorter
+     * rtv.e && rtv.verify(jsonResult, expectedShape); // shorter
+     *
+     * ...
      * </code></pre>
+     *
+     * And using this `rollup.config.js` snippet:
+     *
+     * <pre><code>const replacePlugin = require('rollup-plugin-replace');
+     *
+     * module.exports = {
+     *   ...
+     *   plugins: [
+     *     // invoke this plugin _before_ any other plugins
+     *     replacePlugin({
+     *       'rtv.e': 'false',
+     *       'rtv.config.enabled': 'false'
+     *     }),
+     *     ...
+     *   ]
+     * };
+     * </code></pre>
+     *
+     * The code in the module snippet above would be completely removed from the
+     *  build's output, thereby removing any rtv.js overhead from production.
      *
      * @name rtv.config.enabled
      * @type {boolean}
@@ -217,31 +244,8 @@ const rtv = {
         }
       };
     })()
-  }),
-
-  /**
-   * Shortcut proxy for reading {@link rtv.config.enabled}.
-   * @readonly
-   * @name rtv.e
-   * @type {boolean}
-   */
-  get e() {
-    return this.config.enabled;
-  }
+  })
 };
-
-/**
- * [Internal] Library version.
- * @private
- * @name rtv._version
- * @type {string}
- */
-Object.defineProperty(rtv, '_version', {
-  enumerable: false, // internal
-  configurable: true,
-  writable: true,
-  value: VERSION
-});
 
 export default rtv;
 

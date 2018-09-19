@@ -3,6 +3,11 @@
 import isObject from './isObject';
 
 /**
+ * Validation Module: isTypeArgs
+ * @typedef {Module} rtvref.validation.isTypeArgs
+ */
+
+/**
  * Type: `undefined`, {@link rtvref.types.type_arguments type arguments} pseudo-type.
  * @const {string} rtvref.validation.isTypeArgs.type
  */

@@ -5,6 +5,11 @@ import {default as _isFunction} from 'lodash/isFunction';
 import types from '../types';
 
 /**
+ * Validation Module: isFunction
+ * @typedef {Module} rtvref.validation.isFunction
+ */
+
+/**
  * Type: {@link rtvref.types.FUNCTION FUNCTION}
  * @const {string} rtvref.validation.isFunction.type
  */

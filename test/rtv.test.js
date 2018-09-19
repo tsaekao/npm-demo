@@ -14,6 +14,7 @@ import pkg from '../package.json';
 describe('module: rtv', function() {
   describe('#t', function() {
     it('should provide all types', function() {
+      expect('t' in rtv).to.equal(true);
       expect(rtv.t).to.equal(types);
       expect(rtv.t instanceof Enumeration).to.equal(true);
     });
@@ -21,6 +22,7 @@ describe('module: rtv', function() {
 
   describe('#q', function() {
     it('should provide all qualifiers', function() {
+      expect('q' in rtv).to.equal(true);
       expect(rtv.q).to.equal(qualifiers);
       expect(rtv.q instanceof Enumeration).to.equal(true);
     });
@@ -28,6 +30,7 @@ describe('module: rtv', function() {
 
   describe('#isTypeset()', function() {
     it('should verify a value is a typeset', function() {
+      expect('isTypeset' in rtv).to.equal(true);
       expect(rtv.isTypeset({})).to.be.true;
       expect(rtv.isTypeset([])).to.be.false;
     });
@@ -56,54 +59,19 @@ describe('module: rtv', function() {
     });
   });
 
-  describe('#_version', function() {
-    it('should provide version as internal property', function() {
-      expect(rtv.hasOwnProperty('_version')).to.equal(true);
-      expect(Object.keys(rtv).indexOf('_version')).to.equal(-1); // not enumerable
-      expect(Object.getOwnPropertyDescriptor(rtv, '_version')).to.eql({
-        value: pkg.version,
-        enumerable: false,
-        configurable: true,
-        writable: true
-      });
+  describe('#version', function() {
+    it('should provide version property', function() {
+      expect('version' in rtv).to.equal(true);
+      expect(rtv.version).to.equal(pkg.version);
     });
   });
 
-  describe('#v() proxy', function() {
-    let spy;
-
-    beforeEach(function() {
-      spy = sinon.spy(rtv, 'verify');
-    });
-
-    afterEach(function() {
-      spy.restore();
-    });
-
-    it('should have a shortcut proxy rtv.v()', function() {
-      expect('v' in rtv).to.equal(true);
-      expect(_.isFunction(rtv.v)).to.equal(true);
-      rtv.v('foo', rtv.t.STRING);
-      expect(spy.called).to.equal(true);
-    });
-  });
-
-  describe('#c() proxy', function() {
-    let spy;
-
-    beforeEach(function() {
-      spy = sinon.spy(rtv, 'check');
-    });
-
-    afterEach(function() {
-      spy.restore();
-    });
-
-    it('should have a shortcut proxy rtv.c()', function() {
-      expect('c' in rtv).to.equal(true);
-      expect(_.isFunction(rtv.c)).to.equal(true);
-      rtv.c('foo', rtv.t.STRING);
-      expect(spy.called).to.equal(true);
+  describe('#e proxy', function() {
+    it('should have a shortcut proxy rtv.e -> rtv.config.enabled', function() {
+      expect('e' in rtv).to.equal(true);
+      expect(rtv.e).to.equal(rtv.config.enabled);
+      rtv.config.enabled = false;
+      expect(rtv.e).to.equal(rtv.config.enabled);
     });
   });
 
@@ -147,15 +115,6 @@ describe('module: rtv', function() {
         implCheckSpy.resetHistory(); // call above would have called spy
         expect(rtv.verify('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
         expect(implCheckSpy.called).to.equal(false);
-      });
-    });
-
-    describe('#e proxy', function() {
-      it('should have a shortcut proxy rtv.e', function() {
-        expect('e' in rtv).to.equal(true);
-        expect(rtv.e).to.equal(rtv.config.enabled);
-        rtv.config.enabled = false;
-        expect(rtv.e).to.equal(rtv.config.enabled);
       });
     });
   });

@@ -3,6 +3,11 @@
 import types from '../types';
 
 /**
+ * Validation Module: isAny
+ * @typedef {Module} rtvref.validation.isAny
+ */
+
+/**
  * Type: {@link rtvref.types.ANY ANY}
  * @const {string} rtvref.validation.isAny.type
  */
