@@ -32,15 +32,13 @@ Shapes must be:
 # TODO
 
 - [ ] Implement the library...
-    - [ ] Add a ONE_OF type to check the value is in an enumeration (array of values) -- or make this part of STRING or NUMBER args?
     - [ ] Debug the generated docs (including private docs), checking for broken links...
-- [ ] Unit tests must be run both in the browser and in Node.js
+- [ ] Unit tests must be run both in the browser and in Node.js -- in the browser via Gitlab CI
 - [ ] Add Gitlab CI config, or use TravisCI?
 - [ ] Publish to npm
     - [ ] Add `.npmignore`
 - [ ] Make sure 'Goals' section is complete and accurate, add some links
 - [ ] Make sure `CONTRIBUTING.md` is filled-out
-- [ ] Collect `// TODO[future]` comments as new items in this list?
 
 # Future
 

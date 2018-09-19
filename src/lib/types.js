@@ -163,6 +163,12 @@ import Enumeration from './Enumeration';
  * @see {@link rtvref.qualifiers}
  */
 
+// TODO[future]: Consider adding a `strict` or `restrict` flag in the args to
+//  fail validation if any own-properties are found which are NOT in the shape
+//  if enough users ask for it. Not adding this immediately because that's not
+//  the true spirit of a shape, which is an interface. The consumer of the object
+//  matched to a shape shouldn't care what _other_ properties are on the object,
+//  just that the properties described in the shape are as expected.
 /**
  * <h3>Shape Object Arguments</h3>
  *
