@@ -1,15 +1,20 @@
 {
   "name": "rtvjs",
   "version": "0.0.1",
-  "description": "Runtime Type Verification Isomorphic JavaScript Library",
+  "description": "Runtime Verification Library for browsers and Node.js.",
   "engines": {
     "node": ">=10.0.0",
     "npm": ">=6.0.0"
   },
-  "main": "dist/rtv.umd.js",
-  "module": "dist/rtv.esm.js",
-  "jsnext:main": "dist/rtv.esm.js",
-  "pre-commit": ["precommit:msg", "lint", "docs", "precommit:docs"],
+  "main": "dist/rtv.umd.min.js",
+  "module": "dist/rtv.esm.min.js",
+  "jsnext:main": "dist/rtv.esm.min.js",
+  "pre-commit": [
+    "precommit:msg",
+    "lint",
+    "docs",
+    "precommit:docs"
+  ],
   "scripts": {
     "precommit:msg": "echo 'Running pre-commit checks...'",
     "precommit:docs": "git add API.md",
