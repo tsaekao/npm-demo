@@ -184,9 +184,9 @@ describe('module: lib/validator/valMap', function() {
 
     it('checks for keys and values with specified typeset', function() {
       const map = new Map([
-        [1, new Map([['1', true]])],
-        [2, new Map([['2', false]])],
-        [3, new Map([['3', true]])]
+        [1, new Map([['a', true]])],
+        [2, new Map([['b', false]])],
+        [3, new Map([['c', true]])]
       ]);
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -207,8 +207,8 @@ describe('module: lib/validator/valMap', function() {
         values: valuesTypeset
       };
       vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['valueKey=1'],
-        cause: [qualifiers.REQUIRED, types.MAP, valuesTypeset[1]]
+        path: ['valueKey=1', 'key="a"'],
+        cause: [qualifiers.REQUIRED, types.STRING, {min: 2}]
       });
     });
   });

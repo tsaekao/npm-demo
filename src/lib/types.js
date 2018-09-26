@@ -206,8 +206,8 @@ import Enumeration from './Enumeration';
 /**
  * <h3>Array Arguments</h3>
  * @typedef {Object} rtvref.types.ARRAY_args
- * @property {rtvref.types.typeset} [typeset] The typeset which every value in
- *  the array must match. Defaults to {@link rtvref.types.ANY} which means any
+ * @property {rtvref.types.typeset} [ts] The typeset which every value in the
+ *  array must match. Defaults to {@link rtvref.types.ANY} which means any
  *  value will match.
  * @property {number} [length] Exact length. Ignored if not a
  *  {@link rtvref.types.FINITE FINITE} number >= 0.
@@ -519,31 +519,35 @@ import Enumeration from './Enumeration';
  *
  * @typedef {function} rtvref.types.custom_validator
  * @param {*} value The value being verified.
- * @param {Array} match A __first-level__,
- *  {@link rtvref.types.fully_qualified_typeset fully-qualified} typeset describing
- *  the type that matched. This means the first level of this subset of `typeset`
- *  (the 3rd parameter) is fully-qualified, but any nested
- *  {@link rtvref.types.shape_descriptor shape descriptors} or arrays will not be (they
- *  will remain references to the same shapes/arrays in `typeset`).
+ * @param {Array} match A {@link rtvref.types.fully_qualified_typeset fully-qualified}
+ *  typeset describing the sub-type with the `typeset` parameter that matched, resulting
+ *  in the custom validator being called (if no sub-types matched, it would not get called).
  *
- * For example, if the given typeset was `[PLAIN_OBJECT, {$: {note: STRING}}]`, this
- *  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,
- *  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}]`.
+ *  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,
+ *   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,
+ *   and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.
  *
- * If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter
- *  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the
- *  original `[STRING, FINITE]`.
+ *  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter
+ *   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the original
+ *  `[STRING, FINITE, validator]`.
+ *
+ *  NOTE: If the verification typeset was `validator` (just the validator itself), the `match`
+ *   would be `[REQUIRED, ANY]` (because of the implied {@link rtvref.types.ANY ANY} type) and
+ *   the `typeset` would be `validator`.
  *
  * @param {rtvref.types.typeset} typeset Reference to the typeset used for
- *  verification. Note that the typeset may contain nested typeset(s), and may
+ *  verification. Note the typeset may contain nested typeset(s), and may
  *  be part of a larger parent typeset (though there would be no reference to
- *  the parent typeset, if any). This typeset is as it was specified in the
- *  parent shape, and therefore it may not be fully-qualified.
+ *  the parent typeset, if any).
  * @throws {Error} If the validation fails. This error will fail the overall
- *  validation check, and will be included in the resulting `RtvError` as its
+ *  verification, and will be included in the resulting `RtvError` as its
  *  {@link rtvref.RtvError#failure failure} property, as well as part of its
- *  `message`. Therefore, it's recommended to throw an error with a message that
- *  will help the developer determine why the custom validation failed.
+ *  `message`.
+ *
+ *   It's recommended to throw an error with a message that will help the developer
+ *    determine why the custom validation failed, while avoiding exposing any sensitive
+ *    information that may be found in the `value` (such as passwords).
+ *
  * @see {@link rtvref.validation.isCustomValidator}
  */
 
@@ -859,7 +863,7 @@ const defs = {
    *  any value (nested typeset is not fully-qualified).
    *
    * <pre><code>{
-   *   value: [REQUIRED, ARRAY, {typeset: [FINITE]}]
+   *   value: [REQUIRED, ARRAY, {ts: [FINITE]}]
    * }
    * </code></pre>
    *
@@ -870,7 +874,7 @@ const defs = {
    *  (nested typeset is not fully-qualified).
    *
    * <pre><code>{
-   *   value: [REQUIRED, BOOLEAN, ARRAY, {typeset: [FINITE, STRING]}]
+   *   value: [REQUIRED, BOOLEAN, ARRAY, {ts: [FINITE, STRING]}]
    * }
    * </code></pre>
    *

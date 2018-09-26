@@ -64,7 +64,7 @@ export default function valHashMap(v, q = REQUIRED, args) {
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
   if (valid && args) { // then check args
-    const keys = Object.keys(v);
+    const keys = Object.keys(v); // own-enumerable properties only
 
     // start with the easiest/most efficient test: length
     if (valid && isFinite(args.length) && args.length >= 0) {
@@ -88,7 +88,7 @@ export default function valHashMap(v, q = REQUIRED, args) {
           const value = v[key];
 
           if (reKeys) {
-            valid = reKeys.test(key); // check key against regex since it's a string
+            valid = reKeys.test(key);
             if (!valid) {
               result = new RtvError(v, impl.toTypeset(type, q, args),
                   [`key=${print(key)}`], impl.toTypeset(type, q, args, true));

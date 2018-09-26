@@ -5,6 +5,8 @@ import {default as _forEach} from 'lodash/forEach';
 import {type, default as isArray} from '../validation/isArray';
 
 import isFinite from '../validation/isFinite';
+import isTypeset from '../validation/isTypeset';
+
 import {default as qualifiers, nilPermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
@@ -76,16 +78,17 @@ export default function valArray(v, q = REQUIRED, args) {
       }
     }
 
-    if (valid && args.typeset) {
+    if (valid && isTypeset(args.ts)) {
       // check each element in `value` against the typeset
       _forEach(v, function(elem, idx) {
-        result = impl.check(elem, args.typeset);
+        result = impl.check(elem, args.ts);
         valid = result.valid;
 
         if (!result.valid) {
-          // create a new error from the original, but with the index prepended to the path
+          // create a new error from the original, but with the index (as a string)
+          //  prepended to the path
           result = new RtvError(v, impl.toTypeset(type, q, args),
-              [idx].concat(result.path), result.cause);
+              [`${idx}`].concat(result.path), result.cause);
         }
 
         return valid; // break on first invalid element

@@ -94,7 +94,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
   // FIRST: make sure it's an acceptable type for a typeset: shape, string
   //  (just a plain type name), function (validator), or array (non-empty)
-  let valid = !!(v && (isShape(v) || (isString(v) && types.check(v)) || isCustomValidator(v) ||
+  let valid = !!((v && isShape(v) || (isString(v) && types.check(v)) || isCustomValidator(v) ||
       (isArray(v) && v.length > 0)));
 
   if (!valid) {
@@ -187,12 +187,12 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
           // only go deep if the rule is shape object args with `$` specified (which
           //  means the current in-scope type must be an object type) or ARRAY args with
-          //  `typeset` specified
+          //  `ts` specified
           if (valid && deep && objTypes.check(curType) && rule.hasOwnProperty('$')) {
             valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
-          } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
-            // ARRAY type with args.typeset specified, and we're deep-validating
-            valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
+          } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('ts')) {
+            // ARRAY type with args.ts specified, and we're deep-validating
+            valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
           }
           // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
           //  the rule (object) needs no further validation
@@ -300,7 +300,8 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  that optionally have args, so we don't have to ensure that args
           //  were given when we change the type
           argType = undefined;
-          // since we had an in-scope arg type, the rule must be shape object args
+          // since we had an in-scope arg type, the rule could be shape object args
+          //  if the current in-scope type is an object type
           soArgs = rule;
         }
 
@@ -310,9 +311,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         //  `typeset` specified
         if (valid && deep && objTypes.check(curType) && soArgs.hasOwnProperty('$')) {
           valid = deepVerifyShape(curType, soArgs, options, failurePrefix, idx);
-        } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('typeset')) {
-          // ARRAY type with args.typeset specified, and we're deep-validating
-          valid = deepVerifyArray(rule.typeset, options, failurePrefix, idx);
+        } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('ts')) {
+          // ARRAY type with args.ts specified, and we're deep-validating
+          valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
         }
         // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
         //  the rule (object) needs no further validation

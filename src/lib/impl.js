@@ -215,8 +215,9 @@ const fullyQualify = function(typeset, qualifier) {
 
     // must be either a string, shape, or function with an implied qualifier
     if (isShape(typeset)) {
-      // must be a nested shape descriptor with default object type
-      return [qualifier, DEFAULT_OBJECT_TYPE, typeset];
+      // must be a nested shape descriptor with default object type: move shape
+      //  into args
+      return [qualifier, DEFAULT_OBJECT_TYPE, {$: typeset}];
     }
 
     // if a validator, it has an implied type of ANY
@@ -249,9 +250,9 @@ const fullyQualify = function(typeset, qualifier) {
       curType = rule;
       fqts.push(curType);
     } else if (i === 0 && isShape(rule)) {
-      // nested shape descriptor using default object type
+      // nested shape descriptor using default object type: move shape into args
       curType = DEFAULT_OBJECT_TYPE;
-      fqts.push(curType, rule);
+      fqts.push(curType, {$: rule});
     } else if (isTypeArgs(rule)) {
       // args for curType since typeset is an array and object is not in first position
       fqts.push(rule);
@@ -264,9 +265,9 @@ const fullyQualify = function(typeset, qualifier) {
 
       fqts.push(rule);
     } else {
-      // must be an array: add implied ARRAY type and move Array typeset into args
+      // must be an array: move Array typeset into args
       curType = types.ARRAY;
-      fqts.push(curType, {typeset: rule});
+      fqts.push(curType, {ts: rule});
     }
   });
 
@@ -446,11 +447,9 @@ const _getCheckOptions = function(current = {}, override = {}) {
  * Checks a value using a single type.
  * @function rtvref.impl.checkWithType
  * @param {*} value Value to check.
- * @param {rtvref.types.typeset} singleType Either a simple type name (one of
+ * @param {(string|Array|Object)} singleType Either a simple type name (one of
  *  {@link rtvref.types.types}), a {@link rtvref.types.shape_descriptor shape descriptor},
- *  or an Array typeset which represents a single type.
- *  A {@link rtvref.types.custom_validator custom validator} is not considered
- *  a valid single type.
+ *  or an Array {@link rtvref.types.typeset typeset} which represents a single type.
  *
  *  In the string/simple case, the
  *   {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier} is assumed.
@@ -463,6 +462,12 @@ const _getCheckOptions = function(current = {}, override = {}) {
  *   `[qualifier, type, args]`). Note that the type may be implied the shorthand
  *   notation is being used for an ARRAY, or if the
  *   {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type} is being implied.
+ *
+ *  NOTE: A {@link rtvref.types.custom_validator custom validator} is not considered
+ *   a valid single type. It's also considered a __separate type__ if it were passed-in
+ *   via an Array, e.g. `[STRING, validator]`, which would violate the fact that
+ *   `singleType` should be one type, and therefore cause an exception to be thrown.
+ *
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `singleType` is not a valid simple type or single type.
@@ -488,7 +493,7 @@ const checkWithType = function(value, singleType /*, options*/) {
     // simple type: no args
   } else if (isShape(singleType)) {
     type = DEFAULT_OBJECT_TYPE;
-    args = singleType;
+    args = {$: singleType}; // move shape into args.$
   } else if (isArray(singleType)) {
     const singleTypeCopy = fullyQualify(singleType); // make any implied types concrete
     const typeset = extractNextType(singleTypeCopy, false);
@@ -567,6 +572,7 @@ const checkWithArray = function(value, array /*, options*/) {
   options.isTypeset = true;
 
   let match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
+  let err; // @type {(RtvError|undefined)}
   const qualifier = options.qualifier || getQualifier(array);
 
   // consider each type in the typeset until we find one that matches the value
@@ -577,6 +583,7 @@ const checkWithArray = function(value, array /*, options*/) {
   //  assume that itself is valid because the isTypeset check was just shallow)
   const typesetCopy = array.concat(); // shallow clone so we can modify the array locally
   let subtype = extractNextType(typesetCopy, false); // exclude qualifier we already have
+  const isSingleType = typesetCopy.length === 0; // was there just one type in the Array typeset?
   while (subtype.length > 0) {
     // check for the validator, which will always come alone, and since the validator
     //  must be at the end of an Array typeset, it also signals the end of all subtypes
@@ -601,6 +608,10 @@ const checkWithArray = function(value, array /*, options*/) {
       if (result.valid) {
         match = fullyQualify(subtype, qualifier);
         break; // break on first match
+      } else if (isSingleType) {
+        // capture the error since the Array typeset is a single type; this way,
+        //  we can provide more helpful error reporting
+        err = result;
       }
     }
 
@@ -608,23 +619,31 @@ const checkWithArray = function(value, array /*, options*/) {
     subtype = extractNextType(typesetCopy);
   }
 
-  let err; // @type {(RtvError|undefined)}
-
   if (match) {
     // check for a validator at the end of the Array typeset and invoke it
     const lastType = array[array.length - 1];
     if (isCustomValidator(lastType)) {
       try {
-        lastType(value, match, array);
-      } catch (cvErr) {
+        lastType(value, match, array); // invoke it
+      } catch (failure) {
         // invalid in spite of the match since the validator said no
-        err = new RtvError(value, array, options.path, fullyQualify(array, qualifier), cvErr);
+        err = new RtvError(value, array, options.path, fullyQualify(array, qualifier), failure);
       }
     }
     // else, valid, since we have a match
   } else {
-    // no match
-    err = new RtvError(value, array, options.path, fullyQualify(array, qualifier));
+    // no match: if we already have an error, then the Array typeset should have
+    //  contained a single type, e.g. `[qualifier, type, args]`, so build a new
+    //  error from that one; otherwise, the Array typeset should have contained
+    //  multiple types, in which case we can't tailor an error to any one type
+    //  since the value failed against all of them
+    if (err) {
+      err = new RtvError(value, array, options.path.concat(err.path), err.cause);
+    } else {
+      // make a generic error for the value not matching any of the multiple types
+      //  in the Array typeset
+      err = new RtvError(value, array, options.path, fullyQualify(array, qualifier));
+    }
   }
 
   return err || (new RtvSuccess());
@@ -655,21 +674,26 @@ const check = function(value, typeset /*, options*/) {
 
       if (isCustomValidator(typeset)) {
         // custom validator: bare function implies the ANY type
-        const match = types.ANY;
-        const fqMatch = fullyQualify(match, options.qualifier);
+        const impliedType = types.ANY;
 
         // value must be ANY type, and custom validator must return true
-        const result = checkWithType(value, match, options);
+        const result = checkWithType(value, impliedType, options);
         if (!result.valid) {
           return result;
         }
 
+        // the fully-qualified match should NOT include the validator, only
+        //  the subtype within the implied typeset that matched
+        const match = fullyQualify(impliedType, options.qualifier);
+
         // call the custom validator
-        if (typeset(value, fqMatch, match)) {
-          return new RtvSuccess();
+        try {
+          typeset(value, match, typeset);
+        } catch (failure) {
+          return new RtvError(value, typeset, options.path, match, failure);
         }
 
-        return new RtvError(value, match, options.path, fqMatch);
+        return new RtvSuccess();
       }
 
       if (isShape(typeset)) {

@@ -40,7 +40,7 @@ describe('module: lib/validation/isTypeset', function() {
           [types.PLAIN_OBJECT, {$: {}}],
 
           // an array with args
-          [types.ARRAY, {min: 1, typeset: [types.FINITE]}],
+          [types.ARRAY, {min: 1, ts: [types.FINITE]}],
 
           // since we aren't going deep, we should ignore the fact that the shape
           //  of the class object has a property with an invalid typeset
@@ -96,7 +96,7 @@ describe('module: lib/validation/isTypeset', function() {
           [DEFAULT_QUALIFIER, 'invalid-type'], // invalid type
           [DEFAULT_QUALIFIER, true], // invalid value type in typeset
 
-          [[types.STRING], {typeset: types.FINITE}], // missing object type
+          [[types.STRING], {ts: types.FINITE}], // missing object type
 
           // two ARRAY types
           [types.ARRAY, []],
@@ -119,7 +119,7 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[0] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[0]];
         goodValues[1] = [DEFAULT_QUALIFIER, goodValues[1]];
         goodValues[2].unshift(DEFAULT_QUALIFIER);
-        goodValues[3] = [DEFAULT_QUALIFIER, types.ARRAY, {typeset: goodValues[3][0]}];
+        goodValues[3] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[3][0]}];
         goodValues[4] = [DEFAULT_QUALIFIER, types.ANY, goodValues[4]];
 
         // result: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {foo: types.STRING}]
@@ -134,10 +134,10 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[13] = [DEFAULT_QUALIFIER, goodValues[13]];
         goodValues[14].unshift(DEFAULT_QUALIFIER);
         goodValues[15].unshift(DEFAULT_QUALIFIER);
-        goodValues[16] = [DEFAULT_QUALIFIER, types.ARRAY, {typeset: goodValues[16][0]}];
-        goodValues[17] = [DEFAULT_QUALIFIER, types.ARRAY, {typeset: goodValues[17][0]}];
+        goodValues[16] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[16][0]}];
+        goodValues[17] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[17][0]}];
         goodValues[18] = [DEFAULT_QUALIFIER, goodValues[18][0], types.ARRAY,
-          {typeset: goodValues[18][1]}];
+          {ts: goodValues[18][1]}];
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {fullyQualified: true});
         expect(results.failures).to.eql([]);
@@ -235,7 +235,7 @@ describe('module: lib/validation/isTypeset', function() {
           [qualifiers.OPTIONAL, types.CLASS_OBJECT],
 
           [types.HASH_MAP, {count: 2}],
-          [types.ARRAY, {typeset: types.FINITE}]
+          [types.ARRAY, {ts: types.FINITE}]
         ];
 
         badValues = [
@@ -251,7 +251,7 @@ describe('module: lib/validation/isTypeset', function() {
 
           // 2 ARRAY types in one, and missing object type since object would
           //  be considered other args, not ARRAY args
-          [types.ARRAY, [types.STRING], {typeset: types.FINITE}],
+          [types.ARRAY, [types.STRING], {ts: types.FINITE}],
 
           // STRING type appears more than once in the nested (array) typeset
           [types.STRING, [types.STRING, types.STRING]],
@@ -270,7 +270,7 @@ describe('module: lib/validation/isTypeset', function() {
           [types.CLASS_OBJECT, {$: false}],
 
           // nested typeset has invalid value
-          [types.ARRAY, {typeset: false}]
+          [types.ARRAY, {ts: false}]
         ];
       });
 
@@ -291,7 +291,7 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[3] = [DEFAULT_QUALIFIER, types.ANY, goodValues[3]];
 
         goodValues[4][1].unshift(DEFAULT_QUALIFIER);
-        goodValues[4][1] = {typeset: goodValues[4][1]};
+        goodValues[4][1] = {ts: goodValues[4][1]};
         goodValues[4].splice(1, 0, types.ARRAY);
         goodValues[4].unshift(DEFAULT_QUALIFIER);
 
@@ -300,7 +300,7 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[5] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[5]];
 
         goodValues[6].foo[0].unshift(DEFAULT_QUALIFIER);
-        goodValues[6].foo[0] = {typeset: goodValues[6].foo[0]};
+        goodValues[6].foo[0] = {ts: goodValues[6].foo[0]};
         goodValues[6].foo.unshift(DEFAULT_QUALIFIER, types.ARRAY);
         goodValues[6] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[6]];
 
@@ -316,7 +316,7 @@ describe('module: lib/validation/isTypeset', function() {
         // goodValues[11] is already FQ
         goodValues[12].unshift(DEFAULT_QUALIFIER);
 
-        goodValues[13][1].typeset = [DEFAULT_QUALIFIER, goodValues[13][1].typeset];
+        goodValues[13][1].ts = [DEFAULT_QUALIFIER, goodValues[13][1].ts];
         goodValues[13].unshift(DEFAULT_QUALIFIER);
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues,
@@ -346,7 +346,7 @@ describe('module: lib/validation/isTypeset', function() {
               }
             }],
 
-            [DEFAULT_QUALIFIER, types.ARRAY, {typeset: [DEFAULT_QUALIFIER, 'invalid-type']}]
+            [DEFAULT_QUALIFIER, types.ARRAY, {ts: [DEFAULT_QUALIFIER, 'invalid-type']}]
         );
 
         results = vtu.testValues('isTypeset', isTypeset, badValues,

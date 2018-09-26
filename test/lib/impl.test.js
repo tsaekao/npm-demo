@@ -297,8 +297,8 @@ describe('module: lib/impl', function() {
     it('should FQ object typesets', function() {
       const shape = {};
       const fqts = impl.fullyQualify(shape);
-      expect(fqts).to.eql([DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, shape]);
-      expect(fqts[2]).to.equal(shape); // objects within are not cloned
+      expect(fqts).to.eql([DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {$: shape}]);
+      expect(fqts[2].$).to.equal(shape); // objects within are not cloned
     });
 
     it('should FQ function typesets', function() {
@@ -327,34 +327,34 @@ describe('module: lib/impl', function() {
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
       expect(fqts).to.eql([DEFAULT_QUALIFIER, types.ARRAY,
-        {typeset: [types.FLOAT]}]); // not deep
+        {ts: [types.FLOAT]}]); // not deep
 
       const shape = {};
       ts = [shape, [types.STRING]];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
-      expect(fqts).to.eql([DEFAULT_QUALIFIER, types.OBJECT, shape, types.ARRAY,
-        {typeset: [types.STRING]}]); // object is treated as shape, not array params
-      expect(fqts[2]).to.equal(shape); // same object, not cloned
+      expect(fqts).to.eql([DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {$: shape},
+        types.ARRAY, {ts: [types.STRING]}]); // object is treated as shape, not array params
+      expect(fqts[2].$).to.equal(shape); // same object, not cloned
 
       ts = [types.FINITE, [types.STRING]];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
       expect(fqts).to.eql([DEFAULT_QUALIFIER, types.FINITE, types.ARRAY,
-        {typeset: [types.STRING]}]);
+        {ts: [types.STRING]}]);
 
-      ts = [types.ARRAY, {typeset: types.STRING}];
+      ts = [types.ARRAY, {ts: types.STRING}];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
-      expect(fqts).to.eql([DEFAULT_QUALIFIER, types.ARRAY, {typeset: types.STRING}]);
+      expect(fqts).to.eql([DEFAULT_QUALIFIER, types.ARRAY, {ts: types.STRING}]);
 
-      const args = {min: 1, typeset: [types.STRING]};
+      const args = {min: 1, ts: [types.STRING]};
       ts = [shape, types.ARRAY, args];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
-      expect(fqts).to.eql([DEFAULT_QUALIFIER, types.OBJECT, shape, types.ARRAY,
-        args]);
-      expect(fqts[2]).to.equal(shape); // same object, not cloned
+      expect(fqts).to.eql([DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {$: shape},
+        types.ARRAY, args]);
+      expect(fqts[2].$).to.equal(shape); // same object, not cloned
       expect(fqts[4]).to.equal(args); // same object, not cloned
     });
 
@@ -378,7 +378,7 @@ describe('module: lib/impl', function() {
 
       const shape = {foo: 1};
       expect(impl.fullyQualify(shape, qualifiers.OPTIONAL))
-        .to.eql([qualifiers.OPTIONAL, DEFAULT_OBJECT_TYPE, shape]);
+        .to.eql([qualifiers.OPTIONAL, DEFAULT_OBJECT_TYPE, {$: shape}]);
 
       const validator = function() {};
       expect(impl.fullyQualify(validator, qualifiers.EXPECTED))
@@ -488,7 +488,7 @@ describe('module: lib/impl', function() {
       expect(typeset).to.eql([]);
       expect(nextType).to.eql([qualifiers.REQUIRED, arr]);
 
-      const args = {typeset: arr};
+      const args = {ts: arr};
       typeset = [types.ARRAY, args];
       nextType = impl.extractNextType(typeset);
 
@@ -861,14 +861,17 @@ describe('module: lib/impl', function() {
       expect(err.path).to.eql([]);
       expect(err.typeset).to.equal(typeset);
       expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
+      expect(err.failure).to.equal(undefined);
 
-      typeset = function() { return false; };
+      const cvError = new Error('badness');
+      typeset = function() { throw cvError; };
       err = impl.check(value, typeset);
       expect(err).to.be.an.instanceof(RtvError);
       expect(err.value).to.equal(value);
       expect(err.path).to.eql([]);
-      expect(err.typeset).to.equal(types.ANY); // validator alone means ANY
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.ANY]);
+      expect(err.typeset).to.equal(typeset);
+      expect(err.cause).to.eql([qualifiers.REQUIRED, types.ANY]); // validator alone means ANY
+      expect(err.failure).to.equal(cvError);
 
       value = {foo: 'bar'};
       typeset = {foo: types.FINITE};
@@ -878,6 +881,7 @@ describe('module: lib/impl', function() {
       expect(err.path).to.eql(['foo']);
       expect(err.typeset).to.equal(typeset);
       expect(err.cause).to.eql([qualifiers.REQUIRED, types.FINITE]);
+      expect(err.failure).to.equal(undefined);
 
       value = {foo: {bar: {baz: -1}}};
       typeset = {
@@ -893,6 +897,7 @@ describe('module: lib/impl', function() {
       expect(err.path).to.eql(['foo', 'bar', 'baz']);
       expect(err.typeset).to.equal(typeset);
       expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING, types.FINITE, {oneOf: 0}]);
+      expect(err.failure).to.equal(undefined);
 
       value = 1;
       typeset = [types.STRING];
@@ -902,6 +907,7 @@ describe('module: lib/impl', function() {
       expect(err.path).to.eql([]);
       expect(err.typeset).to.equal(typeset);
       expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
+      expect(err.failure).to.equal(undefined);
     });
 
     it('should check a string value as a string', function() {
@@ -910,6 +916,26 @@ describe('module: lib/impl', function() {
 
     it('should not check a string value as a boolean', function() {
       expect(impl.check('foo', types.BOOLEAN)).to.be.an.instanceof(RtvError);
+    });
+
+    it('should invoke a custom validator', function() {
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.stub().throws(cvError);
+      const result = impl.check('foo', validator);
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'foo',
+        [qualifiers.REQUIRED, types.ANY],
+        validator
+      ]);
+      expect(result).to.be.an.instanceof(RtvError);
+      expect(result.valid).to.be.false;
+      expect(result.value).to.equal('foo');
+      expect(result.path).to.eql([]);
+      expect(result.typeset).to.equal(validator);
+      expect(result.cause).to.eql([qualifiers.REQUIRED, types.ANY]);
+      expect(result.failure).to.equal(cvError);
     });
 
     it(`should not call the validator if the "${types.ANY}" validator fails`, function() {
@@ -939,7 +965,7 @@ describe('module: lib/impl', function() {
         expect(validator.getCall(0).args).to.eql([
           1, // value
           [qualifiers.OPTIONAL, types.ANY], // FQ match
-          types.ANY // match
+          validator // typeset
         ]);
       });
     });

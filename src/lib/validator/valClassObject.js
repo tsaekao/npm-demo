@@ -68,7 +68,7 @@ export default function valClassObject(v, q = REQUIRED, args) {
 
     if (valid) {
       // now validate the shape, if any
-      const shape = (args.shape && isShape(args.shape)) ? args.shape : undefined;
+      const shape = (args.$ && isShape(args.$)) ? args.$ : undefined;
       let err; // @type {(RtvError|undefined)}
 
       // only consider enumerable, own-properties of the shape

@@ -65,7 +65,7 @@ const RtvError = function(value, typeset, path, cause, failure) {
   }
 
   if (!isTypeset(cause, {fullyQualified: true})) {
-    throw new Error(`Invalid cause (expecting a fully-qualified typeset): ${print(cause)}`);
+    throw new Error(`Invalid cause (expecting fully-qualified typeset): ${print(cause)}`);
   }
 
   if (failure && !isError(failure)) {
@@ -81,10 +81,14 @@ const RtvError = function(value, typeset, path, cause, failure) {
   extendsFrom.call(this);
 
   this.name = 'RtvError';
-  this.message = `Verification failed: value=${print(value)}, path="${renderPath(path)}", cause=${print(cause)}`;
+
+  // NOTE: for security reasons, no part of the value should be included in the
+  //  message in case it contains sensitive information like secrets or passwords
+  this.message = `Verification failed: path="${renderPath(path)}", cause=${print(cause)}`;
   if (failure) {
     this.message += `, failure="${failure.message}"`;
   }
+  this.message += `, typeset=${print(typeset)}`;
 
   Object.defineProperties(this, {
     /**
@@ -101,7 +105,8 @@ const RtvError = function(value, typeset, path, cause, failure) {
     },
 
     /**
-     * Value that failed verification.
+     * Value that failed verification against the
+     *  {@link rtvref.RtvError#typeset typeset}.
      * @readonly
      * @name rtvref.RtvError#value
      * @type {*}
@@ -129,8 +134,19 @@ const RtvError = function(value, typeset, path, cause, failure) {
     },
 
     /**
-     * Path from `value` to the nested property that caused the failure. This
-     *  is a shallow clone of the original `path` specified.
+     * Path from {@link rtvref.RtvError#value value} to the nested property that
+     *  caused the failure.
+     *
+     * __SECURITY:__ Some collection types, such as {@link rtvref.types.MAP MAP} and
+     *  {@link rtvref.types.SET SET}, can have actual objects as keys or elements,
+     *  and these are used (in JSON-stringified form) as part of the error path.
+     *  If these objects happen to contain sensitive information, that information
+     *  may end-up in the path, and the path gets included in this error's
+     *  `message` property, which may get logged by your systems.
+     *
+     *  __It is YOUR responsibility to exercise necessary caution when validating
+     *   data structures containing sensitive data.__
+     *
      * @readonly
      * @name rtvref.RtvError#path
      * @type {Array.<string>}
@@ -139,14 +155,14 @@ const RtvError = function(value, typeset, path, cause, failure) {
       enumerable: true,
       configurable: true,
       get() {
-        return path.concat(); // shallow clone
+        return path;
       }
     },
 
     /**
-     * Fully qualified typeset that caused the failure. This will be a subset
-     *  of `typeset`, and possibly of a nested typeset within `typeset`
-     *  expressing only the direct cause of the failure.
+     * Fully qualified typeset that caused the failure. This will be a subset of
+     *  the {@link rtvref.RtvError#typeset typeset}, and possibly of a nested
+     *  typeset within it, expressing only the direct cause of the failure.
      *
      * If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
      *  and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
@@ -192,13 +208,19 @@ RtvError.prototype.constructor = RtvError;
  * @returns {string} String representation.
  */
 RtvError.prototype.toString = function() {
-  let str = `{rtvref.RtvError value=${print(this.value)}, path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
+  // NOTE: for security reasons, no part of the value should be included in the
+  //  serialization in case it contains sensitive information like secrets or
+  //  passwords
+
+  let str = `{rtvref.RtvError path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
 
   if (this.failure) {
     str += `, failure="${this.failure.message}"`;
   } else {
     str += ', failure=<none>';
   }
+
+  str += `, typeset=${print(this.typeset)}`;
 
   return str;
 };

@@ -104,21 +104,32 @@ describe('module: lib/validator/valPlainObject', function() {
       checkStub.restore();
     });
 
-    it('should ignore args if not a shape', function() {
-      val.default({foo: 3}, undefined, 3);
+    it('should ignore args.$ if not a shape', function() {
+      checkStub.callThrough();
+
+      vtu.expectValidatorSuccess(val, {foo: 3}, {});
+      expect(checkStub.called).to.be.false;
+
+      vtu.expectValidatorSuccess(val, {foo: 3}, {$: undefined});
+      expect(checkStub.called).to.be.false;
+
+      vtu.expectValidatorSuccess(val, {foo: 3}, {$: null});
+      expect(checkStub.called).to.be.false;
+
+      vtu.expectValidatorSuccess(val, {foo: 3}, {$: [3]});
       expect(checkStub.called).to.be.false;
     });
 
     it('should check value against shape', function() {
       checkStub.callThrough();
 
-      vtu.expectValidatorSuccess(val, {foo: 3}, undefined, {foo: types.FINITE});
+      vtu.expectValidatorSuccess(val, {foo: 3}, undefined, {$: {foo: types.FINITE}});
       expect(checkStub.called).to.be.true;
 
       checkStub.resetHistory();
       checkStub.callThrough();
 
-      vtu.expectValidatorError(val, {foo: 3}, undefined, {foo: types.STRING}, {
+      vtu.expectValidatorError(val, {foo: 3}, undefined, {$: {foo: types.STRING}}, {
         typeset: {foo: types.STRING},
         cause: [qualifiers.REQUIRED, types.STRING],
         path: ['foo']

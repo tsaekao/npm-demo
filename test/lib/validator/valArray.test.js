@@ -135,29 +135,39 @@ describe('module: lib/validator/valArray', function() {
 
     it('checks each element against typeset', function() {
       let arr = ['a', 'b', ''];
-      let args = {typeset: [qualifiers.EXPECTED, types.STRING]};
+      let args = {ts: [qualifiers.EXPECTED, types.STRING]};
 
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
-      args = {typeset: [qualifiers.REQUIRED, types.STRING]};
+      args = {ts: [qualifiers.REQUIRED, types.STRING]};
       vtu.expectValidatorError(val, arr, undefined, args, {
-        path: [2],
-        cause: args.typeset
+        path: ['2'],
+        cause: args.ts
       });
 
       arr = [1, 'a'];
-      args = {typeset: [types.FINITE, {min: 1}, types.STRING, {oneOf: 'a'}]};
+      args = {ts: [types.FINITE, {min: 1}, types.STRING, {oneOf: 'a'}]};
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
       arr = [1, 'a'];
-      args = {typeset: [types.FINITE, {min: 2}, types.STRING, {oneOf: 'a'}]};
+      args = {ts: [types.FINITE, {min: 2}, types.STRING, {oneOf: 'a'}]};
       vtu.expectValidatorError(val, arr, undefined, args, {
-        path: [0],
+        path: ['0'],
         cause: (function() {
-          const ts = args.typeset.concat();
+          const ts = args.ts.concat();
           ts.unshift(qualifiers.REQUIRED);
           return ts;
         })()
+      });
+
+      args = {ts: /invalid typeset/}; // ignored
+      vtu.expectValidatorSuccess(val, arr, undefined, args);
+    });
+
+    it('creates error paths that are arrays of strings', function() {
+      vtu.expectValidatorError(val, ['a', 2], undefined, {ts: types.STRING}, {
+        path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
+        cause: [qualifiers.REQUIRED, types.STRING]
       });
     });
   });

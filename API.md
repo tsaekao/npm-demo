@@ -656,7 +656,8 @@ Flag indicating the validation failed. Always `false`.
 <a name="rtvref.RtvError+value"></a>
 
 ### rtvError.value : <code>\*</code>
-Value that failed verification.
+Value that failed verification against the
+ [typeset](#rtvref.RtvError+typeset).
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
@@ -670,17 +671,27 @@ Reference to the typeset used for verification.
 <a name="rtvref.RtvError+path"></a>
 
 ### rtvError.path : <code>Array.&lt;string&gt;</code>
-Path from `value` to the nested property that caused the failure. This
- is a shallow clone of the original `path` specified.
+Path from [value](#rtvref.RtvError+value) to the nested property that
+ caused the failure.
+
+__SECURITY:__ Some collection types, such as [MAP](#rtvref.types.MAP) and
+ [SET](#rtvref.types.SET), can have actual objects as keys or elements,
+ and these are used (in JSON-stringified form) as part of the error path.
+ If these objects happen to contain sensitive information, that information
+ may end-up in the path, and the path gets included in this error's
+ `message` property, which may get logged by your systems.
+
+ __It is YOUR responsibility to exercise necessary caution when validating
+  data structures containing sensitive data.__
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
 <a name="rtvref.RtvError+cause"></a>
 
 ### rtvError.cause : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
-Fully qualified typeset that caused the failure. This will be a subset
- of `typeset`, and possibly of a nested typeset within `typeset`
- expressing only the direct cause of the failure.
+Fully qualified typeset that caused the failure. This will be a subset of
+ the [typeset](#rtvref.RtvError+typeset), and possibly of a nested
+ typeset within it, expressing only the direct cause of the failure.
 
 If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
  and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
@@ -870,7 +881,7 @@ Checks a value using a single type.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| singleType | [<code>typeset</code>](#rtvref.types.typeset) | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array typeset which represents a single type.  A [custom validator](#rtvref.types.custom_validator) is not considered  a valid single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied. |
+| singleType | <code>string</code> \| <code>Array</code> \| <code>Object</code> | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array [typeset](#rtvref.types.typeset) which represents a single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied.  NOTE: A [custom validator](#rtvref.types.custom_validator) is not considered   a valid single type. It's also considered a __separate type__ if it were passed-in   via an Array, e.g. `[STRING, validator]`, which would violate the fact that   `singleType` should be one type, and therefore cause an exception to be thrown. |
 
 <a name="rtvref.impl.checkWithShape"></a>
 
@@ -1466,7 +1477,7 @@ The `value` property must be an array (possibly empty) of finite numbers of
  any value (nested typeset is not fully-qualified).
 
 <pre><code>{
-  value: [REQUIRED, ARRAY, {typeset: [FINITE]}]
+  value: [REQUIRED, ARRAY, {ts: [FINITE]}]
 }
 </code></pre>
 
@@ -1477,7 +1488,7 @@ The `value` property must be either a boolean; or an array (possibly empty) of
  (nested typeset is not fully-qualified).
 
 <pre><code>{
-  value: [REQUIRED, BOOLEAN, ARRAY, {typeset: [FINITE, STRING]}]
+  value: [REQUIRED, BOOLEAN, ARRAY, {ts: [FINITE, STRING]}]
 }
 </code></pre>
 
@@ -2000,7 +2011,7 @@ Applicable to all object types that may have a shape:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [typeset] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in  the array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
+| [ts] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in the  array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
 | [length] | <code>number</code> | Exact length. Ignored if not a  [FINITE](#rtvref.types.FINITE) number >= 0. |
 | [min] | <code>number</code> | Minimum inclusive length. Ignored if `exact` is  specified, or `min` is not a [FINITE](#rtvref.types.FINITE) number >= 0. |
 | [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `exact` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. |
@@ -2278,18 +2289,21 @@ There is one disadvantage to using a custom validator: It cannot be de/serialize
 **Throws**:
 
 - <code>Error</code> If the validation fails. This error will fail the overall
- validation check, and will be included in the resulting `RtvError` as its
+ verification, and will be included in the resulting `RtvError` as its
  [failure](#rtvref.RtvError+failure) property, as well as part of its
- `message`. Therefore, it's recommended to throw an error with a message that
- will help the developer determine why the custom validation failed.
+ `message`.
+
+  It's recommended to throw an error with a message that will help the developer
+   determine why the custom validation failed, while avoiding exposing any sensitive
+   information that may be found in the `value` (such as passwords).
 
 **See**: [isCustomValidator](#rtvref.validation.isCustomValidator)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value being verified. |
-| match | <code>Array</code> | A __first-level__,  [fully-qualified](#rtvref.types.fully_qualified_typeset) typeset describing  the type that matched. This means the first level of this subset of `typeset`  (the 3rd parameter) is fully-qualified, but any nested  [shape descriptors](#rtvref.types.shape_descriptor) or arrays will not be (they  will remain references to the same shapes/arrays in `typeset`). For example, if the given typeset was `[PLAIN_OBJECT, {$: {note: STRING}}]`, this  parameter would be a new typeset array `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,  and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}]`. If the given typeset was `[STRING, FINITE]` and FINITE matched, this parameter  would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the  original `[STRING, FINITE]`. |
-| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note that the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). This typeset is as it was specified in the  parent shape, and therefore it may not be fully-qualified. |
+| match | <code>Array</code> | A [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the sub-type with the `typeset` parameter that matched, resulting  in the custom validator being called (if no sub-types matched, it would not get called).  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,   and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the original  `[STRING, FINITE, validator]`.  NOTE: If the verification typeset was `validator` (just the validator itself), the `match`   would be `[REQUIRED, ANY]` (because of the implied [ANY](#rtvref.types.ANY) type) and   the `typeset` would be `validator`. |
+| typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). |
 
 <a name="rtvref.util"></a>
 

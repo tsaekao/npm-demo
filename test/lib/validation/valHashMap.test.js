@@ -192,7 +192,7 @@ describe('module: lib/validator/valHashMap', function() {
         }]
       });
 
-      // keys in nested maps are not strings of >= 2 chars
+      // keys in nested maps are not strings of >= 2 word chars
       const valuesTypeset = [types.HASH_MAP, {
         keyExp: '\\w{2,}',
         values: types.BOOLEAN
@@ -202,7 +202,7 @@ describe('module: lib/validator/valHashMap', function() {
         values: valuesTypeset
       };
       vtu.expectValidatorError(val, map, undefined, args, {
-        path: ['valueKey="1"'],
+        path: ['valueKey="1"', 'key="a"'],
         cause: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]]
       });
     });

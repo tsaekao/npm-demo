@@ -60,9 +60,8 @@ export default function valPlainObject(v, q = REQUIRED, args) {
     return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
   }
 
-  // args is the optional shape: ignore if it isn't a shape, like other validators
-  //  ignore invalid args properties
-  const shape = (args && isShape(args)) ? args : undefined;
+  // validate the shape, if any
+  const shape = (args && args.$ && isShape(args.$)) ? args.$ : undefined;
   let err; // @type {(RtvError|undefined)}
 
   // only consider enumerable, own-properties of the shape
