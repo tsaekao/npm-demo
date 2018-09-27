@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/stefcameron/rtvjs/badges/master/pipeline.svg)](https://gitlab.com/stefcameron/rtvjs/commits/master)
+
 # RTV.js
 
 Runtime Verification Library for browsers and Node.js.
