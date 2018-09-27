@@ -1,0 +1,43 @@
+image: node:latest
+
+before_script:
+  - node --version
+  - npm --version
+  - npm install
+
+stages:
+  - build
+  - test
+
+# cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+run-build-lib:
+  stage: build
+  script:
+    - npm run build:lib
+  artifacts:
+    name: "build-lib-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - dist/
+
+run-build-internals:
+  stage: build
+  script:
+    - npm run build:internals
+  artifacts:
+    name: "build-internals-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - dist_tools/
+
+run-tests:
+  stage: test
+  script:
+    - npm test
+  artifacts:
+    name: "coverage-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - coverage/

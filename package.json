@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "Runtime Verification Library for browsers and Node.js.",
   "engines": {
-    "node": "^10.11.0",
-    "npm": "^6.4.1"
+    "node": ">=10.11.0",
+    "npm": ">=6.4.1"
   },
   "main": "dist/rtv.umd.min.js",
   "module": "dist/rtv.esm.min.js",
@@ -18,13 +18,16 @@
   "scripts": {
     "precommit:msg": "echo 'Running pre-commit checks...'",
     "precommit:docs": "git add API.md",
-    "clean": "rm -rf ./build",
+    "clean:internals": "rm -rf ./dist_tools",
+    "clean:lib": "rm -rf ./dist",
+    "clean": "npm run clean:lib && npm run clean:internals",
     "start": "npm run build:lib && npm run node",
     "node": "node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
-    "node:internals": "rollup -c tools/rollup.internals.js && node -r ./dist_tools/internals.js --inspect",
-    "build:lib": "BABEL_ENV=build rollup -c",
-    "build": "npm run clean && npm run build:lib",
+    "node:internals": "npm run build:internals && node -r ./dist_tools/internals.js --inspect",
+    "build:internals": "npm run clean:internals && rollup -c tools/rollup.internals.js",
+    "build:lib": "npm run clean:lib && BABEL_ENV=build rollup -c",
+    "build": "npm run build:lib",
     "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "lint": "eslint ./*.js \"src/**/*.js\" \"test/**/*.js\" \"tools/**/*.js\"",
     "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
