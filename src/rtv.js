@@ -36,12 +36,6 @@ import * as valSymbol from './lib/validator/valSymbol';
 import * as valWeakMap from './lib/validator/valWeakMap';
 import * as valWeakSet from './lib/validator/valWeakSet';
 
-// TODO[future]: Consider making 'rtv' a function object rather than a plain object.
-//  Invoking it as a function would call rtv.verify(), so rtv.verify(...) could be
-//  shortened to rtv(...), and `rtv.e && rtv.verify(...)` would be shortened to just
-//  `rtv.e && rtv(...)`. This could easily be done in the future, but is not easily
-//  undone, so best to see how people use it first, and if `rtv.verify()` really
-//  is too much typing or not.
 /**
  * <h3>RTV.js Public Interface</h3>
  *

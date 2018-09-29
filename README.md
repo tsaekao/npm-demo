@@ -31,14 +31,8 @@ Shapes must be:
 
 [MIT](LICENSE)
 
-# TODO
-
-- [ ] Unit tests must be run both in the browser and in Node.js -- in the browser via Gitlab CI
-- [ ] Add Gitlab CI config, or use TravisCI?
-- [ ] Publish to npm
-- [ ] Make sure 'Goals' section is complete and accurate, add some links
-- [ ] Make sure `CONTRIBUTING.md` is filled-out
-
 # Future
 
-*   Support a formal plugin architecture allowing third-parties to register custom types?
+See the list of proposed [enhancements](https://gitlab.com/stefcameron/rtvjs/issues?label_name%5B%5D=enhancement). Up-vote the ones you like to help contributors prioritize them!
+
+Feel free to log an __enhancement__ if you have an idea! You may also file a PR, although it might be best to discuss your idea with the community first by logging an enhancement issue.

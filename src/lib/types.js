@@ -95,9 +95,6 @@ import Enumeration from './Enumeration';
  * @see {@link rtvref.validation.isTypeArgs}
  */
 
-// TODO[future]: Add 'exp: string' and 'expFlags: string' args (strings because
-//  of JSON requirement...) for a regular expression test. Similar prop names
-//  to collection_args.
 /**
  * <h3>String Arguments</h3>
  * @typedef {Object} rtvref.types.STRING_args
@@ -163,12 +160,6 @@ import Enumeration from './Enumeration';
  * @see {@link rtvref.qualifiers}
  */
 
-// TODO[future]: Consider adding a `strict` or `restrict` flag in the args to
-//  fail validation if any own-properties are found which are NOT in the shape
-//  if enough users ask for it. Not adding this immediately because that's not
-//  the true spirit of a shape, which is an interface. The consumer of the object
-//  matched to a shape shouldn't care what _other_ properties are on the object,
-//  just that the properties described in the shape are as expected.
 /**
  * <h3>Shape Object Arguments</h3>
  *
@@ -200,9 +191,6 @@ import Enumeration from './Enumeration';
  * @see {@link rtvref.types.CLASS_OBJECT}
  */
 
-// TODO[future]: Short-hand 'exact' with `[ARRAY, 2, [STRING]]` or `[2, [STRING]]` syntax?
-//  IIF this becomes such a common thing to expect an exact length; otherwise, don't
-//  optimize for an infrequent case.
 /**
  * <h3>Array Arguments</h3>
  * @typedef {Object} rtvref.types.ARRAY_args
@@ -761,8 +749,6 @@ const defs = {
    */
   REGEXP: def('REGEXP'),
 
-  // TODO[future] Consider DATE args for ranges, date values to be ISO8601 UTC strings so they are
-  //  easily serializable.
   /**
    * Date rules per qualifiers: Must be a `Date` instance.
    * @name rtvref.types.DATE
