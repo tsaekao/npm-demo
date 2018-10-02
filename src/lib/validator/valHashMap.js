@@ -76,13 +76,13 @@ export default function valHashMap(v, q = REQUIRED, args) {
       // get the key expression
       const keyExp = (args.keyExp && isString(args.keyExp)) ? args.keyExp : undefined;
       // get the key expression flags only if we have a key expression
-      const keyFlagSpec = (keyExp && args.keyFlagSpec && isString(args.keyFlagSpec)) ?
-        args.keyFlagSpec : undefined;
+      const keyFlags = (keyExp && args.keyFlags && isString(args.keyFlags)) ?
+        args.keyFlags : undefined;
       // get the typeset for values
       const tsValues = isTypeset(args.values) ? args.values : undefined;
 
       if (keyExp || tsValues) {
-        const reKeys = keyExp ? new RegExp(keyExp, keyFlagSpec) : undefined;
+        const reKeys = keyExp ? new RegExp(keyExp, keyFlags) : undefined;
 
         _forEach(keys, function(key) {
           const value = v[key];

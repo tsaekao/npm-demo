@@ -48,7 +48,7 @@ import Enumeration from './Enumeration';
  * Describes the shape (i.e. interface) of an object as a map of properties to
  *  {@link rtvref.types.typeset typesets}. Each typeset indicates whether the
  *  property is required, expected, or optional, using {@link rtvref.qualifiers qualifiers},
- *  along with possible types. Only enumerable, own-properties of the shape are
+ *  along with possible types. Only __own-enumerable properties__ of the shape are
  *  considered part of the shape.
  *
  * When a value is {@link rtv.check checked} or {@link rtv.verify verified} against
@@ -60,10 +60,14 @@ import Enumeration from './Enumeration';
  *  described in the shape, and each property is guaranteed to be assigned to a value
  *  of at least one type described in each property's typeset.
  *
- * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}.
+ * The shape descriptor itself must be an {@link rtvref.types.OBJECT OBJECT}. An empty
+ *  shape descriptor is valid, but will result in nothing being verified on the value,
+ *  other than whether its type is the
+ *  {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type}.
  *
  * @typedef {Object} rtvref.types.shape_descriptor
  * @see {@link rtvref.validation.isShape}
+ * @see {@link rtvref.types.typeset}
  */
 
 /**
@@ -85,11 +89,9 @@ import Enumeration from './Enumeration';
  *  of at least 5 characters in length.
  *
  * Since {@link rtvref.qualifiers qualifiers} may affect how a value is validated
- *  against a type, {@link rtvref.types.qualifier_rules qualifier rules} always take
- *  __precedence__ over any argument specified. For example, `[STRING, {min: 0}]`
- *  would fail to validate an empty string because the _implied_ qualifier
- *  is `REQUIRED`, and per {@link rtvref.types.STRING STRING} qualifier rules,
- *  required strings cannot be empty.
+ *  against a type, {@link rtvref.types.qualifier_rules qualifier rules} will take
+ *  precedence over any argument specified, _unless otherwise stated in the type's
+ *  qualifier rules_ or arguments spec.
  *
  * @typedef {Object} rtvref.types.type_arguments
  * @see {@link rtvref.validation.isTypeArgs}
@@ -100,20 +102,30 @@ import Enumeration from './Enumeration';
  * @typedef {Object} rtvref.types.STRING_args
  * @property {(string|Array.<string>)} [oneOf] An exact string to match (`===`).
  *  Can also be a list of strings, one of which must be an exact match. An empty
- *  string is allowed. Note, however, that the {@link rtvref.qualifiers qualifier}
- *  must not be `REQUIRED` because that will disallow an empty string as the value
- *  being checked regardless of this value/list. An empty list will be ignored.
+ *  string is allowed, and will override the normal rules of the `REQUIRED`
+ *  {@link rtvref.qualifiers qualifier} which would otherwise require a non-empty
+ *  string as the value. The list may contain an empty string. __An empty list will
+ *  be ignored__. This argument is ignored if `exp` is specified.
  * @property {string} [partial] A partial value to match (must be somewhere
- *  within the string). Ignored if empty string, or `exact` is specified. `min`
- *  and `max` take __precedence__ over this argument (the length will be
- *  validated first, then a partial match will be attempted).
+ *  within the string). Ignored if not a string, an empty string, or `oneOf` or
+ *  `exp` is specified. `min` and `max` take __precedence__ over this argument
+ *  (min/max will be validated first, then a partial match will be attempted).
  * @property {number} [min] Minimum inclusive length. Defaults to 1 for a
  *  `REQUIRED` string, and 0 for an `EXPECTED` or `OPTIONAL` string. Ignored if
- *  `exact` is specified, or `min` is not a {@link rtvref.types.FINITE FINITE}
+ *  `oneOf` or `exp` is specified, or `min` is not a {@link rtvref.types.FINITE FINITE}
  *  number >= 0.
  * @property {number} [max] Maximum inclusive length. Negative means no maximum.
- *  Ignored if `exact` is specified, `max` is not a
- *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
+ *  Ignored if `oneOf` or `exp` is specified, `max` is not a
+ *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`. Defaults
+ *  to -1 (unlimited length). Can be set to zero to require a zero-length string.
+ * @property {string} [exp] A string-based regular expression describing the
+ *  string. For example, to require a string of numbers with a minimum length of 1,
+ *  the following expression could be used: `"^\\d+$"`.
+ * @property {string} [expFlags] A string specifying any flags to use with
+ *  the regular expression specified in `exp`. Ignored if _falsy_ or if
+ *  `exp` is not specified. See the
+ *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp RegExp#flags}
+ *  parameter for more information.
  * @see {@link rtvref.types.STRING}
  */
 
@@ -147,9 +159,9 @@ import Enumeration from './Enumeration';
  *   not `REQUIRED`; but these values would be ignored by `FINITE` since they
  *   aren't part of the `FINITE` range), or not numbers at all.
  *
- * @property {number} [min] Minimum inclusive value. Ignored if `exact` is
+ * @property {number} [min] Minimum inclusive value. Ignored if `oneOf` is
  *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
- * @property {number} [max] Maximum inclusive value. Ignored if `exact` is
+ * @property {number} [max] Maximum inclusive value. Ignored if `oneOf` is
  *  specified, `max` is `NaN`, `max` is not within normal range of the type,
  *  or `max` is less than `min`.
  * @see {@link rtvref.types.NUMBER}
@@ -199,11 +211,13 @@ import Enumeration from './Enumeration';
  *  value will match.
  * @property {number} [length] Exact length. Ignored if not a
  *  {@link rtvref.types.FINITE FINITE} number >= 0.
- * @property {number} [min] Minimum inclusive length. Ignored if `exact` is
+ * @property {number} [min] Minimum inclusive length. Ignored if `length` is
  *  specified, or `min` is not a {@link rtvref.types.FINITE FINITE} number >= 0.
+ *  Defaults to 0.
  * @property {number} [max] Maximum inclusive length. Negative means no maximum.
- *  Ignored if `exact` is specified, `max` is not a
- *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`.
+ *  Ignored if `length` is specified, `max` is not a
+ *  {@link rtvref.types.FINITE FINITE} number, or `max` is less than `min`. Defaults
+ *  to -1 (unlimited).
  * @see {@link rtvref.types.ARRAY}
  */
 
@@ -221,7 +235,7 @@ import Enumeration from './Enumeration';
  * For example, the following arguments both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
  *
- * - `{keyExp: '[a-z]{3}', keyFlagSpec: 'i', values: FINITE}`
+ * - `{keyExp: '[a-z]{3}', keyFlags: 'i', values: FINITE}`
  * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
  *
  * Note that {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
@@ -259,9 +273,9 @@ import Enumeration from './Enumeration';
  *
  *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP}, {@link rtvref.types.MAP MAP}.
  *
- * @property {string} [keyFlagSpec] A string specifying any flags to use with
- *  the regular expression specified in `keyExp`. Ignored if _falsy_ or if
- *  `keyExp` is not specified. See the
+ * @property {string} [keyFlags] A string specifying any flags to use with
+ *  the regular expression specified in `keyExp`. Ignored if _falsy_, or if
+ *  `keyExp` is not specified or irrelevant. See the
  *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp RegExp#flags}
  *  parameter for more information.
  *
@@ -332,9 +346,9 @@ import Enumeration from './Enumeration';
  *     property which is a non-empty string". In this case, the
  *     {@link rtvref.types.object_args object arguments} `{$: {name: STRING}}` would
  *     be treated as {@link rtvref.types.STRING_args STRING arguments}, which is
- *     likely not the desired intent. The arguments would have to be preceded by an
+ *     likely not the intent. The arguments would have to be preceded by an
  *     object type (e.g. {@link rtvref.types.OBJECT OBJECT},
- *     {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, etc.) to have it interpreted
+ *     {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT}, etc.) to have them interpreted
  *     as in the former "OR" case.
  *   - If an element is an `Array` (any position), it's treated as a __nested list__
  *     with an implied {@link rtvref.types.ARRAY ARRAY} type, e.g.
@@ -499,11 +513,20 @@ import Enumeration from './Enumeration';
  *  explicitly specify a type, the {@link rtvref.types.ANY ANY} type is implied,
  *  which will match _any_ value, which means the validator will always be called.
  *
- * There is one disadvantage to using a custom validator: It cannot be de/serialized
- *  via JSON, which means it cannot be transmitted or persisted. One option would be
- *  to customize the de/serialization to JSON by serializing the validator to a
+ * __NOTE about qualifiers:__ Validators will be invoked regardless of the qualifier.
+ *  If the typeset's qualifier is `EXPECTED`, the validator __must handle `null` values__.
+ *  If the qualifier is `OPTIONAL`, the validator __must handle `undefined` and `null` values__.
+ *  Also note that a value of `null` or `undefined`, if permitted by the qualifier,
+ *  will always be type-matched to the first type in the typeset because all types
+ *  allow these values for their related qualifiers.
+ *
+ * There is one __disadvantage__ to using a custom validator: It cannot be serialized
+ *  via JSON, which means it cannot be easily transmitted or persisted. One option
+ *  would be to customize the serialization to JSON by serializing the validator to a
  *  special object with properties that would inform the deserialization process
- *  on how to reconstruct the validator dynamically.
+ *  on how to reconstruct the validator dynamically. There may also be a way to
+ *  persist the function's code, but that would require the use of the unsafe
+ *  `eval()` function to later reconstitute it as an actual function.
  *
  * @typedef {function} rtvref.types.custom_validator
  * @param {*} value The value being verified.
@@ -513,20 +536,39 @@ import Enumeration from './Enumeration';
  *
  *  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,
  *   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,
- *   and the `typeset` parameter would be the original `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.
+ *   and the `typeset` parameter would be a reference to the original
+ *   `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.
  *
  *  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter
- *   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be the original
+ *   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be a reference to the original
  *  `[STRING, FINITE, validator]`.
  *
- *  NOTE: If the verification typeset was `validator` (just the validator itself), the `match`
+ *  If the verification typeset was `[{message: STRING}, validator]` and the shape matched, this
+ *   parameter would be `[REQUIRED, OBJECT, {$: {message: STRING}}]` (because of the
+ *   {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type}) and the `typeset` parameter
+ *   would be a reference to the original `[{message: STRING}, validator]`.
+ *
+ *  NOTE: If the verification typeset was `validator` (just the validator itself), this parameter
  *   would be `[REQUIRED, ANY]` (because of the implied {@link rtvref.types.ANY ANY} type) and
- *   the `typeset` would be `validator`.
+ *   the `typeset` would be a reference to the original `validator`.
  *
  * @param {rtvref.types.typeset} typeset Reference to the typeset used for
  *  verification. Note the typeset may contain nested typeset(s), and may
  *  be part of a larger parent typeset (though there would be no reference to
  *  the parent typeset, if any).
+ * @returns {*} Either `undefined` or a _truthy_ value to __pass__ the verification, or a _falsy_
+ *  value to fail it. The validator may also throw an `Error` to fail the verification.
+ *
+ *  If a _falsy_ value (other than `undefined`) is returned, an `Error` will be generated and
+ *   included in the resulting `RtvError` as its {@link rtvref.RtvError#failure failure} property,
+ *   as well as part of its `message`.
+ *
+ *  While `undefined` is _falsy_, it's also the result of a function that did not return anything,
+ *   which is interpreted as indicating the validator found no fault with the value.
+ *
+ *  It's recommend to throw an `Error` with a helpful message rather than simply returning a
+ *   _falsy_ value to fail the verification.
+ *
  * @throws {Error} If the validation fails. This error will fail the overall
  *  verification, and will be included in the resulting `RtvError` as its
  *  {@link rtvref.RtvError#failure failure} property, as well as part of its
@@ -596,8 +638,12 @@ const defs = {
   /**
    * String rules per qualifiers:
    *
-   * - REQUIRED: Must be a non-empty string.
-   * - EXPECTED | OPTIONAL: May be an empty string.
+   * - REQUIRED: Must be a non-empty string, unless an argument allows it.
+   * - EXPECTED | OPTIONAL: May be an empty string, unless an argument disallows it.
+   *   Note that a value `null` (for EXPECTED) or `undefined` (for OPTIONAL) will not
+   *   be subject to any restrictions imposed by arguments (i.e. the arguments will be
+   *   ignored; for example, `rtv.verify(null, [EXPECTED, STRING, {min: 1}])` would
+   *   _pass_ verification because `null` is permitted with this qualifier).
    *
    * In all cases, the value must be a string {@link rtvref.types.primitives primitive}.
    *  Note that `new String('hello') !== 'hello'` because the former is an _object_, not a string.
@@ -781,9 +827,8 @@ const defs = {
    * Array rules per qualifiers: Must be an `Array`. Empty arrays are permitted,
    *  unless arguments prevent them.
    *
-   * Arguments (optional): {@link rtvref.types.ARRAY_args},
-   *  {@link rtvref.types.typeset Array typeset}. Note that the `ARRAY` type must
-   *  be specified when using arguments (i.e. the shorthand notation cannot
+   * Arguments (optional): {@link rtvref.types.ARRAY_args}. Note that the `ARRAY`
+   *  type must be specified when using arguments (i.e. the shorthand notation cannot
    *  be used).
    *
    * When describing arrays, either _shorthand_ or _full_ notation may be used.
@@ -1194,7 +1239,8 @@ const defs = {
 //
 
 /**
- * Default object type: {@link rtvref.types.OBJECT}
+ * Default object type: {@link rtvref.types.OBJECT}. This type is associated
+ *  with an un-qualified {@link rtvref.types.shape_descriptor shape descriptor}.
  * @const {string} rtvref.types.DEFAULT_OBJECT_TYPE
  */
 export const DEFAULT_OBJECT_TYPE = defs.OBJECT.value;

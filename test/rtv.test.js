@@ -36,6 +36,13 @@ describe('module: rtv', function() {
     });
   });
 
+  describe('#fullyQualify()', function() {
+    it('should fully-qualify a typeset', function() {
+      expect('fullyQualify' in rtv).to.equal(true);
+      expect(rtv.fullyQualify(types.FUNCTION)).to.eql([qualifiers.REQUIRED, types.FUNCTION]);
+    });
+  });
+
   describe('#check()', function() {
     it('should check a value', function() {
       expect(rtv.check('foo', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
@@ -105,7 +112,7 @@ describe('module: rtv', function() {
       it('should not check when disabled', function() {
         rtv.config.enabled = false;
         implCheckSpy.resetHistory(); // call above would have called spy
-        expect(rtv.check('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
+        expect(rtv.check('foobar', rtv.t.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
         expect(implCheckSpy.called).to.equal(false);
       });
 
@@ -113,7 +120,7 @@ describe('module: rtv', function() {
         rtvVerifySpy.restore(); // disable spy
         rtv.config.enabled = false;
         implCheckSpy.resetHistory(); // call above would have called spy
-        expect(rtv.verify('foobar', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
+        expect(rtv.verify('foobar', rtv.t.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
         expect(implCheckSpy.called).to.equal(false);
       });
     });

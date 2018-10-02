@@ -382,11 +382,39 @@ const extractNextType = function(typeset, qualifier) {
 };
 
 /**
+ * [Internal] Invokes a custom validator function found in a typeset.
+ * @private
+ * @function rtvref.impl._callCustomValidator
+ * @param {rtvref.types.custom_validator} validator Custom validator to invoke.
+ * @param {*} value Value being verified.
+ * @param {rtvref.types.fully_qualified_typeset} match Fully-qualified typeset
+ *  for the subtype of `typeset` that matched.
+ * @param {rtvref.types.typeset} typeset Typeset used for verification.
+ * @returns {(undefined|Error)} `undefined` if the validator succeeded; `Error`
+ *  if the validator failed.
+ */
+const _callCustomValidator = function(validator, value, match, typeset) {
+  let failure;
+
+  try {
+    const result = validator(value, match, typeset);
+
+    if (result !== undefined && !result) { // undefined === no action === success
+      failure = new Error('Verification failed because of the custom validator');
+    }
+  } catch (err) {
+    failure = err;
+  }
+
+  return failure;
+};
+
+/**
  * [Internal] Common options for the various `check*()` functions.
  * @private
  * @typedef {Object} rtvref.impl._checkOptions
- * @property {Array.<string>} path The current path into the typeset. Initially
- *  empty to signify the root (top-level) value being checked.
+ * @property {Array.<string>} path The current path into the original typeset.
+ *  Initially empty to signify the root (top-level) value being checked.
  * @property {boolean} isTypeset `true` if the typeset specified in the public
  *  parameters has already been validated and is a valid __shallow__ typeset;
  *  `false` otherwise (which means the typeset should first be validated before
@@ -623,9 +651,8 @@ const checkWithArray = function(value, array /*, options*/) {
     // check for a validator at the end of the Array typeset and invoke it
     const lastType = array[array.length - 1];
     if (isCustomValidator(lastType)) {
-      try {
-        lastType(value, match, array); // invoke it
-      } catch (failure) {
+      const failure = _callCustomValidator(lastType, value, match, array);
+      if (failure !== undefined) {
         // invalid in spite of the match since the validator said no
         err = new RtvError(value, array, options.path, fullyQualify(array, qualifier), failure);
       }
@@ -686,11 +713,10 @@ const check = function(value, typeset /*, options*/) {
         //  the subtype within the implied typeset that matched
         const match = fullyQualify(impliedType, options.qualifier);
 
-        // call the custom validator
-        try {
-          typeset(value, match, typeset);
-        } catch (failure) {
-          return new RtvError(value, typeset, options.path, match, failure);
+        const failure = _callCustomValidator(typeset, value, match, typeset);
+        if (failure !== undefined) {
+          return new RtvError(value, typeset, options.path,
+              fullyQualify(typeset, options.qualifier), failure);
         }
 
         return new RtvSuccess();
@@ -751,6 +777,7 @@ const impl = {
   // internal
   _validatorMap, // exposed mainly to support unit testing
   _registerType,
+  _callCustomValidator,
   _getCheckOptions,
   // public
   getQualifier,

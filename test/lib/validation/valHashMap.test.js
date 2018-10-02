@@ -132,7 +132,7 @@ describe('module: lib/validator/valHashMap', function() {
 
       vtu.expectValidatorSuccess(val, map, undefined, {
         keyExp: 'KEY\\d',
-        keyFlagSpec: 'i' // case-insensitive flag
+        keyFlags: 'i' // case-insensitive flag
       });
 
       let args = {
@@ -145,7 +145,7 @@ describe('module: lib/validator/valHashMap', function() {
 
       args = {
         keyExp: 'KEY\\d',
-        keyFlagSpec: {} // ignored: not string (so still case-sensitive)
+        keyFlags: {} // ignored: not string (so still case-sensitive)
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],

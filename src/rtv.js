@@ -76,6 +76,15 @@ const rtv = {
   },
 
   /**
+   * Fully-qualifies a given typeset.
+   * @function rtv.fullyQualify
+   * @see {@link rtvref.impl.fullyQualify}
+   */
+  get fullyQualify() {
+    return impl.fullyQualify;
+  },
+
+  /**
    * Shortcut proxy for reading {@link rtv.config.enabled}.
    * @readonly
    * @name rtv.e
@@ -160,6 +169,9 @@ const rtv = {
       throw result; // expected to be an RtvError
     }
 
+    // NOTE: this method still returns a truthy value so that expressions like
+    //  `rtv.e && rtv.verify(...) && do_something_on_success()` work when this
+    //  method doesn't throw an exception
     return new RtvSuccess();
   },
 
@@ -169,7 +181,8 @@ const rtv = {
    */
   config: Object.defineProperties({}, {
     /**
-     * Globally enables or disables {@link rtv.verify} and {@link rtv.check}.
+     * Globally enables or disables {@link rtv.verify} and {@link rtv.check}. When set
+     *  to `false`, these methods are no-ops.
      *
      * Use this, or the shortcut {@link rtv.e}, to enable code optimization
      *  when building source with a bundler that supports _tree shaking_, like

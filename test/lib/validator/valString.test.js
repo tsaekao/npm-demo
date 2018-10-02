@@ -79,11 +79,19 @@ describe('module: lib/validator/valString', function() {
     it('checks for an exact value', function() {
       vtu.expectValidatorSuccess(val, 'foo', undefined, {oneOf: 'foo'});
       vtu.expectValidatorError(val, 'bar', undefined, {oneOf: 'foo'});
+    });
 
-      // empty string is OK with the right qualifier
-      vtu.expectValidatorError(val, '', undefined, {oneOf: ''});
+    it('empty string is OK if oneOf allows it', function() {
+      vtu.expectValidatorSuccess(val, '', undefined, {oneOf: ''});
       vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {oneOf: ''});
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {oneOf: ''});
+
+      // null is not considered empty
+      vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, {oneOf: ''});
+
+      vtu.expectValidatorSuccess(val, '', undefined, {oneOf: ['']});
+      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {oneOf: ['']});
+      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {oneOf: ['']});
     });
 
     it('checks for an exact string in a list', function() {
@@ -91,11 +99,6 @@ describe('module: lib/validator/valString', function() {
       vtu.expectValidatorError(val, '7', undefined, {oneOf: ['6', '8']});
       vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: ['7']});
       vtu.expectValidatorSuccess(val, '7', undefined, {oneOf: []}); // ignored
-
-      // if qualifier allows empty string as a value, empty string works in a list
-      vtu.expectValidatorError(val, '', undefined, {oneOf: ['']});
-      vtu.expectValidatorError(val, '', qualifiers.EXPECTED, {oneOf: ['']});
-      vtu.expectValidatorError(val, '', qualifiers.OPTIONAL, {oneOf: ['']});
 
       // ignores non-type values in a list
       vtu.expectValidatorError(val, '7', undefined, {oneOf: [null, 7, true]});
@@ -125,10 +128,15 @@ describe('module: lib/validator/valString', function() {
       vtu.expectValidatorSuccess(val, 'minimum', undefined, {min: NaN});
       vtu.expectValidatorSuccess(val, 'minimum', undefined, {min: Infinity});
       vtu.expectValidatorSuccess(val, 'minimum', undefined, {min: -Infinity});
+    });
 
-      // default qualifier requires non-empty
-      vtu.expectValidatorError(val, '', undefined, {min: 0});
+    it('empty string is allowed if min requires it', function() {
+      vtu.expectValidatorSuccess(val, '', undefined, {min: 0});
+      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {min: 0});
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {min: 0});
+
+      // null is OK because of EXPECTED
+      vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, {min: 1});
     });
 
     it('min takes precedence over partial', function() {
@@ -138,11 +146,6 @@ describe('module: lib/validator/valString', function() {
       // min is ignored (less than 0) to partial wins, but there's no match
       vtu.expectValidatorError(val, 'minimum', undefined, {min: -100, partial: 'foo'});
       vtu.expectValidatorSuccess(val, 'minimum', undefined, {min: -1, partial: 'nim'});
-
-      // default qualifier requires non-empty
-      vtu.expectValidatorError(val, '', undefined, {min: 0, partial: ''});
-      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {min: 0, partial: ''});
-      vtu.expectValidatorSuccess(val, 'foo', undefined, {min: 0, partial: ''});
     });
 
     it('checks for max length if "exact" is not specified', function() {
@@ -155,10 +158,15 @@ describe('module: lib/validator/valString', function() {
       vtu.expectValidatorSuccess(val, 'maximum', undefined, {max: NaN});
       vtu.expectValidatorSuccess(val, 'maximum', undefined, {max: Infinity});
       vtu.expectValidatorSuccess(val, 'maximum', undefined, {max: -Infinity});
+    });
 
-      // default qualifier requires non-empty
-      vtu.expectValidatorError(val, '', undefined, {max: 0});
+    it('empty string is allowed if max requires it', function() {
+      vtu.expectValidatorSuccess(val, '', undefined, {max: 0});
+      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {max: 0});
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {max: 0});
+
+      // null is OK because of EXPECTED
+      vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, {max: 0});
     });
 
     it('max takes precedence over partial', function() {
@@ -168,12 +176,6 @@ describe('module: lib/validator/valString', function() {
       vtu.expectValidatorError(val, 'maximum', undefined, {max: -100, partial: 'foo'});
 
       vtu.expectValidatorSuccess(val, 'maximum', undefined, {max: -1, partial: 'xim'});
-
-      // default qualifier requires non-empty
-      vtu.expectValidatorError(val, '', undefined, {max: 0, partial: ''});
-
-      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {max: 0, partial: ''});
-      vtu.expectValidatorSuccess(val, 'foo', undefined, {max: -1, partial: ''});
     });
 
     it('checks for min/max length if "exact" is not specified', function() {
@@ -199,6 +201,32 @@ describe('module: lib/validator/valString', function() {
 
       vtu.expectValidatorError(val, 'minandmax', undefined, {min: 10, max: 100, partial: 'and'});
       vtu.expectValidatorError(val, 'minandmax', undefined, {min: -1, max: -1, partial: 'foo'});
+    });
+
+    it('checks for a given regular expression pattern', function() {
+      vtu.expectValidatorSuccess(val, '2018-09-30', undefined, {exp: '\\d{4}-\\d{2}-\\d{2}'});
+      vtu.expectValidatorError(val, 'asdf', undefined, {exp: '\\d+'});
+      vtu.expectValidatorError(val, 'asdf', undefined, {exp: '[A-Z]+'});
+      vtu.expectValidatorSuccess(val, 'asdf', undefined, {exp: '[A-Z]+', expFlags: 'i'});
+    });
+
+    it('empty string is allowed if exp requires it', function() {
+      vtu.expectValidatorSuccess(val, '', undefined, {exp: '^$'});
+      vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, {exp: '^$'});
+      vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, {exp: '^$'});
+
+      // null is OK because of EXPECTED
+      vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, {exp: '^$'});
+    });
+
+    it('oneOf, partial, min, max are ignored when exp specified', function() {
+      vtu.expectValidatorSuccess(val, 'foo', undefined, {
+        exp: 'foo',
+        oneOf: 'bar',
+        length: 5,
+        min: 5,
+        max: 1
+      });
     });
   });
 });

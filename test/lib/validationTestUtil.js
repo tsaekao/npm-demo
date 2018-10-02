@@ -369,6 +369,7 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
 
   expect(result).to.be.an.instanceof(RtvError);
   expect(result.valid).to.be.false;
+  expect(result.name).to.equal('RtvError');
 
   // NOTE: Check for the existence of a property on `expectations` rather than
   //  a truthy value since `undefined`, `null`, `0`, `false`, or an empty string

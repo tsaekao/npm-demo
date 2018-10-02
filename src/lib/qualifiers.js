@@ -54,7 +54,7 @@ const REQUIRED = '!';
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.STRING}
  */
-const EXPECTED = '+';
+const EXPECTED = '*';
 
 /**
  * Optional qualifier: The value _may_ be of the expected type. Depending on

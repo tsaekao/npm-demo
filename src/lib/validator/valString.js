@@ -61,34 +61,59 @@ export default function valString(v, q = REQUIRED, args) {
     return new RtvSuccess();
   }
 
-  let valid = isString(v) || (q !== REQUIRED && v === '');
+  // start by ensuring the value is a string, but allow an empty string for now
+  let valid = isString(v, {allowEmpty: true});
+
+  // if an arg allows the string to be empty, overriding the qualifier
+  let argsAllowEmpty = false;
 
   if (valid && args) { // then check args
-    // empty string is OK for 'oneOf'
-    if (isString(args.oneOf) || (isArray(args.oneOf) && args.oneOf.length > 0)) {
-      const possibilities = [].concat(args.oneOf);
-      // flip the result so that valid is set to false if no values match
-      valid = !possibilities.every(function(possibility) {
-        // return false on first match to break the loop
-        return !(isString(possibility) && v === possibility);
-      });
+    if (args.exp && isString(args.exp)) { // all other args except expFlags are ignored
+      const flagSpec = (args.expFlags && isString(args.expFlags)) ?
+        args.expFlags : undefined;
+      const re = new RegExp(args.exp, flagSpec);
+      valid = re.test(v);
+      argsAllowEmpty = (valid && v === '');
     } else {
-      let min;
-      if (valid && isFinite(args.min) && args.min >= 0) {
-        min = args.min;
-        valid = (v.length >= min);
-      }
+      // empty string is OK for 'oneOf'
+      if (isString(args.oneOf, {allowEmpty: true}) ||
+          (isArray(args.oneOf) && args.oneOf.length > 0)) {
 
-      if (valid && isFinite(args.max) && args.max >= 0) {
-        if (min === undefined || args.max >= min) {
-          valid = (v.length <= args.max);
-        } // else, ignore
-      }
+        const possibilities = [].concat(args.oneOf);
+        // flip the result so that valid is set to false if no values match
+        valid = !possibilities.every(function(possibility) {
+          // return false on first match to break the loop
+          return !(isString(possibility, {allowEmpty: true}) && v === possibility);
+        });
+        argsAllowEmpty = (valid && v === '');
+      } else {
+        let min;
+        if (valid && isFinite(args.min) && args.min >= 0) {
+          min = args.min;
+          valid = (v.length >= min);
+          argsAllowEmpty = (valid && v === '');
+        }
 
-      if (valid && args.partial) {
-        valid = v.includes(args.partial);
+        if (valid && isFinite(args.max) && args.max >= 0) {
+          if (min === undefined || args.max >= min) {
+            valid = (v.length <= args.max);
+            argsAllowEmpty = (valid && v === '');
+          } // else, ignore
+        }
+
+        if (valid && isString(args.partial)) {
+          valid = v.includes(args.partial);
+          // NOTE: partial doesn't apply to argsAllowEmpty because it's ignored
+          //  if it's empty
+        }
       }
     }
+  }
+
+  // only REQUIRED qualifier disallows empty strings by default unless an
+  //  arg overrides it
+  if (valid && !argsAllowEmpty && q === REQUIRED) {
+    valid = (v !== '');
   }
 
   if (valid) {
