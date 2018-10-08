@@ -557,7 +557,7 @@ rtv.verify('', [rtv.q.EXPECTED, rtv.t.STRING]); // ok: expected strings can be n
 
 ## Dynamic Classes
 
-This is an advanced use of the RTV.js library. I recommend you read through the [Getting Started](#getting-started) guide or the [Verification](#verification) example first.
+This is an advanced use of the RTV.js library. I recommend you read through the [Getting Started](#getting-started) guide or the [Verifications](#verifications) example first.
 
 Let's suppose we have the following [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) that describes a simple note:
 
