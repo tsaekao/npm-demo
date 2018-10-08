@@ -658,7 +658,7 @@ RTV.js is not your only choice for runtime verification of values. Here are some
 
 # Contributing
 
-[Contributing](CONTRIBUTING.md)
+[Contributing](CONTRIBUTING.md), including local development guide.
 
 # License
 
