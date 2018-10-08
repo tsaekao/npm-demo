@@ -643,6 +643,7 @@ Now we can generate a Note class and create an instance:
 ```javascript
 const Note = classGenerator(noteShape);
 const note = new Note({text: 'Hello world!');
+
 note.text; // "Hello world!", since it was initialized
 note.created; // null, since it wasn't initialized
 note.text = ''; // ERROR: "text" must be a non-empty string
