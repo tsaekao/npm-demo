@@ -50,3 +50,41 @@ See `/package.json` scripts for other commands.
 ## Merge Requests
 
 In general, once your merge request is posted, you can expect one of the maintainers to respond to it within a few business days.
+
+### Template
+
+Please use this template when filing merge requests:
+
+```markdown
+### Description
+
+Include a summary of the change and which issue is fixed.
+
+If a feature is being implemented, explain your motivation for it. If a bug is being fixed, explain steps to reproduce it.
+
+List any new dependencies that are required for this change and why they are needed (if it isn't obvious).
+
+### Type of change
+
+Place an X in all relevant options and delete those that aren't, along with this note.
+
+- [] Bug fix (non-breaking change which fixes an issue)
+- [] New feature (non-breaking change which adds functionality)
+- [] Breaking change (fix or feature that would cause existing functionality to no longer work as expected)
+
+### Checklist
+
+Place an X in all relevant checks and delete those that aren't, along with this note.
+
+- [] My code builds (verified with `npm run build`)
+- [] My code follows the style guidelines of this project (verified with `npm run lint`)
+- [] I have performed a self-review of my own code
+- [] I have commented my code, particularly in hard-to-understand areas
+- [] I have made corresponding changes to the documentation, including in the `README.md`, and `CHANGELOG.md`
+- [] I have verified my changes to the API documentation in `API.md` (cross-reference links in particular, verified _in part_ with `npm run docs`)
+- [] My changes generate no new warnings or errors (verified with `npm test`)
+- [] I have added tests that prove my fix is effective or that my feature works
+- [] New and existing unit tests pass locally with my changes
+- [] Test coverage has not decreased in my branch as a result of my additions
+- [] Any prerequisite changes have already been merged and published in upstream modules
+```
