@@ -76,12 +76,13 @@ Place an X in all relevant options and delete those that aren't, along with this
 
 Place an X in all relevant checks and delete those that aren't, along with this note.
 
+- [] I have added this change under an appropriate heading in the `[Unreleased]` section of the `/CHANGELOG.md`
 - [] My code builds (verified with `npm run build`)
 - [] My code follows the style guidelines of this project (verified with `npm run lint`)
 - [] I have performed a self-review of my own code
 - [] I have commented my code, particularly in hard-to-understand areas
-- [] I have made corresponding changes to the documentation, including in the `README.md`, and `CHANGELOG.md`
-- [] I have verified my changes to the API documentation in `API.md` (cross-reference links in particular, verified _in part_ with `npm run docs`)
+- [] I have made corresponding changes to the documentation, including the `/README.md`
+- [] I have verified my changes to the API documentation in `/API.md` (cross-reference links in particular, verified _in part_ with `npm run docs`)
 - [] My changes generate no new warnings or errors (verified with `npm test`)
 - [] I have added tests that prove my fix is effective or that my feature works
 - [] New and existing unit tests pass locally with my changes
