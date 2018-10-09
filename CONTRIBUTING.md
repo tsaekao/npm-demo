@@ -46,3 +46,7 @@ See `/package.json` scripts for other commands.
 *   Favor `function() {}` over arrow functions unless contextual binding is required.
 *   Use the latest standardized ES syntax.
 *   Avoid using syntax that is still under active proposal.
+
+## Merge Requests
+
+In general, once your merge request is posted, you can expect one of the maintainers to respond to it within a few business days.
