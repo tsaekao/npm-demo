@@ -35,7 +35,13 @@
     "test:unit:debug": "npm run test:unit -- --inspect-brk",
     "test:coverage": "nyc npm run test:unit",
     "test": "npm run lint && npm run test:coverage",
-    "prepublishOnly": "npm test && npm run build && npm run docs"
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags",
+    "prepublish:checkdocs": "git diff HEAD --exit-code -- API.md",
+    "prepublishOnly": "npm test && npm run build && npm run docs && npm run prepublish:checkdocs",
+    "release:major": "npm version major -m \"Version %s release\" && npm publish",
+    "release:minor": "npm version minor -m \"Version %s release\" && npm publish",
+    "release:patch": "npm version patch -m \"Version %s release\" && npm publish"
   },
   "repository": {
     "type": "git",
