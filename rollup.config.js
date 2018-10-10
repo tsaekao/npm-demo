@@ -71,7 +71,7 @@ const getUmdConfig = function(minified) {
   config.output.push({
     file: `dist/${LIB_NAME}.umd.${minified ? 'min.js' : 'js'}`,
     format: 'umd',
-    name: pkg.name,
+    name: LIB_NAME,
     noConflict: true,
     sourcemap: true,
     banner

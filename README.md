@@ -12,6 +12,35 @@ This library is isomorphic: It runs equally well in modern browsers and on the s
 npm install rtvjs
 ```
 
+The package's `/dist` directory contains two types of builds:
+
+*   `rtv.umd.js/rtv.umd.min.js`: UMD loader, full and minified.
+*   `rtv.esm.js/rtv.esm.mind.js`: ES6 Module, full and minified.
+
+## UMD
+
+The UMD build can be used like this:
+
+```javascript
+// as a global, when loaded via a <script> tag in HTML
+window.rtv;
+
+// as a CommonJS module (e.g. Node.js)
+const rtv = require('rtvjs');
+
+// as an AMD module (e.g. RequireJS)
+define(['rtvjs'], function(rtv) {
+});
+```
+
+## ESM
+
+The ES6 module build can be used like this:
+
+```javascript
+import rtv from 'rtvjs';
+```
+
 # Documentation
 
 [API](API.md)
