@@ -228,7 +228,7 @@ Since typesets are fully nestable/composable, we can get a bit more sophisticate
 }
 ```
 
-Since shapes also represent objects, they have an _implied_ (default) type of [OBJECT](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.OBJECT). When [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) (which means not using any implied typeset elements like the qualifier and type), the shape would move into the special `$` argument of the `OBJECT` type:
+Since shapes also represent objects, they have an _implied_ (default) type of [OBJECT](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.OBJECT). When [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) (which means not using any implied typeset elements like the qualifier and type), the shape would __move into the special `$` argument__ of the `OBJECT` type:
 
 ```javascript
 [rtv.q.REQUIRED, rtv.t.OBJECT, {$: {
