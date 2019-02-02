@@ -8,12 +8,7 @@
         ["@babel/preset-env", {
           "modules": false,
           "targets": {
-            "browsers": [
-              "last 1 version",
-              "not dead",
-              "> 0.2%",
-              "maintained node versions"
-            ]
+            "browsers": "last 1 versions, > 0.2%, not dead, current node, node 10, node 8"
           }
         }]
       ],
