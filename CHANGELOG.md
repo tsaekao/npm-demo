@@ -9,6 +9,11 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
+## 1.1.0 - 2019-02-02
+
+### Changed
+-   Dependency updates (minor and patch versions only)
+
 ## 1.0.0 - 2018-10-11
 
 Initial release!
