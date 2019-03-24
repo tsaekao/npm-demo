@@ -17,7 +17,7 @@ npm install rtvjs
 The package's `/dist` directory contains two types of builds:
 
 *   `rtv.umd.js/rtv.umd.min.js`: UMD loader, full and minified.
-*   `rtv.esm.js/rtv.esm.mind.js`: ES6 Module, full and minified.
+*   `rtv.esm.js/rtv.esm.min.js`: ES6 Module, full and minified.
 
 ## UMD
 
@@ -83,7 +83,7 @@ async function getTodoList() {
 }
 ```
 
-While tools like TypeScript and Flow have their merits, some JavaScript developers are opposed to using them. The size of a project may also dictate whether it's worth including these tools into its toolchain. Still, integration issues remain. There may also be a need to ensure that a critical function call is being given the parameters it expects. Rather than write a series of `if (!state) { throw new Error('state is required'); }` (which don't tell us much about what "state" is expected to be, other than it's _required_), it would be more helpful to have an easy way to express that "state" should be a non-empty string with a value in a given list (i.e. a value found in an enumeration).
+There may also be a need to ensure that a critical function call is being given the parameters it expects. Rather than write a series of `if (!state) { throw new Error('state is required'); }` (which don't tell us much about what "state" is expected to be, other than it's _required_), it would be more helpful to have an easy way to express that "state" should be a non-empty string with a value in a given list (i.e. a value found in an enumeration).
 
 RTV.js can help signal the unexpected state immediately when execution enters the function:
 
@@ -101,6 +101,8 @@ function applyState(state) {
 applyState('on'); // ok
 applyState('dimmed'); // ERROR
 ```
+
+While tools like TypeScript and Flow have their merits, [they come at a steep price](https://medium.com/javascript-scene/the-typescript-tax-132ff4cb175b), and some JavaScript developers are opposed to using them. Typings or not, integration issues __will__ remain. RTV.js allows you to check for types when it _really_ matters (at runtime), and has a simple API so it's easy to learn.
 
 # Goals
 
