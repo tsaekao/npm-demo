@@ -55,7 +55,7 @@ import rtv from 'rtvjs';
 
 To provide an easy, intuitive way to perform validations at __runtime__ on values whenever they cross the boundaries of an API or a function call.
 
-Tools like [TypeScript](http://www.typescriptlang.org/) and [Flow](https://flow.org/) are useful for static analysis (i.e. as code is being written and then transpiled to regular JavaScript), but they don't work at __runtime__.
+Tools like [TypeScript](http://www.typescriptlang.org/) and [Flow](https://flow.org/) are useful for static analysis (i.e. as code is being written and then transpiled to regular JavaScript), but [they come at a price](https://medium.com/javascript-scene/the-typescript-tax-132ff4cb175b) and they don't work at __runtime__.
 
 For example, they can't signal when there are integration issues between frontend and backend systems that are being co-developed. In one conversation, an API may be designed to return an object with certain properties. Later on, an on-the-fly decision to alter the implementation (yes, it happens in spite of the best intentions and processes), or simply a bug in the implementation, may result in an object that is missing an expected property, or has a property with an unexpected value.
 
@@ -102,7 +102,7 @@ applyState('on'); // ok
 applyState('dimmed'); // ERROR
 ```
 
-While tools like TypeScript and Flow have their merits, [they come at a steep price](https://medium.com/javascript-scene/the-typescript-tax-132ff4cb175b), and some JavaScript developers are opposed to using them. Typings or not, integration issues __will__ remain. RTV.js allows you to check for types when it _really_ matters (at runtime), and has a simple API so it's easy to learn.
+While tools like TypeScript and Flow have their merits, [they come at a price](https://medium.com/javascript-scene/the-typescript-tax-132ff4cb175b). Typings or not, integration issues __will__ remain. RTV.js allows you to check for types __at runtime__, when it _really_ matters, and has a simple API so it's easy to learn.
 
 # Goals
 
