@@ -9,6 +9,10 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
+n/a
+
+## 1.2.0 - 2019-05-19
+
 ### Changed
 -   Dependency updates only, including an update to `jsdoc-to-markdown` which resulted in some minor formatting changes to [API.md](API.md).
 
