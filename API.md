@@ -227,13 +227,13 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.check(value)](#rtvref.Enumeration+check) ⇒ <code>\*</code> \| <code>undefined</code>
         * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
         * [.toString()](#rtvref.Enumeration+toString) ⇒ <code>string</code>
-    * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+    * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
         * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
         * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
         * [.value](#rtvref.RtvError+value) : <code>\*</code>
         * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
         * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
-        * [.cause](#rtvref.RtvError+cause) : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+        * [.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
     * [.RtvSuccess](#rtvref.RtvSuccess)
@@ -243,7 +243,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
     * [.impl](#rtvref.impl) : <code>object</code>
         * [.getQualifier(typeset)](#rtvref.impl.getQualifier) ⇒ <code>string</code>
         * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
-        * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+        * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
         * [.checkWithType(value, singleType)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.checkWithShape(value, shape)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -618,17 +618,17 @@ A string representation of this Enumeration.
 **Returns**: <code>string</code> - String representation.  
 <a name="rtvref.RtvError"></a>
 
-## rtvref.RtvError ⇐ [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+## rtvref.RtvError ⇐ [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 **Kind**: static class of [<code>rtvref</code>](#rtvref)  
-**Extends**: [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)  
+**Extends**: [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)  
 
-* [.RtvError](#rtvref.RtvError) ⇐ [<code>JS_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+* [.RtvError](#rtvref.RtvError) ⇐ [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
     * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
     * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
     * [.value](#rtvref.RtvError+value) : <code>\*</code>
     * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
     * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
-    * [.cause](#rtvref.RtvError+cause) : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+    * [.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
     * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
     * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
 
@@ -651,7 +651,7 @@ Describes a failed runtime verification of a value against a given
 | value | <code>\*</code> | The value being verified. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>Array.&lt;string&gt;</code> | The path deep into `value` where the failure occurred.  An empty array signifies the _root_ (top-level) value that was checked. |
-| cause | [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
+| cause | [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
 | [failure] | <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation. |
 
 <a name="rtvref.RtvError+valid"></a>
@@ -697,7 +697,7 @@ __SECURITY:__ Some collection types, such as [MAP](#rtvref.types.MAP) and
 **Read only**: true  
 <a name="rtvref.RtvError+cause"></a>
 
-### rtvError.cause : [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+### rtvError.cause : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
 Fully qualified typeset that caused the failure. This will be a subset of
  the [typeset](#rtvref.RtvError+typeset), and possibly of a nested
  typeset within it, expressing only the direct cause of the failure.
@@ -772,7 +772,7 @@ Provides the internal implementation for the externally-facing [RTV](#rtv)
 * [.impl](#rtvref.impl) : <code>object</code>
     * [.getQualifier(typeset)](#rtvref.impl.getQualifier) ⇒ <code>string</code>
     * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
-    * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+    * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
     * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
     * [.checkWithType(value, singleType)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.checkWithShape(value, shape)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
@@ -825,14 +825,14 @@ While the `qualifier`, `args`, and `fullyQualified` parameters are all
 
 <a name="rtvref.impl.fullyQualify"></a>
 
-### impl.fullyQualify(typeset, [qualifier]) ⇒ [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset)
+### impl.fullyQualify(typeset, [qualifier]) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
 Fully-qualifies a typeset, shallow (i.e. the first level only; nested typesets
  are not fully-qualified).
 
 This function does not modify the input `typeset`.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
-**Returns**: [<code>fully_qualified_typeset</code>](#rtvref.types.fully_qualified_typeset) - A new, fully-qualified typeset
+**Returns**: [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) - A new, fully-qualified typeset
  representing the input `typeset`. Only the first/immediate level of the
  input typeset is fully-qualified. The new array returned contains references
  to elements within the input typeset.  
@@ -1043,7 +1043,7 @@ See specific type for additional rules.
 **See**: [types](#rtvref.types)  
 <a name="rtvref.qualifiers.DEFAULT_QUALIFIER"></a>
 
-### qualifiers.DEFAULT_QUALIFIER : <code>string</code>
+### qualifiers.DEFAULT\_QUALIFIER : <code>string</code>
 Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
@@ -1326,7 +1326,7 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 <a name="rtvref.types.SAFE_INT"></a>
 
-### types.SAFE_INT : <code>string</code>
+### types.SAFE\_INT : <code>string</code>
 Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) number, a
  [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger),
  and a number [primitive](#rtvref.types.primitives).
@@ -1508,7 +1508,7 @@ The `value` property must be either a boolean; or an array (possibly empty) of
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.ANY_OBJECT"></a>
 
-### types.ANY_OBJECT : <code>string</code>
+### types.ANY\_OBJECT : <code>string</code>
 An _any_ object is anything that is __not__ a [primitive](#rtvref.types), which
  means it includes the `Array` type, as well as functions and arguments, and
  other JavaScript _object_ types. To test for an array, use the
@@ -1621,7 +1621,7 @@ Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 <a name="rtvref.types.PLAIN_OBJECT"></a>
 
-### types.PLAIN_OBJECT : <code>string</code>
+### types.PLAIN\_OBJECT : <code>string</code>
 A _plain_ object is one that is created directly from the `Object` constructor,
  whether using `new Object()` or the literal `{}`.
 
@@ -1670,7 +1670,7 @@ Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 <a name="rtvref.types.CLASS_OBJECT"></a>
 
-### types.CLASS_OBJECT : <code>string</code>
+### types.CLASS\_OBJECT : <code>string</code>
 A _class_ object is one that is created by invoking the `new` operator on a
  function (other than a primitive type function), generating a new object,
  commonly referred to as a _class instance_. This object's prototype
@@ -1722,7 +1722,7 @@ Arguments (optional): [shape_object_args](#rtvref.types.shape_object_args)
 
 <a name="rtvref.types.HASH_MAP"></a>
 
-### types.HASH_MAP : <code>string</code>
+### types.HASH\_MAP : <code>string</code>
 A simple [OBJECT](#rtvref.types.OBJECT) that is treated as a hash map
  with an expected set of keys (forcibly strings due to the nature of the
  native JavaScript `Object` type) and values. Keys are __own-properties only__,
@@ -1766,7 +1766,7 @@ Arguments (optional): [collection_args](#rtvref.types.collection_args)
 
 <a name="rtvref.types.WEAK_MAP"></a>
 
-### types.WEAK_MAP : <code>string</code>
+### types.WEAK\_MAP : <code>string</code>
 An ES6 weak map supports any _object_ as its keys, unlike a
  [HASH_MAP](#rtvref.types.HASH_MAP) that only supports strings,
  and a [MAP](#rtvref.types.MAP) that supports any type of value.
@@ -1799,7 +1799,7 @@ Arguments (optional): [collection_args](#rtvref.types.collection_args)
 
 <a name="rtvref.types.WEAK_SET"></a>
 
-### types.WEAK_SET : <code>string</code>
+### types.WEAK\_SET : <code>string</code>
 An ES6 weak set is a collection of weakly held _unique_ _objects_ without
  associated keys.
 
@@ -1833,7 +1833,7 @@ Since this type checks for _any_ valid JSON value, empty string and `null`
 **See**: [qualifiers](#rtvref.qualifiers)  
 <a name="rtvref.types.DEFAULT_OBJECT_TYPE"></a>
 
-### types.DEFAULT_OBJECT_TYPE : <code>string</code>
+### types.DEFAULT\_OBJECT\_TYPE : <code>string</code>
 Default object type: [OBJECT](#rtvref.types.OBJECT). This type is associated
  with an un-qualified [shape descriptor](#rtvref.types.shape_descriptor).
 
@@ -1860,7 +1860,7 @@ In RTV.js (as in [ECMAScript 2015](https://developer.mozilla.org/en-US/docs/Glos
 **See**: [isPrimitive](#rtvref.validation.isPrimitive)  
 <a name="rtvref.types.qualifier_rules"></a>
 
-### types.qualifier_rules : <code>void</code>
+### types.qualifier\_rules : <code>void</code>
 <h3>Rules Per Qualifiers</h3>
 
 [Qualifiers](#rtvref.qualifiers) state basic rules. Unless otherwise stated,
@@ -1875,7 +1875,7 @@ For example, while the [FINITE](#rtvref.types.FINITE) type states that the
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.shape_descriptor"></a>
 
-### types.shape_descriptor : <code>Object</code>
+### types.shape\_descriptor : <code>Object</code>
 <h3>Shape Descriptor</h3>
 
 Describes the shape (i.e. interface) of an object as a map of properties to
@@ -1906,7 +1906,7 @@ The shape descriptor itself must be an [OBJECT](#rtvref.types.OBJECT). An empty
 
 <a name="rtvref.types.type_arguments"></a>
 
-### types.type_arguments : <code>Object</code>
+### types.type\_arguments : <code>Object</code>
 <h3>Type Arguments</h3>
 
 Some types will accept, or may even expect, one or more arguments. Each type
@@ -1933,7 +1933,7 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
 **See**: [isTypeArgs](#rtvref.validation.isTypeArgs)  
 <a name="rtvref.types.STRING_args"></a>
 
-### types.STRING_args : <code>Object</code>
+### types.STRING\_args : <code>Object</code>
 <h3>String Arguments</h3>
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
@@ -1951,7 +1951,7 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
 
 <a name="rtvref.types.SYMBOL_args"></a>
 
-### types.SYMBOL_args : <code>Object</code>
+### types.SYMBOL\_args : <code>Object</code>
 <h3>Symbol Arguments</h3>
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
@@ -1964,7 +1964,7 @@ Since [qualifiers](#rtvref.qualifiers) may affect how a value is validated
 
 <a name="rtvref.types.numeric_args"></a>
 
-### types.numeric_args : <code>Object</code>
+### types.numeric\_args : <code>Object</code>
 <h3>Numeric Value Arguments</h3>
 
 Applicable to all numeric types:
@@ -1995,7 +1995,7 @@ Applicable to all numeric types:
 
 <a name="rtvref.types.shape_object_args"></a>
 
-### types.shape_object_args : <code>Object</code>
+### types.shape\_object\_args : <code>Object</code>
 <h3>Shape Object Arguments</h3>
 
 Applicable to all object types that may have a shape:
@@ -2022,7 +2022,7 @@ Applicable to all object types that may have a shape:
 
 <a name="rtvref.types.ARRAY_args"></a>
 
-### types.ARRAY_args : <code>Object</code>
+### types.ARRAY\_args : <code>Object</code>
 <h3>Array Arguments</h3>
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
@@ -2038,7 +2038,7 @@ Applicable to all object types that may have a shape:
 
 <a name="rtvref.types.collection_args"></a>
 
-### types.collection_args : <code>Object</code>
+### types.collection\_args : <code>Object</code>
 <h3>Collection Arguments</h3>
 
 Describes the keys and values in a collection-based object, which is one of
@@ -2261,7 +2261,7 @@ rtv.verify({name: 'Steve', age: null}, person); // OK
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.fully_qualified_typeset"></a>
 
-### types.fully_qualified_typeset : <code>Array</code>
+### types.fully\_qualified\_typeset : <code>Array</code>
 <h3>Fully-Qualified Typeset</h3>
 
 A [typeset](#rtvref.types.typeset) expressed without any shortcut notations
@@ -2281,7 +2281,7 @@ For example:
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 <a name="rtvref.types.custom_validator"></a>
 
-### types.custom_validator ⇒ <code>\*</code>
+### types.custom\_validator ⇒ <code>\*</code>
 <h3>Custom Validator</h3>
 
 A function used as a [typeset](#rtvref.types.typeset), or as a subset to
@@ -3618,7 +3618,7 @@ There can only be one validator for any given type. Where possible, each
 
 <a name="rtvref.validator.type_validator"></a>
 
-### validator.type_validator(value, [qualifier], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### validator.type\_validator(value, [qualifier], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 <h3>Type Validator Function</h3>
 
 NOTE: A validator must always give __precedence__ to
@@ -3644,7 +3644,7 @@ __NOTE:__ A validator must support all its qualifier rules, including proper
 
 <a name="rtvref.validator.validator_config"></a>
 
-### validator.validator_config(settings)
+### validator.validator\_config(settings)
 <h3>Type Validator Configuration Function</h3>
 
 This function is called to provide the
@@ -3655,7 +3655,7 @@ This function is called to provide the
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valAny"></a>
 
@@ -3684,7 +3684,7 @@ Type: [ANY](#rtvref.types.ANY)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valAny.default"></a>
 
@@ -3727,7 +3727,7 @@ Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valAnyObject.default"></a>
 
@@ -3742,7 +3742,7 @@ Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valArray"></a>
 
@@ -3771,7 +3771,7 @@ Type: [ARRAY](#rtvref.types.ARRAY)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valArray.default"></a>
 
@@ -3786,7 +3786,7 @@ Type: [ARRAY](#rtvref.types.ARRAY)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>ARRAY_args</code>](#rtvref.types.ARRAY_args) | Type arguments. |
+| [args] | [<code>ARRAY\_args</code>](#rtvref.types.ARRAY_args) | Type arguments. |
 
 <a name="rtvref.validator.valBoolean"></a>
 
@@ -3815,7 +3815,7 @@ Type: [BOOLEAN](#rtvref.types.BOOLEAN)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valBoolean.default"></a>
 
@@ -3862,7 +3862,7 @@ Type: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valClassObject.default"></a>
 
@@ -3877,7 +3877,7 @@ Type: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valDate"></a>
 
@@ -3906,7 +3906,7 @@ Type: [DATE](#rtvref.types.DATE)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valDate.default"></a>
 
@@ -3949,7 +3949,7 @@ Type: [ERROR](#rtvref.types.ERROR)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valError.default"></a>
 
@@ -3992,7 +3992,7 @@ Type: [FINITE](#rtvref.types.FINITE)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valFinite.default"></a>
 
@@ -4011,7 +4011,7 @@ Determines if a value is a number literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valFloat"></a>
 
@@ -4040,7 +4040,7 @@ Type: [FLOAT](#rtvref.types.FLOAT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valFloat.default"></a>
 
@@ -4059,7 +4059,7 @@ Determines if a value is a number literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valFunction"></a>
 
@@ -4088,7 +4088,7 @@ Type: [FUNCTION](#rtvref.types.FUNCTION)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valFunction.default"></a>
 
@@ -4131,7 +4131,7 @@ Type: [HASH_MAP](#rtvref.types.HASH_MAP)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valHashMap.default"></a>
 
@@ -4146,7 +4146,7 @@ Type: [HASH_MAP](#rtvref.types.HASH_MAP)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
 
 <a name="rtvref.validator.valInt"></a>
 
@@ -4175,7 +4175,7 @@ Type: [INT](#rtvref.types.INT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valInt.default"></a>
 
@@ -4194,7 +4194,7 @@ Determines if a value is a number literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valJson"></a>
 
@@ -4223,7 +4223,7 @@ Type: [JSON](#rtvref.types.JSON)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valJson.default"></a>
 
@@ -4266,7 +4266,7 @@ Type: [MAP](#rtvref.types.MAP)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valMap.default"></a>
 
@@ -4281,7 +4281,7 @@ Type: [MAP](#rtvref.types.MAP)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
 
 <a name="rtvref.validator.valNull"></a>
 
@@ -4310,7 +4310,7 @@ Type: [NULL](#rtvref.types.NULL)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valNull.default"></a>
 
@@ -4353,7 +4353,7 @@ Type: [NUMBER](#rtvref.types.NUMBER)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valNumber.default"></a>
 
@@ -4372,7 +4372,7 @@ Determines if a value is a number literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valObject"></a>
 
@@ -4401,7 +4401,7 @@ Type: [OBJECT](#rtvref.types.OBJECT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valObject.default"></a>
 
@@ -4416,7 +4416,7 @@ Type: [OBJECT](#rtvref.types.OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valPlainObject"></a>
 
@@ -4445,7 +4445,7 @@ Type: [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valPlainObject.default"></a>
 
@@ -4460,7 +4460,7 @@ Type: [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valPromise"></a>
 
@@ -4489,7 +4489,7 @@ Type: [PROMISE](#rtvref.types.PROMISE)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valPromise.default"></a>
 
@@ -4532,7 +4532,7 @@ Type: [REGEXP](#rtvref.types.REGEXP)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valRegExp.default"></a>
 
@@ -4575,7 +4575,7 @@ Type: [SAFE_INT](#rtvref.types.SAFE_INT)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valSafeInt.default"></a>
 
@@ -4594,7 +4594,7 @@ Determines if a value is a number literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valSet"></a>
 
@@ -4623,7 +4623,7 @@ Type: [SET](#rtvref.types.SET)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valSet.default"></a>
 
@@ -4638,7 +4638,7 @@ Type: [SET](#rtvref.types.SET)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>collection_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
 
 <a name="rtvref.validator.valString"></a>
 
@@ -4667,7 +4667,7 @@ Type: [STRING](#rtvref.types.STRING)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valString.default"></a>
 
@@ -4686,7 +4686,7 @@ Determines if a value is a string literal __only__ (i.e. a
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>STRING_args</code>](#rtvref.types.STRING_args) | Type arguments. |
+| [args] | [<code>STRING\_args</code>](#rtvref.types.STRING_args) | Type arguments. |
 
 <a name="rtvref.validator.valSymbol"></a>
 
@@ -4715,7 +4715,7 @@ Type: [SYMBOL](#rtvref.types.SYMBOL)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valSymbol.default"></a>
 
@@ -4730,7 +4730,7 @@ Type: [SYMBOL](#rtvref.types.SYMBOL)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
 
 <a name="rtvref.validator.valWeakMap"></a>
 
@@ -4759,7 +4759,7 @@ Type: [WEAK_MAP](#rtvref.types.WEAK_MAP)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valWeakMap.default"></a>
 
@@ -4802,7 +4802,7 @@ Type: [WEAK_SET](#rtvref.types.WEAK_SET)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| settings | [<code>validator_config_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
+| settings | [<code>validator\_config\_settings</code>](#rtvref.validator.validator_config_settings) | Configuration settings. |
 
 <a name="rtvref.validator.valWeakSet.default"></a>
 
@@ -4820,7 +4820,7 @@ Type: [WEAK_SET](#rtvref.types.WEAK_SET)
 
 <a name="rtvref.validator.validator_config_settings"></a>
 
-### validator.validator_config_settings : <code>Object</code>
+### validator.validator\_config\_settings : <code>Object</code>
 <h3>Type Validator Configuration Settings</h3>
 
 The settings provided to the
