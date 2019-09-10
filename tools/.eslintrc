@@ -1,0 +1,14 @@
+////// tools ESLint Configuration
+
+{
+  "extends": ["../.eslintrc"],
+
+  "parserOptions": {
+    "ecmaVersion": 2018, // in particular, supports object spread
+    "sourceType": "module"
+  },
+
+  "rules": {
+    "no-console": "off"
+  }
+}

@@ -16,31 +16,35 @@ npm install rtvjs
 
 The package's `/dist` directory contains two types of builds:
 
-*   `rtv.umd.js/rtv.umd.min.js`: UMD loader, full and minified.
-*   `rtv.esm.js/rtv.esm.min.js`: ES6 Module, full and minified.
+*   `./cjs/rtv[.dev].js`: CJS loader, full (.dev) and minified. This is the main package export.
+*   `./umd/rtv[.dev].js`: UMD loader, full (.dev) and minified.
+
+## CJS
+
+The CJS build can be used like this:
+
+```javascript
+const rtv = require('rtvjs');
+```
+
+Note that the main package export points to `./dist/cjs/index.js` which will automatically select the right build to include based on the value of `process.env.NODE_ENV`: If it's `"production"`, it will include the __minified__ version; otherwise, it will include __full__ version.
+
+Use the [Webpack Define Plugin](https://webpack.js.org/plugins/define-plugin/) or the [Rollup Replace Plugin](https://www.npmjs.com/package/rollup-plugin-replace), for example, to configure this in your build.
 
 ## UMD
 
 The UMD build can be used like this:
 
 ```javascript
-// as a global, when loaded via a <script> tag in HTML
-window.rtv;
-
 // as a CommonJS module (e.g. Node.js)
 const rtv = require('rtvjs');
 
 // as an AMD module (e.g. RequireJS)
 define(['rtvjs'], function(rtv) {
 });
-```
 
-## ESM
-
-The ES6 module build can be used like this:
-
-```javascript
-import rtv from 'rtvjs';
+// as a global, when loaded via a <script> tag in HTML
+window.rtv;
 ```
 
 # Documentation

@@ -13,6 +13,10 @@
     "node": true // generally, code runs in Node.js
   },
 
+  "globals": {
+    "DEV_ENV": "readonly" // {boolean}
+  },
+
   //
   // Rules: pull-in ESLint's recommended set, then tweak as necessary
   // @see http://eslint.org/docs/rules/<rule-name>
@@ -42,6 +46,7 @@
     "no-new": "off", // OFF to allow `myFunction(new RegExp('foo'))`, for example
     "no-new-func": "error", // disallow `new Function(...)` to declare a new function
     "no-new-wrappers": "error", // disallow `new Number/String/Boolean()`
+    "no-prototype-builtins": "off", // OFF to allow {}.hasOwnProperty('foo')
     "no-throw-literal": "error",
     "no-warning-comments": ["error", {
       "terms": [

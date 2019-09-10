@@ -9,7 +9,14 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
-n/a
+### Breaking
+-   The ESM build output is replaced with a CJS build output as this is the most compatible with popular Webpack and Rollup build systems.
+-   The main package export is now the CJS build output.
+-   The CJS build output is found in `./dist/cjs/...`
+-   The UMD build output is now found in `./dist/umd/...`
+
+### Changed
+-   Dependency updates: All to latest.
 
 ## 1.2.0 - 2019-05-19
 
