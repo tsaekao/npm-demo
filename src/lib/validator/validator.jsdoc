@@ -60,7 +60,7 @@
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED} to maintain consistent behavior.
  * @param {Object} [args] The arguments object, if any/applicable, for the type
  *  being validated. For example, {@link rtvref.types.STRING_args string args} in
- *  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least
+ *  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least
  *  5 characters in length).
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid;
  *  `RtvError` if not.

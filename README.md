@@ -76,11 +76,11 @@ async function getTodoList() {
   //  will throw if `json` doesn't meet the specified typeset (requirement)
   rtv.verify(json, [[{ // list of objects (could be empty)
     // non-empty string
-    title: rtv.t.STRING,
+    title: rtv.STRING,
     // 'YYYY-MM-DD', or null
-    due: [rtv.q.EXPECTED, rtv.t.STRING, {exp: '\\d{4}-\\d{2}-\\d{2}'}],
+    due: [rtv.EXPECTED, rtv.STRING, {exp: '\\d{4}-\\d{2}-\\d{2}'}],
     // string (could be empty), null, or not even defined
-    note: [rtv.q.OPTIONAL, rtv.t.STRING]
+    note: [rtv.OPTIONAL, rtv.STRING]
   }]]);
 
   return json;
@@ -93,7 +93,7 @@ RTV.js can help signal the unexpected state immediately when execution enters th
 
 ```javascript
 function applyState(state) {
-  rtv.verify(state, [rtv.t.STRING, {oneOf: ['on', 'off']}]);
+  rtv.verify(state, [rtv.STRING, {oneOf: ['on', 'off']}]);
 
   if (state === 'on') {
     // turn the lights on
@@ -113,10 +113,10 @@ While tools like TypeScript and Flow have their merits, [they come at a price](h
 The following statement verifies that the variable "state" is a non-empty string whose value is found in a list of permitted values:
 
 ```javascript
-rtv.verify(state, [rtv.t.STRING, {oneOf: ['on', 'off']}]);
+rtv.verify(state, [rtv.STRING, {oneOf: ['on', 'off']}]);
 ```
 
-The `[rtv.t.STRING, {oneOf: ['on', 'off']}]` portion of the example above is called a _typeset_. It expresses the expectation for the value of the "state" variable.
+The `[rtv.STRING, {oneOf: ['on', 'off']}]` portion of the example above is called a _typeset_. It expresses the expectation for the value of the "state" variable.
 
 [Typesets](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) must be:
 
@@ -151,8 +151,8 @@ Typesets can be strings, objects (shapes), functions (custom validators), or Arr
 At their simplest, typesets are strings that represent type names like `STRING`, `INT`, `DATE`, etc. See the full list of types [here](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.types).
 
 ```javascript
-rtv.verify('Hello world!', rtv.t.STRING); // ok
-rtv.verify('', rtv.t.STRING); // ERROR: a required string cannot be empty
+rtv.verify('Hello world!', rtv.STRING); // ok
+rtv.verify('', rtv.STRING); // ERROR: a required string cannot be empty
 ```
 
 ### Qualifiers
@@ -168,9 +168,9 @@ The only way to specify an alternate qualifier is to use an Array to describe th
 If we wanted to accept an empty string (or `null`) as the value, we could use the `EXPECTED` qualifier:
 
 ```javascript
-rtv.verify('Hello world!', [rtv.q.EXPECTED, rtv.t.STRING]); // ok
-rtv.verify('', [rtv.q.EXPECTED, rtv.t.STRING]); // ok
-rtv.verify(null, [rtv.q.EXPECTED, rtv.t.STRING]); // ok
+rtv.verify('Hello world!', [rtv.EXPECTED, rtv.STRING]); // ok
+rtv.verify('', [rtv.EXPECTED, rtv.STRING]); // ok
+rtv.verify(null, [rtv.EXPECTED, rtv.STRING]); // ok
 ```
 
 ### Type Arguments
@@ -180,23 +180,23 @@ Some types accept arguments. Arguments are simple objects that map argument name
 The `STRING` type accepts [arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.STRING_args), one of which is `min`. It lets us specify the minimum length of the string. By default, when the qualifier is `REQUIRED`, `min` defaults to 1, but we can override that:
 
 ```javascript
-rtv.verify('Hello world!', [rtv.t.STRING, {min: 0}]); // ok
-rtv.verify('', [rtv.t.STRING, {min: 0}]); // ok
-rtv.verify(null, [rtv.t.STRING, {min: 0}]); // ERROR
+rtv.verify('Hello world!', [rtv.STRING, {min: 0}]); // ok
+rtv.verify('', [rtv.STRING, {min: 0}]); // ok
+rtv.verify(null, [rtv.STRING, {min: 0}]); // ERROR
 ```
 
 This verifies the value cannot be `null` or `undefined` because of the (implied) `REQUIRED` qualifier. However, it could be empty because the `min` argument allows a zero-length string as the value.
 
 ### Multiple Types
 
-So far, we've seen simple typesets: either just a string as the type name, or the type name and some arguments, and an optional qualifier that precedes it. There may be cases where a value could be one of multiple types. To verify against additional types, an Array is used to state all the possibilities: `[<qualifier>, <type1>, <type1-args>, <type2>, <type2-args>, ...]`. This is called an "Array typeset", which we've already seen in the two previous sections.
+So far, we've seen simple typesets: Either just a string as the type name, or the type name and some arguments, and an optional qualifier that precedes it. There may be cases where a value could be one of multiple types. To verify against additional types, an Array is used to state all the possibilities: `[<qualifier>, <type1>, <type1-args>, <type2>, <type2-args>, ...]`. This is called an "Array typeset", which we've already seen in the two previous sections.
 
 Since a value can only be of a single type at any given time, Array typesets are evaluated using a __short-circuit OR conjunction__, which means the verification will pass as long as at least one type verifies the value (and verification will stop evaluating any other types against the value once a match is made).
 
 For example, we could verify that a value is either a boolean, or a string that looks like a boolean:
 
 ```javascript
-const typeset = [rtv.t.BOOLEAN, rtv.t.STRING, {
+const typeset = [rtv.BOOLEAN, rtv.STRING, {
   exp: '^(?:true|false)$',
   expFlags: 'i'
 }];
@@ -210,6 +210,38 @@ rtv.verify('false', typeset); // ok
 
 > Since the check for the `BOOLEAN` type is faster than evaluating a regular expression against a string, we list the `BOOLEAN` type first in the typeset.
 
+It's worth pointing out here that:
+
+> The same type can appear __multiple times__ in the same typeset.
+
+This is very useful when a value could be of one or another set of values.
+
+For example, we could verify that a value is a finite number in two different ranges:
+
+```javascript
+const typeset = [
+  rtv.FINITE, {min: 0, max: 9},
+  rtv.FINITE, {min: 100, max: 199}
+];
+rtv.verify(1, typeset); // ok
+rtv.verify(50, typeset); // ERROR
+rtv.verify(150, typeset); // ok
+rtv.verify(-1, typeset); // ERROR
+rtv.verify(200, typeset); // ERROR
+```
+
+This is also useful for _composition_ where you need to combine multiple smaller typesets into a larger one:
+
+```javascript
+const lowerRangeTS = [rtv.FINITE, {min: 0, max: 9}];
+const upperRangeTS = [rtv.FINITE, {min: 100, max: 199}];
+const typeset = [...lowerRangeTS, ...upperRangeTS];
+rtv.verify(1, typeset); // ok
+rtv.verify(50, typeset); // ERROR
+```
+
+`typeset` here will yield the same results as in the previous example.
+
 ### Shapes
 
 Most of the time, especially when integrating with an API, you'll want to verify what you receive against an expected [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor). A _shape_ describes the __interface__ an __object__ is expected to have. As the term implies, an interface describes the properties, and types thereof, expected on an object while ignoring any other properties that the object may have (since the code using this object shouldn't care about them anyway).
@@ -218,9 +250,9 @@ Plain JavaScript objects are used to describe shapes, where expected property na
 
 ```javascript
 {
-  title: rtv.t.STRING, // non-empty string
-  created: rtv.t.DATE, // Date instance
-  priority: rtv.t.INT // some whole number
+  title: rtv.STRING, // non-empty string
+  created: rtv.DATE, // Date instance
+  priority: rtv.INT // some whole number
 }
 ```
 
@@ -228,19 +260,19 @@ Since typesets are fully nestable/composable, we can get a bit more sophisticate
 
 ```javascript
 {
-  title: rtv.t.STRING, // required (non-empty) title
-  created: [rtv.q.OPTIONAL, rtv.t.DATE], // either a TODO or just a note
-  priority: [rtv.t.INT, {oneOf: [0, 1, 2]}] // 0=none, 1=low, 2=high
+  title: rtv.STRING, // required (non-empty) title
+  created: [rtv.OPTIONAL, rtv.DATE], // either a TODO or just a note
+  priority: [rtv.INT, {oneOf: [0, 1, 2]}] // 0=none, 1=low, 2=high
 }
 ```
 
 Since shapes also represent objects, they have an _implied_ (default) type of [OBJECT](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.OBJECT). When [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) (which means not using any implied typeset elements like the qualifier and type), the shape would __move into the special `$` argument__ of the `OBJECT` type:
 
 ```javascript
-[rtv.q.REQUIRED, rtv.t.OBJECT, {$: {
-    title: rtv.t.STRING,
-    created: [rtv.q.OPTIONAL, rtv.t.DATE],
-    priority: [rtv.t.INT, {oneOf: [0, 1, 2]}]
+[rtv.REQUIRED, rtv.OBJECT, {$: {
+    title: rtv.STRING,
+    created: [rtv.OPTIONAL, rtv.DATE],
+    priority: [rtv.INT, {oneOf: [0, 1, 2]}]
   }
 }]
 ```
@@ -248,8 +280,8 @@ Since shapes also represent objects, they have an _implied_ (default) type of [O
 When the default object type is sufficient, it's really easy to nest shapes. Let's say our TODO item also had a note, which is an object with "text" and "updated" properties:
 
 ```javascript
-const {STRING, DATE, INT} = rtv.t;
-const {EXPECTED, OPTIONAL} = rtv.q;
+const {STRING, DATE, INT} = rtv;
+const {EXPECTED, OPTIONAL} = rtv;
 
 const item = {
   title: 'Make Christmas Oatmeal',
@@ -275,8 +307,8 @@ rtv.verify(item, {
 The typeset above would require a TODO item to have a "note" with a non-empty string value for "text", and a `Date` instance for "updated". We could make the entire note optional, however, by _expecting_ it to be either `null` if a note wasn't provided, or the shape if one was:
 
 ```javascript
-const {STRING, DATE, INT} = rtv.t;
-const {EXPECTED, OPTIONAL} = rtv.q;
+const {STRING, DATE, INT} = rtv;
+const {EXPECTED, OPTIONAL} = rtv;
 
 const item = {
   title: 'Make Christmas Oatmeal',
@@ -303,7 +335,7 @@ rtv.verify(item, {
 Many times, an API response or a function's arguments will contain a list of values or objects. At their most basic, lists are simple JavaScript Arrays that contain values of some type. The simplest way to verify a list is homogenous is to use the _shorthand_ syntax for the [ARRAY](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY) type:
 
 ```javascript
-[[rtv.t.STRING]]
+[[rtv.STRING]]
 ```
 
 This would verify that an Array contains non-empty string values, but the Array could be __empty__, given the default [arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY_args).
@@ -315,20 +347,20 @@ What the example above defines is an Array typeset that has a single _implied_ `
 When the __full notation__ is used, the element typeset __moves into the `ts` argument__:
 
 ```javascript
-[rtv.t.ARRAY, {ts: [rtv.t.STRING]}] // same as before, but in full notation
+[rtv.ARRAY, {ts: [rtv.STRING]}] // same as before, but in full notation
 ```
 
 Either form is acceptable, and either form can show-up anywhere in a typeset. Therefore, we could verify a value is either a boolean, an Array of non-empty strings, or an Array of integers like this:
 
 ```javascript
-[rtv.t.BOOLEAN, [rtv.t.STRING], [rtv.t.INT]]
+[rtv.BOOLEAN, [rtv.STRING], [rtv.INT]]
 ```
 
 A more practical example could be requiring a TODO item to have a non-empty list of notes associated with it, if "notes" isn't `null`, meaning there are no notes (i.e. either "notes" is `null` because there are no notes, or "notes" is an Array of note objects containing at least one note):
 
 ```javascript
-const {STRING, DATE, INT} = rtv.t;
-const {EXPECTED, OPTIONAL} = rtv.q;
+const {STRING, DATE, INT} = rtv;
+const {EXPECTED, OPTIONAL} = rtv;
 
 const item = {
   title: 'Make Christmas Oatmeal',
@@ -401,7 +433,7 @@ rtv.verify(3, validator); // ERROR (failure: 'Not a number...')
 Custom validators are intended to be used as _compliments_ to existing types rather than complete replacements as we've been doing so far. For example, rather than worry about parsing the value as an integer and checking to see if it's not a number, we could let RTV.js first verify the value is an [integer](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.INT) by using an Array typeset:
 
 ```javascript
-const typeset = [rtv.t.INT, (v) => v % 2 === 0];
+const typeset = [rtv.INT, (v) => v % 2 === 0];
 
 rtv.verify(2, typeset); // ok
 rtv.verify(3, typeset); // ERROR (failure: 'Verification failed...')
@@ -410,7 +442,7 @@ rtv.verify(3, typeset); // ERROR (failure: 'Verification failed...')
 An Array typeset may have at most __one__ custom validator, and it must be the __last__ element. Each sub-typeset may have its own validator. When one or more types are in the typeset, the validator is immediately invoked if one of the types matches (i.e. verifies) the value (any remaining types are ignored):
 
 ```javascript
-const typeset = [rtv.t.INT, rtv.t.STRING, (v) => v % 2 === 0];
+const typeset = [rtv.INT, rtv.STRING, (v) => v % 2 === 0];
 
 // in both cases, STRING verification is skipped because INT matches first
 rtv.verify(2, typeset); // ok
@@ -420,8 +452,8 @@ rtv.verify(3, typeset); // ERROR (failure: 'Verification failed...')
 Finally, we could enhance our TODO item verification with a custom validator that verifies the `created` Date is not in the past:
 
 ```javascript
-const {STRING, DATE, INT} = rtv.t;
-const {EXPECTED, OPTIONAL} = rtv.q;
+const {STRING, DATE, INT} = rtv;
+const {EXPECTED, OPTIONAL} = rtv;
 
 const item = {
   title: 'Make Christmas Oatmeal',
@@ -463,22 +495,22 @@ RTV.js provides a [configuration](https://gitlab.com/stefcameron/rtvjs/blob/mast
 ```javascript
 rtv.config.enabled = false; // default: true
 
-rtv.verify('foo', rtv.t.INT); // no-op, always returns RtvSuccess
-rtv.check('foo', rtv.t.INT); // no-op, always returns RtvSuccess
+rtv.verify('foo', rtv.INT); // no-op, always returns RtvSuccess
+rtv.check('foo', rtv.INT); // no-op, always returns RtvSuccess
 ```
 
 But why even make the function call?
 
 ```javascript
 if (rtv.config.enabled) {
-  rtv.verify('foo', rtv.t.INT);
+  rtv.verify('foo', rtv.INT);
 }
 ```
 
-Even better, since `rtv.e` is a getter that returns the value of `rtv.config.enabled`, we can make this really terse:
+Even better, since `rtv.enabled` is a getter that returns the value of `rtv.config.enabled`, we can make this terse:
 
 ```javascript
-rtv.e && rtv.verify('foo', rtv.t.INT);
+rtv.enabled && rtv.verify('foo', rtv.INT);
 ```
 
 Finally, a JavaScript bundler that supports _tree shaking_ (e.g. Webpack or Rollup) can be configured to completely _exclude_ the entire code for a build. This could be handy if you're concerned about script download size over runtime checks, say, in a production build. See the [Rollup example](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#enabled-example-rollup) for more information.
@@ -508,7 +540,7 @@ const item = {
 We can describe this object using two [shapes](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor):
 
 ```javascript
-const {STRING, DATE, INT} = rtv.t;
+const {STRING, DATE, INT} = rtv;
 const priorities = [1, 2, 3, 4]; // simple enumeration of priority levels
 
 const shapes = {
@@ -588,8 +620,8 @@ if (rtv.check(item, shapes.todo).valid) {
 Finally, we can check simple values too:
 
 ```javascript
-rtv.verify('1', rtv.t.INT); // ERROR: not an integer number
-rtv.verify('', [rtv.q.EXPECTED, rtv.t.STRING]); // ok: expected strings can be null/empty
+rtv.verify('1', rtv.INT); // ERROR: not an integer number
+rtv.verify('', [rtv.EXPECTED, rtv.STRING]); // ok: expected strings can be null/empty
 ```
 
 ## Dynamic Classes
@@ -599,8 +631,8 @@ This is an advanced use of the RTV.js library. I recommend you read through the 
 Let's suppose we have the following [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) that describes a simple note:
 
 ```javascript
-const {STRING, DATE} = rtv.t; // some types
-const {EXPECTED} = rtv.q; // some qualifiers
+const {STRING, DATE} = rtv; // some types
+const {EXPECTED} = rtv; // some qualifiers
 const tags = ['car', 'money', 'reminder', 'grocery'];
 
 const noteShape = {
@@ -690,8 +722,13 @@ note.text = ''; // ERROR: "text" must be a non-empty string
 
 RTV.js is not your only choice for runtime verification of values. Here are some alternatives you should consider. Compare them to what this library offers and choose the best one to fit your needs!
 
-*   [Joi](https://github.com/hapijs/joi) offers object schema validation. In the _hapi ecosystem_, this is commonly paired with [Hoek](https://github.com/hapijs/hoek).
-*   [prop-types](https://github.com/facebook/prop-types) is useful if you're building a React app.
+*   [Joi](https://github.com/hapijs/joi) offers object schema validation. In the _hapi ecosystem_, this is commonly paired with [Hoek](https://github.com/hapijs/hoek). Note that `Joi` is __only supported in Node.js__ environments.
+*   [prop-types](https://github.com/facebook/prop-types) is useful __if you're building a React app__, but you can't get it to fail on purpose (it's React's support for it that causes errors in the console at runtime in a development build).
+*   [yup](https://github.com/jquense/yup) is useful if you want to __validate an object schema__ (and can be a viable alternative to `Joi` which is only supported on Node.js since `yup` is also supported in the browser).
+
+    While it has similarities to RTV.js, the picture is very different in practice: Yup has a concept of _coercions and transformations_ such that, for instance, `yup.string().required().validateSync(1)` would __not__ fail. Even if `strict` mode is enabled (for which there's no global setting; that would be on a per-statement basis), there are cases where it would still pass! [You wouldn't be the only one concerned with this](https://github.com/jquense/yup/issues/54) (and it's never been resolved, which is fine since `yup` isn't strictly focused on exact types for validations).
+
+    RTV.js, on the other hand, is __specially designed to validate values against exact types, no implicit type coercions or transformations__. It's either a string or it's not. That's what's needed for type validation. Otherwise, (IMO) it's useless, in terms of validation, because you can't be certain of what you have (e.g. if `"1"` and `1` were the same, would `value.substr()` _always_ work...?).
 
 # Contributing
 

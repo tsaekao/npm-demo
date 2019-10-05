@@ -53,7 +53,14 @@ describe('module: lib/validation/isTypeset', function() {
           [types.HASH_MAP, {count: 2}],
           [[{foo: types.STRING}]],
           [[]], // inner array won't be validated since we aren't going deep
-          [types.BOOLEAN, [types.FINITE]]
+          [types.BOOLEAN, [types.FINITE]],
+
+          // duplicate type
+          [types.FUNCTION, types.FUNCTION],
+
+          // two ARRAY types (i.e. duplicate types, but not as obvious)
+          [types.ARRAY, [types.FINITE]],
+          [types.ARRAY, {min: 1}, [types.FINITE]]
         ];
 
         badValues = [
@@ -66,9 +73,6 @@ describe('module: lib/validation/isTypeset', function() {
           'invalid-type',
           true,
           false,
-
-          // a type may only be specified once
-          [types.STRING, types.STRING],
 
           // shape descriptor is not second after qualifier, and ANY does not
           //  take any args
@@ -86,9 +90,6 @@ describe('module: lib/validation/isTypeset', function() {
           // second object/shape is un-typed since it's not first in the array typeset
           [types.PLAIN_OBJECT, {$: {}}, {$: {}}],
 
-          // duplicate type
-          [DEFAULT_QUALIFIER, types.FUNCTION, types.FUNCTION],
-
           // cannot have more than one qualifier
           [qualifiers.REQUIRED, qualifiers.OPTIONAL, types.STRING],
           [qualifiers.REQUIRED, types.STRING, qualifiers.OPTIONAL],
@@ -97,10 +98,6 @@ describe('module: lib/validation/isTypeset', function() {
           [DEFAULT_QUALIFIER, true], // invalid value type in typeset
 
           [[types.STRING], {ts: types.FINITE}], // missing object type
-
-          // two ARRAY types
-          [types.ARRAY, []],
-          [types.ARRAY, {min: 1}, [types.FINITE]],
 
           // second shape has no type
           [{}, {}]
@@ -138,6 +135,12 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[17] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[17][0]}];
         goodValues[18] = [DEFAULT_QUALIFIER, goodValues[18][0], types.ARRAY,
           {ts: goodValues[18][1]}];
+        goodValues[19].unshift(DEFAULT_QUALIFIER);
+
+        goodValues[20] = [DEFAULT_QUALIFIER, types.ARRAY, types.ARRAY, {ts: [types.FINITE]}];
+        goodValues[21] = [DEFAULT_QUALIFIER, types.ARRAY, {min: 1}, types.ARRAY, {
+          ts: [types.FINITE]
+        }];
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {fullyQualified: true});
         expect(results.failures).to.eql([]);
@@ -235,7 +238,12 @@ describe('module: lib/validation/isTypeset', function() {
           [qualifiers.OPTIONAL, types.CLASS_OBJECT],
 
           [types.HASH_MAP, {count: 2}],
-          [types.ARRAY, {ts: types.FINITE}]
+          [types.ARRAY, {ts: types.FINITE}],
+
+          // duplicate type
+          [{foo: [types.FUNCTION, types.FUNCTION]}],
+          // STRING type appears more than once in the nested (array) typeset
+          [types.STRING, [types.STRING, types.STRING]]
         ];
 
         badValues = [
@@ -252,9 +260,6 @@ describe('module: lib/validation/isTypeset', function() {
           // 2 ARRAY types in one, and missing object type since object would
           //  be considered other args, not ARRAY args
           [types.ARRAY, [types.STRING], {ts: types.FINITE}],
-
-          // STRING type appears more than once in the nested (array) typeset
-          [types.STRING, [types.STRING, types.STRING]],
 
           // nested shape with an invalid type
           {foo: {bar: ['invalid-type']}},
@@ -318,6 +323,13 @@ describe('module: lib/validation/isTypeset', function() {
 
         goodValues[13][1].ts = [DEFAULT_QUALIFIER, goodValues[13][1].ts];
         goodValues[13].unshift(DEFAULT_QUALIFIER);
+
+        goodValues[14][0].foo.unshift(DEFAULT_QUALIFIER);
+        goodValues[14] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, ...goodValues[14]];
+
+        goodValues[15] = [DEFAULT_QUALIFIER, types.STRING, types.ARRAY, {
+          ts: [DEFAULT_QUALIFIER, types.STRING, types.STRING]
+        }];
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues,
             {deep: true, fullyQualified: true});

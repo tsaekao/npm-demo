@@ -84,11 +84,12 @@ const RtvError = function(value, typeset, path, cause, failure) {
 
   // NOTE: for security reasons, no part of the value should be included in the
   //  message in case it contains sensitive information like secrets or passwords
+  // NOTE: we don't include the `typeset` in the message since it could be VERY long;
+  //  the `path` and `cause` should be enough for debugging purposes
   this.message = `Verification failed: path="${renderPath(path)}", cause=${print(cause)}`;
   if (failure) {
     this.message += `, failure="${failure.message}"`;
   }
-  this.message += `, typeset=${print(typeset)}`;
 
   Object.defineProperties(this, {
     /**
@@ -164,9 +165,9 @@ const RtvError = function(value, typeset, path, cause, failure) {
      *  the {@link rtvref.RtvError#typeset typeset}, and possibly of a nested
      *  typeset within it, expressing only the direct cause of the failure.
      *
-     * If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
-     *  and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
-     *  because the failure would ultimately have been caused by the nested `rtv.t.STRING`
+     * If `typeset` is `[[rtv.STRING]]` (a required array of required strings),
+     *  and `value` is `['a', 2]`, this property would be `[rtv.REQUIRED, rtv.STRING]`
+     *  because the failure would ultimately have been caused by the nested `rtv.STRING`
      *  typeset.
      *
      * @readonly
@@ -211,8 +212,10 @@ RtvError.prototype.toString = function() {
   // NOTE: for security reasons, no part of the value should be included in the
   //  serialization in case it contains sensitive information like secrets or
   //  passwords
+  // NOTE: we don't include the `typeset` in the serialization since it could be VERY long;
+  //  the `path` and `cause` should be enough for debugging purposes
 
-  let str = `{rtvref.RtvError path="${renderPath(this.path)}", cause=${print(this.cause)}}`;
+  let str = `{rtvref.RtvError path="${renderPath(this.path)}", cause=${print(this.cause)}`;
 
   if (this.failure) {
     str += `, failure="${this.failure.message}"`;
@@ -220,7 +223,7 @@ RtvError.prototype.toString = function() {
     str += ', failure=<none>';
   }
 
-  str += `, typeset=${print(this.typeset)}`;
+  str += '}';
 
   return str;
 };

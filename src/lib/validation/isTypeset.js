@@ -81,7 +81,7 @@ export const type = undefined;
  * @param {boolean} [options.deep=false] If truthy, deeply-validates any nested
  *  typesets. Note that typesets in nested shapes are also deeply-validated.
  * @param {boolean} [options.fullyQualified=false] If truthy, the typeset must be
- *  fully-qualified.
+ *  fully-qualified to be valid.
  * @param {(string|undefined)} [options.failure] (Output property) If an options
  *  object is specified, this property will be added and set to a failure message
  *  IIF the validation fails.
@@ -107,7 +107,6 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray(v) && v.length >= 2) {
-      const usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
       let curType; // @type {string} current in-scope type
       let argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
 
@@ -117,14 +116,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
       const updateCurType = function(newType) {
         // set the rule as the current in-scope type
         curType = newType;
-
-        if (usedTypes[curType]) {
-          // a type cannot appear more than once in a typeset (but nested is OK)
-          valid = false;
-          options.failure = `${failurePrefix}: Type "${curType}" may not be included more than once in the typeset (but may appear again in a nested typeset)`;
-        }
-
-        usedTypes[curType] = true;
+        // NOTE: there's no restriction on having a type appear only once in a typeset,
+        //  but if there was, this is where we'd catch it, using a map to track which
+        //  types have been used already
       };
 
       // iterate through each element in the typeset array to make sure all required
@@ -217,25 +211,18 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   //  definition, and deep (if requested)
   } else if (valid && !fullyQualified && isArray(v)) {
     const failurePrefix = `Non-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v)}`;
-    const usedTypes = {}; // @type {Object.<string,boolean>} map of simple type to `true`
     let curType; // @type {string} current in-scope type
     let argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
     let hasQualifier = false; // true if a qualifier is specified (not implied)
 
-    // Updates the current in-scope type (curType) and marks it as used in usedTypes.
-    //  If the type has already been used, it sets valid to false.
+    // Updates the current in-scope type (curType).
     // @param {string} newType New in-scope type.
     const updateCurType = function(newType) {
       // set the rule as the current in-scope type
       curType = newType;
-
-      if (usedTypes[curType]) {
-        // a type cannot appear more than once in a typeset (but nested is OK)
-        valid = false;
-        options.failure = `${failurePrefix}: Type "${curType}" may not be included more than once in the typeset (but may appear again in a nested typeset)`;
-      }
-
-      usedTypes[curType] = true;
+      // NOTE: there's no restriction on having a type appear only once in a typeset,
+      //  but if there was, this is where we'd catch it, using a map to track which
+      //  types have been used already
     };
 
     // iterate through each element in the typeset array to make sure all required
@@ -285,14 +272,13 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  rule is the type and args all in one, therefore we consume the
           //  rule/object as the in-scope arg type's arguments
           updateCurType(DEFAULT_OBJECT_TYPE);
-          if (valid) {
-            soArgs = {$: rule}; // build default args since the rule is the shape itself
-            valid = (idx === 0 || (hasQualifier && idx === 1));
-            // NOTE: do not set argType because the shape is the default object type's
-            //  args, so they should be consumed by the in-scope arg type
-            if (!valid) {
-              options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}, and should be wrapped in shape object args: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
-            }
+
+          soArgs = {$: rule}; // build default args since the rule is the shape itself
+          valid = (idx === 0 || (hasQualifier && idx === 1));
+          // NOTE: do not set argType because the shape is the default object type's
+          //  args, so they should be consumed by the in-scope arg type
+          if (!valid) {
+            options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}, and should be wrapped in shape object args: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
           }
         } else {
           // consume the object as the in-scope arg type's arguments
@@ -328,7 +314,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         //  it from this type as well
         argType = undefined;
 
-        if (valid && deep) {
+        if (deep) {
           const opts = {deep, fullyQualified};
           valid = isTypeset(rule, opts); // recursive
           options.failure = opts.failure && `${failurePrefix} (index=${idx}): ${opts.failure}`;

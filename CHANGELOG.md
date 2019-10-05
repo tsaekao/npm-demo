@@ -9,7 +9,16 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
-n/a
+### Changed
+-   All types and qualifiers are now directly accessible on the `rtv` object (e.g. `rtv.STRING`).
+-   It's now possible to have the same type appear multiple times in the same typeset (this makes typeset _composition_ much easier, avoiding the need for custom validators in lots of cases).
+-   `RtvError`'s message and string serialization no longer includes the `typeset` to reduce log bloat/noise (they could be _very_ long), but the `typeset` is still available as a property of the object.
+-   __DEPRECATED__ `rtv.t`, being replaced by `rtv.types`.
+-   __DEPRECATED__ `rtv.q`, being replaced by `rtv.qualifiers`.
+-   __DEPRECATED__ `rtv.e`, being replaced by `rtv.enabled`.
+
+### Fixed
+-   If an exception is thrown in `impl`, it's no longer wrapped in an "outer" exception, resulting in a cleaner error message (e.g. what was once, "Cannot check value: Cannot check value: Invalid typeset..." for an invalid typeset nested 2 levels deep is now just, "Invalid typeset...").
 
 ## 2.0.0 - 2019-09-10
 

@@ -28,9 +28,12 @@ Provides the externally-facing API. It wraps the
 **Kind**: global namespace  
 
 * [rtv](#rtv) : <code>object</code>
-    * [.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.q](#rtv.q) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.e](#rtv.e) : <code>boolean</code>
+    * ~~[.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+    * [.types](#rtv.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
+    * ~~[.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+    * [.qualifiers](#rtv.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
+    * ~~[.enabled](#rtv.enabled) : <code>boolean</code>~~
+    * [.enabled](#rtv.enabled) : <code>boolean</code>
     * [.version](#rtv.version) : <code>string</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
@@ -41,21 +44,72 @@ Provides the externally-facing API. It wraps the
 
 <a name="rtv.t"></a>
 
-## rtv.t : [<code>Enumeration</code>](#rtvref.Enumeration)
+## ~~rtv.t : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+***Deprecated***
+
 Enumeration of [types](#rtvref.types.types).
 
+__DEPRECATED__ since version 2.1.0. Please use `rtv.types.<TYPE>`
+ or `rtv.<TYPE>` instead.
+
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.q"></a>
+<a name="rtv.types"></a>
 
-## rtv.q : [<code>Enumeration</code>](#rtvref.Enumeration)
+## rtv.types : [<code>Enumeration</code>](#rtvref.Enumeration)
+Enumeration of [types](#rtvref.types.types).
+
+__For convenience, each type is also available directly from this object__,
+ e.g. `rtv.STRING`, `rtv.FINITE`, etc.
+
+The Enumeration can be used to perform additional validations (e.g.
+ `rtv.types.verify('foo')` would throw because "foo" is not a valid type),
+ however whether the type is referenced as `rtv.STRING` or `rtv.types.STRING`
+ makes no difference to typeset validation.
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
+**Read only**: true  
+<a name="rtv.t"></a>
+
+## ~~rtv.t : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+***Deprecated***
+
 Enumeration of [qualifiers](#rtvref.qualifiers.qualifiers).
 
+__DEPRECATED__ since version 2.1.0. Please use `rtv.qualifiers.<QUALIFIER>`
+ or `rtv.<QUALIFIER>` instead.
+
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.e"></a>
+<a name="rtv.qualifiers"></a>
 
-## rtv.e : <code>boolean</code>
+## rtv.qualifiers : [<code>Enumeration</code>](#rtvref.Enumeration)
+Enumeration of [qualifiers](#rtvref.qualifiers.qualifiers).
+
+__For convenience, each qualifier is also available directly from this object__,
+ e.g. `rtv.EXPECTED`, `rtv.OPTIONAL`, etc.
+
+The Enumeration can be used to perform additional validations (e.g.
+ `rtv.qualifiers.verify('x')` would throw because "x" is not a valid qualifier),
+ however whether the qualifier is referenced as `rtv.EXPECTED` or
+ `rtv.qualifiers.EXPECTED`` makes no difference to typeset validation.
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
+**Read only**: true  
+<a name="rtv.enabled"></a>
+
+## ~~rtv.enabled : <code>boolean</code>~~
+***Deprecated***
+
+Shortcut proxy for reading [enabled](#rtv.config.enabled).
+
+__DEPRECATED__ since version 2.1.0. Please use `rtv.enabled` instead.
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
+**Read only**: true  
+<a name="rtv.enabled"></a>
+
+## rtv.enabled : <code>boolean</code>
 Shortcut proxy for reading [enabled](#rtv.config.enabled).
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
@@ -79,11 +133,11 @@ Library version.
 Globally enables or disables [verify](#rtv.verify) and [check](#rtv.check). When set
  to `false`, these methods are no-ops.
 
-Use this, or the shortcut [e](#rtv.e), to enable code optimization
+Use this, or the shortcut [enabled](#rtv.enabled), to enable code optimization
  when building source with a bundler that supports _tree shaking_, like
  [Rollup](https://rollupjs.org/) or [Webpack](https://webpack.js.org/).
 
-The following plugins can redefine the statement `rtv.e` or `rtv.config.enabled`
+The following plugins can redefine the statement `rtv.enabled` or `rtv.config.enabled`
  as `false` prior to code optimizations that remove unreachable code:
 
 - Rollup: [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace)
@@ -103,7 +157,7 @@ if (rtv.config.enabled) {
  rtv.verify(jsonResult, expectedShape);
 }
 
-rtv.e && rtv.verify(jsonResult, expectedShape); // shorter
+rtv.enabled && rtv.verify(jsonResult, expectedShape); // shorter
 
 ...
 </code></pre>
@@ -117,7 +171,7 @@ module.exports = {
   plugins: [
     // invoke this plugin _before_ any other plugins
     replacePlugin({
-      'rtv.e': 'false',
+      'rtv.enabled': 'false',
       'rtv.config.enabled': 'false'
     }),
     ...
@@ -129,7 +183,7 @@ The code in the module snippet above would be completely removed from the
  build's output, thereby removing any rtv.js overhead from production.
 
 **Kind**: static property of [<code>config</code>](#rtv.config)  
-**See**: [rtv.enabled](rtv.enabled)  
+**See**: [enabled](#rtv.enabled)  
 <a name="rtv.isTypeset"></a>
 
 ## rtv.isTypeset()
@@ -155,11 +209,11 @@ Checks a value against a typeset for compliance.
  [verify()](#rtv.verify), an exception is not thrown__ if the
  `value` is non-compliant.
 
- Since both [RtvSuccess](#rtvref.RtvSuccess), returned when
-  the check succeeds, as well as [RtvError](#rtvref.RtvError), returned
-  when the check fails, have a `valid: boolean` property in common, it's
+ Since both [RtvSuccess](#rtvref.RtvSuccess) (returned when
+  the check succeeds) as well as [RtvError](#rtvref.RtvError) (returned
+  when the check fails) have a `valid: boolean` property in common, it's
   easy to test for success/failure like this:
-  `if (rtv.check(2, rtv.t.FINITE).valid) {...}`.
+  `if (rtv.check(2, rtv.FINITE).valid) {...}`.
 
  __NOTE:__ This method always returns a success indicator if RTV.js is currently
   [disabled](#rtv.config.enabled).  
@@ -562,6 +616,9 @@ Friendly name (not necessarily unique among all enumeration instances)
  used to identify this enumeration, especially in validation error
  messages. Empty string if not specified during construction.
 
+Note that this own-property is non-enumerable on purpose. Enumerable
+ properties on this instance are the keys in this enumeration.
+
 **Kind**: instance property of [<code>Enumeration</code>](#rtvref.Enumeration)  
 **Read only**: true  
 <a name="rtvref.Enumeration+$values"></a>
@@ -702,9 +759,9 @@ Fully qualified typeset that caused the failure. This will be a subset of
  the [typeset](#rtvref.RtvError+typeset), and possibly of a nested
  typeset within it, expressing only the direct cause of the failure.
 
-If `typeset` is `[[rtv.t.STRING]]` (a required array of required strings),
- and `value` is `['a', 2]`, this property would be `[rtv.q.REQUIRED, rtv.t.STRING]`
- because the failure would ultimately have been caused by the nested `rtv.t.STRING`
+If `typeset` is `[[rtv.STRING]]` (a required array of required strings),
+ and `value` is `['a', 2]`, this property would be `[rtv.REQUIRED, rtv.STRING]`
+ because the failure would ultimately have been caused by the nested `rtv.STRING`
  typeset.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
@@ -2109,9 +2166,10 @@ Describes the possible types for a given value. It can be any one of the followi
   the typeset. If a simpler type is a more likely match, it's more performant to specify it
   first/earlier in the typeset to avoid a match attempt on a nested shape or Array.
   - Cannot be an empty Array.
-  - A given type may not be included more than once in the typeset, but may appear
-    again in a nested typeset (when a parent typeset describes an
-    [Array](rtfref.types.ARRAY) or type of [Object](rtfref.types.OBJECT)).
+  - A given type may be included more than once in the typeset. This allows for greater
+    composition. The first-matched will win. `[STRING, {oneOf: 'foo'}, STRING]` would
+    validate both `'foo'` and `'bar'` because the second occurrence of `STRING` is
+    not restricted to any specific value.
   - An Array is necessary to [qualify](#rtvref.qualifiers) the typeset as not
     required (see _Typeset Qualifiers_ below).
   - An Array is necessary if a type needs or requires
@@ -2127,7 +2185,7 @@ Describes the possible types for a given value. It can be any one of the followi
     these typesets are equivalent (and equivalent to just `{name: STRING}`
     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
     `[REQUIRED, OBJECT, {$: {name: STRING}}]`, describing an object that has a name
-    property which is a non-empty string. Changing it to `[STRING, {$: name: STRING}}]`,
+    property which is a non-empty string. Changing it to `[STRING, {$: {name: STRING}}]`,
     however, does __not__ mean, "a non-empty string, or an object with a name
     property which is a non-empty string". In this case, the
     [object arguments](rtvref.types.object_args) `{$: {name: STRING}}` would
@@ -2177,13 +2235,13 @@ This could, among other possibilities, enable the transmission of typesets
 <h4>Typeset Example: Object</h4>
 
 <pre><code>const contactShape = {
-  name: rtv.t.STRING, // required, non-empty, string
-  tags: [rtv.t.ARRAY, [rtv.t.STRING]], // required array of non-empty strings
-  // tags: [[rtv.t.STRING]], // same as above, but using shortcut array format
+  name: rtv.STRING, // required, non-empty, string
+  tags: [rtv.ARRAY, [rtv.STRING]], // required array of non-empty strings
+  // tags: [[rtv.STRING]], // same as above, but using shortcut array format
   details: { // required nested object of type `OBJECT` (default)
-    birthday: [rtv.q.EXPECTED, rtv.t.DATE] // Date (could be null)
+    birthday: [rtv.EXPECTED, rtv.DATE] // Date (could be null)
   },
-  notes: [rtv.q.OPTIONAL, rtv.t.STRING, function(value) { // optional string...
+  notes: [rtv.OPTIONAL, rtv.STRING, function(value) { // optional string...
     if (value && !value.test(/^[A-Z].+\.$/)) {
       throw new Error('Note must start with a capital letter, end with a ' +
           period, and have something in between, if specified.');
@@ -2204,10 +2262,10 @@ rtv.verify(contact, contactShape); // OK
 const walletShape = {
   contacts: [[contactShape]], // list of contacts using nested shape
   address: {
-    street: rtv.t.STRING
+    street: rtv.STRING
     // ...
   },
-  money: rtv.t.FINITE
+  money: rtv.FINITE
 };
 
 rtv.verify({
@@ -2219,13 +2277,13 @@ rtv.verify({
 
 <h4>Typeset Example: String</h4>
 
-<pre><code>rtv.verify('foo', rtv.t.STRING); // OK
-rtv.verify('foo', rtv.t.FINITE); // ERROR
+<pre><code>rtv.verify('foo', rtv.STRING); // OK
+rtv.verify('foo', rtv.FINITE); // ERROR
 </code></pre>
 
 <h4>Typeset Example: Array</h4>
 
-<pre><code>const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
+<pre><code>const typeset = [rtv.STRING, rtv.FINITE]; // non-empty string, or finite number
 rtv.verify('foo', typeset); // OK
 rtv.verify(1, typeset); // OK
 </code></pre>
@@ -2239,14 +2297,14 @@ rtv.verify(1, typeset); // OK
 };
 
 rtv.verify(100, validator); // OK
-rtv.verify(120, [rtv.t.INT, validator]); // OK
+rtv.verify(120, [rtv.INT, validator]); // OK
 </code></pre>
 
 <h4>Typeset Example: Alternate Qualifier</h4>
 
 <pre><code>const person = {
-  name: rtv.t.STRING, // required, non-empty
-  age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => { // 18 or older, if specified
+  name: rtv.STRING, // required, non-empty
+  age: [rtv.OPTIONAL, rtv.FINITE, (v) => { // 18 or older, if specified
     if (v < 18) {
       throw new Error('Must be 18 or older.');
     }
@@ -2275,7 +2333,7 @@ For example:
 
 - `STRING` -> `[REQUIRED, STRING]`
 - `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
-- `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
+- `[[FINITE]]` -> `[REQUIRED, ARRAY, {ts: [REQUIRED, FINITE]}]`
 - `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
@@ -3412,7 +3470,7 @@ Determines if a value is a typeset.
 | v | <code>\*</code> |  | Value to validate. |
 | [options] | <code>Object</code> |  | Validation options. |
 | [options.deep] | <code>boolean</code> | <code>false</code> | If truthy, deeply-validates any nested  typesets. Note that typesets in nested shapes are also deeply-validated. |
-| [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be  fully-qualified. |
+| [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be  fully-qualified to be valid. |
 | [options.failure] | <code>string</code> \| <code>undefined</code> |  | (Output property) If an options  object is specified, this property will be added and set to a failure message  IIF the validation fails. |
 
 <a name="rtvref.validation.isWeakMap"></a>
@@ -3640,7 +3698,7 @@ __NOTE:__ A validator must support all its qualifier rules, including proper
 | --- | --- | --- |
 | value | <code>\*</code> | The value to validate. |
 | [qualifier] | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always explicitly default to  [REQUIRED](#rtvref.qualifiers.REQUIRED) to maintain consistent behavior. |
-| [args] | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.t.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
+| [args] | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
 
 <a name="rtvref.validator.validator_config"></a>
 

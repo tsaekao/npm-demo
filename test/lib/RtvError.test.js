@@ -3,7 +3,6 @@ import {expect} from 'chai';
 import types from '../../src/lib/types';
 import qualifiers from '../../src/lib/qualifiers';
 import RtvError from '../../src/lib/RtvError';
-import {print} from '../../src/lib/util';
 
 describe('module: lib/RtvError', function() {
   it('should extend Error', function() {
@@ -178,7 +177,7 @@ describe('module: lib/RtvError', function() {
     expect(err.message).to.contain(` path="/${path.join('/')}"`);
     expect(err.message).to.contain(` cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
     expect(err.message).not.to.contain(' failure='); // failure not provided, so no failure message
-    expect(err.message).to.contain(` typeset=${print(typeset)}`);
+    expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
     //  contains sensitive information like passwords
     expect(err.message).not.to.contain(' value=');
@@ -194,7 +193,7 @@ describe('module: lib/RtvError', function() {
     expect(err.message).to.contain(` path="/${path.join('/')}"`);
     expect(err.message).to.contain(` cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
     expect(err.message).to.contain(` failure="${failure.message}"`);
-    expect(err.message).to.contain(` typeset=${print(typeset)}`);
+    expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
     //  contains sensitive information like passwords
     expect(err.message).not.to.contain(' value=');
@@ -261,11 +260,12 @@ describe('module: lib/RtvError', function() {
     let str = err + '';
 
     expect(str.match(/^Error: /)).to.equal(null); // not the default serialization
+    expect(str.match(/^{.+}$/)).not.to.equal(null); // wrapped in brackets
     expect(str).to.contain('rtvref.RtvError');
     expect(str).to.contain(` path="/${path.join('/')}"`);
     expect(str).to.contain(` cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
     expect(str).to.contain(' failure=<none>');
-    expect(str).to.contain(` typeset=${print(err.typeset)}`);
+    expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
     //  contains sensitive information like passwords
     expect(str).not.to.contain(' value=');
@@ -274,11 +274,12 @@ describe('module: lib/RtvError', function() {
     str = err + '';
 
     expect(str.match(/^Error: /)).to.equal(null); // not the default serialization
-    expect(str).to.contain('RtvError');
+    expect(str.match(/^{.+}$/)).not.to.equal(null); // wrapped in brackets
+    expect(str).to.contain('rtvref.RtvError');
     expect(str).to.contain(` path="/${path.join('/')}"`);
     expect(str).to.contain(` cause=["${qualifiers.REQUIRED}","${types.STRING}"]`);
     expect(str).to.contain(` failure="${failure.message}"`);
-    expect(str).to.contain(` typeset=${print(err.typeset)}`);
+    expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
     //  contains sensitive information like passwords
     expect(str).not.to.contain(' value=');

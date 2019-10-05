@@ -12,4 +12,7 @@ require('@babel/register');
 // @see https://github.com/jsdom/jsdom
 // @see https://github.com/airbnb/enzyme/blob/master/docs/guides/jsdom.md
 
+// define global variables that are otherwise defined during the build
+global.DEV_ENV = false; // don't run any dev-specific code during tests
+
 module.exports = {}; // nothing for now

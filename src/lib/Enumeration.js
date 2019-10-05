@@ -45,7 +45,7 @@ export default class Enumeration {
       throw new Error('map must contain at least one key');
     }
 
-    // shallow-clone each key in the map into this
+    // shallow-clone each key in the map into this enumeration
     keys.forEach((key) => {
       if (key.indexOf('$') === 0) {
         throw new Error(`map key "${key}" cannot start with "$"`);
@@ -68,6 +68,10 @@ export default class Enumeration {
      * Friendly name (not necessarily unique among all enumeration instances)
      *  used to identify this enumeration, especially in validation error
      *  messages. Empty string if not specified during construction.
+     *
+     * Note that this own-property is non-enumerable on purpose. Enumerable
+     *  properties on this instance are the keys in this enumeration.
+     *
      * @readonly
      * @name rtvref.Enumeration#$name
      * @type {string}

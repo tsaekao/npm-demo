@@ -1085,7 +1085,7 @@ describe('module: lib/impl', function() {
     });
 
     describe('Exceptions', function() {
-      it('should throw if shape is not a valid typeset', function() {
+      it('should throw if typeset is invalid (simple)', function() {
         let err;
         try {
           impl.check(1, 'foo');
@@ -1094,16 +1094,24 @@ describe('module: lib/impl', function() {
         }
 
         expect(err).to.be.an.instanceof(Error);
-        expect(err.message).to.contain('Cannot check value: Invalid typeset');
-        expect(err.rootCause).to.be.an.instanceof(Error);
-        expect(err.rootCause.message.indexOf('Invalid typeset')).to.equal(0);
+        expect(err.message.indexOf('Invalid typeset=')).to.equal(0);
+      });
+
+      it('should throw if typeset is invalid (nested)', function() {
+        let err;
+        try {
+          impl.check({foo: {bar: 1}}, {foo: {bar: 'baz'}});
+        } catch (checkErr) {
+          err = checkErr;
+        }
+
+        expect(err).to.be.an.instanceof(Error);
+        expect(err.message.indexOf('Invalid typeset')).to.equal(0);
       });
 
       it('should throw if typeset type is not supported', function() {
         const isTypesetStub = sinon.stub(isTypesetMod, 'default').returns(true);
 
-        // expect(impl.check.bind(impl, 1, /asdf/))
-        //   .to.throw(/Invalid JavaScript type for typeset/);
         let err;
         try {
           impl.check(1, /asdf/);
@@ -1112,9 +1120,7 @@ describe('module: lib/impl', function() {
         }
 
         expect(err).to.be.an.instanceof(Error);
-        expect(err.message).to.contain('Cannot check value: Invalid JavaScript type for typeset');
-        expect(err.rootCause).to.be.an.instanceof(Error);
-        expect(err.rootCause.message.indexOf('Invalid JavaScript type for typeset')).to.equal(0);
+        expect(err.message.indexOf('Invalid JavaScript type for typeset')).to.equal(0);
 
         isTypesetStub.restore();
       });

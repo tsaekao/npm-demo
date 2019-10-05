@@ -48,23 +48,100 @@ import * as valWeakSet from './lib/validator/valWeakSet';
 const rtv = {
   /**
    * Enumeration of {@link rtvref.types.types types}.
+   *
+   * __DEPRECATED__ since version 2.1.0. Please use `rtv.types.<TYPE>`
+   *  or `rtv.<TYPE>` instead.
+   *
+   * @deprecated
    * @readonly
    * @name rtv.t
    * @type {rtvref.Enumeration}
    */
   get t() {
+    // DEV_ENV is a global set to false during tests so we have to exclude that
+    //  branch from coverage
+    /* istanbul ignore next */
+    if (DEV_ENV) {
+      // eslint-disable-next-line no-console
+      console.warn('DEPRECATED in 2.1.0: rtv.t has been deprecated and ' +
+        'will be removed in the next major release. Please migrate your code to ' +
+        'use `rtv.types.<TYPE>` or just `rtv.<TYPE>` such as `rtv.STRING`.');
+    }
+
     return types;
   },
 
   /**
-   * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
+   * Enumeration of {@link rtvref.types.types types}.
+   *
+   * __For convenience, each type is also available directly from this object__,
+   *  e.g. `rtv.STRING`, `rtv.FINITE`, etc.
+   *
+   * The Enumeration can be used to perform additional validations (e.g.
+   *  `rtv.types.verify('foo')` would throw because "foo" is not a valid type),
+   *  however whether the type is referenced as `rtv.STRING` or `rtv.types.STRING`
+   *  makes no difference to typeset validation.
+   *
    * @readonly
-   * @name rtv.q
+   * @name rtv.types
+   * @type {rtvref.Enumeration}
+   */
+  get types() {
+    return types;
+  },
+
+  // also spread ALL enumerable properties of the enumeration into here so that
+  //  we can just call `rtv.STRING` instead of `rtv.types.STRING`
+  ...types,
+
+  /**
+   * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
+   *
+   * __DEPRECATED__ since version 2.1.0. Please use `rtv.qualifiers.<QUALIFIER>`
+   *  or `rtv.<QUALIFIER>` instead.
+   *
+   * @deprecated
+   * @readonly
+   * @name rtv.t
    * @type {rtvref.Enumeration}
    */
   get q() {
+    // DEV_ENV is a global set to false during tests so we have to exclude that
+    //  branch from coverage
+    /* istanbul ignore next */
+    if (DEV_ENV) {
+      // eslint-disable-next-line no-console
+      console.warn('DEPRECATED in 2.1.0: rtv.q has been deprecated and ' +
+        'will be removed in the next major release. Please migrate your code to ' +
+        'use `rtv.qualifiers.<QUALIFIER>` or just `rtv.<QUALIFIER>` such as ' +
+        '`rtv.EXPECTED`.');
+    }
+
     return qualifiers;
   },
+
+  /**
+   * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
+   *
+   * __For convenience, each qualifier is also available directly from this object__,
+   *  e.g. `rtv.EXPECTED`, `rtv.OPTIONAL`, etc.
+   *
+   * The Enumeration can be used to perform additional validations (e.g.
+   *  `rtv.qualifiers.verify('x')` would throw because "x" is not a valid qualifier),
+   *  however whether the qualifier is referenced as `rtv.EXPECTED` or
+   *  `rtv.qualifiers.EXPECTED`` makes no difference to typeset validation.
+   *
+   * @readonly
+   * @name rtv.qualifiers
+   * @type {rtvref.Enumeration}
+   */
+  get qualifiers() {
+    return qualifiers;
+  },
+
+  // also spread ALL enumerable properties of the enumeration into here so that
+  //  we can just call `rtv.REQUIRED` instead of `rtv.qualifiers.REQUIRED`
+  ...qualifiers,
 
   /**
    * Determines if a value is a typeset.
@@ -86,11 +163,35 @@ const rtv = {
 
   /**
    * Shortcut proxy for reading {@link rtv.config.enabled}.
+   *
+   * __DEPRECATED__ since version 2.1.0. Please use `rtv.enabled` instead.
+   *
+   * @deprecated
    * @readonly
-   * @name rtv.e
+   * @name rtv.enabled
    * @type {boolean}
    */
   get e() {
+    // DEV_ENV is a global set to false during tests so we have to exclude that
+    //  branch from coverage
+    /* istanbul ignore next */
+    if (DEV_ENV) {
+      // eslint-disable-next-line no-console
+      console.warn('DEPRECATED in 2.1.0: rtv.e has been deprecated and ' +
+        'will be removed in the next major release. Please migrate your code to ' +
+        'use `rtv.enabled`.');
+    }
+
+    return this.config.enabled;
+  },
+
+  /**
+   * Shortcut proxy for reading {@link rtv.config.enabled}.
+   * @readonly
+   * @name rtv.enabled
+   * @type {boolean}
+   */
+  get enabled() {
     return this.config.enabled;
   },
 
@@ -116,11 +217,11 @@ const rtv = {
    *  {@link rtv.verify verify()}, an exception is not thrown__ if the
    *  `value` is non-compliant.
    *
-   *  Since both {@link rtvref.RtvSuccess RtvSuccess}, returned when
-   *   the check succeeds, as well as {@link rtvref.RtvError RtvError}, returned
-   *   when the check fails, have a `valid: boolean` property in common, it's
+   *  Since both {@link rtvref.RtvSuccess RtvSuccess} (returned when
+   *   the check succeeds) as well as {@link rtvref.RtvError RtvError} (returned
+   *   when the check fails) have a `valid: boolean` property in common, it's
    *   easy to test for success/failure like this:
-   *   `if (rtv.check(2, rtv.t.FINITE).valid) {...}`.
+   *   `if (rtv.check(2, rtv.FINITE).valid) {...}`.
    *
    *  __NOTE:__ This method always returns a success indicator if RTV.js is currently
    *   {@link rtv.config.enabled disabled}.
@@ -170,7 +271,7 @@ const rtv = {
     }
 
     // NOTE: this method still returns a truthy value so that expressions like
-    //  `rtv.e && rtv.verify(...) && do_something_on_success()` work when this
+    //  `rtv.enabled && rtv.verify(...) && do_something_on_success()` work when this
     //  method doesn't throw an exception
     return new RtvSuccess();
   },
@@ -184,11 +285,11 @@ const rtv = {
      * Globally enables or disables {@link rtv.verify} and {@link rtv.check}. When set
      *  to `false`, these methods are no-ops.
      *
-     * Use this, or the shortcut {@link rtv.e}, to enable code optimization
+     * Use this, or the shortcut {@link rtv.enabled}, to enable code optimization
      *  when building source with a bundler that supports _tree shaking_, like
      *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
      *
-     * The following plugins can redefine the statement `rtv.e` or `rtv.config.enabled`
+     * The following plugins can redefine the statement `rtv.enabled` or `rtv.config.enabled`
      *  as `false` prior to code optimizations that remove unreachable code:
      *
      * - Rollup: {@link https://github.com/rollup/rollup-plugin-replace rollup-plugin-replace}
@@ -208,7 +309,7 @@ const rtv = {
      *  rtv.verify(jsonResult, expectedShape);
      * }
      *
-     * rtv.e && rtv.verify(jsonResult, expectedShape); // shorter
+     * rtv.enabled && rtv.verify(jsonResult, expectedShape); // shorter
      *
      * ...
      * </code></pre>
@@ -222,7 +323,7 @@ const rtv = {
      *   plugins: [
      *     // invoke this plugin _before_ any other plugins
      *     replacePlugin({
-     *       'rtv.e': 'false',
+     *       'rtv.enabled': 'false',
      *       'rtv.config.enabled': 'false'
      *     }),
      *     ...
@@ -246,7 +347,7 @@ const rtv = {
           return value;
         },
         set(newValue) {
-          rtv.verify(newValue, rtv.t.BOOLEAN);
+          rtv.verify(newValue, rtv.BOOLEAN);
           value = newValue;
         }
       };

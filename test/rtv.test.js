@@ -12,7 +12,8 @@ import RtvError from '../src/lib/RtvError';
 import pkg from '../package.json';
 
 describe('module: rtv', function() {
-  describe('#t', function() {
+  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
+  describe('#t (DEPRECATED@2.1.0)', function() {
     it('should provide all types', function() {
       expect('t' in rtv).to.equal(true);
       expect(rtv.t).to.equal(types);
@@ -20,11 +21,44 @@ describe('module: rtv', function() {
     });
   });
 
-  describe('#q', function() {
+  describe('#types', function() {
+    it('should provide all types', function() {
+      expect('types' in rtv).to.equal(true);
+      expect(rtv.types).to.equal(types);
+      expect(rtv.types instanceof Enumeration).to.equal(true);
+    });
+  });
+
+  describe('#...types', function() {
+    it('should provide all enumerable "types" enum props', function() {
+      expect(Object.keys(types).every(function(key) {
+        return rtv[key] === types[key];
+      })).to.be.true;
+    });
+  });
+
+  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
+  describe('#q (DEPRECATED@2.1.0)', function() {
     it('should provide all qualifiers', function() {
       expect('q' in rtv).to.equal(true);
       expect(rtv.q).to.equal(qualifiers);
       expect(rtv.q instanceof Enumeration).to.equal(true);
+    });
+  });
+
+  describe('#qualifiers', function() {
+    it('should provide all qualifiers', function() {
+      expect('qualifiers' in rtv).to.equal(true);
+      expect(rtv.qualifiers).to.equal(qualifiers);
+      expect(rtv.qualifiers instanceof Enumeration).to.equal(true);
+    });
+  });
+
+  describe('#...qualifiers', function() {
+    it('should provide all enumerable "qualifiers" enum props', function() {
+      expect(Object.keys(qualifiers).every(function(key) {
+        return rtv[key] === qualifiers[key];
+      })).to.be.true;
     });
   });
 
@@ -45,20 +79,20 @@ describe('module: rtv', function() {
 
   describe('#check()', function() {
     it('should check a value', function() {
-      expect(rtv.check('foo', rtv.t.STRING)).to.be.an.instanceof(RtvSuccess);
+      expect(rtv.check('foo', rtv.STRING)).to.be.an.instanceof(RtvSuccess);
     });
   });
 
   describe('#verify()', function() {
     it('should verify a value', function() {
-      const params = ['foo', rtv.t.STRING];
+      const params = ['foo', rtv.STRING];
       expect(rtv.verify.bind(rtv, ...params)).not.to.throw();
       expect(rtv.verify(...params)).to.be.an.instanceof(RtvSuccess);
     });
 
     it('should throw an RtvError if verify fails', function() {
       try {
-        rtv.verify('foo', rtv.t.BOOLEAN);
+        rtv.verify('foo', rtv.BOOLEAN);
         expect('statement above should have thrown').to.be.true; // fail this test
       } catch (err) {
         expect(err).to.be.an.instanceof(RtvError);
@@ -73,12 +107,22 @@ describe('module: rtv', function() {
     });
   });
 
-  describe('#e proxy', function() {
+  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
+  describe('#e proxy (DEPRECATED@2.1.0)', function() {
     it('should have a shortcut proxy rtv.e -> rtv.config.enabled', function() {
       expect('e' in rtv).to.equal(true);
       expect(rtv.e).to.equal(rtv.config.enabled);
       rtv.config.enabled = false;
       expect(rtv.e).to.equal(rtv.config.enabled);
+    });
+  });
+
+  describe('#enabled proxy', function() {
+    it('should have a shortcut proxy rtv.enabled -> rtv.config.enabled', function() {
+      expect('enabled' in rtv).to.equal(true);
+      expect(rtv.enabled).to.equal(rtv.config.enabled);
+      rtv.config.enabled = false;
+      expect(rtv.enabled).to.equal(rtv.config.enabled);
     });
   });
 
@@ -106,13 +150,13 @@ describe('module: rtv', function() {
       it('should verify a boolean is being set', function() {
         rtv.config.enabled = false;
         expect(rtvVerifySpy.called).to.equal(true);
-        expect(rtvVerifySpy.calledWith(false, rtv.t.BOOLEAN)).to.equal(true);
+        expect(rtvVerifySpy.calledWith(false, rtv.BOOLEAN)).to.equal(true);
       });
 
       it('should not check when disabled', function() {
         rtv.config.enabled = false;
         implCheckSpy.resetHistory(); // call above would have called spy
-        expect(rtv.check('foobar', rtv.t.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
+        expect(rtv.check('foobar', rtv.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
         expect(implCheckSpy.called).to.equal(false);
       });
 
@@ -120,7 +164,7 @@ describe('module: rtv', function() {
         rtvVerifySpy.restore(); // disable spy
         rtv.config.enabled = false;
         implCheckSpy.resetHistory(); // call above would have called spy
-        expect(rtv.verify('foobar', rtv.t.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
+        expect(rtv.verify('foobar', rtv.BOOLEAN)).to.be.an.instanceof(RtvSuccess);
         expect(implCheckSpy.called).to.equal(false);
       });
     });

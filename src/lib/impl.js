@@ -690,57 +690,51 @@ const checkWithArray = function(value, array /*, options*/) {
 const check = function(value, typeset /*, options*/) {
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
-  try {
-    if (options.isTypeset || isTypeset(typeset)) {
-      options.isTypeset = true;
+  if (options.isTypeset || isTypeset(typeset)) {
+    options.isTypeset = true;
 
-      if (isString(typeset)) {
-        // simple type: check value is of the type
-        return checkWithType(value, typeset, options);
-      }
-
-      if (isCustomValidator(typeset)) {
-        // custom validator: bare function implies the ANY type
-        const impliedType = types.ANY;
-
-        // value must be ANY type, and custom validator must return true
-        const result = checkWithType(value, impliedType, options);
-        if (!result.valid) {
-          return result;
-        }
-
-        // the fully-qualified match should NOT include the validator, only
-        //  the subtype within the implied typeset that matched
-        const match = fullyQualify(impliedType, options.qualifier);
-
-        const failure = _callCustomValidator(typeset, value, match, typeset);
-        if (failure !== undefined) {
-          return new RtvError(value, typeset, options.path,
-              fullyQualify(typeset, options.qualifier), failure);
-        }
-
-        return new RtvSuccess();
-      }
-
-      if (isShape(typeset)) {
-        // shape descriptor: check value against shape
-        return checkWithShape(value, typeset, options);
-      }
-
-      if (isArray(typeset)) {
-        // Array typeset: check value against all types in typeset
-        return checkWithArray(value, typeset, options);
-      }
-
-      throw new Error(`Invalid JavaScript type for typeset=${print(typeset)}`);
-    } else {
-      throw new Error(`Invalid typeset=${print(typeset)} specified`);
+    if (isString(typeset)) {
+      // simple type: check value is of the type
+      return checkWithType(value, typeset, options);
     }
-  } catch (checkErr) {
-    const err = new Error(`Cannot check value: ${checkErr.message}`);
-    err.rootCause = checkErr;
-    throw err;
+
+    if (isCustomValidator(typeset)) {
+      // custom validator: bare function implies the ANY type
+      const impliedType = types.ANY;
+
+      // value must be ANY type, and custom validator must return true
+      const result = checkWithType(value, impliedType, options);
+      if (!result.valid) {
+        return result;
+      }
+
+      // the fully-qualified match should NOT include the validator, only
+      //  the subtype within the implied typeset that matched
+      const match = fullyQualify(impliedType, options.qualifier);
+
+      const failure = _callCustomValidator(typeset, value, match, typeset);
+      if (failure !== undefined) {
+        return new RtvError(value, typeset, options.path,
+            fullyQualify(typeset, options.qualifier), failure);
+      }
+
+      return new RtvSuccess();
+    }
+
+    if (isShape(typeset)) {
+      // shape descriptor: check value against shape
+      return checkWithShape(value, typeset, options);
+    }
+
+    if (isArray(typeset)) {
+      // Array typeset: check value against all types in typeset
+      return checkWithArray(value, typeset, options);
+    }
+
+    throw new Error(`Invalid JavaScript type for typeset=${print(typeset)}`);
   }
+
+  throw new Error(`Invalid typeset=${print(typeset)}`);
 };
 
 /**

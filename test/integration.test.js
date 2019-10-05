@@ -10,7 +10,7 @@ import RtvError from '../src/lib/RtvError';
 describe('Integration', function() {
   describe('Typesets', function() {
     it('should be valid non-fully-qualified typesets', function() {
-      rtv.isTypeset([rtv.t.BOOLEAN, [rtv.t.STRING], [rtv.t.INT]], {deep: true});
+      rtv.isTypeset([rtv.BOOLEAN, [rtv.STRING], [rtv.INT]], {deep: true});
     });
   });
 
@@ -30,12 +30,12 @@ describe('Integration', function() {
       };
 
       shape = {
-        title: rtv.t.STRING,
-        created: [rtv.q.OPTIONAL, rtv.t.DATE],
-        priority: [rtv.t.INT, {oneOf: [0, 1, 2]}],
-        note: [rtv.q.EXPECTED, {
-          text: rtv.t.STRING,
-          updated: rtv.t.DATE
+        title: rtv.STRING,
+        created: [rtv.OPTIONAL, rtv.DATE],
+        priority: [rtv.INT, {oneOf: [0, 1, 2]}],
+        note: [rtv.EXPECTED, {
+          text: rtv.STRING,
+          updated: rtv.DATE
         }]
       };
     });
@@ -70,16 +70,16 @@ describe('Integration', function() {
       shapes = {
         get todo() {
           return {
-            title: rtv.t.STRING,
-            due: rtv.t.DATE,
-            priority: [rtv.t.INT, {oneOf: [1, 2, 3, 4]}],
+            title: rtv.STRING,
+            due: rtv.DATE,
+            priority: [rtv.INT, {oneOf: [1, 2, 3, 4]}],
             notes: [[this.note]]
           };
         },
         get note() {
           return {
-            text: rtv.t.STRING,
-            updated: rtv.t.DATE
+            text: rtv.STRING,
+            updated: rtv.DATE
           };
         }
       };
@@ -105,8 +105,8 @@ describe('Integration', function() {
 
   describe('Dynamic Note class', function() {
     it('creates a class from a shape with setters that verify values', function() {
-      const {STRING, DATE} = rtv.t; // some types
-      const {EXPECTED} = rtv.q; // some qualifiers
+      const {STRING, DATE} = rtv.types; // some types
+      const {EXPECTED} = rtv.qualifiers; // some qualifiers
       const tags = ['car', 'money', 'reminder', 'grocery'];
 
       const noteShape = {

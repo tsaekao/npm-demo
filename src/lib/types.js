@@ -323,9 +323,10 @@ import Enumeration from './Enumeration';
  *   the typeset. If a simpler type is a more likely match, it's more performant to specify it
  *   first/earlier in the typeset to avoid a match attempt on a nested shape or Array.
  *   - Cannot be an empty Array.
- *   - A given type may not be included more than once in the typeset, but may appear
- *     again in a nested typeset (when a parent typeset describes an
- *     {@link rtfref.types.ARRAY Array} or type of {@link rtfref.types.OBJECT Object}).
+ *   - A given type may be included more than once in the typeset. This allows for greater
+ *     composition. The first-matched will win. `[STRING, {oneOf: 'foo'}, STRING]` would
+ *     validate both `'foo'` and `'bar'` because the second occurrence of `STRING` is
+ *     not restricted to any specific value.
  *   - An Array is necessary to {@link rtvref.qualifiers qualify} the typeset as not
  *     required (see _Typeset Qualifiers_ below).
  *   - An Array is necessary if a type needs or requires
@@ -341,7 +342,7 @@ import Enumeration from './Enumeration';
  *     these typesets are equivalent (and equivalent to just `{name: STRING}`
  *     as the typeset): `[{name: STRING}]`, `[REQUIRED, {name: STRING}]`, and
  *     `[REQUIRED, OBJECT, {$: {name: STRING}}]`, describing an object that has a name
- *     property which is a non-empty string. Changing it to `[STRING, {$: name: STRING}}]`,
+ *     property which is a non-empty string. Changing it to `[STRING, {$: {name: STRING}}]`,
  *     however, does __not__ mean, "a non-empty string, or an object with a name
  *     property which is a non-empty string". In this case, the
  *     {@link rtvref.types.object_args object arguments} `{$: {name: STRING}}` would
@@ -391,13 +392,13 @@ import Enumeration from './Enumeration';
  * <h4>Typeset Example: Object</h4>
  *
  * <pre><code>const contactShape = {
- *   name: rtv.t.STRING, // required, non-empty, string
- *   tags: [rtv.t.ARRAY, [rtv.t.STRING]], // required array of non-empty strings
- *   // tags: [[rtv.t.STRING]], // same as above, but using shortcut array format
+ *   name: rtv.STRING, // required, non-empty, string
+ *   tags: [rtv.ARRAY, [rtv.STRING]], // required array of non-empty strings
+ *   // tags: [[rtv.STRING]], // same as above, but using shortcut array format
  *   details: { // required nested object of type `OBJECT` (default)
- *     birthday: [rtv.q.EXPECTED, rtv.t.DATE] // Date (could be null)
+ *     birthday: [rtv.EXPECTED, rtv.DATE] // Date (could be null)
  *   },
- *   notes: [rtv.q.OPTIONAL, rtv.t.STRING, function(value) { // optional string...
+ *   notes: [rtv.OPTIONAL, rtv.STRING, function(value) { // optional string...
  *     if (value && !value.test(/^[A-Z].+\.$/)) {
  *       throw new Error('Note must start with a capital letter, end with a ' +
  *           period, and have something in between, if specified.');
@@ -418,10 +419,10 @@ import Enumeration from './Enumeration';
  * const walletShape = {
  *   contacts: [[contactShape]], // list of contacts using nested shape
  *   address: {
- *     street: rtv.t.STRING
+ *     street: rtv.STRING
  *     // ...
  *   },
- *   money: rtv.t.FINITE
+ *   money: rtv.FINITE
  * };
  *
  * rtv.verify({
@@ -433,13 +434,13 @@ import Enumeration from './Enumeration';
  *
  * <h4>Typeset Example: String</h4>
  *
- * <pre><code>rtv.verify('foo', rtv.t.STRING); // OK
- * rtv.verify('foo', rtv.t.FINITE); // ERROR
+ * <pre><code>rtv.verify('foo', rtv.STRING); // OK
+ * rtv.verify('foo', rtv.FINITE); // ERROR
  * </code></pre>
  *
  * <h4>Typeset Example: Array</h4>
  *
- * <pre><code>const typeset = [rtv.t.STRING, rtv.t.FINITE]; // non-empty string, or finite number
+ * <pre><code>const typeset = [rtv.STRING, rtv.FINITE]; // non-empty string, or finite number
  * rtv.verify('foo', typeset); // OK
  * rtv.verify(1, typeset); // OK
  * </code></pre>
@@ -453,14 +454,14 @@ import Enumeration from './Enumeration';
  * };
  *
  * rtv.verify(100, validator); // OK
- * rtv.verify(120, [rtv.t.INT, validator]); // OK
+ * rtv.verify(120, [rtv.INT, validator]); // OK
  * </code></pre>
  *
  * <h4>Typeset Example: Alternate Qualifier</h4>
  *
  * <pre><code>const person = {
- *   name: rtv.t.STRING, // required, non-empty
- *   age: [rtv.q.OPTIONAL, rtv.t.FINITE, (v) => { // 18 or older, if specified
+ *   name: rtv.STRING, // required, non-empty
+ *   age: [rtv.OPTIONAL, rtv.FINITE, (v) => { // 18 or older, if specified
  *     if (v < 18) {
  *       throw new Error('Must be 18 or older.');
  *     }
@@ -489,7 +490,7 @@ import Enumeration from './Enumeration';
  *
  * - `STRING` -> `[REQUIRED, STRING]`
  * - `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
- * - `[[FINITE]]` -> `[REQUIRED, ARRAY, [REQUIRED, FINITE]]`
+ * - `[[FINITE]]` -> `[REQUIRED, ARRAY, {ts: [REQUIRED, FINITE]}]`
  * - `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
  *
  * @typedef {Array} rtvref.types.fully_qualified_typeset
