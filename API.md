@@ -30,9 +30,9 @@ Provides the externally-facing API. It wraps the
 * [rtv](#rtv) : <code>object</code>
     * ~~[.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
     * [.types](#rtv.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * ~~[.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+    * ~~[.q](#rtv.q) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
     * [.qualifiers](#rtv.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * ~~[.enabled](#rtv.enabled) : <code>boolean</code>~~
+    * ~~[.e](#rtv.e) : <code>boolean</code>~~
     * [.enabled](#rtv.enabled) : <code>boolean</code>
     * [.version](#rtv.version) : <code>string</code>
     * [.config](#rtv.config) : <code>object</code>
@@ -69,9 +69,9 @@ The Enumeration can be used to perform additional validations (e.g.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.t"></a>
+<a name="rtv.q"></a>
 
-## ~~rtv.t : [<code>Enumeration</code>](#rtvref.Enumeration)~~
+## ~~rtv.q : [<code>Enumeration</code>](#rtvref.Enumeration)~~
 ***Deprecated***
 
 Enumeration of [qualifiers](#rtvref.qualifiers.qualifiers).
@@ -96,9 +96,9 @@ The Enumeration can be used to perform additional validations (e.g.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.enabled"></a>
+<a name="rtv.e"></a>
 
-## ~~rtv.enabled : <code>boolean</code>~~
+## ~~rtv.e : <code>boolean</code>~~
 ***Deprecated***
 
 Shortcut proxy for reading [enabled](#rtv.config.enabled).

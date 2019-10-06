@@ -9,7 +9,8 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
-n/a
+### Fixed
+-   API documentation for the `rtv.t`, `rtv.q`, and `rtv.e` deprecated properties. `rtv.enabled` (the newer one) no longer appears twice, once deprecated, once not.
 
 ## 2.1.0 - 2019-10-05
 

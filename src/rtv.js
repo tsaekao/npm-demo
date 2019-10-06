@@ -102,7 +102,7 @@ const rtv = {
    *
    * @deprecated
    * @readonly
-   * @name rtv.t
+   * @name rtv.q
    * @type {rtvref.Enumeration}
    */
   get q() {
@@ -168,7 +168,7 @@ const rtv = {
    *
    * @deprecated
    * @readonly
-   * @name rtv.enabled
+   * @name rtv.e
    * @type {boolean}
    */
   get e() {
