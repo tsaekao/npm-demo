@@ -9,6 +9,10 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
+n/a
+
+## 2.1.0 - 2019-10-05
+
 ### Changed
 -   All types and qualifiers are now directly accessible on the `rtv` object (e.g. `rtv.STRING`).
 -   It's now possible to have the same type appear multiple times in the same typeset (this makes typeset _composition_ much easier, avoiding the need for custom validators in lots of cases).
