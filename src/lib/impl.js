@@ -199,7 +199,7 @@ const toTypeset = function(type, ...rest) {
  */
 const fullyQualify = function(typeset, qualifier) {
   if (!isTypeset(typeset)) { // start by validating so we can be confident later
-    throw new Error(`Invalid typeset=${print(typeset)}`);
+    throw new Error(`Invalid typeset=${print(typeset, {isTypeset: true})}`);
   }
 
   if (qualifier) {
@@ -332,7 +332,7 @@ const extractNextType = function(typeset, qualifier) {
 
   // check for an array first since that's much faster than isTypeset()
   if (!isArray(typeset) || (typeset.length > 0 && !isTypeset(typeset))) {
-    throw new Error(`Invalid Array typeset=${print(typeset)}`);
+    throw new Error(`Invalid Array typeset=${print(typeset, {isTypeset: true})}`);
   }
 
   if (typeset.length === 0) {
@@ -506,7 +506,7 @@ const checkWithType = function(value, singleType /*, options*/) {
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
   if (!options.isTypeset && !isTypeset(singleType)) {
-    throw new Error(`Invalid typeset in singleType=${print(singleType)}`);
+    throw new Error(`Invalid typeset in singleType=${print(singleType, {isTypeset: true})}`);
   }
 
   options.isTypeset = true;
@@ -527,13 +527,13 @@ const checkWithType = function(value, singleType /*, options*/) {
     const typeset = extractNextType(singleTypeCopy, false);
 
     if (singleTypeCopy.length > 0) { // if singleType was just one type, copy should be empty now
-      throw new Error(`Specified singleType=${print(singleType)} typeset must represent a single type`);
+      throw new Error(`Specified singleType=${print(singleType, {isTypeset: true})} typeset must represent a single type`);
     }
 
     type = typeset[0];
     args = typeset.length > 1 ? typeset[1] : undefined;
   } else {
-    throw new Error(`Specified singleType=${print(singleType)} must be a string, shape, or Array`);
+    throw new Error(`Specified singleType=${print(singleType, {isTypeset: true})} must be a string, shape, or Array`);
   }
 
   if (_validatorMap[type]) {
@@ -568,7 +568,7 @@ const checkWithType = function(value, singleType /*, options*/) {
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 const checkWithShape = function(value, shape /*, options*/) {
   if (!isShape(shape)) {
-    throw new Error(`Invalid shape=${print(shape)}`);
+    throw new Error(`Invalid shape=${print(shape, {isTypeset: true})}`);
   }
 
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
@@ -592,9 +592,9 @@ const checkWithShape = function(value, shape /*, options*/) {
 const checkWithArray = function(value, array /*, options*/) {
   const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
 
-  // check for an array first since that's must faster than isTypeset()
+  // check for an array first since that's much faster than isTypeset()
   if (!isArray(array) || !(options.isTypeset || isTypeset(array))) {
-    throw new Error(`Invalid typeset in array=${print(array)}`);
+    throw new Error(`Invalid typeset in array=${print(array, {isTypeset: true})}`);
   }
 
   options.isTypeset = true;
@@ -731,10 +731,10 @@ const check = function(value, typeset /*, options*/) {
       return checkWithArray(value, typeset, options);
     }
 
-    throw new Error(`Invalid JavaScript type for typeset=${print(typeset)}`);
+    throw new Error(`Invalid JavaScript type for typeset=${print(typeset, {isTypeset: true})}`);
   }
 
-  throw new Error(`Invalid typeset=${print(typeset)}`);
+  throw new Error(`Invalid typeset=${print(typeset, {isTypeset: true})}`);
 };
 
 /**

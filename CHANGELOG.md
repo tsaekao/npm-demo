@@ -9,6 +9,9 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
+### Changed
+-   When printing a typeset that contains a validator function, the validator is printed as `"<validator>"` instead of `"<function>"` (hopefully that's more helpful when reading the typeset, typically in an `RtvError`'s string representation).
+
 ### Fixed
 -   API documentation for the `rtv.t`, `rtv.q`, and `rtv.e` deprecated properties. `rtv.enabled` (the newer one) no longer appears twice, once deprecated, once not.
 

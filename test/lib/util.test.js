@@ -23,4 +23,9 @@ describe('module: lib/util', function() {
     expect(util.print({foo: 1})).to.equal('{"foo":1}');
     expect(util.print({foo: [1, {bar: 2}]})).to.equal('{"foo":[1,{"bar":2}]}');
   });
+
+  it('should special-case functions as validators when printing typesets', function() {
+    expect(util.print(['STRING', () => {}], {isTypeset: true})).to.equal(
+        '["STRING","<validator>"]');
+  });
 });

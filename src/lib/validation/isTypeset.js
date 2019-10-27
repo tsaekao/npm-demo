@@ -35,7 +35,7 @@ const deepVerifyShape = function(type, args, options, failurePrefix, idx = -1) {
       return valid; // break on first invalid
     });
   } else {
-    options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type)}`;
+    options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type, {isTypeset: true})}`;
 
     // NOTE: the only case where idx would be negative/not specified should be
     //  when the typeset is a shape descriptor with an implied type of DEFAULT_OBJECT_TYPE,
@@ -103,7 +103,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
 
   // THEN: check if needs to be fully-qualified, and check deep within if requested
   if (valid && fullyQualified) {
-    const failurePrefix = `Fully-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v)}`;
+    const failurePrefix = `Fully-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v, {isTypeset: true})}`;
 
     // must now be an array with at least 2 elements: [qualifier, type]
     if (isArray(v) && v.length >= 2) {
@@ -210,7 +210,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
   //  definition, and deep (if requested)
   } else if (valid && !fullyQualified && isArray(v)) {
-    const failurePrefix = `Non-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v)}`;
+    const failurePrefix = `Non-qualified ${deep ? 'deep' : 'shallow'} typeset=${print(v, {isTypeset: true})}`;
     let curType; // @type {string} current in-scope type
     let argType; // @type {(string|undefined)} current in-scope type IIF it accepts args
     let hasQualifier = false; // true if a qualifier is specified (not implied)
@@ -346,7 +346,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
   //  valid and does not need to be FQ'd (otherwise, 'v' must be an array and
   //  would be invalid as a FQ'd typeset)
   } else if (valid && deep && !fullyQualified && isShape(v)) {
-    const failurePrefix = `Non-qualified deep shape=${print(v)}`;
+    const failurePrefix = `Non-qualified deep shape=${print(v, {isTypeset: true})}`;
 
     // we need to deep-validate a shape descriptor, which means each one of its
     //  own-properties must be a valid typeset

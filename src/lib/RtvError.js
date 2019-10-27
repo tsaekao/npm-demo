@@ -57,7 +57,7 @@ const RtvError = function(value, typeset, path, cause, failure) {
   //  by checking the prototype chain, which isn't properly constructed.
 
   if (!isTypeset(typeset)) {
-    throw new Error(`Invalid typeset: ${print(typeset)}`);
+    throw new Error(`Invalid typeset: ${print(typeset, {isTypeset: true})}`);
   }
 
   if (!isArray(path)) {
@@ -65,7 +65,7 @@ const RtvError = function(value, typeset, path, cause, failure) {
   }
 
   if (!isTypeset(cause, {fullyQualified: true})) {
-    throw new Error(`Invalid cause (expecting fully-qualified typeset): ${print(cause)}`);
+    throw new Error(`Invalid cause (expecting fully-qualified typeset): ${print(cause, {isTypeset: true})}`);
   }
 
   if (failure && !isError(failure)) {
@@ -86,7 +86,7 @@ const RtvError = function(value, typeset, path, cause, failure) {
   //  message in case it contains sensitive information like secrets or passwords
   // NOTE: we don't include the `typeset` in the message since it could be VERY long;
   //  the `path` and `cause` should be enough for debugging purposes
-  this.message = `Verification failed: path="${renderPath(path)}", cause=${print(cause)}`;
+  this.message = `Verification failed: path="${renderPath(path)}", cause=${print(cause, {isTypeset: true})}`;
   if (failure) {
     this.message += `, failure="${failure.message}"`;
   }
@@ -215,7 +215,7 @@ RtvError.prototype.toString = function() {
   // NOTE: we don't include the `typeset` in the serialization since it could be VERY long;
   //  the `path` and `cause` should be enough for debugging purposes
 
-  let str = `{rtvref.RtvError path="${renderPath(this.path)}", cause=${print(this.cause)}`;
+  let str = `{rtvref.RtvError path="${renderPath(this.path)}", cause=${print(this.cause, {isTypeset: true})}`;
 
   if (this.failure) {
     str += `, failure="${this.failure.message}"`;

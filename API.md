@@ -355,7 +355,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.fully_qualified_typeset](#rtvref.types.fully_qualified_typeset) : <code>Array</code>
         * [.custom_validator](#rtvref.types.custom_validator) ⇒ <code>\*</code>
     * [.util](#rtvref.util) : <code>object</code>
-        * [.print(printValue)](#rtvref.util.print) ⇒ <code>string</code>
+        * [.print(printValue, printOptions)](#rtvref.util.print) ⇒ <code>string</code>
     * [.validation](#rtvref.validation) : <code>object</code>
         * [.method(value)](#rtvref.validation.method) ⇒ <code>boolean</code>
         * [.isAny](#rtvref.validation.isAny) : <code>Module</code>
@@ -2412,16 +2412,18 @@ There is one __disadvantage__ to using a custom validator: It cannot be serializ
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 <a name="rtvref.util.print"></a>
 
-### util.print(printValue) ⇒ <code>string</code>
+### util.print(printValue, printOptions) ⇒ <code>string</code>
 Pretty-print a value.
 
 **Kind**: static method of [<code>util</code>](#rtvref.util)  
 **Returns**: <code>string</code> - Pretty-printed value. It's not perfect and may not catch
  all types, but attempts to be good enough.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| printValue | <code>\*</code> | Value to print. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| printValue | <code>\*</code> |  | Value to print. |
+| printOptions | <code>Object</code> |  | Print options. |
+| [printOptions.isTypeset] | <code>boolean</code> | <code>false</code> | `true` if the value being  printed is a [typeset](#rtvref.types.typeset); `false` otherwise. |
 
 <a name="rtvref.validation"></a>
 

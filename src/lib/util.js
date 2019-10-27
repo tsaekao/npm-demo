@@ -13,10 +13,17 @@
  * Pretty-print a value.
  * @function rtvref.util.print
  * @param {*} printValue Value to print.
+ * @param {Object} printOptions Print options.
+ * @param {boolean} [printOptions.isTypeset=false] `true` if the value being
+ *  printed is a {@link rtvref.types.typeset typeset}; `false` otherwise.
  * @returns {string} Pretty-printed value. It's not perfect and may not catch
  *  all types, but attempts to be good enough.
  */
-export const print = function(printValue) {
+export const print = function(printValue, printOptions = {}) {
+  const {
+    isTypeset = false
+  } = printOptions;
+
   // NOTE: key will be undefined when the replacer is called outside of the
   //  JSON.stringify() call, as well as for the first stringify() call
   const replacer = function(stringifying, key, value) {
@@ -37,7 +44,7 @@ export const print = function(printValue) {
     }
 
     if (typeof value === 'function') {
-      return '<function>';
+      return isTypeset ? '<validator>' : '<function>';
     }
 
     if (typeof value === 'symbol') {
