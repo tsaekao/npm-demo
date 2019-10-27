@@ -36,7 +36,7 @@ run-build-internals:
 run-tests:
   stage: test
   script:
-    - npm test
+    - npm run test:ci
   artifacts:
     name: "coverage-${CI_COMMIT_REF_SLUG}"
     paths:

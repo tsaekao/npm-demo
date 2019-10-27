@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/stefcameron/rtvjs/badges/master/pipeline.svg)](https://gitlab.com/stefcameron/rtvjs/commits/master)
+[![pipeline status](https://gitlab.com/stefcameron/rtvjs/badges/master/pipeline.svg)](https://gitlab.com/stefcameron/rtvjs/commits/master) [![codecov](https://codecov.io/gl/stefcameron/rtvjs/branch/master/graph/badge.svg)](https://codecov.io/gl/stefcameron/rtvjs)
 
 # RTV.js
 

@@ -25,6 +25,8 @@
     "build": "npm run build:lib",
     "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "lint": "eslint ./*.js \"src/**/*.js\" \"test/**/*.js\" \"tools/**/*.js\"",
+    "reportCoverage": "nyc report --reporter=text-lcov > ./coverage/coverage.lcov && codecov",
+    "test:ci": "npm run test && npm run reportCoverage",
     "test:unit": "BABEL_ENV=test mocha -c -r mocha-setup.js \"./test/**/*.test.js\"",
     "test:unit:watch": "npm run test:unit -- -w",
     "test:unit:debug": "npm run test:unit -- --inspect-brk",
@@ -75,7 +77,6 @@
     "README.md",
     "dist/"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
@@ -96,6 +97,7 @@
   "optionalDependencies": {
     "babel-plugin-istanbul": "^5.2.0",
     "chai": "^4.2.0",
+    "codecov": "^3.6.1",
     "eslint": "^6.3.0",
     "live-server": "^1.2.1",
     "mocha": "^6.2.0",
