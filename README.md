@@ -8,6 +8,8 @@ This library is isomorphic: It runs equally well in modern browsers and on the s
 
 The latest versions of major browsers, and maintained Node.js releases, are supported.
 
+[Give it a test drive with RunKit!](https://npm.runkit.com/rtvjs)
+
 # Installation
 
 ```bash
