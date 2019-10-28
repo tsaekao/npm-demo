@@ -32,7 +32,7 @@
     "test:unit:debug": "npm run test:unit -- --inspect-brk",
     "test:coverage": "nyc npm run test:unit",
     "test": "npm run lint && npm run test:coverage",
-    "node": "node -r ./tools/node.js --inspect",
+    "node": "echo \"\n!!! REMEMBER TO REBUILD IF NECESSARY !!!\n\n\" && node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
     "node:internals": "npm run build:internals && node -r ./dist_tools/internals.js --inspect",
     "html": "npm run build:lib && npm run html:live",
