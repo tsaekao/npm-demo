@@ -546,7 +546,7 @@ describe('module: lib/impl', function() {
     it('should return an Error if validator returned falsy value but not undefined', function() {
       const failure = impl._callCustomValidator(() => false, 'foo', [], []);
       expect(failure).to.be.an.instanceof(Error);
-      expect(failure.message).to.contain('Verification failed because of the custom validator');
+      expect(failure.message).to.contain('Verification failed due to custom validator');
 
       expect(impl._callCustomValidator(() => null, 'foo', [], [])).to.be.an.instanceof(Error);
       expect(impl._callCustomValidator(() => 0, 'foo', [], [])).to.be.an.instanceof(Error);

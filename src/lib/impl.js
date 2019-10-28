@@ -400,7 +400,7 @@ const _callCustomValidator = function(validator, value, match, typeset) {
     const result = validator(value, match, typeset);
 
     if (result !== undefined && !result) { // undefined === no action === success
-      failure = new Error('Verification failed because of the custom validator');
+      failure = new Error('Verification failed due to custom validator');
     }
   } catch (err) {
     failure = err;
