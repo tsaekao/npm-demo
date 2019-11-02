@@ -9,6 +9,10 @@ Date format is YYYY-MM-DD.
 
 ## Unreleased
 
+### Added
+
+-   Added `sideEffects:false` bundler hint/flag to `package.json`: This will help bundlers like Webpack which support the hint/flag to know that this package does not have any side effects, and can confidently be removed during tree shaking if there are no code paths that refer to the library (e.g. if you only use RTV in your development build). See [Webpack docs](https://webpack.js.org/configuration/optimization/#optimizationsideeffects) for more information.
+
 ### Changed
 -   When printing a typeset that contains a validator function, the validator is printed as `"<validator>"` instead of `"<function>"` (hopefully that's more helpful when reading the typeset, typically in an `RtvError`'s string representation).
 
