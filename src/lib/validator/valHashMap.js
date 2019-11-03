@@ -53,9 +53,10 @@ export const config = function(settings) {
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.collection_args} [args] Type arguments.
+ * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valHashMap(v, q = REQUIRED, args) {
+export default function valHashMap(v, q = REQUIRED, args, context) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -96,13 +97,13 @@ export default function valHashMap(v, q = REQUIRED, args) {
           }
 
           if (valid && tsValues) {
-            result = impl.check(value, tsValues); // check VALUE against typeset
+            result = impl.check(value, tsValues, context); // check VALUE against typeset
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but still with the KEY added to the path
               result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`valueKey=${print(key)}`].concat(result.path), result.cause);
+                  [`valueKey=${print(key)}`].concat(result.path), result.mismatch, result.rootCause);
             }
           }
 

@@ -98,7 +98,7 @@ describe('Integration', function() {
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.value).to.equal(item);
       expect(result.typeset).to.equal(todoShape);
-      expect(result.cause).to.eql(rtv.fullyQualify(shapes.note.updated));
+      expect(result.mismatch).to.eql(rtv.fullyQualify(shapes.note.updated));
       expect(result.path).to.eql(['notes', '1', 'updated']);
     });
   });
@@ -193,6 +193,43 @@ describe('Integration', function() {
       expect(function() {
         note.text = 'Awesome';
       }).not.to.throw();
+    });
+  });
+
+  describe('Reactive Validations', function() {
+    it('validates an object with varying property values', function() {
+      const {STRING, DATE, SAFE_INT} = rtv.types;
+      const {EXPECTED} = rtv.qualifiers;
+      const tags = ['car', 'money', 'reminder', 'grocery'];
+
+      const noteShape = {
+        text: STRING,
+        tags: [[STRING, {oneOf: tags}]],
+        tagCount: [
+          SAFE_INT,
+          (value, match, typeset, context) => {
+            if (value !== context.originalValue.tags.length) {
+              throw new Error('tags and tagCount mismatch');
+            }
+          }
+        ],
+        created: DATE,
+        updated: [EXPECTED, DATE]
+      };
+
+      const note = {
+        text: 'Buy potatoes',
+        tags: ['reminder', 'grocery'],
+        tagCount: 1,
+        created: new Date(Date.now()),
+        updated: null
+      };
+
+      const result = rtv.check(note, noteShape);
+
+      expect(result).to.be.an.instanceOf(RtvError);
+      expect(result.rootCause).to.be.an.instanceOf(Error);
+      expect(result.rootCause.message).to.equal('tags and tagCount mismatch');
     });
   });
 });

@@ -32,7 +32,7 @@
  */
 
 // TODO[plugins]: Later, if we ever expose a plugin architecture, we might change
-//  this to pass some type of registration function into the plugin, or the plugin
+//  the design to pass some type of registration function into the plugin, or the plugin
 //  calls a registration method on rtv, or maybe something else. Whatever we do,
 //  the basics would be to register a new type and provide the function for rtv to
 //  call to validate values for that type. Perhaps we might even allow overriding
@@ -48,22 +48,53 @@
  * __NOTE:__ A validator must support all its qualifier rules, including proper
  *  handling of `null` values when {@link rtvref.qualifiers.EXPECTED EXPECTED}
  *  and `undefined` values when {@link rtvref.qualifiers.OPTIONAL OPTIONAL},
- *  __in addition to__ and type-specific qualifier rules. For example, the
+ *  __in addition to__ any type-specific qualifier rules. For example, the
  *  {@link rtvref.types.STRING STRING} type permits empty strings when not
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  *
  * @function rtvref.validator.type_validator
  * @param {*} value The value to validate.
- * @param {string} [qualifier] The validation qualifier from the immediate
+ * @param {string} qualifier The validation qualifier from the immediate
  *  {@link rtvref.types.typeset typeset} in which the pertaining type was specified.
  *  Validators should always explicitly default to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED} to maintain consistent behavior.
- * @param {Object} [args] The arguments object, if any/applicable, for the type
+ * @param {Object} args The arguments object, if any/applicable, for the type
  *  being validated. For example, {@link rtvref.types.STRING_args string args} in
  *  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least
  *  5 characters in length).
+ * @param {rtvref.validator.type_validator_context} context Additional context
+ *  for the validation.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid;
  *  `RtvError` if not.
+ */
+
+// TODO[plugins]: Consider using the context to pass-in the `impl` reference instead
+//  of having the configuration mechanism. That could make the architecture cleaner,
+//  unless plugins shouldn't have access to the `impl`? The current mechanism could
+//  be used by the internal/provided validators and not provided to third-party ones?
+/**
+ * <h3>Type Validator Context</h3>
+ *
+ * This object provides important information to a
+ *  {@link rtvref.validator.type_validator type validator}, including a
+ *  {@link rtvref.types.custom_validator custom validator}, about the context
+ *  of the current validation check.
+ *
+ * For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would have the
+ *  following `context` regardless of the nesting level of the invoked validator:
+ *
+ * <pre><code>{
+ *   originalValue: {foo: 1}
+ * }
+ * </code></pre>
+ *
+ * This means that when the `NUMBER` {@link rtvref.validator.type_validator type validator}
+ *  is invoked to check the number `1`, its first parameter, `value`, will be `1`, but it
+ *  will still have access to the original value through its `context` parameter.
+ *
+ * @typedef {Object} rtvref.validator.type_validator_context
+ * @property {*} originalValue The original/first value given to
+ *  {@link rtv.check rtv.check()} or {@link rtv.verify rtv.verify()}.
  */
 
 // TODO[plugins]: Plugins should also be given access to the types and qualifiers
@@ -95,4 +126,3 @@
  * @function rtvref.validator.validator_config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-

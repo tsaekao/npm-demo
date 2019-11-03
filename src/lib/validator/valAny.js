@@ -43,9 +43,9 @@ export const config = function(settings) {
  *  {@link rtvref.types.ANY ANY} type.
  * @function rtvref.validator.valAny.default
  * @param {*} v Value to validate.
-  * @param {string} [q] Validation qualifier. Defaults to
+ * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
-* @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
+ * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valAny(v, q = REQUIRED) {
   // NOTE: no point checking basic qualifier rules since this type allows both

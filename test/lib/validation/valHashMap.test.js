@@ -140,7 +140,7 @@ describe('module: lib/validator/valHashMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.HASH_MAP, args]
+        mismatch: [qualifiers.REQUIRED, types.HASH_MAP, args]
       }); // case-sensitive by default
 
       args = {
@@ -149,7 +149,7 @@ describe('module: lib/validator/valHashMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.HASH_MAP, args]
+        mismatch: [qualifiers.REQUIRED, types.HASH_MAP, args]
       });
     });
 
@@ -161,7 +161,7 @@ describe('module: lib/validator/valHashMap', function() {
       let args = {values: types.BOOLEAN};
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="1"'],
-        cause: [qualifiers.REQUIRED, types.BOOLEAN]
+        mismatch: [qualifiers.REQUIRED, types.BOOLEAN]
       });
 
       map[3] = '';
@@ -171,7 +171,7 @@ describe('module: lib/validator/valHashMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="3"'],
-        cause: [qualifiers.REQUIRED, types.STRING]
+        mismatch: [qualifiers.REQUIRED, types.STRING]
       });
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -203,7 +203,7 @@ describe('module: lib/validator/valHashMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="1"', 'key="a"'],
-        cause: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]]
+        mismatch: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]]
       });
     });
   });

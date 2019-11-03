@@ -166,7 +166,7 @@ describe('module: lib/validator/valClassObject', function() {
       vtu.expectValidatorError(val, classObject, undefined, {
         $: {name: types.INT}
       }, {
-        cause: [qualifiers.REQUIRED, types.INT],
+        mismatch: [qualifiers.REQUIRED, types.INT],
         path: ['name']
       });
       expect(checkStub.called).to.be.true;

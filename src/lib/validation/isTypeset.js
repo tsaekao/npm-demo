@@ -29,13 +29,13 @@ const deepVerifyShape = function(type, args, options, failurePrefix, idx = -1) {
   if (valid) {
     // validate all of the shape's typesets (each own-prop should be a typeset)
     _forEach(shape, function(ts, prop) {
-      const opts = Object.assign({}, options); // options.failure should not exist at this point
+      const opts = Object.assign({}, options); // options.rootCause should not exist at this point
       valid = isTypeset(ts, opts); // eslint-disable-line no-use-before-define
-      options.failure = opts.failure && `${failurePrefix} (${idx >= 0 ? `index=${idx}, ` : ''}prop="${prop}"): ${opts.failure}`;
+      options.rootCause = opts.rootCause && `${failurePrefix} (${idx >= 0 ? `index=${idx}, ` : ''}prop="${prop}"): ${opts.rootCause}`;
       return valid; // break on first invalid
     });
   } else {
-    options.failure = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type, {isTypeset: true})}`;
+    options.rootCause = `${failurePrefix}: Expecting a valid shape descriptor for type=${print(type, {isTypeset: true})}`;
 
     // NOTE: the only case where idx would be negative/not specified should be
     //  when the typeset is a shape descriptor with an implied type of DEFAULT_OBJECT_TYPE,
@@ -43,7 +43,7 @@ const deepVerifyShape = function(type, args, options, failurePrefix, idx = -1) {
     //  `[qualifier, {shape}]`; otherwise, the index should always be specified since all
     //  object types take args that specify the shape: [CLASS_OBJECT, {$: {...}}]
     if (idx >= 0) {
-      options.failure += ` at index=${idx}`;
+      options.rootCause += ` at index=${idx}`;
     }
   }
 
@@ -56,9 +56,9 @@ const deepVerifyShape = function(type, args, options, failurePrefix, idx = -1) {
 // @param {string} failurePrefix The prefix to use if a failure message is generated.
 // @param {number} [idx] The position of `typeset` within the parent Array typeset.
 const deepVerifyArray = function(typeset, options, failurePrefix, idx) {
-  const opts = Object.assign({}, options); // options.failure should not exist at this point
+  const opts = Object.assign({}, options); // options.rootCause should not exist at this point
   const valid = isTypeset(typeset, opts); // eslint-disable-line no-use-before-define
-  options.failure = opts.failure && `${failurePrefix} (index=${idx}): ${opts.failure}`;
+  options.rootCause = opts.rootCause && `${failurePrefix} (index=${idx}): ${opts.rootCause}`;
   return valid;
 };
 
@@ -82,7 +82,7 @@ export const type = undefined;
  *  typesets. Note that typesets in nested shapes are also deeply-validated.
  * @param {boolean} [options.fullyQualified=false] If truthy, the typeset must be
  *  fully-qualified to be valid.
- * @param {(string|undefined)} [options.failure] (Output property) If an options
+ * @param {(string|undefined)} [options.rootCause] (Output property) If an options
  *  object is specified, this property will be added and set to a failure message
  *  IIF the validation fails.
  * @returns {boolean} `true` if it is; `false` otherwise.
@@ -98,7 +98,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
       (isArray(v) && v.length > 0)));
 
   if (!valid) {
-    options.failure = `Value v=${print(v)} is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)`;
+    options.rootCause = `Value v=${print(v)} is not a valid type for a typeset: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset, non-empty)`;
   }
 
   // THEN: check if needs to be fully-qualified, and check deep within if requested
@@ -131,7 +131,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  they're always strings
           valid = isString(rule) && !!qualifiers.check(rule);
           if (!valid) {
-            options.failure = `${failurePrefix}: Expected a qualifier at index=${idx}, found ${print(rule)}`;
+            options.rootCause = `${failurePrefix}: Expected a qualifier at index=${idx}, found ${print(rule)}`;
           }
         } else if (isString(rule)) {
           // additional qualifier, or simple type
@@ -139,11 +139,11 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             // cannot have more than one qualifier and qualifier must be in first position
             //  (and this is not the first position because that's handled specially, above)
             valid = false;
-            options.failure = `${failurePrefix}: Cannot have more than one qualifier, and qualifier must be in first position, index=${idx}`;
+            options.rootCause = `${failurePrefix}: Cannot have more than one qualifier, and qualifier must be in first position, index=${idx}`;
           } else if (!types.check(rule)) {
             // if not a qualifier, it must be a valid type (since it's a string)
             valid = false;
-            options.failure = `${failurePrefix}: Expected a valid type in ${types} at index=${idx}, found ${print(rule)}`;
+            options.rootCause = `${failurePrefix}: Expected a valid type in ${types} at index=${idx}, found ${print(rule)}`;
           } else {
             // set the rule as the current in-scope type
             updateCurType(rule);
@@ -161,7 +161,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           //  in-scope type
           valid = !!(curType && (idx + 1 === v.length));
           if (!valid) {
-            options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type`;
+            options.rootCause = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be in the last position, must not be more than 1 in the typeset, must be after the qualifier, and must be preceded by a type`;
           }
         } else if (isTypeArgs(rule)) {
           // since the typeset must be fully-qualified, argType must already be
@@ -176,7 +176,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
             // since the typeset must be fully-qualified and we don't already
             //  have an in-scope arg type, the typeset is invalid
             valid = false;
-            options.failure = `${failurePrefix}: Expecting a type that takes arguments at index=${idx - 1}`;
+            options.rootCause = `${failurePrefix}: Expecting a type that takes arguments at index=${idx - 1}`;
           }
 
           // only go deep if the rule is shape object args with `$` specified (which
@@ -195,7 +195,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           // NOTE: the ARRAY shorthand notation is not supported in fully-qualified
           //  typesets, therefore a rule whose JavaScript type is an Array is not valid
           valid = false;
-          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting shape object args, ${types.ARRAY} args, non-empty string (single type), or function (custom validator)`;
+          options.rootCause = `${failurePrefix}: Unexpected value at index=${idx}: Expecting shape object args, ${types.ARRAY} args, non-empty string (single type), or function (custom validator)`;
         }
 
         return valid; // break if no longer valid
@@ -204,7 +204,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
       // automatically invalid if not an array because a typeset must be in the
       //  array form in order to be FQ'd
       valid = false;
-      options.failure = `${failurePrefix}: Typeset cannot be fully-qualified unless it is an Array of minimum length=2`;
+      options.rootCause = `${failurePrefix}: Typeset cannot be fully-qualified unless it is an Array of minimum length=2`;
     }
 
   // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
@@ -233,7 +233,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           hasQualifier = true;
           valid = (idx === 0); // must be in the first position
           if (!valid) {
-            options.failure = `${failurePrefix}: Unexpected qualifier at index=${idx}: There must be at most one qualifier and it may only be in the first position`;
+            options.rootCause = `${failurePrefix}: Unexpected qualifier at index=${idx}: There must be at most one qualifier and it may only be in the first position`;
           }
         } else if (types.check(rule)) {
           // set the rule as the current in-scope type
@@ -246,7 +246,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         } else {
           // some unknown/invalid qualifier or type
           valid = false;
-          options.failure = `${failurePrefix}: Unknown/invalid qualifier/type=${print(rule)} at index=${idx}`;
+          options.rootCause = `${failurePrefix}: Unknown/invalid qualifier/type=${print(rule)} at index=${idx}`;
         }
       } else if (isCustomValidator(rule)) {
         // must be a validator, but there can't be more than 1, and it must be
@@ -257,7 +257,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           // if we have a validator but no in-scope type, ANY is implied
           updateCurType(types.ANY);
         } else if (!valid) {
-          options.failure = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be at the last position`;
+          options.rootCause = `${failurePrefix}: Unexpected custom validator at index=${idx}: Must be at the last position`;
         }
       } else if (isTypeArgs(rule)) {
         let soArgs; // shape object args
@@ -278,7 +278,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           // NOTE: do not set argType because the shape is the default object type's
           //  args, so they should be consumed by the in-scope arg type
           if (!valid) {
-            options.failure = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}, and should be wrapped in shape object args: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
+            options.rootCause = `${failurePrefix}: Shape at index=${idx} is missing an object type in ${objTypes}, and should be wrapped in shape object args: Only in the first position (or second if a qualifier is specified) does a shape assume the default object type of "${DEFAULT_OBJECT_TYPE}"`;
           }
         } else {
           // consume the object as the in-scope arg type's arguments
@@ -317,7 +317,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         if (deep) {
           const opts = {deep, fullyQualified};
           valid = isTypeset(rule, opts); // recursive
-          options.failure = opts.failure && `${failurePrefix} (index=${idx}): ${opts.failure}`;
+          options.rootCause = opts.rootCause && `${failurePrefix} (index=${idx}): ${opts.rootCause}`;
         }
       } else {
         // any other type in a non-qualified array typeset is not supported
@@ -325,9 +325,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         //  therefore a rule whose JavaScript type is an Array is valid
         valid = false;
         if (idx === 0 || (idx === 1 && hasQualifier)) {
-          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
+          options.rootCause = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (shape), non-empty string (single type), function (custom validator), or array (typeset)`;
         } else {
-          options.failure = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (type args), non-empty string (single type), function (custom validator), or array (typeset)`;
+          options.rootCause = `${failurePrefix}: Unexpected value at index=${idx}: Expecting object (type args), non-empty string (single type), function (custom validator), or array (typeset)`;
         }
       }
 
@@ -338,7 +338,7 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
     if (valid) {
       valid = !!curType;
       if (!valid) {
-        options.failure = `${failurePrefix}: Failed to find a type in the typeset`;
+        options.rootCause = `${failurePrefix}: Failed to find a type in the typeset`;
       }
     }
 

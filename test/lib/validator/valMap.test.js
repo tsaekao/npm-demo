@@ -89,7 +89,7 @@ describe('module: lib/validator/valMap', function() {
 
       vtu.expectValidatorError(val, map, undefined, {keys: types.STRING}, {
         path: ['key=1'],
-        cause: [qualifiers.REQUIRED, types.STRING]
+        mismatch: [qualifiers.REQUIRED, types.STRING]
       });
 
       vtu.expectValidatorSuccess(val, new Map(), undefined, {keys: types.REGEXP});
@@ -108,7 +108,7 @@ describe('module: lib/validator/valMap', function() {
 
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.FINITE]
+        mismatch: [qualifiers.REQUIRED, types.FINITE]
       }); // keys are not numbers in this map
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -134,7 +134,7 @@ describe('module: lib/validator/valMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.MAP, args]
+        mismatch: [qualifiers.REQUIRED, types.MAP, args]
       }); // case-sensitive by default
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -150,7 +150,7 @@ describe('module: lib/validator/valMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
-        cause: [qualifiers.REQUIRED, types.MAP, args]
+        mismatch: [qualifiers.REQUIRED, types.MAP, args]
       });
     });
 
@@ -164,7 +164,7 @@ describe('module: lib/validator/valMap', function() {
       let args = {values: types.BOOLEAN};
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=1'],
-        cause: [qualifiers.REQUIRED, types.BOOLEAN]
+        mismatch: [qualifiers.REQUIRED, types.BOOLEAN]
       });
 
       map = new Map([[1, 'one'], [2, 'two'], [3, '']]);
@@ -174,7 +174,7 @@ describe('module: lib/validator/valMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=3'],
-        cause: [qualifiers.REQUIRED, types.STRING]
+        mismatch: [qualifiers.REQUIRED, types.STRING]
       });
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -208,7 +208,7 @@ describe('module: lib/validator/valMap', function() {
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=1', 'key="a"'],
-        cause: [qualifiers.REQUIRED, types.STRING, {min: 2}]
+        mismatch: [qualifiers.REQUIRED, types.STRING, {min: 2}]
       });
     });
   });

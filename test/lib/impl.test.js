@@ -530,48 +530,105 @@ describe('module: lib/impl', function() {
     });
   });
 
+  describe('#_validateContext', function() {
+    it('should validate a valid context', function() {
+      expect(function() {
+        impl._validateContext({originalValue: undefined});
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext({originalValue: null});
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext({originalValue: 123});
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext({originalValue: 'bar'});
+      }).not.to.throw();
+    });
+
+    it('should throw for an invalid context', function() {
+      const msg = 'Invalid type validator context';
+
+      expect(function() { impl._validateContext(); }).to.throw(msg);
+      expect(function() { impl._validateContext(undefined); }).to.throw(msg);
+      expect(function() { impl._validateContext(null); }).to.throw(msg);
+      expect(function() { impl._validateContext(new Map()); }).to.throw(msg);
+      expect(function() { impl._validateContext([]); }).to.throw(msg);
+      expect(function() { impl._validateContext({}); }).to.throw(msg);
+    });
+  });
+
+  describe('#_createContext', function() {
+    it('should create a new context', function() {
+      expect(function() { impl._validateContext(impl._createContext()); }).not.to.throw();
+      expect(function() { impl._validateContext(impl._createContext(null)); }).not.to.throw();
+      expect(function() { impl._validateContext(impl._createContext(123)); }).not.to.throw();
+      expect(function() { impl._validateContext(impl._createContext({})); }).not.to.throw();
+
+      expect(impl._createContext()).to.eql({originalValue: undefined});
+      expect(impl._createContext(null)).to.eql({originalValue: null});
+      expect(impl._createContext(123)).to.eql({originalValue: 123});
+
+      let value = function() {};
+      expect(impl._createContext(value).originalValue).to.equal(value);
+      value = [];
+      expect(impl._createContext(value).originalValue).to.equal(value);
+      value = {};
+      expect(impl._createContext(value).originalValue).to.equal(value);
+    });
+  });
+
   describe('#_callCustomValidator', function() {
+    let context;
+
+    beforeEach(function() {
+      context = {originalValue: {}};
+    });
+
     it('should return undefined if the validator did not return anything', function() {
-      expect(impl._callCustomValidator(() => {}, 'foo', [], [])).to.equal(undefined);
+      expect(impl._callCustomValidator(() => {}, 'foo', [], [], context)).to.equal(undefined);
     });
 
     it('should return undefined if the validator returned a truthy value', function() {
-      expect(impl._callCustomValidator(() => true, 'foo', [], [])).to.equal(undefined);
-      expect(impl._callCustomValidator(() => ({}), 'foo', [], [])).to.equal(undefined);
-      expect(impl._callCustomValidator(() => [], 'foo', [], [])).to.equal(undefined);
-      expect(impl._callCustomValidator(() => /hello/, 'foo', [], [])).to.equal(undefined);
-      expect(impl._callCustomValidator(() => 1, 'foo', [], [])).to.equal(undefined);
+      expect(impl._callCustomValidator(() => true, 'foo', [], [], context)).to.equal(undefined);
+      expect(impl._callCustomValidator(() => ({}), 'foo', [], [], context)).to.equal(undefined);
+      expect(impl._callCustomValidator(() => [], 'foo', [], [], context)).to.equal(undefined);
+      expect(impl._callCustomValidator(() => /hello/, 'foo', [], [], context)).to.equal(undefined);
+      expect(impl._callCustomValidator(() => 1, 'foo', [], [], context)).to.equal(undefined);
     });
 
     it('should return an Error if validator returned falsy value but not undefined', function() {
-      const failure = impl._callCustomValidator(() => false, 'foo', [], []);
+      const failure = impl._callCustomValidator(() => false, 'foo', [], [], context);
       expect(failure).to.be.an.instanceof(Error);
-      expect(failure.message).to.contain('Verification failed due to custom validator');
+      expect(failure.message).to.contain('Verification failed by the custom validator');
 
-      expect(impl._callCustomValidator(() => null, 'foo', [], [])).to.be.an.instanceof(Error);
-      expect(impl._callCustomValidator(() => 0, 'foo', [], [])).to.be.an.instanceof(Error);
-      expect(impl._callCustomValidator(() => '', 'foo', [], [])).to.be.an.instanceof(Error);
+      expect(impl._callCustomValidator(
+          () => null, 'foo', [], [], context)).to.be.an.instanceof(Error);
+      expect(impl._callCustomValidator(
+          () => 0, 'foo', [], [], context)).to.be.an.instanceof(Error);
+      expect(impl._callCustomValidator(
+          () => '', 'foo', [], [], context)).to.be.an.instanceof(Error);
     });
 
-    it('should return what the customer validator threw', function() {
+    it('should return what the custom validator threw', function() {
       let err = new Error('bar');
       const validator = function() {
         throw err;
       };
 
-      let failure = impl._callCustomValidator(validator, 'foo', [], []);
+      let failure = impl._callCustomValidator(validator, 'foo', [], [], context);
       expect(failure).to.equal(err);
 
       err = [];
-      failure = impl._callCustomValidator(validator, 'foo', [], []);
+      failure = impl._callCustomValidator(validator, 'foo', [], [], context);
       expect(failure).to.equal(err);
 
       err = {};
-      failure = impl._callCustomValidator(validator, 'foo', [], []);
+      failure = impl._callCustomValidator(validator, 'foo', [], [], context);
       expect(failure).to.equal(err);
 
       err = 'error';
-      failure = impl._callCustomValidator(validator, 'foo', [], []);
+      failure = impl._callCustomValidator(validator, 'foo', [], [], context);
       expect(failure).to.equal(err);
     });
   });
@@ -605,22 +662,6 @@ describe('module: lib/impl', function() {
       expect(options).to.eql({path: [], isTypeset: true, qualifier: undefined});
     });
 
-    it('should use override options', function() {
-      let options = impl._getCheckOptions(undefined,
-          {path: [1], isTypeset: true, qualifier: 'string', foo: 1});
-      expect(options).to.eql({
-        path: [1],
-        isTypeset: true,
-        qualifier: 'string'
-      });
-      // should not include extra property 'foo'
-      expect(Object.keys(options)).to.eql(['path', 'isTypeset', 'qualifier']);
-
-      // other properties are defaults
-      options = impl._getCheckOptions(undefined, {isTypeset: true});
-      expect(options).to.eql({path: [], isTypeset: true, qualifier: undefined});
-    });
-
     it('should require current.path to be an array', function() {
       expect(function() {
         impl._getCheckOptions({path: [1]});
@@ -629,16 +670,6 @@ describe('module: lib/impl', function() {
       expect(function() {
         impl._getCheckOptions({path: 1});
       }).to.throw(/current.path must be an Array/);
-    });
-
-    it('should require override.path to be an array', function() {
-      expect(function() {
-        impl._getCheckOptions(undefined, {path: [1]});
-      }).not.to.throw(/override.path must be an Array/);
-
-      expect(function() {
-        impl._getCheckOptions(undefined, {path: 1});
-      }).to.throw(/override.path must be an Array/);
     });
   });
 
@@ -658,14 +689,14 @@ describe('module: lib/impl', function() {
         }).to.throw(/Invalid typeset in singleType=\[\]/);
 
         expect(function() {
-          impl.checkWithType('value', 'foo', {isTypeset: true});
+          impl.checkWithType('value', 'foo', undefined, {isTypeset: true});
         }).not.to.throw(/Invalid typeset in singleType="foo"/);
       });
 
       it('should throw if type is not handled', function() {
         const typesVerifyStub = sinon.stub(types, 'verify').returns('foo');
         expect(function() {
-          impl.checkWithType(2, 'foo', {isTypeset: true, qualifier: DEFAULT_QUALIFIER});
+          impl.checkWithType(2, 'foo', undefined, {isTypeset: true, qualifier: DEFAULT_QUALIFIER});
         }).to.throw(/Missing validator for type="foo"/);
         typesVerifyStub.restore();
       });
@@ -706,16 +737,17 @@ describe('module: lib/impl', function() {
         .to.be.an.instanceof(RtvError);
       expect(impl.checkWithType('', [qualifiers.EXPECTED, types.STRING]))
         .to.be.an.instanceof(RtvSuccess);
-      expect(impl.checkWithType('', types.STRING, {qualifier: qualifiers.EXPECTED}))
+      expect(impl.checkWithType('', types.STRING, undefined, {qualifier: qualifiers.EXPECTED}))
         .to.be.an.instanceof(RtvSuccess);
-      expect(impl.checkWithType('', [types.STRING], {qualifier: qualifiers.EXPECTED}))
+      expect(impl.checkWithType('', [types.STRING], undefined, {qualifier: qualifiers.EXPECTED}))
         .to.be.an.instanceof(RtvSuccess);
-      expect(impl.checkWithType('', [qualifiers.EXPECTED, types.STRING],
+      expect(impl.checkWithType('', [qualifiers.EXPECTED, types.STRING], undefined,
           {qualifier: qualifiers.REQUIRED})).to.be.an.instanceof(RtvError);
     });
 
     it('should append the type error path to options.path', function() {
-      const err = impl.checkWithType({foo: 3}, [{foo: types.STRING}], {path: ['a', 'b']});
+      const err = impl.checkWithType({foo: 3}, [{foo: types.STRING}], undefined,
+          {path: ['a', 'b']});
       expect(err).to.be.an.instanceof(RtvError);
       expect(err.path).to.eql(['a', 'b', 'foo']);
     });
@@ -728,8 +760,37 @@ describe('module: lib/impl', function() {
     });
 
     it('should use given options', function() {
-      expect(impl.checkWithShape(null, {foo: types.BOOLEAN}, {qualifier: qualifiers.EXPECTED}))
-        .to.be.an.instanceof(RtvSuccess);
+      expect(impl.checkWithShape(null, {foo: types.BOOLEAN}, undefined,
+          {qualifier: qualifiers.EXPECTED})).to.be.an.instanceof(RtvSuccess);
+    });
+
+    it('should capture a nested custom validator error as RtvError#failure', function() {
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.stub().throws(cvError);
+      const value = {foo: {bar: 'baz'}};
+      const context = {originalValue: value};
+
+      let typeset = {foo: {bar: validator}};
+      let result = impl.checkWithShape(value, typeset);
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'baz',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        context
+      ]);
+
+      // the resulting RtvError should represent the original check and should
+      //  have a path that points to the 'bar' property in the nested object that
+      //  failed validation
+      expect(result).to.be.an.instanceof(RtvError);
+      expect(result.valid).to.be.false;
+      expect(result.value).to.equal(value);
+      expect(result.path).to.eql(['foo', 'bar']);
+      expect(result.typeset).to.equal(typeset);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError); // points to the error thrown by nested validator
     });
 
     describe('null and undefined properties', function() {
@@ -791,70 +852,127 @@ describe('module: lib/impl', function() {
       expect(result).to.be.an.instanceof(RtvSuccess);
     });
 
-    it('should invoke a custom validator if present', function() {
+    it('should invoke a custom validator if present (generated context)', function() {
       const cvError = new Error('custom validator failed');
       const validator = sinon.stub().throws(cvError);
+      const value = 'foo';
+      const context = {originalValue: value};
 
       let typeset = [validator];
-      let result = impl.checkWithArray('foo', typeset);
+      let result = impl.checkWithArray(value, typeset);
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
-        'foo',
+        value,
         [qualifiers.REQUIRED, types.ANY],
-        typeset
+        typeset,
+        context
       ]);
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.valid).to.be.false;
-      expect(result.value).to.equal('foo');
+      expect(result.value).to.equal(value);
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
-      expect(result.cause).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
-      expect(result.failure).to.equal(cvError);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError);
 
       validator.resetHistory();
 
       typeset = [types.STRING, validator];
-      result = impl.checkWithArray('foo', typeset);
+      result = impl.checkWithArray(value, typeset);
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
-        'foo',
+        value,
         [qualifiers.REQUIRED, types.STRING],
-        typeset
+        typeset,
+        context
       ]);
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.valid).to.be.false;
-      expect(result.value).to.equal('foo');
+      expect(result.value).to.equal(value);
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
-      expect(result.cause).to.eql([qualifiers.REQUIRED, types.STRING, validator]);
-      expect(result.failure).to.equal(cvError);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.STRING, validator]);
+      expect(result.rootCause).to.equal(cvError);
 
       validator.resetHistory();
       validator.returns(true);
 
       typeset = [types.STRING, validator];
-      result = impl.checkWithArray('foo', typeset);
+      result = impl.checkWithArray(value, typeset);
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
-        'foo',
+        value,
         [qualifiers.REQUIRED, types.STRING],
-        typeset
+        typeset,
+        context
       ]);
       expect(result).to.be.an.instanceof(RtvSuccess);
     });
 
+    it('should invoke a custom validator if present (provided context)', function() {
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.stub().throws(cvError);
+      const value = 'foo';
+      const context = {originalValue: value};
+
+      let typeset = [validator];
+      let result = impl.checkWithArray(value, typeset, context);
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        value,
+        [qualifiers.REQUIRED, types.ANY],
+        typeset,
+        context
+      ]);
+      expect(validator.firstCall.args[3]).to.equal(context); // same provided context
+      expect(result).to.be.an.instanceof(RtvError);
+      expect(result.valid).to.be.false;
+      expect(result.value).to.equal(value);
+      expect(result.path).to.eql([]);
+      expect(result.typeset).to.equal(typeset);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError);
+    });
+
+    it('should provide the given context to a custom validator', function() {
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.stub().throws(cvError);
+      const value = {foo: 1};
+      const context = {originalValue: value};
+
+      let typeset = [validator];
+      let result = impl.checkWithArray(value, typeset, context);
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        value,
+        [qualifiers.REQUIRED, types.ANY],
+        typeset,
+        context
+      ]);
+      expect(validator.firstCall.args[3]).to.equal(context); // same provided context
+      expect(validator.firstCall.args[3].originalValue).to.equal(value); // identical value ref
+      expect(result).to.be.an.instanceof(RtvError);
+      expect(result.valid).to.be.false;
+      expect(result.value).to.equal(value);
+      expect(result.path).to.eql([]);
+      expect(result.typeset).to.equal(typeset);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError);
+    });
+
     it('should not invoke a custom validator if no types matched', function() {
-      const validator = sinon.stub().throws(new Error('failure'));
+      const validator = sinon.stub().throws(new Error('rootCause'));
       const typeset = [types.FINITE, validator];
       const result = impl.checkWithArray('foo', typeset);
+
       expect(validator.callCount).to.equal(0);
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.valid).to.be.false;
       expect(result.value).to.equal('foo');
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(typeset);
-      expect(result.cause).to.eql([qualifiers.REQUIRED, types.FINITE, validator]);
-      expect(result.failure).to.equal(undefined);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.FINITE, validator]);
+      expect(result.rootCause).to.equal(undefined);
     });
 
     it('should invoke all nested custom validators with respective values', function() {
@@ -877,15 +995,19 @@ describe('module: lib/impl', function() {
       expect(validator1.firstCall.args).to.eql([
         'foo',
         [qualifiers.REQUIRED, types.STRING],
-        [types.STRING, validator1]
+        [types.STRING, validator1],
+        {originalValue: value}
       ]);
+      expect(validator1.firstCall.args[3].originalValue).to.equal(value); // identical value ref
 
       expect(validator2.callCount).to.equal(1);
       expect(validator2.firstCall.args).to.eql([
         77,
         [qualifiers.REQUIRED, types.INT],
-        [types.INT, validator2]
+        [types.INT, validator2],
+        {originalValue: value}
       ]);
+      expect(validator2.firstCall.args[3].originalValue).to.equal(value); // identical value ref
 
       expect(validator3.callCount).to.equal(1);
       expect(validator3.firstCall.args).to.eql([
@@ -894,8 +1016,10 @@ describe('module: lib/impl', function() {
           prop1: typeset[0].prop1,
           prop2: typeset[0].prop2
         }}],
-        typeset
+        typeset,
+        {originalValue: value}
       ]);
+      expect(validator3.firstCall.args[3].originalValue).to.equal(value); // identical value ref
     });
 
     it('should invoke a custom validator when value is null and qualifier is EXPECTED', function() {
@@ -908,7 +1032,8 @@ describe('module: lib/impl', function() {
       expect(validator.firstCall.args).to.eql([
         null,
         [qualifiers.EXPECTED, types.STRING],
-        typeset
+        typeset,
+        {originalValue: null}
       ]);
 
       validator.resetHistory();
@@ -921,8 +1046,43 @@ describe('module: lib/impl', function() {
       expect(validator.firstCall.args).to.eql([
         undefined,
         [qualifiers.OPTIONAL, types.STRING],
-        typeset
+        typeset,
+        {originalValue: undefined}
       ]);
+    });
+
+    it('should capture a nested custom validator error as RtvError#failure', function() {
+      const cvError = new Error('custom validator failed');
+      const validator = sinon.spy(function(v) {
+        if (v === 'bar') {
+          throw cvError;
+        }
+      });
+      const value = [['foo', 'bar']];
+      const context = {originalValue: value};
+
+      let typeset = [types.ARRAY, {ts: [types.ARRAY, {ts: validator}]}];
+      let result = impl.checkWithArray(value, typeset);
+
+      // the validator should get called 2 times, and fail only the second time
+      expect(validator.callCount).to.equal(2); // 'bar' is second element
+      expect(validator.secondCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        context
+      ]);
+
+      // the resulting RtvError should represent the original check and should
+      //  have a path that points to the 'bar' element in the nested array that
+      //  failed validation
+      expect(result).to.be.an.instanceof(RtvError);
+      expect(result.valid).to.be.false;
+      expect(result.value).to.equal(value);
+      expect(result.path).to.eql(['0', '1']);
+      expect(result.typeset).to.equal(typeset);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError); // points to the error thrown by nested validator
     });
 
     describe('Options', function() {
@@ -930,7 +1090,7 @@ describe('module: lib/impl', function() {
         const isTypesetStub = sinon.stub(isTypesetMod, 'default').callThrough();
 
         expect(function() {
-          impl.checkWithArray(1, ['invalid-type'], {isTypeset: true});
+          impl.checkWithArray(1, ['invalid-type'], undefined, {isTypeset: true});
         }).to.throw(/Invalid Array typeset/);
 
         // should only be called once, as a result of checkWithArray() calling extractNextType()
@@ -941,7 +1101,8 @@ describe('module: lib/impl', function() {
       });
 
       it('should use the given qualifier', function() {
-        const result = impl.checkWithArray(NaN, [types.NUMBER], {qualifier: qualifiers.EXPECTED});
+        const result = impl.checkWithArray(NaN, [types.NUMBER], undefined,
+            {qualifier: qualifiers.EXPECTED});
         expect(result).to.be.an.instanceof(RtvSuccess);
       });
     });
@@ -974,8 +1135,8 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql([]);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
-      expect(err.failure).to.equal(undefined);
+      expect(err.mismatch).to.eql([qualifiers.REQUIRED, types.STRING]);
+      expect(err.rootCause).to.equal(undefined);
 
       const cvError = new Error('badness');
       typeset = function() { throw cvError; };
@@ -984,8 +1145,8 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql([]);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.ANY, typeset]); // validator alone means ANY
-      expect(err.failure).to.equal(cvError);
+      expect(err.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, typeset]); // validator alone means ANY
+      expect(err.rootCause).to.equal(cvError);
 
       value = {foo: 'bar'};
       typeset = {foo: types.FINITE};
@@ -994,8 +1155,8 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql(['foo']);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.FINITE]);
-      expect(err.failure).to.equal(undefined);
+      expect(err.mismatch).to.eql([qualifiers.REQUIRED, types.FINITE]);
+      expect(err.rootCause).to.equal(undefined);
 
       value = {foo: {bar: {baz: -1}}};
       typeset = {
@@ -1010,8 +1171,8 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql(['foo', 'bar', 'baz']);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING, types.FINITE, {oneOf: 0}]);
-      expect(err.failure).to.equal(undefined);
+      expect(err.mismatch).to.eql([qualifiers.REQUIRED, types.STRING, types.FINITE, {oneOf: 0}]);
+      expect(err.rootCause).to.equal(undefined);
 
       value = 1;
       typeset = [types.STRING];
@@ -1020,8 +1181,8 @@ describe('module: lib/impl', function() {
       expect(err.value).to.equal(value);
       expect(err.path).to.eql([]);
       expect(err.typeset).to.equal(typeset);
-      expect(err.cause).to.eql([qualifiers.REQUIRED, types.STRING]);
-      expect(err.failure).to.equal(undefined);
+      expect(err.mismatch).to.eql([qualifiers.REQUIRED, types.STRING]);
+      expect(err.rootCause).to.equal(undefined);
     });
 
     it('should check a string value as a string', function() {
@@ -1041,15 +1202,16 @@ describe('module: lib/impl', function() {
       expect(validator.firstCall.args).to.eql([
         'foo',
         [qualifiers.REQUIRED, types.ANY],
-        validator
+        validator,
+        {originalValue: 'foo'}
       ]);
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.valid).to.be.false;
       expect(result.value).to.equal('foo');
       expect(result.path).to.eql([]);
       expect(result.typeset).to.equal(validator);
-      expect(result.cause).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
-      expect(result.failure).to.equal(cvError);
+      expect(result.mismatch).to.eql([qualifiers.REQUIRED, types.ANY, validator]);
+      expect(result.rootCause).to.equal(cvError);
     });
 
     it(`should not call the validator if the "${types.ANY}" validator fails`, function() {
@@ -1066,7 +1228,7 @@ describe('module: lib/impl', function() {
       it('should not validate the typeset if isTypeset is true', function() {
         const isTypesetSpy = sinon.stub(isTypesetMod, 'default').callThrough();
 
-        impl.check(1, types.FINITE, {isTypeset: true});
+        impl.check(1, types.FINITE, undefined, {isTypeset: true});
         expect(isTypesetSpy.called).to.be.false;
 
         isTypesetSpy.restore();
@@ -1075,11 +1237,12 @@ describe('module: lib/impl', function() {
       it('should use the qualifier if specified', function() {
         const validator = sinon.stub().returns(true);
 
-        impl.check(1, validator, {qualifier: qualifiers.OPTIONAL});
+        impl.check(1, validator, undefined, {qualifier: qualifiers.OPTIONAL});
         expect(validator.getCall(0).args).to.eql([
           1, // value
           [qualifiers.OPTIONAL, types.ANY], // FQ match
-          validator // typeset
+          validator, // typeset
+          {originalValue: 1}
         ]);
       });
     });

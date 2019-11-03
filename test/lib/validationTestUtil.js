@@ -356,7 +356,7 @@ export const expectValidatorSuccess = function(validator, value, qualifier, args
  *  {@link rtvref.qualifiers qualifiers}.
  * @param {rtvref.types.type_arguments} [args] Optional type args.
  * @param {Object} [expectations] Values to use for expectations for any of the
- *  `RtvError` properties. For example, `{cause: [EXPECTED, FINITE]}` would
+ *  `RtvError` properties. For example, `{mismatch: [EXPECTED, FINITE]}` would
  *  alter the expectation for the error's `cause` property to be `eql` to
  *  `[EXPECTED, FINITE]`. All `RtvError` properties are tested using `eql`
  *  except for `value` which is tested using `equal`.
@@ -396,10 +396,10 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
       }
     }
 
-    if (expectations.hasOwnProperty('cause')) {
-      expect(result.cause).to.eql(expectations.cause);
+    if (expectations.hasOwnProperty('mismatch')) {
+      expect(result.mismatch).to.eql(expectations.mismatch);
     } else {
-      expect(result.cause).to.eql(
+      expect(result.mismatch).to.eql(
           [qualifier || DEFAULT_QUALIFIER, validator.type, args]);
     }
   } else {
@@ -413,10 +413,10 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
       }
     }
 
-    if (expectations.hasOwnProperty('cause')) {
-      expect(result.cause).to.eql(expectations.cause);
+    if (expectations.hasOwnProperty('mismatch')) {
+      expect(result.mismatch).to.eql(expectations.mismatch);
     } else {
-      expect(result.cause).to.eql(
+      expect(result.mismatch).to.eql(
           [qualifier || DEFAULT_QUALIFIER, validator.type]);
     }
   }

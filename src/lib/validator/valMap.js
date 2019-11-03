@@ -64,9 +64,10 @@ const isStringTypeset = function(ts) {
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.collection_args} [args] Type arguments.
+ * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valMap(v, q = REQUIRED, args) {
+export default function valMap(v, q = REQUIRED, args, context) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -102,13 +103,13 @@ export default function valMap(v, q = REQUIRED, args) {
           const [key, value] = elem;
 
           if (tsKeys) {
-            result = impl.check(key, tsKeys); // check KEY against typeset
+            result = impl.check(key, tsKeys, context); // check KEY against typeset
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but with the KEY prepended to the path
               result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`key=${print(key)}`].concat(result.path), result.cause);
+                  [`key=${print(key)}`].concat(result.path), result.mismatch, result.rootCause);
             }
 
             if (valid && tsKeysIsString && reKeys) {
@@ -121,13 +122,13 @@ export default function valMap(v, q = REQUIRED, args) {
           }
 
           if (valid && tsValues) {
-            result = impl.check(value, tsValues); // check VALUE against typeset
+            result = impl.check(value, tsValues, context); // check VALUE against typeset
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but still with the KEY added to the path
               result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`valueKey=${print(key)}`].concat(result.path), result.cause);
+                  [`valueKey=${print(key)}`].concat(result.path), result.mismatch, result.rootCause);
             }
           }
 

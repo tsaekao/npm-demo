@@ -5,6 +5,7 @@ import impl from './lib/impl';
 import types from './lib/types';
 import qualifiers from './lib/qualifiers';
 import RtvSuccess from './lib/RtvSuccess';
+import RtvError from './lib/RtvError';
 import isTypeset from './lib/validation/isTypeset';
 
 // all known types
@@ -253,7 +254,7 @@ const rtv = {
    *  {@link rtvref.types.shape_descriptor shape descriptor}.
    * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
    *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
-   * @throws {RtvError} If the `value` is not compliant to the `shape`.
+   * @throws {rtvref.RtvError} If the `value` is not compliant to the `shape`.
    * @throws {Error} If `typeset` is not a valid typeset.
    * @see {@link rtv.check}
    * @see {@link rtv.config.enabled}
@@ -275,6 +276,29 @@ const rtv = {
     //  method doesn't throw an exception
     return new RtvSuccess();
   },
+
+  /**
+   * Reference to the {@link rtvref.RtvSuccess RtvSuccess} class/constructor.
+   *
+   * This can be used to determine, for example, if the result of {@link rtv.check rtv.check()}
+   *  is the success indicator: `if (result instanceof rtv.RtvSuccess) ...` Note that both
+   *  {@link rtvref.RtvSuccess RtvSuccess} and {@link rtvref.RtvError RtvError} have a
+   *  `valid: boolean` property which you can also use to easily test for success or failure.
+   *
+   * @type {function}
+   * @see {@link rtv.check}
+   */
+  RtvSuccess,
+
+  /**
+   * Reference to the {@link rtvref.RtvError RtvError} class/constructor.
+   *
+   * This is useful if you need to determine whether an `Error` is an `RtvError`
+   *  using the `instanceof` operator: `if (err instanceof rtv.RtvError) ...`
+   *
+   * @type {function}
+   */
+  RtvError,
 
   /**
    * <h3>RTV.js Configuration</h3>

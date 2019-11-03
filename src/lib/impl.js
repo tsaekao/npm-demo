@@ -382,6 +382,42 @@ const extractNextType = function(typeset, qualifier) {
 };
 
 /**
+ * [Internal] Validates an object as being a valid
+ *  {@link rtvref.validator.type_validator_context type validator context}.
+ * @param {rtvref.validator.type_validator_context} context Context to validate.
+ * @returns {rtvref.validator.type_validator_context} The `context` that was validated.
+ * @throws {Error} If `context` is not valid.
+ */
+const _validateContext = function(context) {
+  // NOTE: since the original value could be `undefined`, we only test for the
+  //  presence of the property, not the value; the path must at least be an array,
+  //  though it could be empty for the root, and we just assume it's an array of
+  //  strings (which is what it should be)
+  // NOTE: to avoid a possible infinite loop, we validate manually instead of
+  //  being smart and defining a typeset and using the `check()` function...
+  if (!isObject(context) || !context.hasOwnProperty('originalValue')) {
+    // SECURITY: don't print the context since it may contain an original value,
+    //  which could be sensitive information
+    throw new Error('Invalid type validator context');
+  }
+
+  return context;
+};
+
+/**
+ * [Internal] Creates a new
+ *  {@link rtvref.validator.type_validator_context type validator context}.
+ * @param {*} originalValue The original value for the context.
+ * @returns {rtvref.validator.type_validator_context} New context with an empty/root
+ *  path.
+ */
+const _createContext = function(originalValue) {
+  return {
+    originalValue
+  };
+};
+
+/**
  * [Internal] Invokes a custom validator function found in a typeset.
  * @private
  * @function rtvref.impl._callCustomValidator
@@ -390,17 +426,26 @@ const extractNextType = function(typeset, qualifier) {
  * @param {rtvref.types.fully_qualified_typeset} match Fully-qualified typeset
  *  for the subtype of `typeset` that matched.
  * @param {rtvref.types.typeset} typeset Typeset used for verification.
+ * @param {rtvref.validator.type_validator_context} context Additional context
+ *  for the check.
+ *
+ *  NOTE: A new context will not be generated. An existing context must be given.
+ *
  * @returns {(undefined|Error)} `undefined` if the validator succeeded; `Error`
  *  if the validator failed.
+ * @throws {Error} If the specified `context` is not valid.
  */
-const _callCustomValidator = function(validator, value, match, typeset) {
+const _callCustomValidator = function(validator, value, match, typeset, context) {
+  // NOTE: here, we expect to be given a valid context rather than optionally generating a new one
+  _validateContext(context);
+
   let failure;
 
   try {
-    const result = validator(value, match, typeset);
+    const result = validator(value, match, typeset, context);
 
     if (result !== undefined && !result) { // undefined === no action === success
-      failure = new Error('Verification failed due to custom validator');
+      failure = new Error('Verification failed by the custom validator');
     }
   } catch (err) {
     failure = err;
@@ -425,46 +470,40 @@ const _callCustomValidator = function(validator, value, match, typeset) {
  *  should be attributed to the subtype rather than the
  *  {@link rtvref.qualifiers.DEFAULT_QUALIFIER default qualifier}.
  * @see {@link rtvref.impl.check}
- * @see {@link rtvref.impl.checkWithShape}
  * @see {@link rtvref.impl.checkWithType}
+ * @see {@link rtvref.impl.checkWithShape}
+ * @see {@link rtvref.impl.checkWithArray}
  */
 
 /**
  * [Internal] Gets check options for any of the `check*()` functions.
  * @private
  * @function rtvref.impl._getCheckOptions
- * @param {Object} [current] Current options, used as a basis for new options.
- * @param {Object} [override] Override options, which will overwrite any `current`
- *  options.
+ * @param {rtvref.impl._checkOptions} [current] Current options, used as a basis
+ *  for new options.
  * @returns {rtvref.impl._checkOptions} A full, new options object, based on
- *  `given` options, if any. Invalid given options will be ignored. The object
- *  returned may contain references to objects in `given` depending on property
- *  types.
- * @see {@link rtvref.impl.check}
- * @see {@link rtvref.impl.checkWithShape}
- * @see {@link rtvref.impl.checkWithType}
+ *  `current` options, if any. The object returned may contain references to objects
+ *  in `current` depending on property types.
  * @throws {Error} If `current.path` or `override.path` is specified and not an array.
+ * @see {@link rtvref.impl.check}
+ * @see {@link rtvref.impl.checkWithType}
+ * @see {@link rtvref.impl.checkWithShape}
+ * @see {@link rtvref.impl.checkWithArray}
  */
-const _getCheckOptions = function(current = {}, override = {}) {
+const _getCheckOptions = function(current = {}) {
   if (current.path && !isArray(current.path)) {
     throw new Error(`current.path must be an Array when specified, current.path=${print(current.path)}`);
   }
 
-  if (override.path && !isArray(override.path)) {
-    throw new Error(`override.path must be an Array when specified, override.path=${print(override.path)}`);
-  }
-
   const options = {
-    path: override.path || current.path || [],
+    path: current.path || [],
     isTypeset: false,
-    qualifier: override.qualifier || current.qualifier || undefined
+    qualifier: current.qualifier || undefined
   };
 
   // careful with isTypeset since it's a boolean: check for property existence
   //  so we don't misinterpret undefined as a falsy value we should use
-  if (override.hasOwnProperty('isTypeset')) {
-    options.isTypeset = !!override.isTypeset;
-  } else if (current.hasOwnProperty('isTypeset')) {
+  if (current.hasOwnProperty('isTypeset')) {
     options.isTypeset = !!current.isTypeset;
   }
 
@@ -496,14 +535,20 @@ const _getCheckOptions = function(current = {}, override = {}) {
  *   via an Array, e.g. `[STRING, validator]`, which would violate the fact that
  *   `singleType` should be one type, and therefore cause an exception to be thrown.
  *
+ * @param {(rtvref.validator.type_validator_context|undefined)} [context] Additional
+ *  context for the check. If _falsy_, a new context will be created for all
+ *  downstream checks using `value` as the original value, and an empty/root path.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `singleType` is not a valid simple type or single type.
+ * @throws {Error} If the specified `context` is not valid.
  * @see {@link rtvref.types}
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithType = function(value, singleType /*, options*/) {
-  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+const checkWithType = function(value, singleType, context /*, options*/) {
+  context = _validateContext(context || _createContext(value));
+
+  const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
   if (!options.isTypeset && !isTypeset(singleType)) {
     throw new Error(`Invalid typeset in singleType=${print(singleType, {isTypeset: true})}`);
@@ -538,13 +583,13 @@ const checkWithType = function(value, singleType /*, options*/) {
 
   if (_validatorMap[type]) {
     // call the validator for the specified type
-    let result = _validatorMap[type](value, qualifier, args);
+    let result = _validatorMap[type](value, qualifier, args, context);
 
     if (!result.valid) {
       // create a new error from the original, but with the current path and the
       //  original path combined
       result = new RtvError(value, singleType, options.path.concat(result.path),
-          result.cause);
+          result.mismatch, result.rootCause);
     }
 
     return result;
@@ -561,47 +606,59 @@ const checkWithType = function(value, singleType /*, options*/) {
  *  {@link rtvref.types.DEFAULT_OBJECT_TYPE default} object type.
  * @param {Object} shape Expected shape of the `value`. Must be an
  *  {@link rtvref.types.OBJECT OBJECT}.
+ * @param {(rtvref.validator.type_validator_context|undefined)} [context] Additional
+ *  context for the check. If _falsy_, a new context will be created for all
+ *  downstream checks using `value` as the original value, and an empty/root path.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the shape; an error indicator if not.
  * @throws {Error} If `shape` is not an {@link rtvref.types.OBJECT OBJECT}.
+ * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithShape = function(value, shape /*, options*/) {
+const checkWithShape = function(value, shape, context /*, options*/) {
+  context = _validateContext(context || _createContext(value));
+
   if (!isShape(shape)) {
     throw new Error(`Invalid shape=${print(shape, {isTypeset: true})}`);
   }
 
-  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+  const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
   // type validators are ultimately responsible for checking values against shapes
-  return checkWithType(value, shape, _getCheckOptions(options));
+  return checkWithType(value, shape, context, options);
 };
 
 /**
  * Checks a value using an Array typeset.
  * @function rtvref.impl.checkWithArray
  * @param {*} value Value to check.
- * @param {Array} array The Array {@link rtvref.types.typeset typeset} to check
+ * @param {Array} arrayTs The Array {@link rtvref.types.typeset typeset} to check
  *  against.
+ * @param {(rtvref.validator.type_validator_context|undefined)} [context] Additional
+ *  context for the check. If _falsy_, a new context will be created for all
+ *  downstream checks using `value` as the original value, and an empty/root path.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
  *  is compliant to the `typeset`; error indicator otherwise. An exception is
  *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid Array typeset.
+ * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithArray = function(value, array /*, options*/) {
-  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+const checkWithArray = function(value, arrayTs, context /*, options*/) {
+  context = _validateContext(context || _createContext(value));
+
+  const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
   // check for an array first since that's much faster than isTypeset()
-  if (!isArray(array) || !(options.isTypeset || isTypeset(array))) {
-    throw new Error(`Invalid typeset in array=${print(array, {isTypeset: true})}`);
+  if (!isArray(arrayTs) || !(options.isTypeset || isTypeset(arrayTs))) {
+    throw new Error(`Invalid typeset in array=${print(arrayTs, {isTypeset: true})}`);
   }
 
   options.isTypeset = true;
 
   let match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
   let err; // @type {(RtvError|undefined)}
-  const qualifier = options.qualifier || getQualifier(array);
+  const qualifier = options.qualifier || getQualifier(arrayTs);
 
   // consider each type in the typeset until we find one that matches the value
   // NOTE: an Array typeset represents multiple possibilities for a type match
@@ -609,7 +666,7 @@ const checkWithArray = function(value, array /*, options*/) {
   // NOTE: due to the isTypeset check above, we can assume that each 'type' is
   //  a SHALLOW-valid typeset (meaning, if it's an Array typeset, we cannot
   //  assume that itself is valid because the isTypeset check was just shallow)
-  const typesetCopy = array.concat(); // shallow clone so we can modify the array locally
+  const typesetCopy = arrayTs.concat(); // shallow clone so we can modify the array locally
   let subtype = extractNextType(typesetCopy, false); // exclude qualifier we already have
   const isSingleType = typesetCopy.length === 0; // was there just one type in the Array typeset?
   while (subtype.length > 0) {
@@ -621,13 +678,13 @@ const checkWithArray = function(value, array /*, options*/) {
       //  type in the typeset, at which point it gets an implied type of ANY,
       //  which matches any value
       // NOTE: we have to test the original typeset for the ANY condition
-      if (array.length === 1 || (array.length === 2 && qualifiers.check(array[0]))) {
+      if (arrayTs.length === 1 || (arrayTs.length === 2 && qualifiers.check(arrayTs[0]))) {
         match = fullyQualify(types.ANY, qualifier);
       }
 
       break; // break (since this must be the last element in typeset)
     } else {
-      const result = checkWithType(value, subtype, _getCheckOptions(options, {
+      const result = checkWithType(value, subtype, context, _getCheckOptions({
         path: options.path,
         qualifier,
         isTypeset: true // subtype must be valid per extractNextType()
@@ -649,12 +706,13 @@ const checkWithArray = function(value, array /*, options*/) {
 
   if (match) {
     // check for a validator at the end of the Array typeset and invoke it
-    const lastType = array[array.length - 1];
+    const lastType = arrayTs[arrayTs.length - 1];
     if (isCustomValidator(lastType)) {
-      const failure = _callCustomValidator(lastType, value, match, array);
+      const failure = _callCustomValidator(lastType, value, match, arrayTs, context);
       if (failure !== undefined) {
         // invalid in spite of the match since the validator said no
-        err = new RtvError(value, array, options.path, fullyQualify(array, qualifier), failure);
+        err = new RtvError(value, arrayTs, options.path,
+            fullyQualify(arrayTs, qualifier), failure);
       }
     }
     // else, valid, since we have a match
@@ -665,11 +723,12 @@ const checkWithArray = function(value, array /*, options*/) {
     //  multiple types, in which case we can't tailor an error to any one type
     //  since the value failed against all of them
     if (err) {
-      err = new RtvError(value, array, options.path.concat(err.path), err.cause);
+      err = new RtvError(value, arrayTs, options.path.concat(err.path),
+          err.mismatch, err.rootCause);
     } else {
       // make a generic error for the value not matching any of the multiple types
       //  in the Array typeset
-      err = new RtvError(value, array, options.path, fullyQualify(array, qualifier));
+      err = new RtvError(value, arrayTs, options.path, fullyQualify(arrayTs, qualifier));
     }
   }
 
@@ -681,21 +740,27 @@ const checkWithArray = function(value, array /*, options*/) {
  * @function rtvref.impl.check
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset Expected shape/type of the value.
+ * @param {(rtvref.validator.type_validator_context|undefined)} [context] Additional
+ *  context for the check. If _falsy_, a new context will be created for all
+ *  downstream checks using `value` as the original value, and an empty/root path.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the `value`
  *  is compliant to the `typeset`; error indicator otherwise. An exception is
  *  __not__ thrown if the `value` is non-compliant.
  * @throws {Error} If `typeset` is not a valid typeset.
+ * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const check = function(value, typeset /*, options*/) {
-  const options = _getCheckOptions(arguments.length > 2 ? arguments[2] : undefined);
+const check = function(value, typeset, context /*, options*/) {
+  context = _validateContext(context || _createContext(value));
+
+  const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
   if (options.isTypeset || isTypeset(typeset)) {
     options.isTypeset = true;
 
     if (isString(typeset)) {
       // simple type: check value is of the type
-      return checkWithType(value, typeset, options);
+      return checkWithType(value, typeset, context, options);
     }
 
     if (isCustomValidator(typeset)) {
@@ -703,7 +768,7 @@ const check = function(value, typeset /*, options*/) {
       const impliedType = types.ANY;
 
       // value must be ANY type, and custom validator must return true
-      const result = checkWithType(value, impliedType, options);
+      const result = checkWithType(value, impliedType, context, options);
       if (!result.valid) {
         return result;
       }
@@ -712,7 +777,7 @@ const check = function(value, typeset /*, options*/) {
       //  the subtype within the implied typeset that matched
       const match = fullyQualify(impliedType, options.qualifier);
 
-      const failure = _callCustomValidator(typeset, value, match, typeset);
+      const failure = _callCustomValidator(typeset, value, match, typeset, context);
       if (failure !== undefined) {
         return new RtvError(value, typeset, options.path,
             fullyQualify(typeset, options.qualifier), failure);
@@ -723,12 +788,12 @@ const check = function(value, typeset /*, options*/) {
 
     if (isShape(typeset)) {
       // shape descriptor: check value against shape
-      return checkWithShape(value, typeset, options);
+      return checkWithShape(value, typeset, context, options);
     }
 
     if (isArray(typeset)) {
       // Array typeset: check value against all types in typeset
-      return checkWithArray(value, typeset, options);
+      return checkWithArray(value, typeset, context, options);
     }
 
     throw new Error(`Invalid JavaScript type for typeset=${print(typeset, {isTypeset: true})}`);
@@ -771,6 +836,8 @@ const impl = {
   // internal
   _validatorMap, // exposed mainly to support unit testing
   _registerType,
+  _validateContext,
+  _createContext,
   _callCustomValidator,
   _getCheckOptions,
   // public

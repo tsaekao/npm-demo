@@ -50,9 +50,10 @@ export const config = function(settings) {
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.collection_args} [args] Type arguments.
+ * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valSet(v, q = REQUIRED, args) {
+export default function valSet(v, q = REQUIRED, args, context) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -75,14 +76,14 @@ export default function valSet(v, q = REQUIRED, args) {
         const it = v.values(); // iterator of straight values
 
         for (let elem of it) {
-          result = impl.check(elem, tsValues); // check value against typeset
+          result = impl.check(elem, tsValues, context); // check value against typeset
           valid = result.valid;
 
           if (!result.valid) {
             // create a new error from the original, but with the value prepended to
             //  the path (since sets don't have indexes; they just have unique values)
             result = new RtvError(v, impl.toTypeset(type, q, args),
-                [print(elem)].concat(result.path), result.cause);
+                [print(elem)].concat(result.path), result.mismatch, result.rootCause);
           }
 
           if (!valid) { // break on first invalid value

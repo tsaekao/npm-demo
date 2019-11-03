@@ -91,7 +91,7 @@ describe('module: lib/validator/valSet', function() {
       let args = {values: types.BOOLEAN};
       vtu.expectValidatorError(val, set, undefined, args, {
         path: ['"one"'],
-        cause: [qualifiers.REQUIRED, types.BOOLEAN]
+        mismatch: [qualifiers.REQUIRED, types.BOOLEAN]
       });
 
       set = new Set(['one', 'two', '']);
@@ -101,7 +101,7 @@ describe('module: lib/validator/valSet', function() {
       };
       vtu.expectValidatorError(val, set, undefined, args, {
         path: ['""'],
-        cause: [qualifiers.REQUIRED, types.STRING]
+        mismatch: [qualifiers.REQUIRED, types.STRING]
       });
 
       vtu.expectValidatorSuccess(val, set, undefined, {
@@ -134,7 +134,7 @@ describe('module: lib/validator/valSet', function() {
       };
       vtu.expectValidatorError(val, set, undefined, args, {
         path: [print(set.values().next().value)],
-        cause: [qualifiers.REQUIRED, ...args.values]
+        mismatch: [qualifiers.REQUIRED, ...args.values]
       });
     });
   });

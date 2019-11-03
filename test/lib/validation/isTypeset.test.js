@@ -173,14 +173,15 @@ describe('module: lib/validation/isTypeset', function() {
       it('should indicate shape in failure message if failure at index 0', function() {
         const options = {};
         isTypeset([1], options);
-        expect(options.failure).to.contain('Unexpected value at index=0: Expecting object (shape)');
+        expect(options.rootCause).to.contain(
+            'Unexpected value at index=0: Expecting object (shape)');
       });
 
       it('should indicate shape in failure message if failure at index 1 with qualifier',
           function() {
             const options = {};
             isTypeset([DEFAULT_QUALIFIER, 1], options);
-            expect(options.failure).to.contain(
+            expect(options.rootCause).to.contain(
                 'Unexpected value at index=1: Expecting object (shape)');
           });
 
@@ -190,12 +191,12 @@ describe('module: lib/validation/isTypeset', function() {
           'without qualifier', function() {
             let options = {};
             isTypeset([types.CLASS_OBJECT, 1], options);
-            expect(options.failure).to.contain(
+            expect(options.rootCause).to.contain(
                 'Unexpected value at index=1: Expecting object (type args)');
 
             options = {};
             isTypeset([DEFAULT_QUALIFIER, types.PLAIN_OBJECT, 1], options);
-            expect(options.failure).to.contain(
+            expect(options.rootCause).to.contain(
                 'Unexpected value at index=2: Expecting object (type args)');
           });
       /* eslint-enable indent */
@@ -385,7 +386,7 @@ describe('module: lib/validation/isTypeset', function() {
 
             const options = {deep: true};
             expect(isTypeset({}, options)).to.be.false;
-            expect(options.failure).to.include(`Expecting a valid shape descriptor for type="${types.OBJECT}"`);
+            expect(options.rootCause).to.include(`Expecting a valid shape descriptor for type="${types.OBJECT}"`);
 
             isShapeStub.restore();
           });

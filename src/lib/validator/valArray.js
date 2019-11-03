@@ -51,9 +51,10 @@ export const config = function(settings) {
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.ARRAY_args} [args] Type arguments.
+ * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valArray(v, q = REQUIRED, args) {
+export default function valArray(v, q = REQUIRED, args, context) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -81,14 +82,14 @@ export default function valArray(v, q = REQUIRED, args) {
     if (valid && isTypeset(args.ts)) {
       // check each element in `value` against the typeset
       _forEach(v, function(elem, idx) {
-        result = impl.check(elem, args.ts);
+        result = impl.check(elem, args.ts, context);
         valid = result.valid;
 
         if (!result.valid) {
           // create a new error from the original, but with the index (as a string)
           //  prepended to the path
           result = new RtvError(v, impl.toTypeset(type, q, args),
-              [`${idx}`].concat(result.path), result.cause);
+              [`${idx}`].concat(result.path), result.mismatch, result.rootCause);
         }
 
         return valid; // break on first invalid element

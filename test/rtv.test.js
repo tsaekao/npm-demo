@@ -100,6 +100,20 @@ describe('module: rtv', function() {
     });
   });
 
+  describe('#RtvSuccess', function() {
+    it('should provide RtvSuccess property', function() {
+      expect('RtvSuccess' in rtv).to.equal(true);
+      expect(rtv.RtvSuccess).to.equal(RtvSuccess);
+    });
+  });
+
+  describe('#RtvError', function() {
+    it('should provide RtvError property', function() {
+      expect('RtvError' in rtv).to.equal(true);
+      expect(rtv.RtvError).to.equal(RtvError);
+    });
+  });
+
   describe('#version', function() {
     it('should provide version property', function() {
       expect('version' in rtv).to.equal(true);

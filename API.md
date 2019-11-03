@@ -16,6 +16,19 @@
 </dd>
 </dl>
 
+# Functions
+
+<dl>
+<dt><a href="#_validateContext">_validateContext(context)</a></dt>
+<dd><p>[Internal] Validates an object as being a valid
+ <a href="#rtvref.validator.type_validator_context">type validator context</a>.</p>
+</dd>
+<dt><a href="#_createContext">_createContext(originalValue)</a> ⇒ <code><a href="#rtvref.validator.type_validator_context">type_validator_context</a></code></dt>
+<dd><p>[Internal] Creates a new
+ <a href="#rtvref.validator.type_validator_context">type validator context</a>.</p>
+</dd>
+</dl>
+
 <a name="rtv"></a>
 
 # rtv : <code>object</code>
@@ -299,10 +312,10 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
         * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
-        * [.checkWithType(value, singleType)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.checkWithShape(value, shape)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.checkWithArray(value, array)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.check(value, typeset)](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithType(value, singleType, context)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithShape(value, shape, context)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithArray(value, arrayTs, context)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.check(value, typeset, [context])](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
         * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
@@ -452,7 +465,8 @@ Members herein are _indirectly_ accessed and/or exposed through the
             * [.type](#rtvref.validation.isWeakSet.type) : <code>string</code>
             * [.default(v)](#rtvref.validation.isWeakSet.default) ⇒ <code>boolean</code>
     * [.validator](#rtvref.validator) : <code>object</code>
-        * [.type_validator(value, [qualifier], [args])](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.type_validator(value, qualifier, args, context)](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.type_validator_context_resolve(path)](#rtvref.validator.type_validator_context_resolve) ⇒ <code>\*</code>
         * [.validator_config(settings)](#rtvref.validator.validator_config)
         * [.valAny](#rtvref.validator.valAny) : <code>Module</code>
             * [.type](#rtvref.validator.valAny.type) : <code>string</code>
@@ -558,6 +572,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
             * [.type](#rtvref.validator.valWeakSet.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valWeakSet.config)
             * [.default(v, [q])](#rtvref.validator.valWeakSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.type_validator_context](#rtvref.validator.type_validator_context) : <code>Object</code>
         * [.validator_config_settings](#rtvref.validator.validator_config_settings) : <code>Object</code>
 
 <a name="rtvref.Enumeration"></a>
@@ -831,10 +846,10 @@ Provides the internal implementation for the externally-facing [RTV](#rtv)
     * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
     * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
     * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
-    * [.checkWithType(value, singleType)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.checkWithShape(value, shape)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.checkWithArray(value, array)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.check(value, typeset)](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithType(value, singleType, context)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithShape(value, shape, context)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithArray(value, arrayTs, context)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.check(value, typeset, [context])](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.impl.getQualifier"></a>
 
@@ -932,7 +947,7 @@ For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE
 
 <a name="rtvref.impl.checkWithType"></a>
 
-### impl.checkWithType(value, singleType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithType(value, singleType, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using a single type.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -948,10 +963,11 @@ Checks a value using a single type.
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | singleType | <code>string</code> \| <code>Array</code> \| <code>Object</code> | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array [typeset](#rtvref.types.typeset) which represents a single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied.  NOTE: A [custom validator](#rtvref.types.custom_validator) is not considered   a valid single type. It's also considered a __separate type__ if it were passed-in   via an Array, e.g. `[STRING, validator]`, which would violate the fact that   `singleType` should be one type, and therefore cause an exception to be thrown. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
 
 <a name="rtvref.impl.checkWithShape"></a>
 
-### impl.checkWithShape(value, shape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithShape(value, shape, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using a [shape descriptor](#rtvref.types.shape_descriptor) and
  ensure the value's type is the default object type.
 
@@ -967,10 +983,11 @@ Checks a value using a [shape descriptor](#rtvref.types.shape_descriptor) and
 | --- | --- | --- |
 | value | <code>Object</code> | Value to check. Must be of the  [default](#rtvref.types.DEFAULT_OBJECT_TYPE) object type. |
 | shape | <code>Object</code> | Expected shape of the `value`. Must be an  [OBJECT](#rtvref.types.OBJECT). |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
 
 <a name="rtvref.impl.checkWithArray"></a>
 
-### impl.checkWithArray(value, array) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithArray(value, arrayTs, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using an Array typeset.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -985,11 +1002,12 @@ Checks a value using an Array typeset.
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
-| array | <code>Array</code> | The Array [typeset](#rtvref.types.typeset) to check  against. |
+| arrayTs | <code>Array</code> | The Array [typeset](#rtvref.types.typeset) to check  against. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
 
 <a name="rtvref.impl.check"></a>
 
-### impl.check(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.check(value, typeset, [context]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value against a typeset.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -1005,6 +1023,7 @@ Checks a value against a typeset.
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Expected shape/type of the value. |
+| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and an empty/root path. |
 
 <a name="rtvref.qualifiers"></a>
 
@@ -2403,6 +2422,7 @@ There is one __disadvantage__ to using a custom validator: It cannot be serializ
 | value | <code>\*</code> | The value being verified. |
 | match | <code>Array</code> | A [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the sub-type with the `typeset` parameter that matched, resulting  in the custom validator being called (if no sub-types matched, it would not get called).  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,   and the `typeset` parameter would be a reference to the original   `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be a reference to the original  `[STRING, FINITE, validator]`.  If the verification typeset was `[{message: STRING}, validator]` and the shape matched, this   parameter would be `[REQUIRED, OBJECT, {$: {message: STRING}}]` (because of the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE)) and the `typeset` parameter   would be a reference to the original `[{message: STRING}, validator]`.  NOTE: If the verification typeset was `validator` (just the validator itself), this parameter   would be `[REQUIRED, ANY]` (because of the implied [ANY](#rtvref.types.ANY) type) and   the `typeset` would be a reference to the original `validator`. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the validation. |
 
 <a name="rtvref.util"></a>
 
@@ -3568,7 +3588,8 @@ There can only be one validator for any given type. Where possible, each
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.validator](#rtvref.validator) : <code>object</code>
-    * [.type_validator(value, [qualifier], [args])](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.type_validator(value, qualifier, args, context)](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.type_validator_context_resolve(path)](#rtvref.validator.type_validator_context_resolve) ⇒ <code>\*</code>
     * [.validator_config(settings)](#rtvref.validator.validator_config)
     * [.valAny](#rtvref.validator.valAny) : <code>Module</code>
         * [.type](#rtvref.validator.valAny.type) : <code>string</code>
@@ -3674,11 +3695,12 @@ There can only be one validator for any given type. Where possible, each
         * [.type](#rtvref.validator.valWeakSet.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valWeakSet.config)
         * [.default(v, [q])](#rtvref.validator.valWeakSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.type_validator_context](#rtvref.validator.type_validator_context) : <code>Object</code>
     * [.validator_config_settings](#rtvref.validator.validator_config_settings) : <code>Object</code>
 
 <a name="rtvref.validator.type_validator"></a>
 
-### validator.type\_validator(value, [qualifier], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### validator.type\_validator(value, qualifier, args, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 <h3>Type Validator Function</h3>
 
 NOTE: A validator must always give __precedence__ to
@@ -3688,7 +3710,7 @@ NOTE: A validator must always give __precedence__ to
 __NOTE:__ A validator must support all its qualifier rules, including proper
  handling of `null` values when [EXPECTED](#rtvref.qualifiers.EXPECTED)
  and `undefined` values when [OPTIONAL](#rtvref.qualifiers.OPTIONAL),
- __in addition to__ and type-specific qualifier rules. For example, the
+ __in addition to__ any type-specific qualifier rules. For example, the
  [STRING](#rtvref.types.STRING) type permits empty strings when not
  [REQUIRED](#rtvref.qualifiers.REQUIRED).
 
@@ -3699,8 +3721,24 @@ __NOTE:__ A validator must support all its qualifier rules, including proper
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | The value to validate. |
-| [qualifier] | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always explicitly default to  [REQUIRED](#rtvref.qualifiers.REQUIRED) to maintain consistent behavior. |
-| [args] | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
+| qualifier | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always explicitly default to  [REQUIRED](#rtvref.qualifiers.REQUIRED) to maintain consistent behavior. |
+| args | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the validation. |
+
+<a name="rtvref.validator.type_validator_context_resolve"></a>
+
+### validator.type\_validator\_context\_resolve(path) ⇒ <code>\*</code>
+<h3>Type Validator Context - Resolve Function</h3>
+
+Resolves a given path from the [context](#rtvref.validator.type_validator_context)'s
+ `originalValue`.
+
+**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
+**Returns**: <code>\*</code> - The value at the specified path _from_ the context's `originalValue`.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>Array.&lt;(string\|number)&gt;</code> | The path into the `originalValue` to resolve.  An empty path resolves to the `originalValue`. Works across objects and arrays  provided the path is valid. Numbers will be implicitly cast to strings when they  are used to access properties on objects. An invalid path will result in an  `Error` thrown. |
 
 <a name="rtvref.validator.validator_config"></a>
 
@@ -4878,6 +4916,52 @@ Type: [WEAK_SET](#rtvref.types.WEAK_SET)
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 
+<a name="rtvref.validator.type_validator_context"></a>
+
+### validator.type\_validator\_context : <code>Object</code>
+<h3>Type Validator Context</h3>
+
+This object provides important information to a
+ [type validator](#rtvref.validator.type_validator), including a
+ [custom validator](#rtvref.types.custom_validator), about the context
+ of the current validation check.
+
+For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would start
+ with the following `context`:
+
+<pre><code>{
+  path: [],
+  originalValue: {foo: 1}
+}
+</code></pre>
+
+This indicates the object `{foo: 1}` itself is being checked (as being the
+ [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE)).
+
+If that check passes, then the check will dive into the object and start looking
+ at its properties. The next check, which would be for the property `foo`,
+ would have the following `context`
+
+<pre><code>{
+  path: ['foo'],
+  originalValue: {foo: 1}
+}
+</code></pre>
+
+This indicates the value `1` of the property `foo` of the `originalValue`
+ `{foo: 1}` is currently being checked. The
+ [type validator](#rtvref.validator.type_validator)'s first parameter's
+ value will be `1` in this case.
+
+**Kind**: static typedef of [<code>validator</code>](#rtvref.validator)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| path | <code>Array.&lt;string&gt;</code> | The current path into the value being checked.  Initially empty to signify the root (top-level) value being checked.  Using this array, it's possible to programmatically address any value visited   along the path, to any prior depth, by starting at the `originalValue` and   looping through the `path` while accessing the related element since object   properties and array elements can both be accessed using the same   `originalValue[path[0]][path[1]][..][[path[n]]]` syntax. Note that the current   value being checked is available as the first parameter given to the   [type validator](#rtvref.validator.type_validator) function. |
+| originalValue | <code>\*</code> | The original/first value given to  [rtv.check()](#rtv.check) or [rtv.verify()](#rtv.verify). |
+| resolve | [<code>type\_validator\_context\_resolve</code>](#rtvref.validator.type_validator_context_resolve) | Resolves  a given path into the context's `originalValue`. |
+
 <a name="rtvref.validator.validator_config_settings"></a>
 
 ### validator.validator\_config\_settings : <code>Object</code>
@@ -4892,4 +4976,34 @@ The settings provided to the
 | Name | Type | Description |
 | --- | --- | --- |
 | impl | [<code>impl</code>](#rtvref.impl) | Reference to the `impl` module. |
+
+<a name="_validateContext"></a>
+
+# \_validateContext(context)
+[Internal] Validates an object as being a valid
+ [type validator context](#rtvref.validator.type_validator_context).
+
+**Kind**: global function  
+**Throws**:
+
+- <code>Error</code> If `context` is not valid.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Context to validate. |
+
+<a name="_createContext"></a>
+
+# \_createContext(originalValue) ⇒ [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context)
+[Internal] Creates a new
+ [type validator context](#rtvref.validator.type_validator_context).
+
+**Kind**: global function  
+**Returns**: [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) - New context with an empty/root
+ path.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| originalValue | <code>\*</code> | The original value for the context. |
 

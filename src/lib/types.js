@@ -531,8 +531,13 @@ import Enumeration from './Enumeration';
  *
  * @typedef {function} rtvref.types.custom_validator
  * @param {*} value The value being verified.
+ *
+ *  This value differs from `context.originalValue` in that it is the value currently being verified,
+ *   closest to the custom validator itself, e.g. the value of element in an array, as opposed to the
+ *   array itself, or the value of a property in an object, as opposed to the object itself.
+ *
  * @param {Array} match A {@link rtvref.types.fully_qualified_typeset fully-qualified}
- *  typeset describing the sub-type with the `typeset` parameter that matched, resulting
+ *  typeset describing the __sub-type within__ the `typeset` parameter that matched, resulting
  *  in the custom validator being called (if no sub-types matched, it would not get called).
  *
  *  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,
@@ -549,7 +554,7 @@ import Enumeration from './Enumeration';
  *   {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type}) and the `typeset` parameter
  *   would be a reference to the original `[{message: STRING}, validator]`.
  *
- *  NOTE: If the verification typeset was `validator` (just the validator itself), this parameter
+ *  If the verification typeset was simply `validator` (just the validator itself), this parameter
  *   would be `[REQUIRED, ANY]` (because of the implied {@link rtvref.types.ANY ANY} type) and
  *   the `typeset` would be a reference to the original `validator`.
  *
@@ -557,6 +562,8 @@ import Enumeration from './Enumeration';
  *  verification. Note the typeset may contain nested typeset(s), and may
  *  be part of a larger parent typeset (though there would be no reference to
  *  the parent typeset, if any).
+ * @param {rtvref.validator.type_validator_context} context Additional context
+ *  for the validation.
  * @returns {*} Either `undefined` or a _truthy_ value to __pass__ the verification, or a _falsy_
  *  value to fail it. The validator may also throw an `Error` to fail the verification.
  *
@@ -570,14 +577,14 @@ import Enumeration from './Enumeration';
  *  It's recommend to throw an `Error` with a helpful message rather than simply returning a
  *   _falsy_ value to fail the verification.
  *
- * @throws {Error} If the validation fails. This error will fail the overall
+ * @throws {Error} (Optional) If the validation fails. This error will fail the overall
  *  verification, and will be included in the resulting `RtvError` as its
  *  {@link rtvref.RtvError#failure failure} property, as well as part of its
  *  `message`.
  *
- *   It's recommended to throw an error with a message that will help the developer
- *    determine why the custom validation failed, while avoiding exposing any sensitive
- *    information that may be found in the `value` (such as passwords).
+ *   Although not required, it's recommended to throw an error with a message that will
+ *    help the developer determine why the custom validation failed, while avoiding exposing
+ *    any sensitive information that may be found in the `value` (such as passwords).
  *
  * @see {@link rtvref.validation.isCustomValidator}
  */
@@ -1147,7 +1154,7 @@ const defs = {
    * @see {@link rtvref.types.MAP}
    * @see {@link rtvref.types.WEAK_MAP}
    */
-  HASH_MAP: def('MAP_OBJECT', true), // NOTE: NOT an object type (unrelated to shapes)
+  HASH_MAP: def('HASH_MAP', true), // NOTE: NOT an object type (unrelated to shapes)
 
   /**
    * An ES6 map supports any value as its keys, unlike a

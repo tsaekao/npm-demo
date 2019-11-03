@@ -142,7 +142,7 @@ describe('module: lib/validator/valArray', function() {
       args = {ts: [qualifiers.REQUIRED, types.STRING]};
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['2'],
-        cause: args.ts
+        mismatch: args.ts
       });
 
       arr = [1, 'a'];
@@ -153,7 +153,7 @@ describe('module: lib/validator/valArray', function() {
       args = {ts: [types.FINITE, {min: 2}, types.STRING, {oneOf: 'a'}]};
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['0'],
-        cause: (function() {
+        mismatch: (function() {
           const ts = args.ts.concat();
           ts.unshift(qualifiers.REQUIRED);
           return ts;
@@ -167,7 +167,7 @@ describe('module: lib/validator/valArray', function() {
     it('creates error paths that are arrays of strings', function() {
       vtu.expectValidatorError(val, ['a', 2], undefined, {ts: types.STRING}, {
         path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
-        cause: [qualifiers.REQUIRED, types.STRING]
+        mismatch: [qualifiers.REQUIRED, types.STRING]
       });
     });
   });

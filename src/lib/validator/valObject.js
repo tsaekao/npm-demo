@@ -48,10 +48,11 @@ export const config = function(settings) {
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
- * @param {rtvref.types.numeric_args} [args] Type arguments.
+ * @param {rtvref.types.shape_object_args} [args] Type arguments.
+ * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valObject(v, q = REQUIRED, args) {
+export default function valObject(v, q = REQUIRED, args, context) {
   if (nilPermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -66,10 +67,11 @@ export default function valObject(v, q = REQUIRED, args) {
 
   // only consider enumerable, own-properties of the shape
   _forEach(shape, function(typeset, prop) {
-    const result = impl.check(v[prop], typeset); // check prop value against shape prop typeset
+    // check prop value against shape prop typeset
+    const result = impl.check(v[prop], typeset, context);
 
     if (!result.valid) {
-      err = new RtvError(v, shape, [prop].concat(result.path), result.cause);
+      err = new RtvError(v, shape, [prop].concat(result.path), result.mismatch, result.rootCause);
     }
 
     return !err; // break on first error

@@ -110,7 +110,7 @@ describe('module: lib/validator/valAnyObject', function() {
 
       vtu.expectValidatorError(val, {foo: 3}, undefined, {$: {foo: types.STRING}}, {
         typeset: {foo: types.STRING},
-        cause: [qualifiers.REQUIRED, types.STRING],
+        mismatch: [qualifiers.REQUIRED, types.STRING],
         path: ['foo']
       });
       expect(checkStub.called).to.be.true;
