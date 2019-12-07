@@ -48,8 +48,8 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valAny(v, q = REQUIRED) {
-  // NOTE: no point checking basic qualifier rules since this type allows both
-  //  undefined and null regardless of the qualifier
+  // NOTE: no point checking basic qualifier rules since this type allows any falsy
+  //  value regardless of the qualifier
 
   if (isAny(v)) {
     return new RtvSuccess();

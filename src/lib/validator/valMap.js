@@ -7,7 +7,7 @@ import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
 import types from '../types';
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import {print} from '../util';
@@ -68,7 +68,7 @@ const isStringTypeset = function(ts) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valMap(v, q = REQUIRED, args, context) {
-  if (nilPermitted(v, q)) {
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

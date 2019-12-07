@@ -2,7 +2,7 @@
 
 import {type, default as isFunction} from '../validation/isFunction';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -39,7 +39,7 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valFunction(v, q = REQUIRED) {
-  if (nilPermitted(v, q)) {
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

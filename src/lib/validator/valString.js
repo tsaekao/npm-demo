@@ -5,7 +5,7 @@ import {type, default as isString} from '../validation/isString';
 import isFinite from '../validation/isFinite';
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -57,7 +57,9 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valString(v, q = REQUIRED, args) {
-  if (nilPermitted(v, q)) {
+  // NOTE: this test, when the qualifier is TRUTHY, will permit an empty string regardless
+  //  of any args that may not, which is the intended behavior
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

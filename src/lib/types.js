@@ -28,6 +28,24 @@ import Enumeration from './Enumeration';
  */
 
 /**
+ * <h3>Falsy Values</h3>
+ *
+ * In JavaScript, a _falsy_ value means any one of these values which, when
+ *  tested in a logical operation like `&&`, `||`, or an `IF` statement, evaluates
+ *  to `false`:
+ *
+ * - `undefined`
+ * - `null`
+ * - `false`
+ * - `0`
+ * - `""`
+ * - `NaN`
+ *
+ * @typedef {void} rtvref.types.falsy_values
+ * @see {@link rtvref.validation.isFalsy}
+ */
+
+/**
  * <h3>Rules Per Qualifiers</h3>
  *
  * {@link rtvref.qualifiers Qualifiers} state basic rules. Unless otherwise stated,
@@ -159,11 +177,22 @@ import Enumeration from './Enumeration';
  *   not `REQUIRED`; but these values would be ignored by `FINITE` since they
  *   aren't part of the `FINITE` range), or not numbers at all.
  *
+ *  Note that `0` and `NaN` are permitted when the qualifier is `TRUTHY` even if
+ *   they aren't part of the list or aren't the single match.
+ *
  * @property {number} [min] Minimum inclusive value. Ignored if `oneOf` is
  *  specified, `min` is `NaN`, or `min` is not within normal range of the type.
+ *
+ *  Note that `0` is permitted when the qualifier is `TRUTHY` even if the minimum
+ *   does not permit it.
+ *
  * @property {number} [max] Maximum inclusive value. Ignored if `oneOf` is
  *  specified, `max` is `NaN`, `max` is not within normal range of the type,
  *  or `max` is less than `min`.
+ *
+ *  Note that `0` is permitted when the qualifier is `TRUTHY` even if the minimum
+ *   does not permit it.
+ *
  * @see {@link rtvref.types.NUMBER}
  * @see {@link rtvref.types.FINITE}
  * @see {@link rtvref.types.INT}
@@ -609,14 +638,16 @@ const defs = {
   /**
    * The any type is special in that it allows _anything_, which includes `null`
    *  and `undefined` values. Because of this, it's the most liberal in terms of
-   *  types as well as qualifiers. A more specific type should be used whenever
-   *  possible to ensure a higher degree of confidence in the value being validated.
+   *  types as well as in its interaction with qualifiers. A more specific type
+   *  should be used whenever possible to ensure a higher degree of confidence
+   *  in the value being validated.
    *
    * Any rules per qualifiers:
    *
    * - REQUIRED: Can be any value, including `null` and `undefined`.
    * - EXPECTED: Same rules as REQUIRED.
    * - OPTIONAL: Same rules as EXPECTED.
+   * - TRUTHY: Same rules as OPTIONAL.
    *
    * Since this type removes the property's need for existence in the prototype
    *  chain, it renders the verification moot (i.e. the property of this type might
@@ -631,7 +662,7 @@ const defs = {
   ANY: def('ANY'),
 
   /**
-   * Null rules per qualifiers: must be the `null` {@link rtvref.types.primitives primitive}.
+   * Null rules per qualifiers: Must be the `null` {@link rtvref.types.primitives primitive}.
    *
    * Use this special type to explicitly test for a `null` value. For example,
    *  a {@link rtvref.types.shape_descriptor shape}'s property may be required to be
@@ -648,10 +679,14 @@ const defs = {
    *
    * - REQUIRED: Must be a non-empty string, unless an argument allows it.
    * - EXPECTED | OPTIONAL: May be an empty string, unless an argument disallows it.
-   *   Note that a value `null` (for EXPECTED) or `undefined` (for OPTIONAL) will not
-   *   be subject to any restrictions imposed by arguments (i.e. the arguments will be
+   *   Note that the value `null` (for EXPECTED and OPTIONAL) or `undefined` (for OPTIONAL)
+   *   will not be subject to any restrictions imposed by arguments (i.e. the arguments will be
    *   ignored; for example, `rtv.verify(null, [EXPECTED, STRING, {min: 1}])` would
-   *   _pass_ verification because `null` is permitted with this qualifier).
+   *   _pass_ verification because `null` is permitted with EXPECTED).
+   * - TRUTHY: May be an empty string _regardless_ of arguments, since an empty
+   *   string is _falsy_, and this qualifier permits all _falsy_ values. Therefore,
+   *   `rtv.verify("", [TRUTHY, STRING, {min: 1}])` would still _pass_ verification
+   *   because an empty string is permitted with TRUTHY.
    *
    * In all cases, the value must be a string {@link rtvref.types.primitives primitive}.
    *  Note that `new String('hello') !== 'hello'` because the former is an _object_, not a string.
@@ -689,6 +724,8 @@ const defs = {
    *
    * - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
    * - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
+   * - TRUTHY: Could be `NaN` (since that is a {@link rtvref.types.falsy_values falsy value}),
+   *   `+Infinity`, `-Infinity`.
    *
    * In all cases, the value must be a number {@link rtvref.types.primitives primitive}.
    *  Note that `new Number(1) !== 1` because the former is an _object_, not a number.
@@ -709,8 +746,8 @@ const defs = {
   NUMBER: def('NUMBER', true),
 
   /**
-   * Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
-   *  value can be either an {@link rtvref.types.INT integer},
+   * Finite rules per qualifiers: Cannot be `NaN` (unless the qualifier is TRUTHY),
+   *  `+Infinity`, `-Infinity`. The value can be either an {@link rtvref.types.INT integer},
    *  or a {@link rtvref.types.FLOAT floating point number}. It must also be a
    *  number {@link rtvref.types.primitives primitive}.
    *
@@ -731,7 +768,8 @@ const defs = {
 
   /**
    * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number,
-   *  an integer, and a number {@link rtvref.types.primitives primitive}.
+   *  an integer, and a number {@link rtvref.types.primitives primitive}. `NaN`,
+   *  however, is permitted if the qualifier is TRUTHY.
    *
    * An integer is not guaranteed to be a
    *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer}.
@@ -751,7 +789,8 @@ const defs = {
   /**
    * Int rules per qualifiers: Must be a {@link rtvref.types.FINITE finite} number, a
    *  {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger safe integer},
-   *  and a number {@link rtvref.types.primitives primitive}.
+   *  and a number {@link rtvref.types.primitives primitive}. `NaN`, however, is
+   *  permitted if the qualifier is TRUTHY.
    *
    * An integer is safe if it's an IEEE-754 double precision number which isn't
    *  the result of a rounded unsafe integer. For example, `2^53 - 1` is safe,
@@ -772,7 +811,8 @@ const defs = {
   /**
    * Float rules per qualifiers: Must be a {@link rtvref.types.FINITE finite}
    *  floating point number, and a number {@link rtvref.types.primitives primitive}.
-   *  Per IEEE 754, zero is considered a float.
+   *  Per IEEE 754, zero (`0`) is considered a float. Note that `NaN` is permitted
+   *  if the qualifier is TRUTHY.
    *
    * Arguments (optional): {@link rtvref.types.numeric_args}
    *
@@ -1226,7 +1266,8 @@ const defs = {
    * - {@link rtvref.types.STRING string}, however __empty strings are permitted__,
    *   even if the qualifier is `REQUIRED`
    * - {@link rtvref.types.BOOLEAN boolean}
-   * - {@link rtvref.types.FINITE finite number}
+   * - {@link rtvref.types.FINITE finite number}, however `NaN` __is permitted__
+   *   if the qualifier is TRUTHY since it is a {@link rtvref.types.falsy_values falsy value}.
    * - {@link rtvref.types.PLAIN_OBJECT plain object}
    * - {@link rtvref.types.ARRAY array}
    *
@@ -1234,6 +1275,9 @@ const defs = {
    *  values are permitted, even when the typeset is qualified as `REQUIRED`.
    *  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
    *  qualifier.
+   *
+   * Also note that if the qualifier is `OPTIONAL` or `TRUTHY`, then `undefined`
+   *  will be a permitted value, even though it is not a JSON value.
    *
    * @name rtvref.types.JSON
    * @const {string}

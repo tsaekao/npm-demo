@@ -161,9 +161,9 @@ rtv.verify('', rtv.STRING); // ERROR: a required string cannot be empty
 
 The first verification succeeds because the value is a non-empty string. The second one fails because the typeset uses the default [qualifier](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.qualifiers), which is `REQUIRED`. A _required_ string cannot be empty (nor can it be `null` or `undefined`).
 
-In some implementations, an empty string is considered a bad value because it's a _falsy_ value in JavaScript, just like `null`, `undefined`, `false`, and `0`.
+In some implementations, an empty string is considered a bad value because it's a _falsy_ value in JavaScript, just like `null`, `undefined`, `false`, `0`, and `NaN`.
 
-There are two other qualifiers, `EXPECTED` and `OPTIONAL`. A typeset may only have one qualifier, and it must be specified before any types.
+There are 3 other qualifiers, `EXPECTED`, `OPTIONAL`, and `TRUTHY`. A typeset may only have one qualifier, and it must be specified before any types.
 
 The only way to specify an alternate qualifier is to use an Array to describe the typeset: `[<qualifier>, types...]`
 
@@ -173,6 +173,23 @@ If we wanted to accept an empty string (or `null`) as the value, we could use th
 rtv.verify('Hello world!', [rtv.EXPECTED, rtv.STRING]); // ok
 rtv.verify('', [rtv.EXPECTED, rtv.STRING]); // ok
 rtv.verify(null, [rtv.EXPECTED, rtv.STRING]); // ok
+```
+
+If we had a variable which we expect to be an object whenever it's value is _truthy_, we could use the `TRUTHY` qualifier, which would permit any _falsy_ value, but require the value to be of a specified type otherwise:
+
+```javascript
+let objectOrFalsy = false;
+rtv.verify(objectOrFalsy, [rtv.TRUTHY, rtv.PLAIN_OBJECT]); // ok
+
+objectOrFalsy = {hello: 'world!'};
+rtv.verify(objectOrFalsy, [rtv.TRUTHY, rtv.PLAIN_OBJECT]); // ok
+rtv.verify(objectOrFalsy, [rtv.TRUTHY, rtv.ARRAY]); // ERROR: value is not an array
+
+// similar to how the following code would either print "world!" or not get executed
+//  depending on the truthiness of `objectOrFalsy`
+if (objectOrFalsy) {
+  console.log(objectOrFalsy.hello);
+}
 ```
 
 ### Type Arguments

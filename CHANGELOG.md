@@ -10,19 +10,20 @@ Date format is YYYY-MM-DD.
 ## Unreleased
 
 ### Added
--   Added `sideEffects:false` bundler hint/flag to `package.json`: This will help bundlers like Webpack which support the hint/flag to know that this package does not have any side effects, and can confidently be removed during tree shaking if there are no code paths that refer to the library (e.g. if you only use RTV in your development build). See [Webpack docs](https://webpack.js.org/configuration/optimization/#optimizationsideeffects) for more information.
+-   Added `sideEffects:false` bundler hint/flag to `package.json`: This will help bundlers like Webpack, which support the hint/flag, to know that this package does not have any side effects, and can confidently be removed during tree shaking if there are no code paths that refer to the library (e.g. if you only use RTV in your development build). See [Webpack docs](https://webpack.js.org/configuration/optimization/#optimizationsideeffects) for more information.
 -   When a custom validator function is called, it now receives a fourth parameter, `context`, which is a _type validator context_. This context provides additional information about the verification, such as the __original value__ being verified (which differs from the first parameter, `value`, as that is the value currently being verified, closest to the custom validator itself, e.g. the value of element in an array, as opposed to the array itself).
 -   A reference to the `RtvError` constructor function (and `RtvSuccess` also, to balance things out) is now provided as `rtv.RtvError` so that an `Error` object can be tested using the `instanceof` operator.
+-   Added a __new qualifier__: `TRUTHY`. Think of this qualifier as, "if _truthy_, the value is __required__ to be of the specified type." Therefore, _falsy_ values like `null`, `NaN`, or `false` are permitted even if they aren't of the expected type(s), which makes it possible to verify only when a value is truthy, something that was not previously possible even with the `OPTIONAL` qualifier.
 
 ### Changed
 -   When printing a typeset that contains a custom validator function, the validator is printed as `"<validator>"` instead of `"<function>"` (hopefully that's more helpful when reading the typeset, typically in an `RtvError`'s string representation).
 -   When a verification is failed by a custom validator that does not throw an error (instead, it just returns a _falsy_ value), the generated error has been changed from `"Verification failed due to custom validator"` to `"Verification failed by the custom validator"`, which hopefully better indicates that the verification failed because the custom validator chose to fail it, not because of the _presence_ of a custom validator (as if it shouldn't have been there).
--   __DEPRECATED__ `RtvError.cause`, being replaced by `RtvError.mismatch`.
--   __DEPRECATED__ `RtvError.failure`, being replaced by `RtvError.rootCause`.
+-   __DEPRECATED__ `RtvError.cause`, replaced with `RtvError.mismatch`.
+-   __DEPRECATED__ `RtvError.failure`, replaced with `RtvError.rootCause`.
 
 ### Fixed
 -   API documentation for the `rtv.t`, `rtv.q`, and `rtv.e` deprecated properties. `rtv.enabled` (the newer one) no longer appears twice, once deprecated, once not.
--   An error thrown by a nested custom validator was not being reported in the `RtvError#failure` property (the property was `undefined` in most cases, even if the validator throw an error).
+-   An error thrown by a nested custom validator was not being reported in the `RtvError#failure` property (the property was `undefined` in most cases, even if the validator threw an error).
 
 ## 2.1.0 - 2019-10-05
 

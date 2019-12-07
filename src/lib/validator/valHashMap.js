@@ -8,7 +8,7 @@ import isFinite from '../validation/isFinite';
 import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import {print} from '../util';
@@ -57,7 +57,7 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valHashMap(v, q = REQUIRED, args, context) {
-  if (nilPermitted(v, q)) {
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

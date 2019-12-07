@@ -22,7 +22,7 @@ describe('module: lib/validator/valAny', function() {
       const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
 
-      let values = [undefined, null];
+      let values = vtu.getRestrictedValues(); // undefined, null, etc.
       _.forEach(validTypes, function(type) {
         values = values.concat(validValues[type]);
       });
@@ -38,19 +38,29 @@ describe('module: lib/validator/valAny', function() {
 
   describe('qualifiers', function() {
     describe('rules are supported', function() {
+      let restrictedValues;
+
+      beforeEach(function() {
+        restrictedValues = vtu.getRestrictedValues();
+      });
+
+      // NOTE: because of the nature of the ANY type, there are NO restrictions
+      //  on any value...
+
       it('REQUIRED (other than values previously tested)', function() {
-        vtu.expectValidatorSuccess(val, undefined, qualifiers.REQUIRED);
-        vtu.expectValidatorSuccess(val, null, qualifiers.REQUIRED);
+        vtu.expectAllToPass(val.type, val.default, restrictedValues, qualifiers.REQUIRED);
       });
 
       it('EXPECTED', function() {
-        vtu.expectValidatorSuccess(val, undefined, qualifiers.EXPECTED);
-        vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
+        vtu.expectAllToPass(val.type, val.default, restrictedValues, qualifiers.EXPECTED);
       });
 
       it('OPTIONAL', function() {
-        vtu.expectValidatorSuccess(val, undefined, qualifiers.OPTIONAL);
-        vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
+        vtu.expectAllToPass(val.type, val.default, restrictedValues, qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        vtu.expectAllToPass(val.type, val.default, restrictedValues, qualifiers.TRUTHY);
       });
     });
 
@@ -79,6 +89,10 @@ describe('module: lib/validator/valAny', function() {
 
       it('OPTIONAL', function() {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });

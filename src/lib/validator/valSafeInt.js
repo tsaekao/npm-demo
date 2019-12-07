@@ -4,7 +4,7 @@ import {type, default as isSafeInt} from '../validation/isSafeInt';
 
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -56,7 +56,7 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valSafeInt(v, q = REQUIRED, args) {
-  if (nilPermitted(v, q)) {
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

@@ -39,18 +39,28 @@ describe('module: lib/validator/valJson', function() {
         vtu.expectValidatorError(val, undefined, qualifiers.REQUIRED);
         vtu.expectValidatorSuccess(val, null, qualifiers.REQUIRED);
         vtu.expectValidatorSuccess(val, '', qualifiers.REQUIRED);
+        vtu.expectValidatorError(val, NaN, qualifiers.REQUIRED);
       });
 
       it('EXPECTED', function() {
         vtu.expectValidatorError(val, undefined, qualifiers.EXPECTED);
         vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
         vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED);
+        vtu.expectValidatorError(val, NaN, qualifiers.EXPECTED);
       });
 
       it('OPTIONAL', function() {
         vtu.expectValidatorSuccess(val, undefined, qualifiers.OPTIONAL);
         vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
         vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL);
+        vtu.expectValidatorError(val, NaN, qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        vtu.expectValidatorSuccess(val, undefined, qualifiers.TRUTHY);
+        vtu.expectValidatorSuccess(val, null, qualifiers.TRUTHY);
+        vtu.expectValidatorSuccess(val, '', qualifiers.TRUTHY);
+        vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY);
       });
     });
 
@@ -69,6 +79,10 @@ describe('module: lib/validator/valJson', function() {
 
       it('OPTIONAL', function() {
         vtu.expectValidatorError(val, Symbol(1), qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        vtu.expectValidatorError(val, Symbol(1), qualifiers.TRUTHY);
       });
     });
   });

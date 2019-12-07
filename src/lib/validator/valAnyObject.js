@@ -4,7 +4,7 @@ import _forEach from 'lodash/forEach';
 
 import {type, default as isAnyObject} from '../validation/isAnyObject';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import isShape from '../validation/isShape';
@@ -53,7 +53,7 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valAnyObject(v, q = REQUIRED, args, context) {
-  if (nilPermitted(v, q)) {
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

@@ -2,7 +2,7 @@
 
 import {type, default as isJson} from '../validation/isJson';
 
-import {default as qualifiers, nilPermitted} from '../qualifiers';
+import {default as qualifiers, valuePermitted} from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -48,7 +48,9 @@ export const config = function(settings) {
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export default function valJson(v, q = REQUIRED) {
-  if (nilPermitted(v, q)) {
+  // NOTE: this test, when the qualifier is TRUTHY, will permit `undefined` since it's
+  //  falsy, even though it isn't a valid JSON value; this is the intended behavior
+  if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
 

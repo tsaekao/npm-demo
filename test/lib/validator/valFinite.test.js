@@ -46,44 +46,72 @@ describe('module: lib/validator/valFinite', function() {
   });
 
   describe('qualifiers', function() {
-    it('never allows NaN', function() {
+    it('only allows NaN if TRUTHY', function() {
       _.forEach(qualifiers, function(qualifier) {
-        vtu.expectValidatorError(val, NaN, qualifier);
+        if (qualifier !== qualifiers.TRUTHY) {
+          vtu.expectValidatorError(val, NaN, qualifier);
+        } else {
+          vtu.expectValidatorSuccess(val, NaN, qualifier);
+        }
       });
     });
 
     describe('rules are supported', function() {
       it('REQUIRED (other than values previously tested)', function() {
-        vtu.expectValidatorError(val, undefined, qualifiers.REQUIRED);
-        vtu.expectValidatorError(val, null, qualifiers.REQUIRED);
+        const restrictedValues =
+            vtu.getRestrictedValues(qualifiers.REQUIRED).filter((v) => v !== 0);
+        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.REQUIRED);
+
+        const permittedValues = vtu.getPermittedValues(qualifiers.REQUIRED);
+        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.REQUIRED);
       });
 
       it('EXPECTED', function() {
-        vtu.expectValidatorError(val, undefined, qualifiers.EXPECTED);
-        vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
+        const restrictedValues =
+            vtu.getRestrictedValues(qualifiers.EXPECTED).filter((v) => v !== 0 && !isNaN(v));
+        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.EXPECTED);
+
+        const permittedValues = vtu.getPermittedValues(qualifiers.EXPECTED);
+        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.EXPECTED);
       });
 
       it('OPTIONAL', function() {
-        vtu.expectValidatorSuccess(val, undefined, qualifiers.OPTIONAL);
-        vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
+        const restrictedValues =
+            vtu.getRestrictedValues(qualifiers.OPTIONAL).filter((v) => v !== 0 && !isNaN(v));
+        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.OPTIONAL);
+
+        const permittedValues = vtu.getPermittedValues(qualifiers.OPTIONAL);
+        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
+        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.TRUTHY);
+
+        const permittedValues = vtu.getPermittedValues(qualifiers.TRUTHY);
+        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.TRUTHY);
       });
     });
 
     describe('are used in error typesets', function() {
       it('DEFAULT', function() {
-        vtu.expectValidatorError(val, false); // default should be REQUIRED
+        vtu.expectValidatorError(val, /foo/); // default should be REQUIRED
       });
 
       it('REQUIRED', function() {
-        vtu.expectValidatorError(val, false, qualifiers.REQUIRED);
+        vtu.expectValidatorError(val, /foo/, qualifiers.REQUIRED);
       });
 
       it('EXPECTED', function() {
-        vtu.expectValidatorError(val, false, qualifiers.EXPECTED);
+        vtu.expectValidatorError(val, /foo/, qualifiers.EXPECTED);
       });
 
       it('OPTIONAL', function() {
-        vtu.expectValidatorError(val, false, qualifiers.OPTIONAL);
+        vtu.expectValidatorError(val, /foo/, qualifiers.OPTIONAL);
+      });
+
+      it('TRUTHY', function() {
+        vtu.expectValidatorError(val, /foo/, qualifiers.TRUTHY);
       });
     });
   });
@@ -108,6 +136,11 @@ describe('module: lib/validator/valFinite', function() {
       // zero is in type range
       vtu.expectValidatorError(val, 7, undefined, {oneOf: 0});
 
+      // TRUTHY allows NaN even if not allowed for exact
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY, {oneOf: 1});
+      // TRUTHY allows 0 even if not allowed for exact
+      vtu.expectValidatorSuccess(val, 0, qualifiers.TRUTHY, {oneOf: 1});
+
       // ignored: not in type range
       vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: NaN});
       vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: -Infinity});
@@ -124,6 +157,11 @@ describe('module: lib/validator/valFinite', function() {
       vtu.expectValidatorError(val, 7, undefined, {oneOf: [6, 8]});
       vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: [7]});
       vtu.expectValidatorSuccess(val, 7, undefined, {oneOf: []}); // ignored
+
+      // TRUTHY allows NaN even if not allowed for exact
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY, {oneOf: [1]});
+      // TRUTHY allows 0 even if not allowed for exact
+      vtu.expectValidatorSuccess(val, 0, qualifiers.TRUTHY, {oneOf: [1]});
 
       // ignores non-type values in a list
       vtu.expectValidatorError(val, 7, undefined, {oneOf: [null, '7', true]});
@@ -149,6 +187,11 @@ describe('module: lib/validator/valFinite', function() {
 
       // zero is in type range
       vtu.expectValidatorError(val, -7, undefined, {min: 0});
+
+      // TRUTHY allows NaN even if not allowed in range
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY, {min: 1});
+      // TRUTHY allows 0 even if not allowed in range
+      vtu.expectValidatorSuccess(val, 0, qualifiers.TRUTHY, {min: 1});
 
       // these are all ignored min values
       vtu.expectValidatorSuccess(val, 7, undefined, {min: '8'});
@@ -177,10 +220,25 @@ describe('module: lib/validator/valFinite', function() {
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.POSITIVE_INFINITY});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: -Infinity});
       vtu.expectValidatorSuccess(val, 7, undefined, {max: Number.NEGATIVE_INFINITY});
+
+      // TRUTHY allows NaN even if not allowed in range
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY, {max: 1});
+      // TRUTHY allows 0 even if not allowed in range
+      vtu.expectValidatorSuccess(val, 0, qualifiers.TRUTHY, {max: -1});
     });
 
     it('max ignored if less than min', function() {
       vtu.expectValidatorSuccess(val, 7, undefined, {min: 7, max: 6});
+    });
+
+    it('checks for a number in a range', function() {
+      vtu.expectValidatorSuccess(val, 5, undefined, {min: 1, max: 10});
+      vtu.expectValidatorError(val, 0, undefined, {min: 1, max: 10});
+
+      // TRUTHY allows NaN even if not allowed in range
+      vtu.expectValidatorSuccess(val, NaN, qualifiers.TRUTHY, {min: 1, max: 10});
+      // TRUTHY allows 0 even if not allowed in range
+      vtu.expectValidatorSuccess(val, 0, qualifiers.TRUTHY, {min: 1, max: 10});
     });
   });
 });

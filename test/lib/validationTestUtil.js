@@ -4,12 +4,12 @@ import _ from 'lodash';
 import {expect} from 'chai';
 
 import types from '../../src/lib/types';
-import {DEFAULT_QUALIFIER} from '../../src/lib/qualifiers';
+import qualifiers, {DEFAULT_QUALIFIER} from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
 
-/* eslint-disable no-new-wrappers */
+/* eslint-disable no-new-wrappers, no-console */
 
 /**
  * Get a fresh copy of the valid values type map, or just one valid value type array.
@@ -231,6 +231,78 @@ export const getInvalidJsonValues = function() {
 };
 
 /**
+ * Get all JavaScript falsy values.
+ * @returns {Array} Falsy values.
+ */
+export const getFalsyValues = function() {
+  return [undefined, null, false, 0, '', NaN];
+};
+
+/**
+ * Get all values that a qualifier imposes restrictions on.
+ * @param {(string|undefined)} [q] Optional {@link rtvref.qualifiers.qualifiers qualifier}
+ *  to filter the list of returned values to only those which the qualifier does
+ *  not permit. Defaults to {@link rtvref.qualifiers.REQUIRED}, which means ALL possible
+ *  restricted values are returned.
+ * @returns {Array} Restricted values.
+ * @throws {Error} If the qualifier is unknown/invalid.
+ */
+export const getRestrictedValues = function(q = qualifiers.REQUIRED) {
+  const values = getFalsyValues(); // for now, restricted values are same as falsy values
+
+  if (q === qualifiers.REQUIRED) {
+    return values; // all restricted
+  }
+
+  if (q === qualifiers.EXPECTED) {
+    // only null is permitted
+    return values.filter((v) => v !== null);
+  }
+
+  if (q === qualifiers.OPTIONAL) {
+    // undefined and null are permitted
+    return values.filter((v) => v !== undefined && v !== null);
+  }
+
+  if (q === qualifiers.TRUTHY) {
+    return []; // all permitted
+  }
+
+  throw new Error(`Invalid qualifier: q="${q}"`);
+};
+
+/**
+ * Get all values that a qualifier permits.
+ * @param {(string|undefined)} [q] Optional {@link rtvref.qualifiers.qualifiers qualifier}
+ *  to filter the list of returned values to only those which the qualifier does
+ *  not permit.  Defaults to {@link rtvref.qualifiers.REQUIRED}, which means
+ *  NO permitted values are returned.
+ * @returns {Array} Permitted values.
+ * @throws {Error} If the qualifier is unknown/invalid.
+ */
+export const getPermittedValues = function(q = qualifiers.REQUIRED) {
+  if (q === qualifiers.REQUIRED) {
+    return []; // all restricted
+  }
+
+  if (q === qualifiers.EXPECTED) {
+    // only null is permitted
+    return [null];
+  }
+
+  if (q === qualifiers.OPTIONAL) {
+    // undefined and null are permitted
+    return [undefined, null];
+  }
+
+  if (q === qualifiers.TRUTHY) {
+    return getFalsyValues(); // for now, restricted values are same as falsy values
+  }
+
+  throw new Error(`Invalid qualifier: q="${q}"`);
+};
+
+/**
  * Determines if a test result is a pass.
  * @param {(boolean|rtvref.RtvSuccess)} result Test result.
  * @returns {boolean} True if the result is a pass; false otherwise.
@@ -254,18 +326,24 @@ export const failed = function(result) {
  * @param {string} type The type being tested. Not validated as a type if
  *  `values` is specified.
  * @param {function} valFn The type's validation function.
- * @param {Array} [values] Optional override list of values to test.
+ * @param {Array} [values] Optional override list of values to test. If not
+ *  specified, `type` is used to get a list of valid values from `getValidValues()`.
+ *
+ *  NOTE: If empty, NO VALUES WILL BE TESTED and the test will succeed.
+ *
  * @param {*} [rest] Optional parameters to pass to the validation function.
  * @returns {Object} Results:
  *  - {Array.<string>} failures Empty array if all values were validated (good).
  *    Otherwise, messages indicating which values failed (bad).
- *  - {Array.<number>} passes Empty array if all values failed validation (bad).
+ *  - {Array.<string>} passes Empty array if all values failed validation (bad).
  *    Otherwise, messages indicating which values passed (good).
  */
 export const testValues = function(type, valFn, values, ...rest) {
-  values = values || getValidValues(types.verify(type)); // get valid values for the type
-  if (!values || values.length === 0) {
-    throw new Error(`Missing test values for type="${type}", values=${util.print(values)}`);
+  if (!values) {
+    values = getValidValues(types.verify(type)); // get valid values for the type
+    if (values.length === 0) {
+      throw new Error(`Missing test values for type="${type}", values=${util.print(values)}`);
+    }
   }
 
   const passes = [];
@@ -324,6 +402,65 @@ export const testOtherValues = function(type, valFn, treatAsValid) {
   });
 
   return violations;
+};
+
+/**
+ * Expects all values to __pass__ the type's validation/validator function.
+ *
+ * This is a convenience function that simply calls `testValues()` and expects
+ *  the result's `failures` list to be empty, and the `passes` list to have a
+ *  length equal to `values.length`.
+ *
+* @param {string} type The type being tested. Not validated as a type if
+ *  `values` is specified.
+ * @param {function} valFn The type's validation function.
+ * @param {Array} [values] Optional override list of values to test.
+ * @param {*} [rest] Optional parameters to pass to the validation function.
+ * @returns {Object} The results object returned by `testValues()`.
+ */
+export const expectAllToPass = function(type, valFn, values, ...rest) {
+  const results = testValues(type, valFn, values, ...rest);
+
+  expect(results.passes.length).to.equal(values.length);
+
+  // print these BEFORE we fail the next expectation otherwise this code wouldn't
+  //  get executed
+  if (results.failures.length > 0) {
+    console.error('Failures that should have PASSED:\n%s', results.passes.join('\n'));
+  }
+
+  expect(results.failures.length).to.equal(0);
+
+  return results;
+};
+
+/**
+ * Expects all values to __fail__ the type's validation/validator function.
+ *
+ * This is a convenience function that simply calls `testValues()` and expects
+ *  the result's `passes` list to be empty, and the `failures` list to have a
+ *  length equal to `values.length`.
+ *
+* @param {string} type The type being tested. Not validated as a type if
+ *  `values` is specified.
+ * @param {function} valFn The type's validation function.
+ * @param {Array} [values] Optional override list of values to test.
+ * @param {*} [rest] Optional parameters to pass to the validation function.
+ * @returns {Object} The results object returned by `testValues()`.
+ */
+export const expectAllToFail = function(type, valFn, values, ...rest) {
+  const results = testValues(type, valFn, values, ...rest);
+
+  // print these BEFORE we fail the next expectation otherwise this code wouldn't
+  //  get executed
+  if (results.passes.length > 0) {
+    console.error('Passes that should have FAILED:\n%s', results.passes.join('\n'));
+  }
+
+  expect(results.passes.length).to.equal(0);
+  expect(results.failures.length).to.equal(values.length);
+
+  return results;
 };
 
 /**

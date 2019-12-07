@@ -19,7 +19,7 @@
 # Functions
 
 <dl>
-<dt><a href="#_validateContext">_validateContext(context)</a></dt>
+<dt><a href="#_validateContext">_validateContext(context)</a> ⇒ <code><a href="#rtvref.validator.type_validator_context">type_validator_context</a></code></dt>
 <dd><p>[Internal] Validates an object as being a valid
  <a href="#rtvref.validator.type_validator_context">type validator context</a>.</p>
 </dd>
@@ -48,6 +48,8 @@ Provides the externally-facing API. It wraps the
     * ~~[.e](#rtv.e) : <code>boolean</code>~~
     * [.enabled](#rtv.enabled) : <code>boolean</code>
     * [.version](#rtv.version) : <code>string</code>
+    * [.RtvSuccess](#rtv.RtvSuccess) : <code>function</code>
+    * [.RtvError](#rtv.RtvError) : <code>function</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
     * [.isTypeset()](#rtv.isTypeset)
@@ -134,6 +136,27 @@ Library version.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
+<a name="rtv.RtvSuccess"></a>
+
+## rtv.RtvSuccess : <code>function</code>
+Reference to the [RtvSuccess](#rtvref.RtvSuccess) class/constructor.
+
+This can be used to determine, for example, if the result of [rtv.check()](#rtv.check)
+ is the success indicator: `if (result instanceof rtv.RtvSuccess) ...` Note that both
+ [RtvSuccess](#rtvref.RtvSuccess) and [RtvError](#rtvref.RtvError) have a
+ `valid: boolean` property which you can also use to easily test for success or failure.
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
+**See**: [check](#rtv.check)  
+<a name="rtv.RtvError"></a>
+
+## rtv.RtvError : <code>function</code>
+Reference to the [RtvError](#rtvref.RtvError) class/constructor.
+
+This is useful if you need to determine whether an `Error` is an `RtvError`
+ using the `instanceof` operator: `if (err instanceof rtv.RtvError) ...`
+
+**Kind**: static property of [<code>rtv</code>](#rtv)  
 <a name="rtv.config"></a>
 
 ## rtv.config : <code>object</code>
@@ -260,7 +283,7 @@ NOTE: This method does nothing if RTV.js is currently
  to the `shape`. Otherwise, an [RtvError](#rtvref.RtvError) __is thrown__.  
 **Throws**:
 
-- <code>RtvError</code> If the `value` is not compliant to the `shape`.
+- [<code>RtvError</code>](#rtvref.RtvError) If the `value` is not compliant to the `shape`.
 - <code>Error</code> If `typeset` is not a valid typeset.
 
 **See**
@@ -295,13 +318,15 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.verify(value, [silent])](#rtvref.Enumeration+verify) ⇒ <code>\*</code>
         * [.toString()](#rtvref.Enumeration+toString) ⇒ <code>string</code>
     * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
-        * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
+        * [new RtvError(value, typeset, path, mismatch, [rootCause])](#new_rtvref.RtvError_new)
         * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
         * [.value](#rtvref.RtvError+value) : <code>\*</code>
         * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
         * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
-        * [.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-        * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
+        * [.mismatch](#rtvref.RtvError+mismatch) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
+        * ~~[.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
+        * [.rootCause](#rtvref.RtvError+rootCause) : <code>Error</code> \| <code>undefined</code>
+        * ~~[.failure](#rtvref.RtvError+failure) : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
     * [.RtvSuccess](#rtvref.RtvSuccess)
         * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
@@ -312,17 +337,19 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
         * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
         * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
-        * [.checkWithType(value, singleType, context)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.checkWithShape(value, shape, context)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.checkWithArray(value, arrayTs, context)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithType(value, singleType, [context])](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithShape(value, shape, [context])](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.checkWithArray(value, arrayTs, [context])](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.check(value, typeset, [context])](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
         * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
         * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
         * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
+        * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
         * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
-        * [.nilPermitted(v, [q])](#rtvref.qualifiers.nilPermitted) ⇒ <code>boolean</code>
+        * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
+        * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
     * [.types](#rtvref.types) : <code>object</code>
         * [.objTypes](#rtvref.types.objTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
         * [.argTypes](#rtvref.types.argTypes) : [<code>Enumeration</code>](#rtvref.Enumeration)
@@ -355,6 +382,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.JSON](#rtvref.types.JSON) : <code>string</code>
         * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
         * [.primitives](#rtvref.types.primitives) : <code>void</code>
+        * [.falsy_values](#rtvref.types.falsy_values) : <code>void</code>
         * [.qualifier_rules](#rtvref.types.qualifier_rules) : <code>void</code>
         * [.shape_descriptor](#rtvref.types.shape_descriptor) : <code>Object</code>
         * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
@@ -395,6 +423,9 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.isError](#rtvref.validation.isError) : <code>Module</code>
             * [.type](#rtvref.validation.isError.type) : <code>string</code>
             * [.default(v)](#rtvref.validation.isError.default) ⇒ <code>boolean</code>
+        * [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
+            * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
+            * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
         * [.isFinite](#rtvref.validation.isFinite) : <code>Module</code>
             * [.type](#rtvref.validation.isFinite.type) : <code>string</code>
             * [.default(v)](#rtvref.validation.isFinite.default) ⇒ <code>boolean</code>
@@ -466,7 +497,6 @@ Members herein are _indirectly_ accessed and/or exposed through the
             * [.default(v)](#rtvref.validation.isWeakSet.default) ⇒ <code>boolean</code>
     * [.validator](#rtvref.validator) : <code>object</code>
         * [.type_validator(value, qualifier, args, context)](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-        * [.type_validator_context_resolve(path)](#rtvref.validator.type_validator_context_resolve) ⇒ <code>\*</code>
         * [.validator_config(settings)](#rtvref.validator.validator_config)
         * [.valAny](#rtvref.validator.valAny) : <code>Module</code>
             * [.type](#rtvref.validator.valAny.type) : <code>string</code>
@@ -475,11 +505,11 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valAnyObject](#rtvref.validator.valAnyObject) : <code>Module</code>
             * [.type](#rtvref.validator.valAnyObject.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valAnyObject.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valArray](#rtvref.validator.valArray) : <code>Module</code>
             * [.type](#rtvref.validator.valArray.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valArray.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valBoolean](#rtvref.validator.valBoolean) : <code>Module</code>
             * [.type](#rtvref.validator.valBoolean.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valBoolean.config)
@@ -487,7 +517,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valClassObject](#rtvref.validator.valClassObject) : <code>Module</code>
             * [.type](#rtvref.validator.valClassObject.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valClassObject.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valDate](#rtvref.validator.valDate) : <code>Module</code>
             * [.type](#rtvref.validator.valDate.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valDate.config)
@@ -511,7 +541,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valHashMap](#rtvref.validator.valHashMap) : <code>Module</code>
             * [.type](#rtvref.validator.valHashMap.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valHashMap.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valInt](#rtvref.validator.valInt) : <code>Module</code>
             * [.type](#rtvref.validator.valInt.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valInt.config)
@@ -523,7 +553,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valMap](#rtvref.validator.valMap) : <code>Module</code>
             * [.type](#rtvref.validator.valMap.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valMap.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valNull](#rtvref.validator.valNull) : <code>Module</code>
             * [.type](#rtvref.validator.valNull.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valNull.config)
@@ -535,11 +565,11 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valObject](#rtvref.validator.valObject) : <code>Module</code>
             * [.type](#rtvref.validator.valObject.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valObject.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valPlainObject](#rtvref.validator.valPlainObject) : <code>Module</code>
             * [.type](#rtvref.validator.valPlainObject.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valPlainObject.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valPromise](#rtvref.validator.valPromise) : <code>Module</code>
             * [.type](#rtvref.validator.valPromise.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valPromise.config)
@@ -555,7 +585,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.valSet](#rtvref.validator.valSet) : <code>Module</code>
             * [.type](#rtvref.validator.valSet.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valSet.config)
-            * [.default(v, [q], [args])](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+            * [.default(v, [q], [args], context)](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.valString](#rtvref.validator.valString) : <code>Module</code>
             * [.type](#rtvref.validator.valString.type) : <code>string</code>
             * [.config(settings)](#rtvref.validator.valString.config)
@@ -695,18 +725,20 @@ A string representation of this Enumeration.
 **Extends**: [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)  
 
 * [.RtvError](#rtvref.RtvError) ⇐ [<code>JS\_Error</code>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
-    * [new RtvError(value, typeset, path, cause, [failure])](#new_rtvref.RtvError_new)
+    * [new RtvError(value, typeset, path, mismatch, [rootCause])](#new_rtvref.RtvError_new)
     * [.valid](#rtvref.RtvError+valid) : <code>boolean</code>
     * [.value](#rtvref.RtvError+value) : <code>\*</code>
     * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
     * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
-    * [.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-    * [.failure](#rtvref.RtvError+failure) : <code>Error</code> \| <code>undefined</code>
+    * [.mismatch](#rtvref.RtvError+mismatch) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
+    * ~~[.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
+    * [.rootCause](#rtvref.RtvError+rootCause) : <code>Error</code> \| <code>undefined</code>
+    * ~~[.failure](#rtvref.RtvError+failure) : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
     * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
 
 <a name="new_rtvref.RtvError_new"></a>
 
-### new RtvError(value, typeset, path, cause, [failure])
+### new RtvError(value, typeset, path, mismatch, [rootCause])
 Runtime Verification Error Indicator
 
 Describes a failed runtime verification of a value against a given
@@ -715,7 +747,7 @@ Describes a failed runtime verification of a value against a given
 
 **Throws**:
 
-- <code>Error</code> If `typeset`, `path`, or `cause` is invalid.
+- <code>Error</code> If `typeset`, `path`, or `mismatch` is invalid.
 
 
 | Param | Type | Description |
@@ -723,8 +755,8 @@ Describes a failed runtime verification of a value against a given
 | value | <code>\*</code> | The value being verified. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>Array.&lt;string&gt;</code> | The path deep into `value` where the failure occurred.  An empty array signifies the _root_ (top-level) value that was checked. |
-| cause | [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that caused the failure. This is normally the fully-qualified version of `typeset`,  but could be a sub-type if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
-| [failure] | <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation. |
+| mismatch | [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that resulted in the failed validation. This is normally the fully-qualified version  of `typeset`, but could be a subtype if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
+| [rootCause] | [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation and the validator threw an  exception; or some other nested error that was the root cause for the failed validation. |
 
 <a name="rtvref.RtvError+valid"></a>
 
@@ -755,38 +787,88 @@ Reference to the typeset used for verification.
 Path from [value](#rtvref.RtvError+value) to the nested property that
  caused the failure.
 
-__SECURITY:__ Some collection types, such as [MAP](#rtvref.types.MAP) and
+Note that paths into collections such as [HASH_MAP](#rtvref.types.HASH_MAP)
+ or ES6 structures such as [MAP](#rtvref.types.MAP), where it's possible
+ to specify arguments to verify keys vs values, will have elements with special
+ prefixes to differentiate whether the path points to a key ("`key={key-name}`")
+ or a value ("`valueKey={key-name}`").
+
+For example, given the has map `{hello: 'world'}`, if all keys were supposed to be
+ numerical, then the path for the validation error would be `["key=hello"]`, indicating
+ that the problem occurred with the __key__ named "hello", not the associated __value__.
+
+If, however, keys could be anything, but values had to be numerical, then the path
+ would be `["valueKey=hello"]`, indicating that the problem occurred with the __value__
+ associated to the key rather than the key itself.
+
+<h4>SECURITY</h4>
+
+Some collection types, such as [MAP](#rtvref.types.MAP) and
  [SET](#rtvref.types.SET), can have actual objects as keys or elements,
  and these are used (in JSON-stringified form) as part of the error path.
  If these objects happen to contain sensitive information, that information
  may end-up in the path, and the path gets included in this error's
  `message` property, which may get logged by your systems.
 
- __It is YOUR responsibility to exercise necessary caution when validating
-  data structures containing sensitive data.__
+Other object types where keys can technically be any string value could also
+ contain sensitive information depending on how these keys are defined. These
+ keys will also end-up in the path that gets included in this error's `message`
+ property.
+
+__It is YOUR responsibility to exercise necessary caution when validating
+ data structures containing sensitive data.__
+
+**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
+**Read only**: true  
+<a name="rtvref.RtvError+mismatch"></a>
+
+### rtvError.mismatch : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
+[Fully qualified typeset](#rtvref.types.fully_qualified_typeset) that caused the
+ validation error (i.e. the mismatched subtype). This will be a subset/subtype of the
+ [typeset](#rtvref.RtvError+typeset), and possibly of a nested typeset within it,
+ expressing only the direct cause of the error.
+
+For example, of `typeset` is `[[rtv.STRING]]` (a required array of required strings),
+ and `value` is `['a', 2]`, this property would be `[rtv.REQUIRED, rtv.STRING]`
+ because the validation error would ultimately have been caused by the nested
+ `rtv.STRING` typeset.
+
+Remember that the fully-qualified `typeset` would be
+ `[rtv.REQUIRED, rtv.ARRAY, {ts: [rtv.REQUIRED, rtv.STRING]}]`, which demonstrates
+ that `[rtv.REQUIRED, rtv.STRING]` is indeed a subset/subtype.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
 <a name="rtvref.RtvError+cause"></a>
 
-### rtvError.cause : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-Fully qualified typeset that caused the failure. This will be a subset of
- the [typeset](#rtvref.RtvError+typeset), and possibly of a nested
- typeset within it, expressing only the direct cause of the failure.
+### ~~rtvError.cause : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
+***Deprecated***
 
-If `typeset` is `[[rtv.STRING]]` (a required array of required strings),
- and `value` is `['a', 2]`, this property would be `[rtv.REQUIRED, rtv.STRING]`
- because the failure would ultimately have been caused by the nested `rtv.STRING`
- typeset.
+This property was renamed [mismatch](#rtvref.RtvError+mismatch).
+
+__DEPRECATED__ since version 2.2.0. Please use the `mismatch` property instead.
+
+**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
+**Read only**: true  
+<a name="rtvref.RtvError+rootCause"></a>
+
+### rtvError.rootCause : <code>Error</code> \| <code>undefined</code>
+Validation error thrown by a [Custom Validator](#rtvref.types.custom_validator),
+ which resulted in this `RtvError`. `undefined` if this error was not the result
+ of a failed custom validation. If the custom validator throw an error, this will
+ be a reference to the error it threw; otherwise, it'll be a generic `Error`
+ generated by the library.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
 <a name="rtvref.RtvError+failure"></a>
 
-### rtvError.failure : <code>Error</code> \| <code>undefined</code>
-Validation error thrown by a [Custom Validator](#rtvref.types.custom_validator),
- which resulted in this `RtvError`. `undefined` if this error was not the result
- of a failed custom validation.
+### ~~rtvError.failure : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
+***Deprecated***
+
+This property was renamed [rootCause](#rtvref.RtvError+rootCause).
+
+__DEPRECATED__ since version 2.2.0. Please use the `rootCause` property instead.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
@@ -846,9 +928,9 @@ Provides the internal implementation for the externally-facing [RTV](#rtv)
     * [.toTypeset(type, [qualifier], [args], [fullyQualified])](#rtvref.impl.toTypeset) ⇒ [<code>typeset</code>](#rtvref.types.typeset)
     * [.fullyQualify(typeset, [qualifier])](#rtvref.impl.fullyQualify) ⇒ [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
     * [.extractNextType(typeset, [qualifier])](#rtvref.impl.extractNextType) ⇒ [<code>typeset</code>](#rtvref.types.typeset) \| <code>Array</code>
-    * [.checkWithType(value, singleType, context)](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.checkWithShape(value, shape, context)](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.checkWithArray(value, arrayTs, context)](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithType(value, singleType, [context])](#rtvref.impl.checkWithType) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithShape(value, shape, [context])](#rtvref.impl.checkWithShape) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.checkWithArray(value, arrayTs, [context])](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.check(value, typeset, [context])](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.impl.getQualifier"></a>
@@ -947,7 +1029,7 @@ For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE
 
 <a name="rtvref.impl.checkWithType"></a>
 
-### impl.checkWithType(value, singleType, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithType(value, singleType, [context]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using a single type.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -956,6 +1038,7 @@ Checks a value using a single type.
 **Throws**:
 
 - <code>Error</code> If `singleType` is not a valid simple type or single type.
+- <code>Error</code> If the specified `context` is not valid.
 
 **See**: [types](#rtvref.types)  
 
@@ -963,11 +1046,11 @@ Checks a value using a single type.
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | singleType | <code>string</code> \| <code>Array</code> \| <code>Object</code> | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array [typeset](#rtvref.types.typeset) which represents a single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied.  NOTE: A [custom validator](#rtvref.types.custom_validator) is not considered   a valid single type. It's also considered a __separate type__ if it were passed-in   via an Array, e.g. `[STRING, validator]`, which would violate the fact that   `singleType` should be one type, and therefore cause an exception to be thrown. |
-| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
+| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and an empty/root path. |
 
 <a name="rtvref.impl.checkWithShape"></a>
 
-### impl.checkWithShape(value, shape, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithShape(value, shape, [context]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using a [shape descriptor](#rtvref.types.shape_descriptor) and
  ensure the value's type is the default object type.
 
@@ -977,17 +1060,18 @@ Checks a value using a [shape descriptor](#rtvref.types.shape_descriptor) and
 **Throws**:
 
 - <code>Error</code> If `shape` is not an [OBJECT](#rtvref.types.OBJECT).
+- <code>Error</code> If the specified `context` is not valid.
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>Object</code> | Value to check. Must be of the  [default](#rtvref.types.DEFAULT_OBJECT_TYPE) object type. |
 | shape | <code>Object</code> | Expected shape of the `value`. Must be an  [OBJECT](#rtvref.types.OBJECT). |
-| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
+| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and an empty/root path. |
 
 <a name="rtvref.impl.checkWithArray"></a>
 
-### impl.checkWithArray(value, arrayTs, context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+### impl.checkWithArray(value, arrayTs, [context]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 Checks a value using an Array typeset.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -997,13 +1081,14 @@ Checks a value using an Array typeset.
 **Throws**:
 
 - <code>Error</code> If `typeset` is not a valid Array typeset.
+- <code>Error</code> If the specified `context` is not valid.
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | arrayTs | <code>Array</code> | The Array [typeset](#rtvref.types.typeset) to check  against. |
-| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the check. |
+| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and an empty/root path. |
 
 <a name="rtvref.impl.check"></a>
 
@@ -1017,6 +1102,7 @@ Checks a value against a typeset.
 **Throws**:
 
 - <code>Error</code> If `typeset` is not a valid typeset.
+- <code>Error</code> If the specified `context` is not valid.
 
 
 | Param | Type | Description |
@@ -1039,8 +1125,10 @@ Qualifiers determine the degree at which a value must be of a given type.
     * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
     * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
     * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
+    * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
     * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
-    * [.nilPermitted(v, [q])](#rtvref.qualifiers.nilPermitted) ⇒ <code>boolean</code>
+    * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
+    * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
 
 <a name="rtvref.qualifiers.qualifiers"></a>
 
@@ -1050,6 +1138,7 @@ Enumeration (`string -> string`) of all qualifiers:
 - [REQUIRED](#rtvref.qualifiers.REQUIRED)
 - [EXPECTED](#rtvref.qualifiers.EXPECTED)
 - [OPTIONAL](#rtvref.qualifiers.OPTIONAL)
+- [TRUTHY](rtvref.qualifiers.TRUTHY)
 
 **Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 <a name="rtvref.qualifiers.REQUIRED"></a>
@@ -1059,14 +1148,14 @@ Required qualifier: The value __must__ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
 Unless otherwise stated in type-specific rules, this qualifier does not
- allow the value to be `null` or `undefined`.
+ permit the value to be `null` or `undefined`.
 
 Note the fact the value cannot be `undefined` implicitly requires a
  [shape](#rtvref.types.shape_descriptor)'s property to be defined _somewhere_
  its prototype chain (if it weren't, then its value would be `undefined`,
  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  would require the `name` property to exist and not be `undefined`, but would
- allow it to be `null` or even an empty string.
+ permit it to be `null` or even an empty string.
 
 See specific type for additional rules.
 
@@ -1082,15 +1171,15 @@ See specific type for additional rules.
 Expected qualifier: The value _should_ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
-Unless otherwise stated in type-specific rules, this qualifier does _not_ allow
- the value to be `undefined`, but does _allow_ it to be `null`.
+Unless otherwise stated in type-specific rules, this qualifier does _not_ permit
+ the value to be `undefined`, but does _permit_ it to be `null`.
 
 Note the fact the value cannot be `undefined` implicitly requires a
  [shape](#rtvref.types.shape_descriptor)'s property to be defined _somewhere_
  its prototype chain (if it weren't, then its value would be `undefined`,
  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
  would require the `name` property to exist and not be `undefined`, but would
- allow it to be `null` or even an empty string.
+ permit it to be `null` or even an empty string.
 
 See specific type for additional rules.
 
@@ -1106,8 +1195,8 @@ See specific type for additional rules.
 Optional qualifier: The value _may_ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
-Unless otherwise stated in type-specific rules, this qualifier _allows_ a
- the value to be `null` as well as `undefined`,
+Unless otherwise stated in type-specific rules, this qualifier _permits_ a
+ the value to be `null` as well as `undefined`.
 
 Note the fact the value can be `undefined` implies it does _not_ require a
  [shape](#rtvref.types.shape_descriptor)'s property to be defined anywhere in
@@ -1117,35 +1206,80 @@ See specific type for additional rules.
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**: [types](#rtvref.types)  
+<a name="rtvref.qualifiers.EXPECTED"></a>
+
+### qualifiers.EXPECTED : <code>string</code>
+Truthy qualifier: If the value is _truthy_, it must be of the expected type.
+ Depending on the type, additional requirements may be enforced.
+
+Think of this qualifier as, "if _truthy_, the value is
+ [required](#rtvref.qualifiers.REQUIRED) to be of the specified type."
+
+Unless otherwise stated in type-specific rules, this qualifier does _permit_
+ the value to be any [falsy value](#rtvref.types.falsy_values).
+
+Note the fact the value can be `undefined` implies it does _not_ require a
+ [shape](#rtvref.types.shape_descriptor)'s property to be defined anywhere in
+ its prototype chain.
+
+See specific type for additional rules.
+
+**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**See**
+
+- [types](#rtvref.types)
+- [STRING](#rtvref.types.STRING)
+
 <a name="rtvref.qualifiers.DEFAULT_QUALIFIER"></a>
 
 ### qualifiers.DEFAULT\_QUALIFIER : <code>string</code>
 Default qualifier: [REQUIRED](#rtvref.qualifiers.REQUIRED)
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
-<a name="rtvref.qualifiers.nilPermitted"></a>
+<a name="rtvref.qualifiers.valuePermitted"></a>
 
-### qualifiers.nilPermitted(v, [q]) ⇒ <code>boolean</code>
-Convenience function to check if a nil value (either `undefined` or `null`)
- is permitted under basic qualifier rules:
+### qualifiers.valuePermitted(v, [q]) ⇒ <code>boolean</code>
+Convenience function to check if a value is permitted under basic qualifier rules:
 
-- REQUIRED: Cannot be `undefined` nor `null`.
+- REQUIRED: Cannot be any [falsy value](#rtvref.types.falsy_values), including
+  `undefined` and `null`.
 - EXPECTED: Can be `null`.
 - OPTIONAL: Can be either `undefined` or `null`.
+- TRUTHY: Can be any [falsy value](#rtvref.types.falsy_values).
 
 **Kind**: static method of [<code>qualifiers</code>](#rtvref.qualifiers)  
-**Returns**: <code>boolean</code> - `true` if the value is _nil_ (either `null` or `undefined`)
- and the basic qualifier's rules allow it to be so; `false` otherwise.
+**Returns**: <code>boolean</code> - `true` if the value is _falsy_ and the specific value
+ is permitted by the basic qualifier's rules; `false` otherwise.
 
- For example, `nilPermitted(null, REQUIRED) === false` while
-  `nilPermitted(null, EXPECTED) === true`. Also, `nilPermitted(1, *) === false`
-  because the value `1` is not _nil_  
+ For example,
+
+ - `valuePermitted(null, REQUIRED) === false`
+ - `valuePermitted(null, EXPECTED) === true`
+ - `valuePermitted(1, *) === false` because the value `1` is not any of the
+   permitted _falsy_ values for any qualifier
+ - `valuePermitted(false, OPTIONAL) === false` because the value `false` is
+   not permitted by OPTIONAL  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | v | <code>\*</code> | Value to check. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 
+<a name="rtvref.qualifiers.restricted_values"></a>
+
+### qualifiers.restricted\_values : <code>void</code>
+<h3>Restricted Values</h3>
+
+Qualifiers impose restrictions on certain JavaScript values. Currently, the
+ list of restricted values is the same as the list of JavaScript's
+ [falsy values](#rtvref.types.falsy_values). This may change in the future
+ if more qualifiers are added.
+
+See the documentation for each qualifier to know which of these values they
+ permit or restrict.
+
+**Kind**: static typedef of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**See**: [valuePermitted](#rtvref.qualifiers.valuePermitted)  
 <a name="rtvref.types"></a>
 
 ## rtvref.types : <code>object</code>
@@ -1185,6 +1319,7 @@ Convenience function to check if a nil value (either `undefined` or `null`)
     * [.JSON](#rtvref.types.JSON) : <code>string</code>
     * [.DEFAULT_OBJECT_TYPE](#rtvref.types.DEFAULT_OBJECT_TYPE) : <code>string</code>
     * [.primitives](#rtvref.types.primitives) : <code>void</code>
+    * [.falsy_values](#rtvref.types.falsy_values) : <code>void</code>
     * [.qualifier_rules](#rtvref.types.qualifier_rules) : <code>void</code>
     * [.shape_descriptor](#rtvref.types.shape_descriptor) : <code>Object</code>
     * [.type_arguments](#rtvref.types.type_arguments) : <code>Object</code>
@@ -1269,14 +1404,16 @@ Enumeration (`string -> string`) of all types:
 ### types.ANY : <code>string</code>
 The any type is special in that it allows _anything_, which includes `null`
  and `undefined` values. Because of this, it's the most liberal in terms of
- types as well as qualifiers. A more specific type should be used whenever
- possible to ensure a higher degree of confidence in the value being validated.
+ types as well as in its interaction with qualifiers. A more specific type
+ should be used whenever possible to ensure a higher degree of confidence
+ in the value being validated.
 
 Any rules per qualifiers:
 
 - REQUIRED: Can be any value, including `null` and `undefined`.
 - EXPECTED: Same rules as REQUIRED.
 - OPTIONAL: Same rules as EXPECTED.
+- TRUTHY: Same rules as OPTIONAL.
 
 Since this type removes the property's need for existence in the prototype
  chain, it renders the verification moot (i.e. the property of this type might
@@ -1289,7 +1426,7 @@ Since this type removes the property's need for existence in the prototype
 <a name="rtvref.types.NULL"></a>
 
 ### types.NULL : <code>string</code>
-Null rules per qualifiers: must be the `null` [primitive](#rtvref.types.primitives).
+Null rules per qualifiers: Must be the `null` [primitive](#rtvref.types.primitives).
 
 Use this special type to explicitly test for a `null` value. For example,
  a [shape](#rtvref.types.shape_descriptor)'s property may be required to be
@@ -1304,10 +1441,14 @@ String rules per qualifiers:
 
 - REQUIRED: Must be a non-empty string, unless an argument allows it.
 - EXPECTED | OPTIONAL: May be an empty string, unless an argument disallows it.
-  Note that a value `null` (for EXPECTED) or `undefined` (for OPTIONAL) will not
-  be subject to any restrictions imposed by arguments (i.e. the arguments will be
+  Note that the value `null` (for EXPECTED and OPTIONAL) or `undefined` (for OPTIONAL)
+  will not be subject to any restrictions imposed by arguments (i.e. the arguments will be
   ignored; for example, `rtv.verify(null, [EXPECTED, STRING, {min: 1}])` would
-  _pass_ verification because `null` is permitted with this qualifier).
+  _pass_ verification because `null` is permitted with EXPECTED).
+- TRUTHY: May be an empty string _regardless_ of arguments, since an empty
+  string is _falsy_, and this qualifier permits all _falsy_ values. Therefore,
+  `rtv.verify("", [TRUTHY, STRING, {min: 1}])` would still _pass_ verification
+  because an empty string is permitted with TRUTHY.
 
 In all cases, the value must be a string [primitive](#rtvref.types.primitives).
  Note that `new String('hello') !== 'hello'` because the former is an _object_, not a string.
@@ -1340,6 +1481,8 @@ Number rules per qualifiers:
 
 - REQUIRED: Cannot be `NaN`, but could be `+Infinity`, `-Infinity`.
 - EXPECTED | OPTIONAL: Could be `NaN`, `+Infinity`, `-Infinity`.
+- TRUTHY: Could be `NaN` (since that is a [falsy value](#rtvref.types.falsy_values)),
+  `+Infinity`, `-Infinity`.
 
 In all cases, the value must be a number [primitive](#rtvref.types.primitives).
  Note that `new Number(1) !== 1` because the former is an _object_, not a number.
@@ -1361,8 +1504,8 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 <a name="rtvref.types.FINITE"></a>
 
 ### types.FINITE : <code>string</code>
-Finite rules per qualifiers: Cannot be `NaN`, `+Infinity`, `-Infinity`. The
- value can be either an [integer](#rtvref.types.INT),
+Finite rules per qualifiers: Cannot be `NaN` (unless the qualifier is TRUTHY),
+ `+Infinity`, `-Infinity`. The value can be either an [integer](#rtvref.types.INT),
  or a [floating point number](#rtvref.types.FLOAT). It must also be a
  number [primitive](#rtvref.types.primitives).
 
@@ -1384,7 +1527,8 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
 ### types.INT : <code>string</code>
 Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) number,
- an integer, and a number [primitive](#rtvref.types.primitives).
+ an integer, and a number [primitive](#rtvref.types.primitives). `NaN`,
+ however, is permitted if the qualifier is TRUTHY.
 
 An integer is not guaranteed to be a
  [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger).
@@ -1405,7 +1549,8 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 ### types.SAFE\_INT : <code>string</code>
 Int rules per qualifiers: Must be a [finite](#rtvref.types.FINITE) number, a
  [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger),
- and a number [primitive](#rtvref.types.primitives).
+ and a number [primitive](#rtvref.types.primitives). `NaN`, however, is
+ permitted if the qualifier is TRUTHY.
 
 An integer is safe if it's an IEEE-754 double precision number which isn't
  the result of a rounded unsafe integer. For example, `2^53 - 1` is safe,
@@ -1427,7 +1572,8 @@ Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 ### types.FLOAT : <code>string</code>
 Float rules per qualifiers: Must be a [finite](#rtvref.types.FINITE)
  floating point number, and a number [primitive](#rtvref.types.primitives).
- Per IEEE 754, zero is considered a float.
+ Per IEEE 754, zero (`0`) is considered a float. Note that `NaN` is permitted
+ if the qualifier is TRUTHY.
 
 Arguments (optional): [numeric_args](#rtvref.types.numeric_args)
 
@@ -1896,7 +2042,8 @@ JSON rules per qualifiers: Must be a JSON value:
 - [string](#rtvref.types.STRING), however __empty strings are permitted__,
   even if the qualifier is `REQUIRED`
 - [boolean](#rtvref.types.BOOLEAN)
-- [finite number](#rtvref.types.FINITE)
+- [finite number](#rtvref.types.FINITE), however `NaN` __is permitted__
+  if the qualifier is TRUTHY since it is a [falsy value](#rtvref.types.falsy_values).
 - [plain object](#rtvref.types.PLAIN_OBJECT)
 - [array](#rtvref.types.ARRAY)
 
@@ -1904,6 +2051,9 @@ Since this type checks for _any_ valid JSON value, empty string and `null`
  values are permitted, even when the typeset is qualified as `REQUIRED`.
  Therefore, the `REQUIRED` qualifier has the same effect as the `EXPECTED`
  qualifier.
+
+Also note that if the qualifier is `OPTIONAL` or `TRUTHY`, then `undefined`
+ will be a permitted value, even though it is not a JSON value.
 
 **Kind**: static constant of [<code>types</code>](#rtvref.types)  
 **See**: [qualifiers](#rtvref.qualifiers)  
@@ -1934,6 +2084,24 @@ In RTV.js (as in [ECMAScript 2015](https://developer.mozilla.org/en-US/docs/Glos
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **See**: [isPrimitive](#rtvref.validation.isPrimitive)  
+<a name="rtvref.types.falsy_values"></a>
+
+### types.falsy\_values : <code>void</code>
+<h3>Falsy Values</h3>
+
+In JavaScript, a _falsy_ value means any one of these values which, when
+ tested in a logical operation like `&&`, `||`, or an `IF` statement, evaluates
+ to `false`:
+
+- `undefined`
+- `null`
+- `false`
+- `0`
+- `""`
+- `NaN`
+
+**Kind**: static typedef of [<code>types</code>](#rtvref.types)  
+**See**: [isFalsy](#rtvref.validation.isFalsy)  
 <a name="rtvref.types.qualifier_rules"></a>
 
 ### types.qualifier\_rules : <code>void</code>
@@ -2065,9 +2233,9 @@ Applicable to all numeric types:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [oneOf] | <code>number</code> \| <code>Array.&lt;number&gt;</code> | An exact number to match (`===`).  Can also be a list of numbers, one of which must be an exact match. An empty  list will be ignored.  Values to match are ignored if they are not within normal range of the type   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is   not `REQUIRED`; but these values would be ignored by `FINITE` since they   aren't part of the `FINITE` range), or not numbers at all. |
-| [min] | <code>number</code> | Minimum inclusive value. Ignored if `oneOf` is  specified, `min` is `NaN`, or `min` is not within normal range of the type. |
-| [max] | <code>number</code> | Maximum inclusive value. Ignored if `oneOf` is  specified, `max` is `NaN`, `max` is not within normal range of the type,  or `max` is less than `min`. |
+| [oneOf] | <code>number</code> \| <code>Array.&lt;number&gt;</code> | An exact number to match (`===`).  Can also be a list of numbers, one of which must be an exact match. An empty  list will be ignored.  Values to match are ignored if they are not within normal range of the type   (e.g. for `NUMBER`, could be `+Infinity`, or even `NaN` if the qualifier is   not `REQUIRED`; but these values would be ignored by `FINITE` since they   aren't part of the `FINITE` range), or not numbers at all.  Note that `0` and `NaN` are permitted when the qualifier is `TRUTHY` even if   they aren't part of the list or aren't the single match. |
+| [min] | <code>number</code> | Minimum inclusive value. Ignored if `oneOf` is  specified, `min` is `NaN`, or `min` is not within normal range of the type.  Note that `0` is permitted when the qualifier is `TRUTHY` even if the minimum   does not permit it. |
+| [max] | <code>number</code> | Maximum inclusive value. Ignored if `oneOf` is  specified, `max` is `NaN`, `max` is not within normal range of the type,  or `max` is less than `min`.  Note that `0` is permitted when the qualifier is `TRUTHY` even if the minimum   does not permit it. |
 
 <a name="rtvref.types.shape_object_args"></a>
 
@@ -2406,21 +2574,21 @@ There is one __disadvantage__ to using a custom validator: It cannot be serializ
   _falsy_ value to fail the verification.  
 **Throws**:
 
-- <code>Error</code> If the validation fails. This error will fail the overall
+- <code>Error</code> (Optional) If the validation fails. This error will fail the overall
  verification, and will be included in the resulting `RtvError` as its
  [failure](#rtvref.RtvError+failure) property, as well as part of its
  `message`.
 
-  It's recommended to throw an error with a message that will help the developer
-   determine why the custom validation failed, while avoiding exposing any sensitive
-   information that may be found in the `value` (such as passwords).
+  Although not required, it's recommended to throw an error with a message that will
+   help the developer determine why the custom validation failed, while avoiding exposing
+   any sensitive information that may be found in the `value` (such as passwords).
 
 **See**: [isCustomValidator](#rtvref.validation.isCustomValidator)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>\*</code> | The value being verified. |
-| match | <code>Array</code> | A [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the sub-type with the `typeset` parameter that matched, resulting  in the custom validator being called (if no sub-types matched, it would not get called).  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,   and the `typeset` parameter would be a reference to the original   `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be a reference to the original  `[STRING, FINITE, validator]`.  If the verification typeset was `[{message: STRING}, validator]` and the shape matched, this   parameter would be `[REQUIRED, OBJECT, {$: {message: STRING}}]` (because of the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE)) and the `typeset` parameter   would be a reference to the original `[{message: STRING}, validator]`.  NOTE: If the verification typeset was `validator` (just the validator itself), this parameter   would be `[REQUIRED, ANY]` (because of the implied [ANY](#rtvref.types.ANY) type) and   the `typeset` would be a reference to the original `validator`. |
+| value | <code>\*</code> | The value being verified.  This value differs from `context.originalValue` in that it is the value currently being verified,   closest to the custom validator itself, e.g. the value of element in an array, as opposed to the   array itself, or the value of a property in an object, as opposed to the object itself. |
+| match | <code>Array</code> | A [fully-qualified](#rtvref.types.fully_qualified_typeset)  typeset describing the __sub-type within__ the `typeset` parameter that matched, resulting  in the custom validator being called (if no sub-types matched, it would not get called).  For example, if the typeset used for verification was `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`,   this parameter would be a new Array typeset `[REQUIRED, PLAIN_OBJECT, {$: {note: STRING}}]`,   and the `typeset` parameter would be a reference to the original   `[PLAIN_OBJECT, {$: {note: STRING}}, validator]`.  If the verification typeset was `[STRING, FINITE, validator]` and FINITE matched, this parameter   would be `[REQUIRED, FINITE]` and the `typeset` parameter would be a reference to the original  `[STRING, FINITE, validator]`.  If the verification typeset was `[{message: STRING}, validator]` and the shape matched, this   parameter would be `[REQUIRED, OBJECT, {$: {message: STRING}}]` (because of the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE)) and the `typeset` parameter   would be a reference to the original `[{message: STRING}, validator]`.  If the verification typeset was simply `validator` (just the validator itself), this parameter   would be `[REQUIRED, ANY]` (because of the implied [ANY](#rtvref.types.ANY) type) and   the `typeset` would be a reference to the original `validator`. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | Reference to the typeset used for  verification. Note the typeset may contain nested typeset(s), and may  be part of a larger parent typeset (though there would be no reference to  the parent typeset, if any). |
 | context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the validation. |
 
@@ -2508,6 +2676,9 @@ NOTE: Where possible, validations should use the other validations rather than
     * [.isError](#rtvref.validation.isError) : <code>Module</code>
         * [.type](#rtvref.validation.isError.type) : <code>string</code>
         * [.default(v)](#rtvref.validation.isError.default) ⇒ <code>boolean</code>
+    * [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
+        * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
+        * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
     * [.isFinite](#rtvref.validation.isFinite) : <code>Module</code>
         * [.type](#rtvref.validation.isFinite.type) : <code>string</code>
         * [.default(v)](#rtvref.validation.isFinite.default) ⇒ <code>boolean</code>
@@ -2830,6 +3001,35 @@ Type: [ERROR](#rtvref.types.ERROR)
 
 **Kind**: static method of [<code>isError</code>](#rtvref.validation.isError)  
 **Returns**: <code>boolean</code> - `true` if validated; `false` otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| v | <code>\*</code> | Value to validate. |
+
+<a name="rtvref.validation.isFalsy"></a>
+
+### validation.isFalsy : <code>Module</code>
+Validation Module: isFalsy
+
+**Kind**: static typedef of [<code>validation</code>](#rtvref.validation)  
+
+* [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
+    * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
+    * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
+
+<a name="rtvref.validation.isFalsy.type"></a>
+
+#### isFalsy.type : <code>string</code>
+Type: `undefined`, [falsy value](#rtvref.types.falsy_values) pseudo-type.
+
+**Kind**: static constant of [<code>isFalsy</code>](#rtvref.validation.isFalsy)  
+<a name="rtvref.validation.isFalsy.default"></a>
+
+#### isFalsy.default(v) ⇒ <code>boolean</code>
+Determines if a value is a JavaScript [falsy value](#rtvref.types.falsy_values).
+
+**Kind**: static method of [<code>isFalsy</code>](#rtvref.validation.isFalsy)  
+**Returns**: <code>boolean</code> - `true` if it is; `false` otherwise.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3493,7 +3693,7 @@ Determines if a value is a typeset.
 | [options] | <code>Object</code> |  | Validation options. |
 | [options.deep] | <code>boolean</code> | <code>false</code> | If truthy, deeply-validates any nested  typesets. Note that typesets in nested shapes are also deeply-validated. |
 | [options.fullyQualified] | <code>boolean</code> | <code>false</code> | If truthy, the typeset must be  fully-qualified to be valid. |
-| [options.failure] | <code>string</code> \| <code>undefined</code> |  | (Output property) If an options  object is specified, this property will be added and set to a failure message  IIF the validation fails. |
+| [options.rootCause] | <code>string</code> \| <code>undefined</code> |  | (Output property) If an options  object is specified, this property will be added and set to a failure message  IIF the validation fails. |
 
 <a name="rtvref.validation.isWeakMap"></a>
 
@@ -3589,7 +3789,6 @@ There can only be one validator for any given type. Where possible, each
 
 * [.validator](#rtvref.validator) : <code>object</code>
     * [.type_validator(value, qualifier, args, context)](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
-    * [.type_validator_context_resolve(path)](#rtvref.validator.type_validator_context_resolve) ⇒ <code>\*</code>
     * [.validator_config(settings)](#rtvref.validator.validator_config)
     * [.valAny](#rtvref.validator.valAny) : <code>Module</code>
         * [.type](#rtvref.validator.valAny.type) : <code>string</code>
@@ -3598,11 +3797,11 @@ There can only be one validator for any given type. Where possible, each
     * [.valAnyObject](#rtvref.validator.valAnyObject) : <code>Module</code>
         * [.type](#rtvref.validator.valAnyObject.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valAnyObject.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valArray](#rtvref.validator.valArray) : <code>Module</code>
         * [.type](#rtvref.validator.valArray.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valArray.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valBoolean](#rtvref.validator.valBoolean) : <code>Module</code>
         * [.type](#rtvref.validator.valBoolean.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valBoolean.config)
@@ -3610,7 +3809,7 @@ There can only be one validator for any given type. Where possible, each
     * [.valClassObject](#rtvref.validator.valClassObject) : <code>Module</code>
         * [.type](#rtvref.validator.valClassObject.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valClassObject.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valDate](#rtvref.validator.valDate) : <code>Module</code>
         * [.type](#rtvref.validator.valDate.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valDate.config)
@@ -3634,7 +3833,7 @@ There can only be one validator for any given type. Where possible, each
     * [.valHashMap](#rtvref.validator.valHashMap) : <code>Module</code>
         * [.type](#rtvref.validator.valHashMap.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valHashMap.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valInt](#rtvref.validator.valInt) : <code>Module</code>
         * [.type](#rtvref.validator.valInt.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valInt.config)
@@ -3646,7 +3845,7 @@ There can only be one validator for any given type. Where possible, each
     * [.valMap](#rtvref.validator.valMap) : <code>Module</code>
         * [.type](#rtvref.validator.valMap.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valMap.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valNull](#rtvref.validator.valNull) : <code>Module</code>
         * [.type](#rtvref.validator.valNull.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valNull.config)
@@ -3658,11 +3857,11 @@ There can only be one validator for any given type. Where possible, each
     * [.valObject](#rtvref.validator.valObject) : <code>Module</code>
         * [.type](#rtvref.validator.valObject.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valObject.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valPlainObject](#rtvref.validator.valPlainObject) : <code>Module</code>
         * [.type](#rtvref.validator.valPlainObject.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valPlainObject.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valPromise](#rtvref.validator.valPromise) : <code>Module</code>
         * [.type](#rtvref.validator.valPromise.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valPromise.config)
@@ -3678,7 +3877,7 @@ There can only be one validator for any given type. Where possible, each
     * [.valSet](#rtvref.validator.valSet) : <code>Module</code>
         * [.type](#rtvref.validator.valSet.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valSet.config)
-        * [.default(v, [q], [args])](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+        * [.default(v, [q], [args], context)](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.valString](#rtvref.validator.valString) : <code>Module</code>
         * [.type](#rtvref.validator.valString.type) : <code>string</code>
         * [.config(settings)](#rtvref.validator.valString.config)
@@ -3724,21 +3923,6 @@ __NOTE:__ A validator must support all its qualifier rules, including proper
 | qualifier | <code>string</code> | The validation qualifier from the immediate  [typeset](#rtvref.types.typeset) in which the pertaining type was specified.  Validators should always explicitly default to  [REQUIRED](#rtvref.qualifiers.REQUIRED) to maintain consistent behavior. |
 | args | <code>Object</code> | The arguments object, if any/applicable, for the type  being validated. For example, [string args](#rtvref.types.STRING_args) in  a typeset such as `[rtv.STRING, {min: 5}]` (a required string of at least  5 characters in length). |
 | context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Additional context  for the validation. |
-
-<a name="rtvref.validator.type_validator_context_resolve"></a>
-
-### validator.type\_validator\_context\_resolve(path) ⇒ <code>\*</code>
-<h3>Type Validator Context - Resolve Function</h3>
-
-Resolves a given path from the [context](#rtvref.validator.type_validator_context)'s
- `originalValue`.
-
-**Kind**: static method of [<code>validator</code>](#rtvref.validator)  
-**Returns**: <code>\*</code> - The value at the specified path _from_ the context's `originalValue`.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| path | <code>Array.&lt;(string\|number)&gt;</code> | The path into the `originalValue` to resolve.  An empty path resolves to the `originalValue`. Works across objects and arrays  provided the path is valid. Numbers will be implicitly cast to strings when they  are used to access properties on objects. An invalid path will result in an  `Error` thrown. |
 
 <a name="rtvref.validator.validator_config"></a>
 
@@ -3808,7 +3992,7 @@ Validator Module: valAnyObject
 * [.valAnyObject](#rtvref.validator.valAnyObject) : <code>Module</code>
     * [.type](#rtvref.validator.valAnyObject.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valAnyObject.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valAnyObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valAnyObject.type"></a>
 
@@ -3829,7 +4013,7 @@ Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 
 <a name="rtvref.validator.valAnyObject.default"></a>
 
-#### valAnyObject.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valAnyObject.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [ANY_OBJECT](#rtvref.types.ANY_OBJECT) type.
 
@@ -3840,7 +4024,8 @@ Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>shape\_object\_args</code>](#rtvref.types.shape_object_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valArray"></a>
 
@@ -3852,7 +4037,7 @@ Validator Module: valArray
 * [.valArray](#rtvref.validator.valArray) : <code>Module</code>
     * [.type](#rtvref.validator.valArray.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valArray.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valArray.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valArray.type"></a>
 
@@ -3873,7 +4058,7 @@ Type: [ARRAY](#rtvref.types.ARRAY)
 
 <a name="rtvref.validator.valArray.default"></a>
 
-#### valArray.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valArray.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [ARRAY](#rtvref.types.ARRAY) type.
 
@@ -3885,6 +4070,7 @@ Type: [ARRAY](#rtvref.types.ARRAY)
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 | [args] | [<code>ARRAY\_args</code>](#rtvref.types.ARRAY_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valBoolean"></a>
 
@@ -3943,7 +4129,7 @@ Validator Module: valClassObject
 * [.valClassObject](#rtvref.validator.valClassObject) : <code>Module</code>
     * [.type](#rtvref.validator.valClassObject.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valClassObject.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valClassObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valClassObject.type"></a>
 
@@ -3964,7 +4150,7 @@ Type: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
 
 <a name="rtvref.validator.valClassObject.default"></a>
 
-#### valClassObject.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valClassObject.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) type.
 
@@ -3975,7 +4161,8 @@ Type: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>shape\_object\_args</code>](#rtvref.types.shape_object_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valDate"></a>
 
@@ -4212,7 +4399,7 @@ Validator Module: valHashMap
 * [.valHashMap](#rtvref.validator.valHashMap) : <code>Module</code>
     * [.type](#rtvref.validator.valHashMap.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valHashMap.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valHashMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valHashMap.type"></a>
 
@@ -4233,7 +4420,7 @@ Type: [HASH_MAP](#rtvref.types.HASH_MAP)
 
 <a name="rtvref.validator.valHashMap.default"></a>
 
-#### valHashMap.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valHashMap.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [HASH_MAP](#rtvref.types.HASH_MAP) type.
 
@@ -4245,6 +4432,7 @@ Type: [HASH_MAP](#rtvref.types.HASH_MAP)
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 | [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valInt"></a>
 
@@ -4347,7 +4535,7 @@ Validator Module: valMap
 * [.valMap](#rtvref.validator.valMap) : <code>Module</code>
     * [.type](#rtvref.validator.valMap.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valMap.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valMap.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valMap.type"></a>
 
@@ -4368,7 +4556,7 @@ Type: [MAP](#rtvref.types.MAP)
 
 <a name="rtvref.validator.valMap.default"></a>
 
-#### valMap.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valMap.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [MAP](#rtvref.types.MAP) type.
 
@@ -4380,6 +4568,7 @@ Type: [MAP](#rtvref.types.MAP)
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 | [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valNull"></a>
 
@@ -4482,7 +4671,7 @@ Validator Module: valObject
 * [.valObject](#rtvref.validator.valObject) : <code>Module</code>
     * [.type](#rtvref.validator.valObject.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valObject.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valObject.type"></a>
 
@@ -4503,7 +4692,7 @@ Type: [OBJECT](#rtvref.types.OBJECT)
 
 <a name="rtvref.validator.valObject.default"></a>
 
-#### valObject.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valObject.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [OBJECT](#rtvref.types.OBJECT) type.
 
@@ -4514,7 +4703,8 @@ Type: [OBJECT](#rtvref.types.OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>shape\_object\_args</code>](#rtvref.types.shape_object_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valPlainObject"></a>
 
@@ -4526,7 +4716,7 @@ Validator Module: valPlainObject
 * [.valPlainObject](#rtvref.validator.valPlainObject) : <code>Module</code>
     * [.type](#rtvref.validator.valPlainObject.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valPlainObject.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valPlainObject.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valPlainObject.type"></a>
 
@@ -4547,7 +4737,7 @@ Type: [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 
 <a name="rtvref.validator.valPlainObject.default"></a>
 
-#### valPlainObject.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valPlainObject.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) type.
 
@@ -4558,7 +4748,8 @@ Type: [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 | --- | --- | --- |
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
-| [args] | [<code>numeric\_args</code>](#rtvref.types.numeric_args) | Type arguments. |
+| [args] | [<code>shape\_object\_args</code>](#rtvref.types.shape_object_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valPromise"></a>
 
@@ -4704,7 +4895,7 @@ Validator Module: valSet
 * [.valSet](#rtvref.validator.valSet) : <code>Module</code>
     * [.type](#rtvref.validator.valSet.type) : <code>string</code>
     * [.config(settings)](#rtvref.validator.valSet.config)
-    * [.default(v, [q], [args])](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+    * [.default(v, [q], [args], context)](#rtvref.validator.valSet.default) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 
 <a name="rtvref.validator.valSet.type"></a>
 
@@ -4725,7 +4916,7 @@ Type: [SET](#rtvref.types.SET)
 
 <a name="rtvref.validator.valSet.default"></a>
 
-#### valSet.default(v, [q], [args]) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
+#### valSet.default(v, [q], [args], context) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
 [Validator](#rtvref.validator.type_validator) for the
  [SET](#rtvref.types.SET) type.
 
@@ -4737,6 +4928,7 @@ Type: [SET](#rtvref.types.SET)
 | v | <code>\*</code> | Value to validate. |
 | [q] | <code>string</code> | Validation qualifier. Defaults to  [REQUIRED](#rtvref.qualifiers.REQUIRED). |
 | [args] | [<code>collection\_args</code>](#rtvref.types.collection_args) | Type arguments. |
+| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Validation context. |
 
 <a name="rtvref.validator.valString"></a>
 
@@ -4926,41 +5118,24 @@ This object provides important information to a
  [custom validator](#rtvref.types.custom_validator), about the context
  of the current validation check.
 
-For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would start
- with the following `context`:
+For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would have the
+ following `context` regardless of the nesting level of the invoked validator:
 
 <pre><code>{
-  path: [],
   originalValue: {foo: 1}
 }
 </code></pre>
 
-This indicates the object `{foo: 1}` itself is being checked (as being the
- [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE)).
-
-If that check passes, then the check will dive into the object and start looking
- at its properties. The next check, which would be for the property `foo`,
- would have the following `context`
-
-<pre><code>{
-  path: ['foo'],
-  originalValue: {foo: 1}
-}
-</code></pre>
-
-This indicates the value `1` of the property `foo` of the `originalValue`
- `{foo: 1}` is currently being checked. The
- [type validator](#rtvref.validator.type_validator)'s first parameter's
- value will be `1` in this case.
+This means that when the `NUMBER` [type validator](#rtvref.validator.type_validator)
+ is invoked to check the number `1`, its first parameter, `value`, will be `1`, but it
+ will still have access to the original value through its `context` parameter.
 
 **Kind**: static typedef of [<code>validator</code>](#rtvref.validator)  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| path | <code>Array.&lt;string&gt;</code> | The current path into the value being checked.  Initially empty to signify the root (top-level) value being checked.  Using this array, it's possible to programmatically address any value visited   along the path, to any prior depth, by starting at the `originalValue` and   looping through the `path` while accessing the related element since object   properties and array elements can both be accessed using the same   `originalValue[path[0]][path[1]][..][[path[n]]]` syntax. Note that the current   value being checked is available as the first parameter given to the   [type validator](#rtvref.validator.type_validator) function. |
 | originalValue | <code>\*</code> | The original/first value given to  [rtv.check()](#rtv.check) or [rtv.verify()](#rtv.verify). |
-| resolve | [<code>type\_validator\_context\_resolve</code>](#rtvref.validator.type_validator_context_resolve) | Resolves  a given path into the context's `originalValue`. |
 
 <a name="rtvref.validator.validator_config_settings"></a>
 
@@ -4979,11 +5154,12 @@ The settings provided to the
 
 <a name="_validateContext"></a>
 
-# \_validateContext(context)
+# \_validateContext(context) ⇒ [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context)
 [Internal] Validates an object as being a valid
  [type validator context](#rtvref.validator.type_validator_context).
 
 **Kind**: global function  
+**Returns**: [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) - The `context` that was validated.  
 **Throws**:
 
 - <code>Error</code> If `context` is not valid.
