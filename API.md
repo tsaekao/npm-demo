@@ -16,19 +16,6 @@
 </dd>
 </dl>
 
-# Functions
-
-<dl>
-<dt><a href="#_validateContext">_validateContext(context)</a> ⇒ <code><a href="#rtvref.validator.type_validator_context">type_validator_context</a></code></dt>
-<dd><p>[Internal] Validates an object as being a valid
- <a href="#rtvref.validator.type_validator_context">type validator context</a>.</p>
-</dd>
-<dt><a href="#_createContext">_createContext(originalValue)</a> ⇒ <code><a href="#rtvref.validator.type_validator_context">type_validator_context</a></code></dt>
-<dd><p>[Internal] Creates a new
- <a href="#rtvref.validator.type_validator_context">type validator context</a>.</p>
-</dd>
-</dl>
-
 <a name="rtv"></a>
 
 # rtv : <code>object</code>
@@ -346,7 +333,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
         * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
         * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
-        * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
+        * [.TRUTHY](#rtvref.qualifiers.TRUTHY) : <code>string</code>
         * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
         * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
         * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
@@ -1125,7 +1112,7 @@ Qualifiers determine the degree at which a value must be of a given type.
     * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
     * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
     * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
-    * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
+    * [.TRUTHY](#rtvref.qualifiers.TRUTHY) : <code>string</code>
     * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
     * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
     * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
@@ -1138,7 +1125,7 @@ Enumeration (`string -> string`) of all qualifiers:
 - [REQUIRED](#rtvref.qualifiers.REQUIRED)
 - [EXPECTED](#rtvref.qualifiers.EXPECTED)
 - [OPTIONAL](#rtvref.qualifiers.OPTIONAL)
-- [TRUTHY](rtvref.qualifiers.TRUTHY)
+- [TRUTHY](#rtvref.qualifiers.TRUTHY)
 
 **Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 <a name="rtvref.qualifiers.REQUIRED"></a>
@@ -1206,9 +1193,9 @@ See specific type for additional rules.
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**: [types](#rtvref.types)  
-<a name="rtvref.qualifiers.EXPECTED"></a>
+<a name="rtvref.qualifiers.TRUTHY"></a>
 
-### qualifiers.EXPECTED : <code>string</code>
+### qualifiers.TRUTHY : <code>string</code>
 Truthy qualifier: If the value is _truthy_, it must be of the expected type.
  Depending on the type, additional requirements may be enforced.
 
@@ -1225,11 +1212,7 @@ Note the fact the value can be `undefined` implies it does _not_ require a
 See specific type for additional rules.
 
 **Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
-**See**
-
-- [types](#rtvref.types)
-- [STRING](#rtvref.types.STRING)
-
+**See**: [types](#rtvref.types)  
 <a name="rtvref.qualifiers.DEFAULT_QUALIFIER"></a>
 
 ### qualifiers.DEFAULT\_QUALIFIER : <code>string</code>
@@ -5151,35 +5134,4 @@ The settings provided to the
 | Name | Type | Description |
 | --- | --- | --- |
 | impl | [<code>impl</code>](#rtvref.impl) | Reference to the `impl` module. |
-
-<a name="_validateContext"></a>
-
-# \_validateContext(context) ⇒ [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context)
-[Internal] Validates an object as being a valid
- [type validator context](#rtvref.validator.type_validator_context).
-
-**Kind**: global function  
-**Returns**: [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) - The `context` that was validated.  
-**Throws**:
-
-- <code>Error</code> If `context` is not valid.
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| context | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) | Context to validate. |
-
-<a name="_createContext"></a>
-
-# \_createContext(originalValue) ⇒ [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context)
-[Internal] Creates a new
- [type validator context](#rtvref.validator.type_validator_context).
-
-**Kind**: global function  
-**Returns**: [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) - New context with an empty/root
- path.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| originalValue | <code>\*</code> | The original value for the context. |
 

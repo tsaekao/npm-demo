@@ -107,10 +107,9 @@ const OPTIONAL = '?';
  *
  * See specific type for additional rules.
  *
- * @name rtvref.qualifiers.EXPECTED
+ * @name rtvref.qualifiers.TRUTHY
  * @const {string}
  * @see {@link rtvref.types}
- * @see {@link rtvref.types.STRING}
  */
 const TRUTHY = '+';
 

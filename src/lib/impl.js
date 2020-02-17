@@ -384,6 +384,8 @@ const extractNextType = function(typeset, qualifier) {
 /**
  * [Internal] Validates an object as being a valid
  *  {@link rtvref.validator.type_validator_context type validator context}.
+ * @private
+ * @function rtvref.impl._validateContext
  * @param {rtvref.validator.type_validator_context} context Context to validate.
  * @returns {rtvref.validator.type_validator_context} The `context` that was validated.
  * @throws {Error} If `context` is not valid.
@@ -407,6 +409,8 @@ const _validateContext = function(context) {
 /**
  * [Internal] Creates a new
  *  {@link rtvref.validator.type_validator_context type validator context}.
+ * @private
+ * @function rtvref.impl._createContext
  * @param {*} originalValue The original value for the context.
  * @returns {rtvref.validator.type_validator_context} New context with an empty/root
  *  path.
