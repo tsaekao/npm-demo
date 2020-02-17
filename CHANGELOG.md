@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
-## Unreleased
+## 2.2.0
+
+Release date: 2020-02-17
 
 ### Added
 -   Added `sideEffects:false` bundler hint/flag to `package.json`: This will help bundlers like Webpack, which support the hint/flag, to know that this package does not have any side effects, and can confidently be removed during tree shaking if there are no code paths that refer to the library (e.g. if you only use RTV in your development build). See [Webpack docs](https://webpack.js.org/configuration/optimization/#optimizationsideeffects) for more information.
@@ -25,7 +27,9 @@ Date format is YYYY-MM-DD.
 -   API documentation for the `rtv.t`, `rtv.q`, and `rtv.e` deprecated properties. `rtv.enabled` (the newer one) no longer appears twice, once deprecated, once not.
 -   An error thrown by a nested custom validator was not being reported in the `RtvError#failure` property (the property was `undefined` in most cases, even if the validator threw an error).
 
-## 2.1.0 - 2019-10-05
+## 2.1.0
+
+Release date: 2019-10-05
 
 ### Changed
 -   All types and qualifiers are now directly accessible on the `rtv` object (e.g. `rtv.STRING`).
@@ -38,7 +42,9 @@ Date format is YYYY-MM-DD.
 ### Fixed
 -   If an exception is thrown in `impl`, it's no longer wrapped in an "outer" exception, resulting in a cleaner error message (e.g. what was once, "Cannot check value: Cannot check value: Invalid typeset..." for an invalid typeset nested 2 levels deep is now just, "Invalid typeset...").
 
-## 2.0.0 - 2019-09-10
+## 2.0.0
+
+Release date: 2019-09-10
 
 ### Breaking
 -   The ESM build output is replaced with a CJS build output as this is the most compatible with popular Webpack and Rollup build systems.
@@ -49,19 +55,22 @@ Date format is YYYY-MM-DD.
 ### Changed
 -   Dependency updates: All to latest.
 
-## 1.2.0 - 2019-05-19
+## 1.2.0
+
+Release date: 2019-05-19
 
 ### Changed
 -   Dependency updates only, including an update to `jsdoc-to-markdown` which resulted in some minor formatting changes to [API.md](API.md).
 
-## 1.1.0 - 2019-02-02
+## 1.1.0
+
+Release date: 2019-02-02
 
 ### Changed
 -   Dependency updates (minor and patch versions only)
 
-## 1.0.0 - 2018-10-11
+## 1.0.0
 
-Initial release!
+Release date: 2018-10-11
 
-### Added
--   Everything
+__Initial release!__
