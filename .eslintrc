@@ -74,10 +74,6 @@
     }],
     "no-use-before-define": "error",
 
-    //// NodeJS and CommonJS
-
-    "global-require": "error",
-
     //// stylistic issues
 
     "array-bracket-spacing": ["error", "never"],

@@ -1,7 +1,10 @@
 ////// tools ESLint Configuration
 
 {
-  "extends": ["../.eslintrc"],
+  "extends": [
+    "../.eslintrc",
+    "plugin:node/recommended"
+  ],
 
   "parserOptions": {
     "ecmaVersion": 2018, // in particular, supports object spread
@@ -9,6 +12,21 @@
   },
 
   "rules": {
-    "no-console": "off"
+    "no-console": "off",
+
+    //// NodeJS and CommonJS
+
+    // ECMAScript 2015 (ES6) does not define the lookup logic and Node LTS does not
+    //  support modules yet, which means this rule will likely change in the future.
+    //  Best not to depend on a 'recommended' rule that could change later.
+    "node/no-missing-import": "off",
+    "node/no-unpublished-import": "off",
+
+    // this rule behaves a little strangely, and besides, we are not publishing
+    //  this package
+    "node/no-unpublished-require": "off",
+
+    // we're OK with process.exit()
+    "no-process-exit": "off"
   }
 }
