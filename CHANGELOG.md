@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## 2.3.0
+
+Release date: 2020-05-25
+
+### Changed
+-   Dependency updates: All to latest.
+
 ## 2.2.0
 
 Release date: 2020-02-17
