@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## 2.3.1
+
+Release date: 2020-06-09
+
+### Changed
+-   Reverted package.json `engines` back to oldest supported Node LTS (`>=10.21.0`) and the version of NPM it ships with (`>=6.14.4`).
+
 ## 2.3.0
 
 Release date: 2020-05-25
