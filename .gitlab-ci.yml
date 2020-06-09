@@ -1,4 +1,4 @@
-image: node:lts
+image: node:dubnium
 
 before_script:
   - node --version
