@@ -68,7 +68,12 @@ export default function valAnyObject(v, q = REQUIRED, args, context) {
   // only consider enumerable, own-properties of the shape
   _forEach(shape, function(typeset, prop) {
     // check prop value against shape prop typeset
-    const result = impl.check(v[prop], typeset, context);
+    const result = impl.check(v[prop], typeset, {
+      originalValue: v, // let this get overwritten if `context` is specified
+      ...context,
+      parent: v,
+      parentKey: prop
+    });
 
     if (!result.valid) {
       err = new RtvError(v, shape, [prop].concat(result.path), result.mismatch, result.rootCause);

@@ -103,7 +103,13 @@ export default function valMap(v, q = REQUIRED, args, context) {
           const [key, value] = elem;
 
           if (tsKeys) {
-            result = impl.check(key, tsKeys, context); // check KEY against typeset
+            // check KEY against typeset
+            result = impl.check(key, tsKeys, {
+              originalValue: v, // let this get overwritten if `context` is specified
+              ...context,
+              parent: v,
+              parentKey: undefined // key is main value being checked in this case
+            });
             valid = result.valid;
 
             if (!result.valid) {
@@ -122,7 +128,13 @@ export default function valMap(v, q = REQUIRED, args, context) {
           }
 
           if (valid && tsValues) {
-            result = impl.check(value, tsValues, context); // check VALUE against typeset
+            // check VALUE against typeset
+            result = impl.check(value, tsValues, {
+              originalValue: v, // let this get overwritten if `context` is specified
+              ...context,
+              parent: v,
+              parentKey: key
+            });
             valid = result.valid;
 
             if (!result.valid) {

@@ -75,7 +75,12 @@ export default function valClassObject(v, q = REQUIRED, args, context) {
       // only consider enumerable, own-properties of the shape
       _forEach(shape, function(typeset, prop) {
         // check prop value against shape prop typeset
-        const propResult = impl.check(v[prop], typeset, context);
+        const propResult = impl.check(v[prop], typeset, {
+          originalValue: v, // let this get overwritten if `context` is specified
+          ...context,
+          parent: v,
+          parentKey: prop
+        });
 
         if (!propResult.valid) {
           err = new RtvError(v, impl.toTypeset(type, q, args),

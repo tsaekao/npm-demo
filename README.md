@@ -739,6 +739,8 @@ note.text = ''; // ERROR: "text" must be a non-empty string
 
 ## Reactive Validations
 
+### originalValue
+
 Let's revisit the Note shape from the [Dynamic Classes](#dynamic-classes) example, but we'll add one more property, `tagCount`:
 
 ```javascript
@@ -762,16 +764,18 @@ const noteShape = {
 };
 ```
 
-The `tagCount` property should always be an integer equal to the length of the `tags` array. The most basic validation we could do is the above: Mark it as a `SAFE_INT`. The problem is, it's not a complete validation because the following Node would pass, however __it would still be invalid__:
+The `tagCount` property should always be an integer equal to the length of the `tags` array. The most basic validation we could do is the above: Mark it as a `SAFE_INT`. The problem is, it's not a complete validation because the following Note would pass, however __it would still be invalid__:
 
 ```javascript
-{
+const note = {
   text: 'Buy potatoes',
   tags: ['reminder', 'grocery'],
   tagCount: 1,                    // <- does not match length of `tags` array
   created: new Date(Date.now()),
   updated: null
 }
+
+rtv.verify(note, noteShape); // ok (but not ok...)
 ```
 
 To address this issue, we can use the `context` parameter provided to any [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) since it provides a reference to the `originalValue` being validated:
@@ -780,12 +784,15 @@ To address this issue, we can use the `context` parameter provided to any [custo
 const noteShape = {
   ...,
 
-  // tagCount: SAFE_INT,                       // <- BEFORE
+  // tagCount: SAFE_INT,                             // <- BEFORE
 
   tagCount: [
     SAFE_INT,
-    (value, match, typeset, context) =>        // <- AFTER
-        value === context.originalValue.tags.length
+    (value, match, typeset, context) => {            // <- AFTER
+      if (value !== context.originalValue.tags.length) {
+          throw new Error('tags and tagCount mismatch');
+      }
+    }
   ],
   ...
 };
@@ -793,7 +800,47 @@ const noteShape = {
 
 The first parameter, `value`, is the value of the `tagCount` property being validated by the [typeset](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) in which the custom validator is located. The fourth parameter, `context`, provides some additional information such as the original value, that being the Node object itself (the `note` object given to `rtv.verify(note, typeset)`).
 
+```javascript
+rtv.verify(note, noteShape); // ERROR: 'tags and tagCount mismatch'
+```
+
 With this change, we now have a _reactive validation_, since it reacts (or adjusts) according to some of the data its given.
+
+### parent and parentKey
+
+`originalValue`, however, may not always be sufficient because it never changes regardless of the hierarchy of objects being validated. Let's say we wanted to validate a __list__ of notes:
+
+```javascript
+rtv.verify([note], [[noteShape]]); // ERROR: 'cannot read property "length" of undefined'
+    // (because `originalValue` is the array and does not have a `tags` property,
+    // so `originalValue.tags.length` causes an exception)
+```
+
+This is where `parent` (and `parentKey`) are handy: `parent` will always refer to the immediate enclosing `Object`, `Array`, `Map`, or `Set`, whenever a property or element _within_ it is being validated. `parentKey` will be the property or index, depending on `parent`'s type, whose _value_ is being validated. See [custom validator context](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.validator.type_validator_context) for more details on these two properties.
+
+Therefore, we can change our typeset to this:
+
+```javascript
+const noteShape = {
+  ...,
+  tagCount: [
+    SAFE_INT,
+    (value, match, typeset, context) => {
+      // if (value !== context.originalValue.tags.length) {    // <- BEFORE
+      if (value !== context.parent.tags.length) {              // <- AFTER
+          throw new Error('tags and tagCount mismatch');
+      }
+    }
+  ],
+  ...
+};
+```
+
+And now the validation works again:
+
+```javascript
+rtv.verify([note], [[noteShape]]); // ok!
+```
 
 # Alternatives
 

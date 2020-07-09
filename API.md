@@ -993,7 +993,7 @@ This function does not modify the input `typeset`.
 Extracts (modifies) the next complete type from an Array typeset.
 
 For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE]`,
- the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
+ the returned array would be `[EXPECTED, STRING, {string_args}]` and `typeset`
  would then be `[FINITE]`.
 
 **Kind**: static method of [<code>impl</code>](#rtvref.impl)  
@@ -1033,7 +1033,7 @@ Checks a value using a single type.
 | --- | --- | --- |
 | value | <code>\*</code> | Value to check. |
 | singleType | <code>string</code> \| <code>Array</code> \| <code>Object</code> | Either a simple type name (one of  [types](#rtvref.types.types)), a [shape descriptor](#rtvref.types.shape_descriptor),  or an Array [typeset](#rtvref.types.typeset) which represents a single type.  In the string/simple case, the   [default qualifier](#rtvref.qualifiers.DEFAULT_QUALIFIER) is assumed.  In the shape descriptor case, the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is assumed.  In the Array case, the qualifier is optional, and a type, along with args,   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or   `[qualifier, type, args]`). Note that the type may be implied the shorthand   notation is being used for an ARRAY, or if the   [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE) is being implied.  NOTE: A [custom validator](#rtvref.types.custom_validator) is not considered   a valid single type. It's also considered a __separate type__ if it were passed-in   via an Array, e.g. `[STRING, validator]`, which would violate the fact that   `singleType` should be one type, and therefore cause an exception to be thrown. |
-| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and an empty/root path. |
+| [context] | [<code>type\_validator\_context</code>](#rtvref.validator.type_validator_context) \| <code>undefined</code> | Additional  context for the check. If _falsy_, a new context will be created for all  downstream checks using `value` as the original value, and `undefined` as  the parent. |
 
 <a name="rtvref.impl.checkWithShape"></a>
 
@@ -5101,17 +5101,16 @@ This object provides important information to a
  [custom validator](#rtvref.types.custom_validator), about the context
  of the current validation check.
 
-For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would have the
- following `context` regardless of the nesting level of the invoked validator:
+For example, a call to `rtv.verify({foo: 1}, {foo: validator})` would provide the
+ following `context` to the invoked `validator`:
 
 <pre><code>{
-  originalValue: {foo: 1}
+  originalValue: {foo: 1},
+  parent: {foo: 1},
+  parentKey: 'foo'
 }
+// and here, the validator's `value` parameter would be set to 1.
 </code></pre>
-
-This means that when the `NUMBER` [type validator](#rtvref.validator.type_validator)
- is invoked to check the number `1`, its first parameter, `value`, will be `1`, but it
- will still have access to the original value through its `context` parameter.
 
 **Kind**: static typedef of [<code>validator</code>](#rtvref.validator)  
 **Properties**
@@ -5119,6 +5118,8 @@ This means that when the `NUMBER` [type validator](#rtvref.validator.type_valida
 | Name | Type | Description |
 | --- | --- | --- |
 | originalValue | <code>\*</code> | The original/first value given to  [rtv.check()](#rtv.check) or [rtv.verify()](#rtv.verify). |
+| parent | <code>Object</code> \| <code>Array</code> \| <code>Map</code> \| <code>Set</code> \| <code>undefined</code> | Reference to the immediate  parent of the property or element being validated.  For example, if we have this object:  <pre><code>const foods = {    fruits: ['apple', 'orange', 'banana'],    vegetables: ['celery', 'cucumber', 'kale']  }  </code></pre>  and we validate it with the following typeset:  <pre><code>[rtv.HASH_MAP, {    keyExp: '\\w+',    values: [[rtv.STRING, (value, match, typeset, context) => {      // called for each element of both arrays      value; // 'apple', 'orange', ..., 'cucumber', 'kale'      context.originalValue; // `foods`      context.parent; // first `fruits`, then `vegetables`    }]]  }]  </code></pre>  we see (in the comments) how `originalValue` and `parent` differ. `parent`  gives more immediate context than `originalValue` does since it changes as  the validation digs into the object hierarchy.  `parent` will be `undefined` if the custom validator is placed at the top  top of the typeset since there is no parent to reference in that case.  For example:  <pre><code>[    rtv.HASH_MAP,    {      keyExp: '\\w+',      values: [[rtv.STRING]]    },    (value, match, typeset, context) => {      // called once for the hash map itself      value; // `foods`      context.originalValue; // `foods`      context.parent; // `undefined`    }  ]  </code></pre> |
+| parentKey | <code>\*</code> | Reference to the key/index in the `parent` that is  being validated. The associated value is provided as the first parameter  to the [custom validator](#rtvref.types.custom_validator).  `parentKey` differs depending on the type of `parent`:  - `Set`: `undefined` since Sets do not have indexes. Use the `value`    parameter provided to the    [custom validator](#rtvref.types.custom_validator) as the key into the    `parent` in this case.  - `Map`: When validating __keys__, always `undefined`. Use the `value` parameter    provided to the [custom validator](#rtvref.types.custom_validator) to    know which key is being validated. When validating __values__, `parentKey`    will be any value that is a valid key in a `Map`.  - `Object` (i.e. [HASH_MAP](#rtvref.types.HASH_MAP)): `string`, the key name.  - `Array`: `number`, the element's index.  - `undefined`: `undefined`. |
 
 <a name="rtvref.validator.validator_config_settings"></a>
 

@@ -201,4 +201,22 @@ describe('module: lib/validator/valClassObject', function() {
       expect(checkStub.called).to.be.false;
     });
   });
+
+  describe('context', function() {
+    it('should set parent to object and parentKey to property', function() {
+      const validator = sinon.spy();
+      const shape = {
+        name: validator
+      };
+      val.default(classObject, undefined, {$: shape});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        classObject.name,
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: classObject, parent: classObject, parentKey: 'name'}
+      ]);
+    });
+  });
 });

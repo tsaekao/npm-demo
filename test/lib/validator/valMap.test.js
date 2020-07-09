@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
@@ -231,6 +232,36 @@ describe('module: lib/validator/valMap', function() {
         path: ['valueKey=1', 'key="a"'],
         mismatch: [qualifiers.REQUIRED, types.STRING, {min: 2}]
       });
+    });
+  });
+
+  describe('context', function() {
+    it('should set parent to Map and parentKey to undefined for keys', function() {
+      const validator = sinon.spy();
+      const value = new Map([['key', 'bar']]);
+      val.default(value, undefined, {keys: validator});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'key',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: undefined}
+      ]);
+    });
+
+    it('should set parent to Map and parentKey to key for values', function() {
+      const validator = sinon.spy();
+      const value = new Map([['key', 'bar']]);
+      val.default(value, undefined, {values: validator});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: 'key'}
+      ]);
     });
   });
 });

@@ -80,21 +80,83 @@
  *  {@link rtvref.types.custom_validator custom validator}, about the context
  *  of the current validation check.
  *
- * For example, a call to `rtv.verify({foo: 1}, {foo: rtv.NUMBER})` would have the
- *  following `context` regardless of the nesting level of the invoked validator:
+ * For example, a call to `rtv.verify({foo: 1}, {foo: validator})` would provide the
+ *  following `context` to the invoked `validator`:
  *
  * <pre><code>{
- *   originalValue: {foo: 1}
+ *   originalValue: {foo: 1},
+ *   parent: {foo: 1},
+ *   parentKey: 'foo'
  * }
+ * // and here, the validator's `value` parameter would be set to 1.
  * </code></pre>
- *
- * This means that when the `NUMBER` {@link rtvref.validator.type_validator type validator}
- *  is invoked to check the number `1`, its first parameter, `value`, will be `1`, but it
- *  will still have access to the original value through its `context` parameter.
  *
  * @typedef {Object} rtvref.validator.type_validator_context
  * @property {*} originalValue The original/first value given to
  *  {@link rtv.check rtv.check()} or {@link rtv.verify rtv.verify()}.
+ * @property {(Object|Array|Map|Set|undefined)} parent Reference to the immediate
+ *  parent of the property or element being validated.
+ *
+ *  For example, if we have this object:
+ *
+ *  <pre><code>const foods = {
+ *    fruits: ['apple', 'orange', 'banana'],
+ *    vegetables: ['celery', 'cucumber', 'kale']
+ *  }
+ *  </code></pre>
+ *
+ *  and we validate it with the following typeset:
+ *
+ *  <pre><code>[rtv.HASH_MAP, {
+ *    keyExp: '\\w+',
+ *    values: [[rtv.STRING, (value, match, typeset, context) => {
+ *      // called for each element of both arrays
+ *      value; // 'apple', 'orange', ..., 'cucumber', 'kale'
+ *      context.originalValue; // `foods`
+ *      context.parent; // first `fruits`, then `vegetables`
+ *    }]]
+ *  }]
+ *  </code></pre>
+ *
+ *  we see (in the comments) how `originalValue` and `parent` differ. `parent`
+ *  gives more immediate context than `originalValue` does since it changes as
+ *  the validation digs into the object hierarchy.
+ *
+ *  `parent` will be `undefined` if the custom validator is placed at the top
+ *  top of the typeset since there is no parent to reference in that case.
+ *  For example:
+ *
+ *  <pre><code>[
+ *    rtv.HASH_MAP,
+ *    {
+ *      keyExp: '\\w+',
+ *      values: [[rtv.STRING]]
+ *    },
+ *    (value, match, typeset, context) => {
+ *      // called once for the hash map itself
+ *      value; // `foods`
+ *      context.originalValue; // `foods`
+ *      context.parent; // `undefined`
+ *    }
+ *  ]
+ *  </code></pre>
+ *
+ * @property {*} parentKey Reference to the key/index in the `parent` that is
+ *  being validated. The associated value is provided as the first parameter
+ *  to the {@link rtvref.types.custom_validator custom validator}.
+ *
+ *  `parentKey` differs depending on the type of `parent`:
+ *  - `Set`: `undefined` since Sets do not have indexes. Use the `value`
+ *    parameter provided to the
+ *    {@link rtvref.types.custom_validator custom validator} as the key into the
+ *    `parent` in this case.
+ *  - `Map`: When validating __keys__, always `undefined`. Use the `value` parameter
+ *    provided to the {@link rtvref.types.custom_validator custom validator} to
+ *    know which key is being validated. When validating __values__, `parentKey`
+ *    will be any value that is a valid key in a `Map`.
+ *  - `Object` (i.e. {@link rtvref.types.HASH_MAP HASH_MAP}): `string`, the key name.
+ *  - `Array`: `number`, the element's index.
+ *  - `undefined`: `undefined`.
  */
 
 // TODO[plugins]: Plugins should also be given access to the types and qualifiers

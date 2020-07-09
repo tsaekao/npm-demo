@@ -137,4 +137,25 @@ describe('module: lib/validator/valAnyObject', function() {
       expect(checkStub.called).to.be.true;
     });
   });
+
+  describe('context', function() {
+    it('should set parent to object and parentKey to property', function() {
+      const validator = sinon.spy();
+      const shape = {
+        foo: validator
+      };
+      const value = {
+        foo: 'bar'
+      };
+      val.default(value, undefined, {$: shape});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: 'foo'}
+      ]);
+    });
+  });
 });

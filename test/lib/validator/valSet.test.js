@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
 import types from '../../../src/lib/types';
@@ -157,6 +158,22 @@ describe('module: lib/validator/valSet', function() {
         path: [print(set.values().next().value)],
         mismatch: [qualifiers.REQUIRED, ...args.values]
       });
+    });
+  });
+
+  describe('context', function() {
+    it('should set parent to Set and parentKey to undefined', function() {
+      const validator = sinon.spy();
+      const value = new Set(['bar']);
+      val.default(value, undefined, {values: validator});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: undefined}
+      ]);
     });
   });
 });

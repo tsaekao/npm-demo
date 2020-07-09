@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
@@ -226,6 +227,24 @@ describe('module: lib/validator/valHashMap', function() {
         path: ['valueKey="1"', 'key="a"'],
         mismatch: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]]
       });
+    });
+  });
+
+  describe('context', function() {
+    it('should set parent to object and parentKey to property', function() {
+      const validator = sinon.spy();
+      const value = {
+        foo: 'bar'
+      };
+      val.default(value, undefined, {values: validator});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: 'foo'}
+      ]);
     });
   });
 });

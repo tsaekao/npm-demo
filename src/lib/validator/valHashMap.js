@@ -97,7 +97,12 @@ export default function valHashMap(v, q = REQUIRED, args, context) {
           }
 
           if (valid && tsValues) {
-            result = impl.check(value, tsValues, context); // check VALUE against typeset
+            result = impl.check(value, tsValues, {
+              originalValue: v, // let this get overwritten if `context` is specified
+              ...context,
+              parent: v,
+              parentKey: key
+            }); // check VALUE against typeset
             valid = result.valid;
 
             if (!result.valid) {

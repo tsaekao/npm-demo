@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
@@ -190,6 +191,22 @@ describe('module: lib/validator/valArray', function() {
         path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
         mismatch: [qualifiers.REQUIRED, types.STRING]
       });
+    });
+  });
+
+  describe('context', function() {
+    it('should set parent to array and parentKey to index', function() {
+      const validator = sinon.spy();
+      const value = ['bar'];
+      val.default(value, undefined, {ts: validator});
+
+      expect(validator.callCount).to.equal(1);
+      expect(validator.firstCall.args).to.eql([
+        'bar',
+        [qualifiers.REQUIRED, types.ANY],
+        validator,
+        {originalValue: value, parent: value, parentKey: 0}
+      ]);
     });
   });
 });

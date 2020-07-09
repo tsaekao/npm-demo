@@ -76,7 +76,13 @@ export default function valSet(v, q = REQUIRED, args, context) {
         const it = v.values(); // iterator of straight values
 
         for (let elem of it) {
-          result = impl.check(elem, tsValues, context); // check value against typeset
+          // check VALUE against typeset
+          result = impl.check(elem, tsValues, {
+            originalValue: v, // let this get overwritten if `context` is specified
+            ...context,
+            parent: v,
+            parentKey: undefined // Sets don't have keys
+          });
           valid = result.valid;
 
           if (!result.valid) {

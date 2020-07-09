@@ -7,6 +7,8 @@ import isObject from './validation/isObject';
 import isString from './validation/isString';
 import isFunction from './validation/isFunction';
 import isBoolean from './validation/isBoolean';
+import isMap from './validation/isMap';
+import isSet from './validation/isSet';
 
 import isTypeset from './validation/isTypeset';
 import isShape from './validation/isShape';
@@ -280,7 +282,7 @@ const fullyQualify = function(typeset, qualifier) {
  * Extracts (modifies) the next complete type from an Array typeset.
  *
  * For example, if the given `typeset` is `[EXPECTED, STRING, {string_args}, FINITE]`,
- *  the returned array would be `[EXPECTED, STRING, {atring_args}]` and `typeset`
+ *  the returned array would be `[EXPECTED, STRING, {string_args}]` and `typeset`
  *  would then be `[FINITE]`.
  *
  * @function rtvref.impl.extractNextType
@@ -394,12 +396,16 @@ const extractNextType = function(typeset, qualifier) {
  */
 const _validateContext = function(context) {
   // NOTE: since the original value could be `undefined`, we only test for the
-  //  presence of the property, not the value; the path must at least be an array,
-  //  though it could be empty for the root, and we just assume it's an array of
-  //  strings (which is what it should be)
-  // NOTE: to avoid a possible infinite loop, we validate manually instead of
-  //  being smart and defining a typeset and using the `check()` function...
-  if (!isObject(context) || !objHasOwnProp.call(context, 'originalValue')) {
+  //  presence of the property, not the value
+  // WARNING: to avoid a possible infinite loop, we validate manually instead of
+  //  being _smart_ and defining a typeset and using the `check()` function...
+  if (!isObject(context) ||
+      !objHasOwnProp.call(context, 'originalValue') ||
+      !objHasOwnProp.call(context, 'parent') ||
+          !(context.parent === undefined || isObject(context.parent) ||
+          isArray(context.parent) || isMap(context.parent) || isSet(context.parent)) ||
+      !objHasOwnProp.call(context, 'parentKey')) {
+
     // SECURITY: don't print the context since it may contain an original value,
     //  which could be sensitive information
     throw new Error('Invalid type validator context');
@@ -413,13 +419,19 @@ const _validateContext = function(context) {
  *  {@link rtvref.validator.type_validator_context type validator context}.
  * @private
  * @function rtvref.impl._createContext
- * @param {*} originalValue The original value for the context.
+ * @param {Object} spec Context specification.
+ * @param {*} [spec.originalValue] The original value for the context.
+ * @param {(Object|Array|Map|Set|undefined)} [spec.parent] The parent reference
+ *  for the context.
+ * @param {*} [spec.parentKey] The key accessed in the parent.
  * @returns {rtvref.validator.type_validator_context} New context with an empty/root
  *  path.
  */
-const _createContext = function(originalValue) {
+const _createContext = function({originalValue, parent, parentKey}) {
   return {
-    originalValue
+    originalValue,
+    parent,
+    parentKey
   };
 };
 
@@ -543,7 +555,8 @@ const _getCheckOptions = function(current = {}) {
  *
  * @param {(rtvref.validator.type_validator_context|undefined)} [context] Additional
  *  context for the check. If _falsy_, a new context will be created for all
- *  downstream checks using `value` as the original value, and an empty/root path.
+ *  downstream checks using `value` as the original value, and `undefined` as
+ *  the parent.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} A success indicator if the
  *  `value` is compliant to the type; an error indicator if not.
  * @throws {Error} If `singleType` is not a valid simple type or single type.
@@ -552,7 +565,7 @@ const _getCheckOptions = function(current = {}) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 const checkWithType = function(value, singleType, context /*, options*/) {
-  context = _validateContext(context || _createContext(value));
+  context = _validateContext(context || _createContext({originalValue: value}));
 
   const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
@@ -622,7 +635,7 @@ const checkWithType = function(value, singleType, context /*, options*/) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 const checkWithShape = function(value, shape, context /*, options*/) {
-  context = _validateContext(context || _createContext(value));
+  context = _validateContext(context || _createContext({originalValue: value}));
 
   if (!isShape(shape)) {
     throw new Error(`Invalid shape=${print(shape, {isTypeset: true})}`);
@@ -651,7 +664,7 @@ const checkWithShape = function(value, shape, context /*, options*/) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 const checkWithArray = function(value, arrayTs, context /*, options*/) {
-  context = _validateContext(context || _createContext(value));
+  context = _validateContext(context || _createContext({originalValue: value}));
 
   const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 
@@ -757,7 +770,7 @@ const checkWithArray = function(value, arrayTs, context /*, options*/) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 const check = function(value, typeset, context /*, options*/) {
-  context = _validateContext(context || _createContext(value));
+  context = _validateContext(context || _createContext({originalValue: value}));
 
   const options = _getCheckOptions(arguments.length > 3 ? arguments[3] : undefined);
 

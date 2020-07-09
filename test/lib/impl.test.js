@@ -533,16 +533,22 @@ describe('module: lib/impl', function() {
   describe('#_validateContext', function() {
     it('should validate a valid context', function() {
       expect(function() {
-        impl._validateContext({originalValue: undefined});
+        impl._validateContext({originalValue: undefined, parent: undefined, parentKey: undefined});
       }).not.to.throw();
       expect(function() {
-        impl._validateContext({originalValue: null});
+        impl._validateContext({originalValue: null, parent: {}, parentKey: 1});
       }).not.to.throw();
       expect(function() {
-        impl._validateContext({originalValue: 123});
+        impl._validateContext({originalValue: 123, parent: [], parentKey: 'a'});
       }).not.to.throw();
       expect(function() {
-        impl._validateContext({originalValue: 'bar'});
+        impl._validateContext({originalValue: 'bar', parent: new Map(), parentKey: {}});
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext({originalValue: true, parent: new Set(), parentKey: undefined});
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext({originalValue: true, parent: undefined, parentKey: function() {}});
       }).not.to.throw();
     });
 
@@ -555,26 +561,183 @@ describe('module: lib/impl', function() {
       expect(function() { impl._validateContext(new Map()); }).to.throw(msg);
       expect(function() { impl._validateContext([]); }).to.throw(msg);
       expect(function() { impl._validateContext({}); }).to.throw(msg);
+      expect(function() { impl._validateContext({originalValue: []}); }).to.throw(msg);
+      expect(function() { impl._validateContext({parent: []}); }).to.throw(msg);
+      expect(function() { impl._validateContext({parentKey: function() {}}); }).to.throw(msg);
+      expect(function() { impl._validateContext({originalValue: 1, parentKey: 1}); }).to.throw(msg);
+      expect(function() { impl._validateContext({originalValue: 1, parent: {}}); }).to.throw(msg);
+      expect(function() { impl._validateContext({parent: {}, parentKey: 'foo'}); }).to.throw(msg);
+
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: null, parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: 1, parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: true, parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: 'foo', parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        // eslint-disable-next-line no-new-wrappers
+        impl._validateContext({originalValue: 1, parent: new String('foo'), parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: function() {}, parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: /foo/, parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: new WeakMap(), parentKey: 1});
+      }).to.throw(msg);
+      expect(function() {
+        impl._validateContext({originalValue: 1, parent: new WeakSet(), parentKey: 1});
+      }).to.throw(msg);
     });
   });
 
   describe('#_createContext', function() {
     it('should create a new context', function() {
-      expect(function() { impl._validateContext(impl._createContext()); }).not.to.throw();
-      expect(function() { impl._validateContext(impl._createContext(null)); }).not.to.throw();
-      expect(function() { impl._validateContext(impl._createContext(123)); }).not.to.throw();
       expect(function() { impl._validateContext(impl._createContext({})); }).not.to.throw();
+      expect(function() {
+        impl._validateContext(impl._createContext({originalValue: null}));
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext(impl._createContext({originalValue: 123}));
+      }).not.to.throw();
+      expect(function() {
+        impl._validateContext(impl._createContext({originalValue: {}}));
+      }).not.to.throw();
 
-      expect(impl._createContext()).to.eql({originalValue: undefined});
-      expect(impl._createContext(null)).to.eql({originalValue: null});
-      expect(impl._createContext(123)).to.eql({originalValue: 123});
+      let originalValue = undefined;
+      let parent = undefined;
+      let parentKey = undefined;
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
 
-      let value = function() {};
-      expect(impl._createContext(value).originalValue).to.equal(value);
-      value = [];
-      expect(impl._createContext(value).originalValue).to.equal(value);
-      value = {};
-      expect(impl._createContext(value).originalValue).to.equal(value);
+      originalValue = null;
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = 123;
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parent = {};
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = true;
+      parent = [];
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = 'foo';
+      parent = new Map();
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parent = new Set();
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = function() {};
+      parent = {};
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = [];
+      parent = [];
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = {};
+      parent = new Map();
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      originalValue = {};
+      parent = new Set();
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = 1;
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = 'key';
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = {};
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = [];
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = function() {};
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
+
+      parentKey = /key/;
+      expect(impl._createContext({originalValue, parent, parentKey})).to.eql({
+        originalValue,
+        parent,
+        parentKey
+      });
     });
   });
 
@@ -582,7 +745,7 @@ describe('module: lib/impl', function() {
     let context;
 
     beforeEach(function() {
-      context = {originalValue: {}};
+      context = {originalValue: {}, parent: {}, parentKey: 'key'};
     });
 
     it('should return undefined if the validator did not return anything', function() {
@@ -768,10 +931,10 @@ describe('module: lib/impl', function() {
       const cvError = new Error('custom validator failed');
       const validator = sinon.stub().throws(cvError);
       const value = {foo: {bar: 'baz'}};
-      const context = {originalValue: value};
+      const context = {originalValue: value, parent: value.foo, parentKey: 'bar'};
 
-      let typeset = {foo: {bar: validator}};
-      let result = impl.checkWithShape(value, typeset);
+      const typeset = {foo: {bar: validator}};
+      const result = impl.checkWithShape(value, typeset);
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
@@ -856,7 +1019,7 @@ describe('module: lib/impl', function() {
       const cvError = new Error('custom validator failed');
       const validator = sinon.stub().throws(cvError);
       const value = 'foo';
-      const context = {originalValue: value};
+      const context = {originalValue: value, parent: undefined, parentKey: undefined};
 
       let typeset = [validator];
       let result = impl.checkWithArray(value, typeset);
@@ -913,7 +1076,7 @@ describe('module: lib/impl', function() {
       const cvError = new Error('custom validator failed');
       const validator = sinon.stub().throws(cvError);
       const value = 'foo';
-      const context = {originalValue: value};
+      const context = {originalValue: value, parent: undefined, parentKey: undefined};
 
       let typeset = [validator];
       let result = impl.checkWithArray(value, typeset, context);
@@ -938,7 +1101,7 @@ describe('module: lib/impl', function() {
       const cvError = new Error('custom validator failed');
       const validator = sinon.stub().throws(cvError);
       const value = {foo: 1};
-      const context = {originalValue: value};
+      const context = {originalValue: value, parent: undefined, parentKey: undefined};
 
       let typeset = [validator];
       let result = impl.checkWithArray(value, typeset, context);
@@ -996,7 +1159,7 @@ describe('module: lib/impl', function() {
         'foo',
         [qualifiers.REQUIRED, types.STRING],
         [types.STRING, validator1],
-        {originalValue: value}
+        {originalValue: value, parent: value, parentKey: 'prop1'}
       ]);
       expect(validator1.firstCall.args[3].originalValue).to.equal(value); // identical value ref
 
@@ -1005,7 +1168,7 @@ describe('module: lib/impl', function() {
         77,
         [qualifiers.REQUIRED, types.INT],
         [types.INT, validator2],
-        {originalValue: value}
+        {originalValue: value, parent: value, parentKey: 'prop2'}
       ]);
       expect(validator2.firstCall.args[3].originalValue).to.equal(value); // identical value ref
 
@@ -1017,7 +1180,7 @@ describe('module: lib/impl', function() {
           prop2: typeset[0].prop2
         }}],
         typeset,
-        {originalValue: value}
+        {originalValue: value, parent: undefined, parentKey: undefined}
       ]);
       expect(validator3.firstCall.args[3].originalValue).to.equal(value); // identical value ref
     });
@@ -1033,7 +1196,7 @@ describe('module: lib/impl', function() {
         null,
         [qualifiers.EXPECTED, types.STRING],
         typeset,
-        {originalValue: null}
+        {originalValue: null, parent: undefined, parentKey: undefined}
       ]);
 
       validator.resetHistory();
@@ -1047,7 +1210,7 @@ describe('module: lib/impl', function() {
         undefined,
         [qualifiers.OPTIONAL, types.STRING],
         typeset,
-        {originalValue: undefined}
+        {originalValue: undefined, parent: undefined, parentKey: undefined}
       ]);
     });
 
@@ -1059,7 +1222,7 @@ describe('module: lib/impl', function() {
         }
       });
       const value = [['foo', 'bar']];
-      const context = {originalValue: value};
+      const context = {originalValue: value, parent: value[0], parentKey: 1};
 
       let typeset = [types.ARRAY, {ts: [types.ARRAY, {ts: validator}]}];
       let result = impl.checkWithArray(value, typeset);
@@ -1203,7 +1366,7 @@ describe('module: lib/impl', function() {
         'foo',
         [qualifiers.REQUIRED, types.ANY],
         validator,
-        {originalValue: 'foo'}
+        {originalValue: 'foo', parent: undefined, parentKey: undefined}
       ]);
       expect(result).to.be.an.instanceof(RtvError);
       expect(result.valid).to.be.false;
@@ -1242,7 +1405,7 @@ describe('module: lib/impl', function() {
           1, // value
           [qualifiers.OPTIONAL, types.ANY], // FQ match
           validator, // typeset
-          {originalValue: 1}
+          {originalValue: 1, parent: undefined, parentKey: undefined}
         ]);
       });
     });
