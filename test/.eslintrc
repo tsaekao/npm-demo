@@ -5,5 +5,8 @@
   "extends": ["../src/.eslintrc"],
   "env": {
     "mocha": true
+  },
+  "rules": {
+    "no-prototype-builtins": "off" // OFF to allow {}.hasOwnProperty('foo')
   }
 }

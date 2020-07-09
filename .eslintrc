@@ -49,7 +49,7 @@
     "no-new": "off", // OFF to allow `myFunction(new RegExp('foo'))`, for example
     "no-new-func": "error", // disallow `new Function(...)` to declare a new function
     "no-new-wrappers": "error", // disallow `new Number/String/Boolean()`
-    "no-prototype-builtins": "off", // OFF to allow {}.hasOwnProperty('foo')
+    "no-prototype-builtins": "error",
     "no-throw-literal": "error",
     "no-warning-comments": ["error", {
       "terms": [

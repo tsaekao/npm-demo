@@ -12,6 +12,8 @@ import {default as types, argTypes, objTypes, DEFAULT_OBJECT_TYPE} from '../type
 import qualifiers from '../qualifiers';
 import {print} from '../util';
 
+const objHasOwnProp = Object.prototype.hasOwnProperty;
+
 // Deep-verify a shape.
 // @param {string} type The in-scope type (should be an object type from types.objTypes).
 // @param {Object} args The {@link rtvref.types.shape_object_args} for the `type`
@@ -182,9 +184,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
           // only go deep if the rule is shape object args with `$` specified (which
           //  means the current in-scope type must be an object type) or ARRAY args with
           //  `ts` specified
-          if (valid && deep && objTypes.check(curType) && rule.hasOwnProperty('$')) {
+          if (valid && deep && objTypes.check(curType) && objHasOwnProp.call(rule, '$')) {
             valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
-          } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('ts')) {
+          } else if (valid && deep && curType === types.ARRAY && objHasOwnProp.call(rule, 'ts')) {
             // ARRAY type with args.ts specified, and we're deep-validating
             valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
           }
@@ -295,9 +297,9 @@ export default function isTypeset(v, options = {deep: false, fullyQualified: fal
         //  an object type, and the rule is either the shape itself, or shape object
         //  args with a `$` property that specifies the shape) or ARRAY args with
         //  `typeset` specified
-        if (valid && deep && objTypes.check(curType) && soArgs.hasOwnProperty('$')) {
+        if (valid && deep && objTypes.check(curType) && objHasOwnProp.call(soArgs, '$')) {
           valid = deepVerifyShape(curType, soArgs, options, failurePrefix, idx);
-        } else if (valid && deep && curType === types.ARRAY && rule.hasOwnProperty('ts')) {
+        } else if (valid && deep && curType === types.ARRAY && objHasOwnProp.call(rule, 'ts')) {
           // ARRAY type with args.ts specified, and we're deep-validating
           valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
         }

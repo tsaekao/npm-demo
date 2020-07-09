@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+-   Prevent some potential denial-of-service security vulnerabilities by ensuring that active code doesn't call `.hasOwnProperty()` directly on objects. Instead, use `Object.prototype.hasOwnProperty.call(obj, 'property')`.
+
 ## 2.3.1
 
 Release date: 2020-06-09

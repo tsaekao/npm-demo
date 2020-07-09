@@ -19,6 +19,8 @@ import {print} from './util';
 import RtvSuccess from './RtvSuccess';
 import RtvError from './RtvError';
 
+const objHasOwnProp = Object.prototype.hasOwnProperty;
+
 /**
  * <h3>RTV.js Implementation</h3>
  *
@@ -397,7 +399,7 @@ const _validateContext = function(context) {
   //  strings (which is what it should be)
   // NOTE: to avoid a possible infinite loop, we validate manually instead of
   //  being smart and defining a typeset and using the `check()` function...
-  if (!isObject(context) || !context.hasOwnProperty('originalValue')) {
+  if (!isObject(context) || !objHasOwnProp.call(context, 'originalValue')) {
     // SECURITY: don't print the context since it may contain an original value,
     //  which could be sensitive information
     throw new Error('Invalid type validator context');
@@ -507,7 +509,7 @@ const _getCheckOptions = function(current = {}) {
 
   // careful with isTypeset since it's a boolean: check for property existence
   //  so we don't misinterpret undefined as a falsy value we should use
-  if (current.hasOwnProperty('isTypeset')) {
+  if (objHasOwnProp.call(current, 'isTypeset')) {
     options.isTypeset = !!current.isTypeset;
   }
 
