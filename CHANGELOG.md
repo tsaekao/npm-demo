@@ -12,7 +12,7 @@ Date format is YYYY-MM-DD.
 Release date: 2020-07-09
 
 -   Prevent some potential denial-of-service security vulnerabilities by ensuring that active code doesn't call `.hasOwnProperty()` directly on objects. Instead, use `Object.prototype.hasOwnProperty.call(obj, 'property')`.
--   Add `parent` and `parentKey` properties to Type Validator Context to provide more flexibility to _reactive validations_ (see example in [README](./README.md#parent-and-parentKey)).
+-   Add `parent` and `parentKey` properties to Type Validator Context to provide more flexibility to _reactive validations_ (see example in [README](./README.md#parent-and-parentkey)).
 
 ## 2.3.1
 
