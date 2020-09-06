@@ -38,7 +38,6 @@ const getBaseConfig = function(options = {
   return {
     input: `${DIR_SRC}/rtv.js`,
     output: [],
-    preserveModules: false, // NOTE: must be false to 'roll-up' all code into one file
     external: [...peerDeps],
     plugins: [
       jsonPlugin(),
@@ -97,6 +96,7 @@ const getUmdConfig = function(minified = false) {
     name: LIB_NAME,
     noConflict: true,
     sourcemap: true,
+    preserveModules: false, // NOTE: must be false to 'roll-up' all code into one file
     banner
   });
 
@@ -116,6 +116,8 @@ const getCjsConfig = function(minified = false) {
     file: `${DIR_DIST_CJS}/${LIB_NAME}${minified ? '.js' : `${OUTPUT_DEV}.js`}`,
     format: RU_FORMAT_CJS,
     sourcemap: true,
+    preserveModules: false, // NOTE: must be false to 'roll-up' all code into one file
+    exports: 'default',
     banner
   });
 
