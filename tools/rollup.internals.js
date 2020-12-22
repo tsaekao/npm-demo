@@ -1,8 +1,8 @@
 ////// Rollup Configuration for internals.js module
 
-const jsonPlugin = require('rollup-plugin-json');
-const resolvePlugin = require('rollup-plugin-node-resolve');
-const cjsPlugin = require('rollup-plugin-commonjs');
+const jsonPlugin = require('@rollup/plugin-json');
+const {nodeResolve: resolvePlugin} = require('@rollup/plugin-node-resolve');
+const cjsPlugin = require('@rollup/plugin-commonjs');
 
 const LIB_NAME = 'internals';
 

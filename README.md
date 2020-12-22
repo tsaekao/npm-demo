@@ -16,22 +16,42 @@ The latest versions of major browsers, and maintained Node.js releases, are supp
 npm install rtvjs
 ```
 
-The package's `/dist` directory contains two types of builds:
+The package's `./dist` directory contains 3 types of builds:
 
-*   `./cjs/rtv[.dev].js`: CJS loader, full (.dev) and minified. This is the main package export.
-*   `./umd/rtv[.dev].js`: UMD loader, full (.dev) and minified.
+*   `rtv.js`: CJS (i.e. `const rtv = require('rtvjs')`)
+*   `rtv.esm.js`: ESM (i.e. `import rtv from 'rtvjs'`)
+*   `rtv.umd[.dev].js`: UMD (i.e. `window.rtvjs` global, for use in browsers, self-contained), the non-dev build is also minified.
+
+> Both the CJS and ESM builds depend on [@babel/runtime](https://babeljs.io/docs/en/babel-runtime) and [lodash](https://lodash.com/), and require defining the `process.env.NODE_ENV` to either `"development"` or `"production"`. Both builds rely on the consumer's bundler to do the final bundling and tree shaking.
+>
+> The UMD 'dev' build is the equivalent of defining `process.env.NODE_ENV = "development"`.
 
 ## CJS
 
-The CJS build can be used like this:
+The CJS build can be used like this, typically in Node.js, or with a bundler like Webpack or Rollup:
 
 ```javascript
 const rtv = require('rtvjs');
 ```
 
-Note that the main package export points to `./dist/cjs/index.js` which will automatically select the right build to include based on the value of `process.env.NODE_ENV`: If it's `"production"`, it will include the __minified__ version; otherwise, it will include __full__ version.
+Make sure you have also installed the following (peer) dependencies:
 
-Use the [Webpack Define Plugin](https://webpack.js.org/plugins/define-plugin/) or the [Rollup Replace Plugin](https://www.npmjs.com/package/rollup-plugin-replace), for example, to configure this in your build.
+-   [@babel/runtime](https://babeljs.io/docs/en/babel-runtime)
+-   [lodash](https://lodash.com/)
+
+Also make sure you set `process.env.NODE_ENV = "development"` if you want to enable the dev code it contains (e.g. deprecation warnings).
+
+Use the [Webpack Define Plugin](https://webpack.js.org/plugins/define-plugin/) or the [Rollup Replace Plugin](https://www.npmjs.com/package/@rollup/plugin-replace), for example, to configure this in your build.
+
+## ESM
+
+The ESM build can be used like this:
+
+```javascript
+import rtv from 'rtvjs';
+```
+
+The CJS considerations above also apply to this build (externals and environment).
 
 ## UMD
 
@@ -39,15 +59,17 @@ The UMD build can be used like this:
 
 ```javascript
 // as a CommonJS module (e.g. Node.js)
-const rtv = require('rtvjs');
+const rtv = require('./dist/rtv.umd.js');
 
 // as an AMD module (e.g. RequireJS)
 define(['rtvjs'], function(rtv) {
 });
 
 // as a global, when loaded via a <script> tag in HTML
-window.rtv;
+window.rtvjs;
 ```
+
+This is a self-contained build optimized for browsers.
 
 # Documentation
 

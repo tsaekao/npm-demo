@@ -223,10 +223,8 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       enumerable: true,
       configurable: true,
       get() {
-        // DEV_ENV is a global set to false during tests so we have to exclude that
-        //  branch from coverage
-        /* istanbul ignore next */
-        if (DEV_ENV) {
+        /* istanbul ignore next -- test code runs as Prod so skip */
+        if (process.env.NODE_ENV === 'development') {
           // eslint-disable-next-line no-console
           console.warn('DEPRECATED in 2.2.0: RtvError#cause has been deprecated and ' +
             'will be removed in the next major release. Please migrate your code to ' +
@@ -269,10 +267,8 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       enumerable: true,
       configurable: true,
       get() {
-        // DEV_ENV is a global set to false during tests so we have to exclude that
-        //  branch from coverage
-        /* istanbul ignore next */
-        if (DEV_ENV) {
+        /* istanbul ignore next -- test code runs as Prod so skip */
+        if (process.env.NODE_ENV === 'development') {
           // eslint-disable-next-line no-console
           console.warn('DEPRECATED in 2.2.0: RtvError#failure has been deprecated and ' +
             'will be removed in the next major release. Please migrate your code to ' +

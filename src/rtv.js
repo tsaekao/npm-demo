@@ -59,10 +59,8 @@ const rtv = {
    * @type {rtvref.Enumeration}
    */
   get t() {
-    // DEV_ENV is a global set to false during tests so we have to exclude that
-    //  branch from coverage
-    /* istanbul ignore next */
-    if (DEV_ENV) {
+    /* istanbul ignore next -- test code runs as Prod so skip */
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.warn('DEPRECATED in 2.1.0: rtv.t has been deprecated and ' +
         'will be removed in the next major release. Please migrate your code to ' +
@@ -107,10 +105,8 @@ const rtv = {
    * @type {rtvref.Enumeration}
    */
   get q() {
-    // DEV_ENV is a global set to false during tests so we have to exclude that
-    //  branch from coverage
-    /* istanbul ignore next */
-    if (DEV_ENV) {
+    /* istanbul ignore next -- test code runs as Prod so skip */
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.warn('DEPRECATED in 2.1.0: rtv.q has been deprecated and ' +
         'will be removed in the next major release. Please migrate your code to ' +
@@ -173,10 +169,8 @@ const rtv = {
    * @type {boolean}
    */
   get e() {
-    // DEV_ENV is a global set to false during tests so we have to exclude that
-    //  branch from coverage
-    /* istanbul ignore next */
-    if (DEV_ENV) {
+    /* istanbul ignore next -- test code runs as Prod so skip */
+    if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
       console.warn('DEPRECATED in 2.1.0: rtv.e has been deprecated and ' +
         'will be removed in the next major release. Please migrate your code to ' +

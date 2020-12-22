@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+### 🚨 BREAKING
+
+-   New package builds:
+    -   The CJS (as before) and ESM (new) builds depend on `process.env.NODE_ENV` being defined during bundling as either `"development"` or `"production"`. This is a fairly standard global definition, so it shouldn't really cause any trouble, and had previously been required for the CJS build anyway.
+    -   The CJS builds are now combined into a single file (`./dist/rtv.js`) with `process.env.NODE_ENV === "development"` checks where appropriate for dev-only behavior (e.g. deprecation warnings). It is targeted for consumption by app bundlers such as Webpack or Rollup.
+    -   The CJS build is no longer minified. Again, the app bundler should take care of this.
+    -   The CJS build depends on `@babel/runtime` and `lodash`, which are now declared as peer dependencies of this package, rather than pre-bundling them and adding unnecessary bloat when the consuming project is already using Babel and/or Lodash.
+    -   The new ESM build is available in `./dist/rtv.esm.js` and also requires defining the `process.env.NODE_ENV` global.
+    -   NOTE: The UMD builds are still two files, Dev and Prod versions, and bundle _everything_. They are meant for self-contained, direct use in a browser. The package purposely does not reference the UMD build via the `browser` property because Webpack will prioritize that type of bundle by default, and this is not how this package should be consumed by another bundler who is also preparing a package to run in the browser. Doing so would lead to unnecessary duplication of code between Babel Runtime Helpers and Lodash functions, as well as prevent any level of tree shaking.
+
 ## 2.4.0
 
 Release date: 2020-07-09
