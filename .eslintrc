@@ -7,13 +7,16 @@
   "parser": "babel-eslint",
 
   "parserOptions": {
+    "ecmaFeatures": {
+      "impliedStrict": true
+    },
     "ecmaVersion": 6,
     "sourceType": "module"
   },
 
   "env": {
     "es6": true,
-    "node": true // generally, code runs in Node.js
+    "node": true // all but ./src is fine to use Node APIs (src-specific config disables Node)
   },
 
   "globals": {
@@ -25,11 +28,18 @@
   // @see http://eslint.org/docs/rules/<rule-name>
   //
 
-  "extends": ["eslint:recommended"],
+  "extends": [
+    "eslint:recommended",
+    "prettier" // ALWAYS AFTER ESLINT: disable style rules that conflict with prettier
+  ],
+
   "rules": {
     //// possible errors
 
     "no-regex-spaces": "off",
+    "no-await-in-loop": "error",
+    "no-async-promise-executor": "error",
+    "no-misleading-character-class": "error",
 
     //// best practices
 
@@ -46,19 +56,17 @@
     "no-lone-blocks": "error",
     "no-loop-func": "error",
     "no-multi-spaces": "error",
-    "no-new": "off", // OFF to allow `myFunction(new RegExp('foo'))`, for example
+    "no-new": "off", // OFF to allow `myFunction(new RegExp("foo"))`, for example
     "no-new-func": "error", // disallow `new Function(...)` to declare a new function
     "no-new-wrappers": "error", // disallow `new Number/String/Boolean()`
-    "no-prototype-builtins": "error",
     "no-throw-literal": "error",
-    "no-warning-comments": ["error", {
-      "terms": [
-        "DEBUG",
-        "FIXME",
-        "HACK"
-      ],
-      "location": "start"
-    }],
+    "no-warning-comments": [
+      "error",
+      {
+        "terms": ["DEBUG", "FIXME", "HACK"],
+        "location": "start"
+      }
+    ],
 
     //// strict mode
 
@@ -68,93 +76,38 @@
 
     "no-catch-shadow": "error",
     "no-shadow": "error",
-    "no-unused-vars": ["error", {
-      "args": "none",
-      "caughtErrors": "none"
-    }],
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "caughtErrors": "none"
+      }
+    ],
     "no-use-before-define": "error",
 
     //// stylistic issues
 
-    "array-bracket-spacing": ["error", "never"],
-    "block-spacing": ["error", "always"],
-    "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
-    "camelcase": ["error", {"properties": "always"}],
-    "comma-dangle": ["error", "never"],
-    "comma-spacing": ["error", {"before": false, "after": true}],
-    "comma-style": ["error", "last"],
-    "computed-property-spacing": ["error", "never"],
-    "eol-last": "error",
-    "indent": ["error", 2, { // @see https://eslint.org/docs/rules/indent
-      "SwitchCase": 1, // indent case/default by 1x indent WRT switch statement
-      "CallExpression": {
-        "arguments": 2 // indent 'continuation lines' within statements by 2x indent
-      },
-      "FunctionDeclaration": {
-        "parameters": 2 // indent 'continuation lines' within statements by 2x indent
-      },
-      "FunctionExpression": {
-        "parameters": 2 // indent 'continuation lines' within statements by 2x indent
+    // NONE: Prettier will take care of these by reformatting the code on commit,
+    //  save a few exceptions.
+
+    // Prettier will format using single quotes per mds-format settings, but
+    //  will not require single quotes instead of backticks/template strings
+    //  when interpolation isn"t used, so this rule will catch those cases
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": false
       }
-    }],
-    "key-spacing": ["error", {"beforeColon": false, "afterColon": true, "mode": "strict"}],
-    "keyword-spacing": "error",
-    "linebreak-style": ["error", "unix"],
-    "max-len": ["error", {
-      "code": 100, // really should be 80, but let's allow a 20 char buffer
-      "tabWidth": 2,
-      "ignoreComments": true, // due to JSDoc syntax
-      "ignoreUrls": true,
-      "ignoreTemplateLiterals": true,
-      "ignoreRegExpLiterals": true
-    }],
-    "new-cap": "error",
-    "new-parens": "error",
-    "no-array-constructor": "error",
-    "no-multiple-empty-lines": ["error", {"max": 1, "maxBOF": 0}],
-    "no-spaced-func": "error",
-    "no-trailing-spaces": "error",
-    "no-unneeded-ternary": "error",
-    "no-whitespace-before-property": "error",
-    "object-curly-spacing": ["error", "never"],
-    "one-var": ["error", "never"],
-    "operator-linebreak": ["error", "after"],
-    "quote-props": ["error", "as-needed", {
-      "keywords": false,
-      "unnecessary": true,
-      "numbers": true
-    }],
-    "quotes": ["error", "single", "avoid-escape"],
-    "semi": ["error", "always"],
-    "semi-spacing": ["error", {"before": false, "after": true}],
-    "space-before-blocks": "error",
-    "space-before-function-paren": ["error", "never"],
-    "space-in-parens": ["error", "never"],
-    "space-infix-ops": ["error", {"int32Hint": false}],
-    "space-unary-ops": ["error", {
-      "words": true, // yes after 'new', 'delete', 'yield'...
-      "nonwords": false // no after '++', '!'...
-    }],
+    ],
 
-    //// ECMAScript 6
+    //// ECMAScript 6 (non-stylistic issues only)
 
-    "arrow-body-style": ["error", "as-needed"],
-    "arrow-parens": ["error", "always"], // disambiguate '=>' from '>=' in if statements...
-    "arrow-spacing": ["error", {"before": true, "after": true}],
-    "constructor-super": "error",
-    "generator-star-spacing": ["error", {"before": true, "after": false}], // match 'yield-start-spacing'
-    "no-class-assign": "error",
-    "no-confusing-arrow": ["error", {"allowParens": true}],
-    "no-const-assign": "error",
-    "no-dupe-class-members": "error",
-    "no-duplicate-imports": ["error", {"includeExports": true}],
-    "no-new-symbol": "error",
-    "no-this-before-super": "error",
+    "no-duplicate-imports": ["error", { "includeExports": true }],
     "no-useless-constructor": "error",
-    "no-var": "warn", // discourage, but be flexible with old code until migrated
+    "no-var": "error",
     "prefer-arrow-callback": "off",
-    "require-yield": "error",
-    "template-curly-spacing": ["error", "never"],
-    "yield-star-spacing": ["error", {"before": true, "after": false}] // match 'generator-start-spacing'
+    "prefer-const": "error"
   }
 }
