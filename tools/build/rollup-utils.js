@@ -24,5 +24,5 @@ module.exports = {
   RU_FORMAT_UMD,
   OUTPUT_DEV,
   DIR_SRC,
-  DIR_DIST
+  DIR_DIST,
 };

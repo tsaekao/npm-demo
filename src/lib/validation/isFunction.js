@@ -1,6 +1,6 @@
 ////// isFunction validation
 
-import {default as _isFunction} from 'lodash/isFunction';
+import { default as _isFunction } from 'lodash/isFunction';
 
 import types from '../types';
 

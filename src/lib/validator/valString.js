@@ -1,11 +1,11 @@
 ////// valString validator
 
-import {type, default as isString} from '../validation/isString';
+import { type, default as isString } from '../validation/isString';
 
 import isFinite from '../validation/isFinite';
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -14,7 +14,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valString
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -24,20 +24,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valString._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.STRING STRING}
  * @const {string} rtvref.validator.valString.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valString.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -64,42 +64,47 @@ export default function valString(v, q = REQUIRED, args) {
   }
 
   // start by ensuring the value is a string, but allow an empty string for now
-  let valid = isString(v, {allowEmpty: true});
+  let valid = isString(v, { allowEmpty: true });
 
   // if an arg allows the string to be empty, overriding the qualifier
   let argsAllowEmpty = false;
 
-  if (valid && args) { // then check args
-    if (args.exp && isString(args.exp)) { // all other args except expFlags are ignored
-      const flagSpec = (args.expFlags && isString(args.expFlags)) ?
-        args.expFlags : undefined;
+  if (valid && args) {
+    // then check args
+    if (args.exp && isString(args.exp)) {
+      // all other args except expFlags are ignored
+      const flagSpec =
+        args.expFlags && isString(args.expFlags) ? args.expFlags : undefined;
       const re = new RegExp(args.exp, flagSpec);
       valid = re.test(v);
-      argsAllowEmpty = (valid && v === '');
+      argsAllowEmpty = valid && v === '';
     } else {
       // empty string is OK for 'oneOf'
-      if (isString(args.oneOf, {allowEmpty: true}) ||
-          (isArray(args.oneOf) && args.oneOf.length > 0)) {
-
+      if (
+        isString(args.oneOf, { allowEmpty: true }) ||
+        (isArray(args.oneOf) && args.oneOf.length > 0)
+      ) {
         const possibilities = [].concat(args.oneOf);
         // flip the result so that valid is set to false if no values match
-        valid = !possibilities.every(function(possibility) {
+        valid = !possibilities.every(function (possibility) {
           // return false on first match to break the loop
-          return !(isString(possibility, {allowEmpty: true}) && v === possibility);
+          return !(
+            isString(possibility, { allowEmpty: true }) && v === possibility
+          );
         });
-        argsAllowEmpty = (valid && v === '');
+        argsAllowEmpty = valid && v === '';
       } else {
         let min;
         if (valid && isFinite(args.min) && args.min >= 0) {
           min = args.min;
-          valid = (v.length >= min);
-          argsAllowEmpty = (valid && v === '');
+          valid = v.length >= min;
+          argsAllowEmpty = valid && v === '';
         }
 
         if (valid && isFinite(args.max) && args.max >= 0) {
           if (min === undefined || args.max >= min) {
-            valid = (v.length <= args.max);
-            argsAllowEmpty = (valid && v === '');
+            valid = v.length <= args.max;
+            argsAllowEmpty = valid && v === '';
           } // else, ignore
         }
 
@@ -115,13 +120,17 @@ export default function valString(v, q = REQUIRED, args) {
   // only REQUIRED qualifier disallows empty strings by default unless an
   //  arg overrides it
   if (valid && !argsAllowEmpty && q === REQUIRED) {
-    valid = (v !== '');
+    valid = v !== '';
   }
 
   if (valid) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q, args), [],
-      impl.toTypeset(type, q, args, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q, args),
+    [],
+    impl.toTypeset(type, q, args, true)
+  );
 }

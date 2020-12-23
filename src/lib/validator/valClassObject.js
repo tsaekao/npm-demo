@@ -2,9 +2,9 @@
 
 import _forEach from 'lodash/forEach';
 
-import {type, default as isClassObject} from '../validation/isClassObject';
+import { type, default as isClassObject } from '../validation/isClassObject';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import isShape from '../validation/isShape';
@@ -15,7 +15,7 @@ import isFunction from '../validation/isFunction';
  * @typedef {Module} rtvref.validator.valClassObject
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -25,20 +25,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valClassObject._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}
  * @const {string} rtvref.validator.valClassObject.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valClassObject.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -61,30 +61,36 @@ export default function valClassObject(v, q = REQUIRED, args, context) {
   let valid = isClassObject(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
-  if (valid && args) { // then check args
+  if (valid && args) {
+    // then check args
     // check constructor first since it's more efficient than the shape
     if (args.ctor && isFunction(args.ctor)) {
-      valid = (v instanceof args.ctor);
+      valid = v instanceof args.ctor;
     }
 
     if (valid) {
       // now validate the shape, if any
-      const shape = (args.$ && isShape(args.$)) ? args.$ : undefined;
+      const shape = args.$ && isShape(args.$) ? args.$ : undefined;
       let err; // @type {(RtvError|undefined)}
 
       // only consider enumerable, own-properties of the shape
-      _forEach(shape, function(typeset, prop) {
+      _forEach(shape, function (typeset, prop) {
         // check prop value against shape prop typeset
         const propResult = impl.check(v[prop], typeset, {
           originalValue: v, // let this get overwritten if `context` is specified
           ...context,
           parent: v,
-          parentKey: prop
+          parentKey: prop,
         });
 
         if (!propResult.valid) {
-          err = new RtvError(v, impl.toTypeset(type, q, args),
-              [prop].concat(propResult.path), propResult.mismatch, propResult.rootCause);
+          err = new RtvError(
+            v,
+            impl.toTypeset(type, q, args),
+            [prop].concat(propResult.path),
+            propResult.mismatch,
+            propResult.rootCause
+          );
         }
 
         return !err; // break on first error
@@ -99,8 +105,12 @@ export default function valClassObject(v, q = REQUIRED, args, context) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl.toTypeset(type, q, args), [],
-          impl.toTypeset(type, q, args, true));
+      result = new RtvError(
+        v,
+        impl.toTypeset(type, q, args),
+        [],
+        impl.toTypeset(type, q, args, true)
+      );
     }
   }
 

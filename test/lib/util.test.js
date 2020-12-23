@@ -1,9 +1,9 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import * as util from '../../src/lib/util';
 
-describe('module: lib/util', function() {
-  it('should print just about anything', function() {
+describe('module: lib/util', function () {
+  it('should print just about anything', function () {
     // simple/single values
     expect(util.print(null)).to.equal('null');
     expect(util.print(undefined)).to.equal('undefined');
@@ -20,12 +20,15 @@ describe('module: lib/util', function() {
     // complex values
     expect(util.print([true])).to.equal('[true]');
     expect(util.print([1, [2, 'three']])).to.equal('[1,[2,"three"]]');
-    expect(util.print({foo: 1})).to.equal('{"foo":1}');
-    expect(util.print({foo: [1, {bar: 2}]})).to.equal('{"foo":[1,{"bar":2}]}');
+    expect(util.print({ foo: 1 })).to.equal('{"foo":1}');
+    expect(util.print({ foo: [1, { bar: 2 }] })).to.equal(
+      '{"foo":[1,{"bar":2}]}'
+    );
   });
 
-  it('should special-case functions as validators when printing typesets', function() {
-    expect(util.print(['STRING', () => {}], {isTypeset: true})).to.equal(
-        '["STRING","<validator>"]');
+  it('should special-case functions as validators when printing typesets', function () {
+    expect(util.print(['STRING', () => {}], { isTypeset: true })).to.equal(
+      '["STRING","<validator>"]'
+    );
   });
 });

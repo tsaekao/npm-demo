@@ -4,7 +4,7 @@ import isTypeset from './validation/isTypeset';
 import isArray from './validation/isArray';
 import isError from './validation/isError';
 
-import {print} from './util';
+import { print } from './util';
 
 // @type {function} The super class.
 const extendsFrom = Error;
@@ -12,9 +12,9 @@ const extendsFrom = Error;
 // Renders a path array as a string.
 // @param {Array.<string>} path
 // @returns {string}
-const renderPath = function(path) {
+const renderPath = function (path) {
   // returns '/' if the path is empty
-  return path.reduce(function(strPath, elem) {
+  return path.reduce(function (strPath, elem) {
     // cast `elem` to string rather than print() to avoid quotes (should be a
     //  string anyway)
     return `${strPath}${strPath === '/' ? '' : '/'}${elem + ''}`;
@@ -48,7 +48,7 @@ const renderPath = function(path) {
  *  exception; or some other nested error that was the root cause for the failed validation.
  * @throws {Error} If `typeset`, `path`, or `mismatch` is invalid.
  */
-const RtvError = function(value, typeset, path, mismatch, rootCause) {
+const RtvError = function (value, typeset, path, mismatch, rootCause) {
   // NOTE: We're using the old ES5 way of doing classical inheritance rather than
   //  an ES6 'class' because extending from Error doesn't appear to work very well,
   //  at least not with Babel 6.x. It seems OK in Node 9.x, however. Anyway,
@@ -58,19 +58,25 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
   //  by checking the prototype chain, which isn't properly constructed.
 
   if (!isTypeset(typeset)) {
-    throw new Error(`Invalid typeset: ${print(typeset, {isTypeset: true})}`);
+    throw new Error(`Invalid typeset: ${print(typeset, { isTypeset: true })}`);
   }
 
   if (!isArray(path)) {
     throw new Error(`Invalid path: ${print(path)}`);
   }
 
-  if (!isTypeset(mismatch, {fullyQualified: true})) {
-    throw new Error(`Invalid mismatch (expecting fully-qualified typeset): ${print(mismatch, {isTypeset: true})}`);
+  if (!isTypeset(mismatch, { fullyQualified: true })) {
+    throw new Error(
+      `Invalid mismatch (expecting fully-qualified typeset): ${print(mismatch, {
+        isTypeset: true,
+      })}`
+    );
   }
 
   if (rootCause && !isError(rootCause)) {
-    throw new Error(`Invalid rootCause (expecting JavaScript Error): ${print(rootCause)}`);
+    throw new Error(
+      `Invalid rootCause (expecting JavaScript Error): ${print(rootCause)}`
+    );
   } else if (!rootCause) {
     rootCause = undefined; // normalize falsy values
   }
@@ -87,7 +93,9 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
   //  message in case it contains sensitive information like secrets or passwords
   // NOTE: we don't include the `typeset` in the message since it could be VERY long;
   //  the `path` and `mismatch` should be enough for debugging purposes
-  this.message = `Verification failed: path="${renderPath(path)}", mismatch=${print(mismatch, {isTypeset: true})}`;
+  this.message = `Verification failed: path="${renderPath(
+    path
+  )}", mismatch=${print(mismatch, { isTypeset: true })}`;
   if (rootCause) {
     this.message += `, rootCause="${rootCause.message}"`;
   }
@@ -103,7 +111,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
     valid: {
       enumerable: true,
       configurable: true,
-      value: false
+      value: false,
     },
 
     /**
@@ -118,7 +126,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       configurable: true,
       get() {
         return value;
-      }
+      },
     },
 
     /**
@@ -132,7 +140,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       configurable: true,
       get() {
         return typeset;
-      }
+      },
     },
 
     /**
@@ -179,7 +187,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       configurable: true,
       get() {
         return path;
-      }
+      },
     },
 
     /**
@@ -206,7 +214,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       configurable: true,
       get() {
         return mismatch;
-      }
+      },
     },
 
     /**
@@ -226,13 +234,15 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
         /* istanbul ignore next -- test code runs as Prod so skip */
         if (process.env.NODE_ENV === 'development') {
           // eslint-disable-next-line no-console
-          console.warn('DEPRECATED in 2.2.0: RtvError#cause has been deprecated and ' +
-            'will be removed in the next major release. Please migrate your code to ' +
-            'use `RtvError#mismatch`.');
+          console.warn(
+            'DEPRECATED in 2.2.0: RtvError#cause has been deprecated and ' +
+              'will be removed in the next major release. Please migrate your code to ' +
+              'use `RtvError#mismatch`.'
+          );
         }
 
         return mismatch;
-      }
+      },
     },
 
     /**
@@ -250,7 +260,7 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
       configurable: true,
       get() {
         return rootCause;
-      }
+      },
     },
 
     /**
@@ -270,14 +280,16 @@ const RtvError = function(value, typeset, path, mismatch, rootCause) {
         /* istanbul ignore next -- test code runs as Prod so skip */
         if (process.env.NODE_ENV === 'development') {
           // eslint-disable-next-line no-console
-          console.warn('DEPRECATED in 2.2.0: RtvError#failure has been deprecated and ' +
-            'will be removed in the next major release. Please migrate your code to ' +
-            'use `RtvError#rootCause`.');
+          console.warn(
+            'DEPRECATED in 2.2.0: RtvError#failure has been deprecated and ' +
+              'will be removed in the next major release. Please migrate your code to ' +
+              'use `RtvError#rootCause`.'
+          );
         }
 
         return rootCause;
-      }
-    }
+      },
+    },
   });
 };
 
@@ -289,14 +301,16 @@ RtvError.prototype.constructor = RtvError;
  * @method rtvref.RtvError#toString
  * @returns {string} String representation.
  */
-RtvError.prototype.toString = function() {
+RtvError.prototype.toString = function () {
   // NOTE: for security reasons, no part of the value should be included in the
   //  serialization in case it contains sensitive information like secrets or
   //  passwords
   // NOTE: we don't include the `typeset` in the serialization since it could be VERY long;
   //  the `path` and `mismatch` should be enough for debugging purposes
 
-  let str = `{rtvref.RtvError path="${renderPath(this.path)}", mismatch=${print(this.mismatch, {isTypeset: true})}`;
+  let str = `{rtvref.RtvError path="${renderPath(
+    this.path
+  )}", mismatch=${print(this.mismatch, { isTypeset: true })}`;
 
   if (this.rootCause) {
     str += `, rootCause="${this.rootCause.message}"`;

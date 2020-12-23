@@ -21,5 +21,5 @@ export const type = types.PROMISE;
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
 export default function isPromise(v) {
-  return (v instanceof Promise);
+  return v instanceof Promise;
 }

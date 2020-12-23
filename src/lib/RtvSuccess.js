@@ -23,8 +23,8 @@ export default class RtvSuccess {
       valid: {
         enumerable: true,
         configurable: true,
-        value: true
-      }
+        value: true,
+      },
     });
   }
 

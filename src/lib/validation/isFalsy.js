@@ -1,6 +1,6 @@
 ////// isFalsy validation module
 
-import {default as _isNaN} from 'lodash/isNaN';
+import { default as _isNaN } from 'lodash/isNaN';
 
 /**
  * Validation Module: isFalsy
@@ -20,5 +20,12 @@ export const type = undefined;
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
 export default function isFalsy(v) {
-  return v === undefined || v === null || v === false || v === 0 || v === '' || _isNaN(v);
+  return (
+    v === undefined ||
+    v === null ||
+    v === false ||
+    v === 0 ||
+    v === '' ||
+    _isNaN(v)
+  );
 }

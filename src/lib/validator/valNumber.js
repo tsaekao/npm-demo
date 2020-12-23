@@ -1,12 +1,12 @@
 ////// valNumber validator
 
-import {default as _isNaN} from 'lodash/isNaN';
+import { default as _isNaN } from 'lodash/isNaN';
 
-import {type, default as isNumber} from '../validation/isNumber';
+import { type, default as isNumber } from '../validation/isNumber';
 
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -15,7 +15,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valNumber
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -25,20 +25,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valNumber._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.NUMBER NUMBER}
  * @const {string} rtvref.validator.valNumber.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valNumber.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -69,28 +69,34 @@ export default function valNumber(v, q = REQUIRED, args) {
     valid = true;
   }
 
-  if (valid && args) { // then check args against normal type range
+  if (valid && args) {
+    // then check args against normal type range
     // NOTE: NaN is OK for the oneOf arg (careful: NaN !== NaN...)
-    if (isNumber(args.oneOf) || _isNaN(args.oneOf) ||
-        (isArray(args.oneOf) && args.oneOf.length > 0)) {
+    if (
+      isNumber(args.oneOf) ||
+      _isNaN(args.oneOf) ||
+      (isArray(args.oneOf) && args.oneOf.length > 0)
+    ) {
       const possibilities = [].concat(args.oneOf);
       // flip the result so that valid is set to false if no values match
-      valid = !possibilities.every(function(possibility) {
+      valid = !possibilities.every(function (possibility) {
         // special allowance for NaN, and ignore any possibility that is not a NUMBER
         // return false on first match to break the loop
-        return !((_isNaN(possibility) && _isNaN(v)) ||
-            (isNumber(possibility) && v === possibility));
+        return !(
+          (_isNaN(possibility) && _isNaN(v)) ||
+          (isNumber(possibility) && v === possibility)
+        );
       });
     } else {
       let min;
       if (valid && isNumber(args.min)) {
         min = args.min;
-        valid = (v >= min);
+        valid = v >= min;
       }
 
       if (valid && isNumber(args.max)) {
         if (min === undefined || args.max >= min) {
-          valid = (v <= args.max);
+          valid = v <= args.max;
         } // else, ignore
       }
     }
@@ -100,6 +106,10 @@ export default function valNumber(v, q = REQUIRED, args) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q, args), [],
-      impl.toTypeset(type, q, args, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q, args),
+    [],
+    impl.toTypeset(type, q, args, true)
+  );
 }

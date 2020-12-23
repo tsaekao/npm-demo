@@ -1,6 +1,6 @@
 ////// isAnyObject validation
 
-import {default as _isObject} from 'lodash/isObject';
+import { default as _isObject } from 'lodash/isObject';
 
 import types from '../types';
 

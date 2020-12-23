@@ -1,8 +1,8 @@
 ////// valDate validator
 
-import {type, default as isDate} from '../validation/isDate';
+import { type, default as isDate } from '../validation/isDate';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -11,7 +11,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valDate
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -21,20 +21,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valDate._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.DATE DATE}
  * @const {string} rtvref.validator.valDate.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valDate.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -56,5 +56,10 @@ export default function valDate(v, q = REQUIRED) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q),
+    [],
+    impl.toTypeset(type, q, true)
+  );
 }

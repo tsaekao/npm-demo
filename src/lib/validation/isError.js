@@ -1,6 +1,6 @@
 ////// isError validation
 
-import {default as _isError} from 'lodash/isError';
+import { default as _isError } from 'lodash/isError';
 
 import types from '../types';
 

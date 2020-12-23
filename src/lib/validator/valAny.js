@@ -1,6 +1,6 @@
 ////// valAny validator
 
-import {type, default as isAny} from '../validation/isAny';
+import { type, default as isAny } from '../validation/isAny';
 
 import qualifiers from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
@@ -11,7 +11,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valAny
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -21,20 +21,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valAny._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.ANY ANY}
  * @const {string} rtvref.validator.valAny.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valAny.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -55,5 +55,10 @@ export default function valAny(v, q = REQUIRED) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q),
+    [],
+    impl.toTypeset(type, q, true)
+  );
 }

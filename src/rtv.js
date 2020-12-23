@@ -1,6 +1,6 @@
 ////// Main entry point
 
-import {version as VERSION} from '../package.json';
+import { version as VERSION } from '../package.json';
 import impl from './lib/impl';
 import types from './lib/types';
 import qualifiers from './lib/qualifiers';
@@ -62,9 +62,11 @@ const rtv = {
     /* istanbul ignore next -- test code runs as Prod so skip */
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.warn('DEPRECATED in 2.1.0: rtv.t has been deprecated and ' +
-        'will be removed in the next major release. Please migrate your code to ' +
-        'use `rtv.types.<TYPE>` or just `rtv.<TYPE>` such as `rtv.STRING`.');
+      console.warn(
+        'DEPRECATED in 2.1.0: rtv.t has been deprecated and ' +
+          'will be removed in the next major release. Please migrate your code to ' +
+          'use `rtv.types.<TYPE>` or just `rtv.<TYPE>` such as `rtv.STRING`.'
+      );
     }
 
     return types;
@@ -108,10 +110,12 @@ const rtv = {
     /* istanbul ignore next -- test code runs as Prod so skip */
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.warn('DEPRECATED in 2.1.0: rtv.q has been deprecated and ' +
-        'will be removed in the next major release. Please migrate your code to ' +
-        'use `rtv.qualifiers.<QUALIFIER>` or just `rtv.<QUALIFIER>` such as ' +
-        '`rtv.EXPECTED`.');
+      console.warn(
+        'DEPRECATED in 2.1.0: rtv.q has been deprecated and ' +
+          'will be removed in the next major release. Please migrate your code to ' +
+          'use `rtv.qualifiers.<QUALIFIER>` or just `rtv.<QUALIFIER>` such as ' +
+          '`rtv.EXPECTED`.'
+      );
     }
 
     return qualifiers;
@@ -172,9 +176,11 @@ const rtv = {
     /* istanbul ignore next -- test code runs as Prod so skip */
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.warn('DEPRECATED in 2.1.0: rtv.e has been deprecated and ' +
-        'will be removed in the next major release. Please migrate your code to ' +
-        'use `rtv.enabled`.');
+      console.warn(
+        'DEPRECATED in 2.1.0: rtv.e has been deprecated and ' +
+          'will be removed in the next major release. Please migrate your code to ' +
+          'use `rtv.enabled`.'
+      );
     }
 
     return this.config.enabled;
@@ -298,79 +304,82 @@ const rtv = {
    * <h3>RTV.js Configuration</h3>
    * @namespace rtv.config
    */
-  config: Object.defineProperties({}, {
-    /**
-     * Globally enables or disables {@link rtv.verify} and {@link rtv.check}. When set
-     *  to `false`, these methods are no-ops.
-     *
-     * Use this, or the shortcut {@link rtv.enabled}, to enable code optimization
-     *  when building source with a bundler that supports _tree shaking_, like
-     *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
-     *
-     * The following plugins can redefine the statement `rtv.enabled` or `rtv.config.enabled`
-     *  as `false` prior to code optimizations that remove unreachable code:
-     *
-     * - Rollup: {@link https://github.com/rollup/rollup-plugin-replace rollup-plugin-replace}
-     * - Webpack: {@link https://webpack.js.org/plugins/define-plugin/ DefinePlugin}
-     *
-     * <h4>Enabled Example: Rollup</h4>
-     *
-     * By conditionally calling {@link rtv.verify} based on the state of
-     *  {@link rtv.config.enabled}, a bundler can be configured to completely
-     *  remove the code from a production build.
-     *
-     * Given this module code snippet:
-     *
-     * <pre><code>...
-     *
-     * if (rtv.config.enabled) {
-     *  rtv.verify(jsonResult, expectedShape);
-     * }
-     *
-     * rtv.enabled && rtv.verify(jsonResult, expectedShape); // shorter
-     *
-     * ...
-     * </code></pre>
-     *
-     * And using this `rollup.config.js` snippet:
-     *
-     * <pre><code>const replacePlugin = require('rollup-plugin-replace');
-     *
-     * module.exports = {
-     *   ...
-     *   plugins: [
-     *     // invoke this plugin _before_ any other plugins
-     *     replacePlugin({
-     *       'rtv.enabled': 'false',
-     *       'rtv.config.enabled': 'false'
-     *     }),
-     *     ...
-     *   ]
-     * };
-     * </code></pre>
-     *
-     * The code in the module snippet above would be completely removed from the
-     *  build's output, thereby removing any rtv.js overhead from production.
-     *
-     * @name rtv.config.enabled
-     * @type {boolean}
-     * @see {@link rtv.enabled}
-     */
-    enabled: (function() {
-      let value = true;
-      return {
-        enumerable: true,
-        configurable: true,
-        get() {
-          return value;
-        },
-        set(newValue) {
-          rtv.verify(newValue, rtv.BOOLEAN);
-          value = newValue;
-        }
-      };
-    })()
-  })
+  config: Object.defineProperties(
+    {},
+    {
+      /**
+       * Globally enables or disables {@link rtv.verify} and {@link rtv.check}. When set
+       *  to `false`, these methods are no-ops.
+       *
+       * Use this, or the shortcut {@link rtv.enabled}, to enable code optimization
+       *  when building source with a bundler that supports _tree shaking_, like
+       *  {@link https://rollupjs.org/ Rollup} or {@link https://webpack.js.org/ Webpack}.
+       *
+       * The following plugins can redefine the statement `rtv.enabled` or `rtv.config.enabled`
+       *  as `false` prior to code optimizations that remove unreachable code:
+       *
+       * - Rollup: {@link https://github.com/rollup/rollup-plugin-replace rollup-plugin-replace}
+       * - Webpack: {@link https://webpack.js.org/plugins/define-plugin/ DefinePlugin}
+       *
+       * <h4>Enabled Example: Rollup</h4>
+       *
+       * By conditionally calling {@link rtv.verify} based on the state of
+       *  {@link rtv.config.enabled}, a bundler can be configured to completely
+       *  remove the code from a production build.
+       *
+       * Given this module code snippet:
+       *
+       * <pre><code>...
+       *
+       * if (rtv.config.enabled) {
+       *  rtv.verify(jsonResult, expectedShape);
+       * }
+       *
+       * rtv.enabled && rtv.verify(jsonResult, expectedShape); // shorter
+       *
+       * ...
+       * </code></pre>
+       *
+       * And using this `rollup.config.js` snippet:
+       *
+       * <pre><code>const replacePlugin = require('rollup-plugin-replace');
+       *
+       * module.exports = {
+       *   ...
+       *   plugins: [
+       *     // invoke this plugin _before_ any other plugins
+       *     replacePlugin({
+       *       'rtv.enabled': 'false',
+       *       'rtv.config.enabled': 'false'
+       *     }),
+       *     ...
+       *   ]
+       * };
+       * </code></pre>
+       *
+       * The code in the module snippet above would be completely removed from the
+       *  build's output, thereby removing any rtv.js overhead from production.
+       *
+       * @name rtv.config.enabled
+       * @type {boolean}
+       * @see {@link rtv.enabled}
+       */
+      enabled: (function () {
+        let value = true;
+        return {
+          enumerable: true,
+          configurable: true,
+          get() {
+            return value;
+          },
+          set(newValue) {
+            rtv.verify(newValue, rtv.BOOLEAN);
+            value = newValue;
+          },
+        };
+      })(),
+    }
+  ),
 };
 
 export default rtv;
@@ -378,7 +387,8 @@ export default rtv;
 ////////////////////////////////////////////////////////////////////////////////
 // Register all known types with impl
 
-(function() { // put in an IIFE so there's nothing unnecessarily retained in any closures
+(function () {
+  // put in an IIFE so there's nothing unnecessarily retained in any closures
   // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.
   const validators = [
     valAny,
@@ -406,17 +416,18 @@ export default rtv;
     valString,
     valSymbol,
     valWeakMap,
-    valWeakSet
+    valWeakSet,
   ];
 
   const publicImpl = {}; // impl for validators, excluding any internal parts
 
-  Object.keys(impl).forEach(function(k) { // only enumerable methods/properties
+  Object.keys(impl).forEach(function (k) {
+    // only enumerable methods/properties
     publicImpl[k] = impl[k];
   });
 
-  validators.forEach(function(val) {
-    val.config({impl: publicImpl});
+  validators.forEach(function (val) {
+    val.config({ impl: publicImpl });
     impl._registerType(val);
   });
 })();

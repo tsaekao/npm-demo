@@ -1,6 +1,6 @@
 ////// Enumeration
 
-import {print} from './util';
+import { print } from './util';
 
 /**
  * Simple enumeration type. Own-properties on an instance are the keys in the
@@ -79,7 +79,7 @@ export default class Enumeration {
     Object.defineProperty(this, '$name', {
       enumerable: false,
       configurable: true,
-      value: name || ''
+      value: name || '',
     });
 
     /**
@@ -98,7 +98,7 @@ export default class Enumeration {
       configurable: true,
       get() {
         return values.concat(); // shallow clone
-      }
+      },
     });
   }
 
@@ -134,7 +134,11 @@ export default class Enumeration {
     const result = this.check(value);
 
     if (result === undefined && !silent) {
-      throw new Error(`Invalid value for ${this.$name ? `${print(this.$name)} ` : ''}enumeration (${this.$values.map(print).join(', ')}): ${print(value)}`);
+      throw new Error(
+        `Invalid value for ${
+          this.$name ? `${print(this.$name)} ` : ''
+        }enumeration (${this.$values.map(print).join(', ')}): ${print(value)}`
+      );
     }
 
     return result;
@@ -147,6 +151,8 @@ export default class Enumeration {
    */
   toString() {
     const pairs = Object.keys(this).map((k) => [k, this[k]]);
-    return `{rtvref.Enumeration $name=${print(this.$name)} pairs=[${pairs.map(print).join(', ')}]}`;
+    return `{rtvref.Enumeration $name=${print(this.$name)} pairs=[${pairs
+      .map(print)
+      .join(', ')}]}`;
   }
 }

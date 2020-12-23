@@ -1,6 +1,6 @@
 ////// isObject validation
 
-import {default as _isObjectLike} from 'lodash/isObjectLike';
+import { default as _isObjectLike } from 'lodash/isObjectLike';
 
 import isArray from './isArray';
 import isMap from './isMap';
@@ -32,16 +32,21 @@ export const type = types.OBJECT;
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isObject(v) { // no qualifier rules, no args
-  return _isObjectLike(v) && // excludes primitives and functions
-      !(v instanceof String) && // excludes `new String('foo')`
-      !(v instanceof Number) && // excludes `new Number(1)`
-      !(v instanceof Boolean) && // excludes `new Boolean(true)`
-      !isArray(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
-      !isMap(v) && !isWeakMap(v) &&
-      !isSet(v) && !isWeakSet(v) &&
-      !isRegExp(v) &&
-      !isDate(v) &&
-      !isError(v) &&
-      !isPromise(v);
+export default function isObject(v) {
+  // no qualifier rules, no args
+  return (
+    _isObjectLike(v) && // excludes primitives and functions
+    !(v instanceof String) && // excludes `new String('foo')`
+    !(v instanceof Number) && // excludes `new Number(1)`
+    !(v instanceof Boolean) && // excludes `new Boolean(true)`
+    !isArray(v) && // excludes arrays which are otherwise object-like (typeof [] === 'object')
+    !isMap(v) &&
+    !isWeakMap(v) &&
+    !isSet(v) &&
+    !isWeakSet(v) &&
+    !isRegExp(v) &&
+    !isDate(v) &&
+    !isError(v) &&
+    !isPromise(v)
+  );
 }

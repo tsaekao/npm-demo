@@ -29,6 +29,6 @@ export const type = types.STRING;
  *  permitted.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isString(v, {allowEmpty = false} = {}) {
-  return (typeof v === 'string') && (v !== '' || allowEmpty);
+export default function isString(v, { allowEmpty = false } = {}) {
+  return typeof v === 'string' && (v !== '' || allowEmpty);
 }

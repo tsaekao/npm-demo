@@ -1,10 +1,10 @@
 ////// valSymbol validator
 
-import {type, default as isSymbol} from '../validation/isSymbol';
+import { type, default as isSymbol } from '../validation/isSymbol';
 
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -13,7 +13,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valSymbol
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -23,20 +23,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valSymbol._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.SYMBOL SYMBOL}
  * @const {string} rtvref.validator.valSymbol.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valSymbol.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -58,10 +58,13 @@ export default function valSymbol(v, q = REQUIRED, args) {
   let valid = isSymbol(v);
 
   if (valid && args) {
-    if (isSymbol(args.oneOf) || (isArray(args.oneOf) && args.oneOf.length > 0)) {
+    if (
+      isSymbol(args.oneOf) ||
+      (isArray(args.oneOf) && args.oneOf.length > 0)
+    ) {
       const possibilities = [].concat(args.oneOf);
       // flip the result so that valid is set to false if no values match
-      valid = !possibilities.every(function(possibility) {
+      valid = !possibilities.every(function (possibility) {
         // return false on first match to break the loop
         return !(isSymbol(possibility) && v === possibility);
       });
@@ -72,6 +75,10 @@ export default function valSymbol(v, q = REQUIRED, args) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q, args), [],
-      impl.toTypeset(type, q, args, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q, args),
+    [],
+    impl.toTypeset(type, q, args, true)
+  );
 }

@@ -148,17 +148,17 @@ export const DEFAULT_QUALIFIER = REQUIRED;
  *  - `valuePermitted(false, OPTIONAL) === false` because the value `false` is
  *    not permitted by OPTIONAL
  */
-export const valuePermitted = function(v, q = REQUIRED) {
+export const valuePermitted = function (v, q = REQUIRED) {
   if (q === REQUIRED) {
     return false;
   }
 
   if (q === EXPECTED) {
-    return (v === null);
+    return v === null;
   }
 
   if (q === OPTIONAL) {
-    return (v === undefined || v === null);
+    return v === undefined || v === null;
   }
 
   // TRUTHY permits any falsy value
@@ -176,9 +176,12 @@ export const valuePermitted = function(v, q = REQUIRED) {
  * @name rtvref.qualifiers.qualifiers
  * @type {rtvref.Enumeration}
  */
-export default new Enumeration({
-  REQUIRED,
-  EXPECTED,
-  OPTIONAL,
-  TRUTHY
-}, 'qualifiers');
+export default new Enumeration(
+  {
+    REQUIRED,
+    EXPECTED,
+    OPTIONAL,
+    TRUTHY,
+  },
+  'qualifiers'
+);

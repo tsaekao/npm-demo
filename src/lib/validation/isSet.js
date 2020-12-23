@@ -1,6 +1,6 @@
 ////// isSet validation
 
-import {default as _isSet} from 'lodash/isSet';
+import { default as _isSet } from 'lodash/isSet';
 
 import types from '../types';
 

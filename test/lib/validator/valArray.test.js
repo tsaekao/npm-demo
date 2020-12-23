@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 
@@ -7,205 +7,268 @@ import types from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valArray';
 
-describe('module: lib/validator/valArray', function() {
-  describe('validator', function() { // module, and value only
-    it('#type', function() {
+describe('module: lib/validator/valArray', function () {
+  describe('validator', function () {
+    // module, and value only
+    it('#type', function () {
       expect(val.type).to.equal(types.ARRAY);
     });
 
-    it('succeeds with an RtvSuccess', function() {
+    it('succeeds with an RtvSuccess', function () {
       vtu.expectValidatorSuccess(val, []);
     });
 
-    it('valid values', function() {
+    it('valid values', function () {
       expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
-    it('other types/values', function() {
+    it('other types/values', function () {
       expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
     });
   });
 
-  describe('qualifiers', function() {
-    it('empty arrays allowed', function() {
-      _.forEach(qualifiers, function(qualifier) {
+  describe('qualifiers', function () {
+    it('empty arrays allowed', function () {
+      _.forEach(qualifiers, function (qualifier) {
         vtu.expectValidatorSuccess(val, [], qualifier);
       });
     });
 
-    describe('rules are supported', function() {
-      it('REQUIRED (other than values previously tested)', function() {
+    describe('rules are supported', function () {
+      it('REQUIRED (other than values previously tested)', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
-        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.REQUIRED);
+        vtu.expectAllToFail(
+          val.type,
+          val.default,
+          restrictedValues,
+          qualifiers.REQUIRED
+        );
 
         const permittedValues = vtu.getPermittedValues(qualifiers.REQUIRED);
-        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.REQUIRED);
+        vtu.expectAllToPass(
+          val.type,
+          val.default,
+          permittedValues,
+          qualifiers.REQUIRED
+        );
       });
 
-      it('EXPECTED', function() {
+      it('EXPECTED', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
-        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.EXPECTED);
+        vtu.expectAllToFail(
+          val.type,
+          val.default,
+          restrictedValues,
+          qualifiers.EXPECTED
+        );
 
         const permittedValues = vtu.getPermittedValues(qualifiers.EXPECTED);
-        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.EXPECTED);
+        vtu.expectAllToPass(
+          val.type,
+          val.default,
+          permittedValues,
+          qualifiers.EXPECTED
+        );
       });
 
-      it('OPTIONAL', function() {
+      it('OPTIONAL', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
-        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.OPTIONAL);
+        vtu.expectAllToFail(
+          val.type,
+          val.default,
+          restrictedValues,
+          qualifiers.OPTIONAL
+        );
 
         const permittedValues = vtu.getPermittedValues(qualifiers.OPTIONAL);
-        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.OPTIONAL);
+        vtu.expectAllToPass(
+          val.type,
+          val.default,
+          permittedValues,
+          qualifiers.OPTIONAL
+        );
       });
 
-      it('TRUTHY', function() {
+      it('TRUTHY', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
-        vtu.expectAllToFail(val.type, val.default, restrictedValues, qualifiers.TRUTHY);
+        vtu.expectAllToFail(
+          val.type,
+          val.default,
+          restrictedValues,
+          qualifiers.TRUTHY
+        );
 
         const permittedValues = vtu.getPermittedValues(qualifiers.TRUTHY);
-        vtu.expectAllToPass(val.type, val.default, permittedValues, qualifiers.TRUTHY);
+        vtu.expectAllToPass(
+          val.type,
+          val.default,
+          permittedValues,
+          qualifiers.TRUTHY
+        );
       });
     });
 
-    describe('are used in error typesets', function() {
-      it('DEFAULT', function() {
+    describe('are used in error typesets', function () {
+      it('DEFAULT', function () {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function() {
+      it('REQUIRED', function () {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function() {
+      it('EXPECTED', function () {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function() {
+      it('OPTIONAL', function () {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function() {
+      it('TRUTHY', function () {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function() {
-    it('checks for an exact length', function() {
+  describe('arguments', function () {
+    it('checks for an exact length', function () {
       const arr = [7];
 
-      vtu.expectValidatorSuccess(val, [], undefined, {length: 0});
-      vtu.expectValidatorSuccess(val, [], undefined, {length: -0});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: 1});
+      vtu.expectValidatorSuccess(val, [], undefined, { length: 0 });
+      vtu.expectValidatorSuccess(val, [], undefined, { length: -0 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: 1 });
 
-      vtu.expectValidatorError(val, arr, undefined, {length: 2});
-      vtu.expectValidatorError(val, arr, undefined, {length: 1.1});
+      vtu.expectValidatorError(val, arr, undefined, { length: 2 });
+      vtu.expectValidatorError(val, arr, undefined, { length: 1.1 });
 
       // all these lengths should be ignored
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: '1'});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: -1});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: NaN});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: -Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: Number.POSITIVE_INFINITY});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: Number.NEGATIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: '1' });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: -1 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: NaN });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: -Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        length: Number.POSITIVE_INFINITY,
+      });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        length: Number.NEGATIVE_INFINITY,
+      });
     });
 
-    it('length takes precedence over min/max', function() {
+    it('length takes precedence over min/max', function () {
       const arr = [7, 8, 9];
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: 3, min: 4});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: 3, max: 2});
-      vtu.expectValidatorSuccess(val, arr, undefined, {length: 3, min: 4, max: 2});
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: 3, min: 4 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { length: 3, max: 2 });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        length: 3,
+        min: 4,
+        max: 2,
+      });
     });
 
-    it('checks for a minimum length', function() {
+    it('checks for a minimum length', function () {
       const arr = [7, 8, 9];
 
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: 3});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: 0});
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: 3 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: 0 });
 
       // all these minimums should be ignored
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: '7'});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: -7});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: NaN});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: -Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: Number.POSITIVE_INFINITY});
-      vtu.expectValidatorSuccess(val, arr, undefined, {min: Number.NEGATIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: '7' });
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: -7 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: NaN });
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, { min: -Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        min: Number.POSITIVE_INFINITY,
+      });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        min: Number.NEGATIVE_INFINITY,
+      });
     });
 
-    it('checks for a maximum length', function() {
+    it('checks for a maximum length', function () {
       const arr = [7, 8, 9];
 
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: 3});
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: 3 });
 
-      vtu.expectValidatorError(val, arr, undefined, {max: 0});
+      vtu.expectValidatorError(val, arr, undefined, { max: 0 });
 
       // all these maximums should be ignored
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: '7'});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: -7});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: NaN});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: -Infinity});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: Number.POSITIVE_INFINITY});
-      vtu.expectValidatorSuccess(val, arr, undefined, {max: Number.NEGATIVE_INFINITY});
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: '7' });
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: -7 });
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: NaN });
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, { max: -Infinity });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        max: Number.POSITIVE_INFINITY,
+      });
+      vtu.expectValidatorSuccess(val, arr, undefined, {
+        max: Number.NEGATIVE_INFINITY,
+      });
     });
 
-    it('max ignored if less than min', function() {
-      vtu.expectValidatorSuccess(val, [7, 8, 9], undefined, {min: 2, max: 1});
+    it('max ignored if less than min', function () {
+      vtu.expectValidatorSuccess(val, [7, 8, 9], undefined, { min: 2, max: 1 });
     });
 
-    it('checks each element against typeset', function() {
+    it('checks each element against typeset', function () {
       let arr = ['a', 'b', ''];
-      let args = {ts: [qualifiers.EXPECTED, types.STRING]};
+      let args = { ts: [qualifiers.EXPECTED, types.STRING] };
 
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
-      args = {ts: [qualifiers.REQUIRED, types.STRING]};
+      args = { ts: [qualifiers.REQUIRED, types.STRING] };
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['2'],
-        mismatch: args.ts
+        mismatch: args.ts,
       });
 
       arr = [1, 'a'];
-      args = {ts: [types.FINITE, {min: 1}, types.STRING, {oneOf: 'a'}]};
+      args = { ts: [types.FINITE, { min: 1 }, types.STRING, { oneOf: 'a' }] };
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
       arr = [1, 'a'];
-      args = {ts: [types.FINITE, {min: 2}, types.STRING, {oneOf: 'a'}]};
+      args = { ts: [types.FINITE, { min: 2 }, types.STRING, { oneOf: 'a' }] };
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['0'],
-        mismatch: (function() {
+        mismatch: (function () {
           const ts = args.ts.concat();
           ts.unshift(qualifiers.REQUIRED);
           return ts;
-        })()
+        })(),
       });
 
-      args = {ts: /invalid typeset/}; // ignored
+      args = { ts: /invalid typeset/ }; // ignored
       vtu.expectValidatorSuccess(val, arr, undefined, args);
     });
 
-    it('creates error paths that are arrays of strings', function() {
-      vtu.expectValidatorError(val, ['a', 2], undefined, {ts: types.STRING}, {
-        path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
-        mismatch: [qualifiers.REQUIRED, types.STRING]
-      });
+    it('creates error paths that are arrays of strings', function () {
+      vtu.expectValidatorError(
+        val,
+        ['a', 2],
+        undefined,
+        { ts: types.STRING },
+        {
+          path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
+          mismatch: [qualifiers.REQUIRED, types.STRING],
+        }
+      );
     });
   });
 
-  describe('context', function() {
-    it('should set parent to array and parentKey to index', function() {
+  describe('context', function () {
+    it('should set parent to array and parentKey to index', function () {
       const validator = sinon.spy();
       const value = ['bar'];
-      val.default(value, undefined, {ts: validator});
+      val.default(value, undefined, { ts: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
-        {originalValue: value, parent: value, parentKey: 0}
+        { originalValue: value, parent: value, parentKey: 0 },
       ]);
     });
   });

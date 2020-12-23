@@ -119,7 +119,7 @@ global.rtvi = {
       isString,
       isSymbol,
       isWeakMap,
-      isWeakSet
+      isWeakSet,
     },
     validator: {
       // NOTE: these are the full modules, so it'll look like
@@ -149,7 +149,7 @@ global.rtvi = {
       valString,
       valSymbol,
       valWeakMap,
-      valWeakSet
-    }
-  }
+      valWeakSet,
+    },
+  },
 };

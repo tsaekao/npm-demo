@@ -1,57 +1,65 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
-import types, {DEFAULT_OBJECT_TYPE} from '../../../src/lib/types';
-import qualifiers, {DEFAULT_QUALIFIER} from '../../../src/lib/qualifiers';
+import types, { DEFAULT_OBJECT_TYPE } from '../../../src/lib/types';
+import qualifiers, { DEFAULT_QUALIFIER } from '../../../src/lib/qualifiers';
 import * as isShapeMod from '../../../src/lib/validation/isShape';
-import {default as isTypeset, type as isTypesetType} from '../../../src/lib/validation/isTypeset';
+import {
+  default as isTypeset,
+  type as isTypesetType,
+} from '../../../src/lib/validation/isTypeset';
 
-describe('module: lib/validation/isTypeset', function() {
-  it('#type', function() {
+describe('module: lib/validation/isTypeset', function () {
+  it('#type', function () {
     expect(isTypesetType).to.equal(undefined);
   });
 
-  describe('#default', function() {
-    describe('shallow', function() {
+  describe('#default', function () {
+    describe('shallow', function () {
       let goodValues; // @type {Array}
       let badValues; // @type {Array}
 
-      beforeEach(function() {
+      beforeEach(function () {
         goodValues = [
-          {foo: null}, // null is invalid, but we aren't checking deep
+          { foo: null }, // null is invalid, but we aren't checking deep
           types.STRING,
           [types.ANY],
           [[types.FLOAT]],
-          function() {},
-          [{foo: types.STRING}],
+          function () {},
+          [{ foo: types.STRING }],
 
           // ANY type is implied since there are no other types before the validator
-          [DEFAULT_QUALIFIER, function() {}],
+          [DEFAULT_QUALIFIER, function () {}],
 
           // OBJECT type is implied since the shape descriptor is first immediately
           //  after the qualifier
-          [DEFAULT_QUALIFIER, {foo: types.STRING}],
+          [DEFAULT_QUALIFIER, { foo: types.STRING }],
 
           // object type specified before shape that is not in first position after qualifier
-          [DEFAULT_QUALIFIER, types.ANY, DEFAULT_OBJECT_TYPE, {$: {foo: types.STRING}}],
+          [
+            DEFAULT_QUALIFIER,
+            types.ANY,
+            DEFAULT_OBJECT_TYPE,
+            { $: { foo: types.STRING } },
+          ],
 
           {}, // empty shapes are OK
-          [types.PLAIN_OBJECT, {$: {}}],
+          [types.PLAIN_OBJECT, { $: {} }],
 
           // an array with args
-          [types.ARRAY, {min: 1, ts: [types.FINITE]}],
+          [types.ARRAY, { min: 1, ts: [types.FINITE] }],
 
           // since we aren't going deep, we should ignore the fact that the shape
           //  of the class object has a property with an invalid typeset
-          [types.CLASS_OBJECT, {$: {foo: ['invalid-type']}}],
+          [types.CLASS_OBJECT, { $: { foo: ['invalid-type'] } }],
 
           // should be fine as a class object without args (or a shape)
           types.CLASS_OBJECT,
           [types.CLASS_OBJECT],
 
-          [types.HASH_MAP, {count: 2}],
-          [[{foo: types.STRING}]],
+          [types.HASH_MAP, { count: 2 }],
+          [[{ foo: types.STRING }]],
           [[]], // inner array won't be validated since we aren't going deep
           [types.BOOLEAN, [types.FINITE]],
 
@@ -60,7 +68,7 @@ describe('module: lib/validation/isTypeset', function() {
 
           // two ARRAY types (i.e. duplicate types, but not as obvious)
           [types.ARRAY, [types.FINITE]],
-          [types.ARRAY, {min: 1}, [types.FINITE]]
+          [types.ARRAY, { min: 1 }, [types.FINITE]],
         ];
 
         badValues = [
@@ -76,7 +84,7 @@ describe('module: lib/validation/isTypeset', function() {
 
           // shape descriptor is not second after qualifier, and ANY does not
           //  take any args
-          [DEFAULT_QUALIFIER, types.ANY, {foo: types.FINITE}],
+          [DEFAULT_QUALIFIER, types.ANY, { foo: types.FINITE }],
 
           // invalid value type in typeset
           [Symbol('foo')],
@@ -88,7 +96,7 @@ describe('module: lib/validation/isTypeset', function() {
           [types.STRING, DEFAULT_QUALIFIER],
 
           // second object/shape is un-typed since it's not first in the array typeset
-          [types.PLAIN_OBJECT, {$: {}}, {$: {}}],
+          [types.PLAIN_OBJECT, { $: {} }, { $: {} }],
 
           // cannot have more than one qualifier
           [qualifiers.REQUIRED, qualifiers.OPTIONAL, types.STRING],
@@ -97,14 +105,14 @@ describe('module: lib/validation/isTypeset', function() {
           [DEFAULT_QUALIFIER, 'invalid-type'], // invalid type
           [DEFAULT_QUALIFIER, true], // invalid value type in typeset
 
-          [[types.STRING], {ts: types.FINITE}], // missing object type
+          [[types.STRING], { ts: types.FINITE }], // missing object type
 
           // second shape has no type
-          [{}, {}]
+          [{}, {}],
         ];
       });
 
-      it('should validate shallow typesets', function() {
+      it('should validate shallow typesets', function () {
         let results = vtu.testValues('isTypeset', isTypeset, goodValues);
         expect(results.failures).to.eql([]);
 
@@ -112,15 +120,23 @@ describe('module: lib/validation/isTypeset', function() {
         expect(results.passes).to.eql([]);
       });
 
-      it('should validate shallow fully-qualified typesets', function() {
+      it('should validate shallow fully-qualified typesets', function () {
         goodValues[0] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[0]];
         goodValues[1] = [DEFAULT_QUALIFIER, goodValues[1]];
         goodValues[2].unshift(DEFAULT_QUALIFIER);
-        goodValues[3] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[3][0]}];
+        goodValues[3] = [
+          DEFAULT_QUALIFIER,
+          types.ARRAY,
+          { ts: goodValues[3][0] },
+        ];
         goodValues[4] = [DEFAULT_QUALIFIER, types.ANY, goodValues[4]];
 
         // result: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {foo: types.STRING}]
-        goodValues[5] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[5][0]];
+        goodValues[5] = [
+          DEFAULT_QUALIFIER,
+          DEFAULT_OBJECT_TYPE,
+          goodValues[5][0],
+        ];
 
         goodValues[6].splice(1, 0, types.STRING);
         goodValues[7].splice(1, 0, types.PLAIN_OBJECT);
@@ -131,124 +147,157 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[13] = [DEFAULT_QUALIFIER, goodValues[13]];
         goodValues[14].unshift(DEFAULT_QUALIFIER);
         goodValues[15].unshift(DEFAULT_QUALIFIER);
-        goodValues[16] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[16][0]}];
-        goodValues[17] = [DEFAULT_QUALIFIER, types.ARRAY, {ts: goodValues[17][0]}];
-        goodValues[18] = [DEFAULT_QUALIFIER, goodValues[18][0], types.ARRAY,
-          {ts: goodValues[18][1]}];
+        goodValues[16] = [
+          DEFAULT_QUALIFIER,
+          types.ARRAY,
+          { ts: goodValues[16][0] },
+        ];
+        goodValues[17] = [
+          DEFAULT_QUALIFIER,
+          types.ARRAY,
+          { ts: goodValues[17][0] },
+        ];
+        goodValues[18] = [
+          DEFAULT_QUALIFIER,
+          goodValues[18][0],
+          types.ARRAY,
+          { ts: goodValues[18][1] },
+        ];
         goodValues[19].unshift(DEFAULT_QUALIFIER);
 
-        goodValues[20] = [DEFAULT_QUALIFIER, types.ARRAY, types.ARRAY, {ts: [types.FINITE]}];
-        goodValues[21] = [DEFAULT_QUALIFIER, types.ARRAY, {min: 1}, types.ARRAY, {
-          ts: [types.FINITE]
-        }];
+        goodValues[20] = [
+          DEFAULT_QUALIFIER,
+          types.ARRAY,
+          types.ARRAY,
+          { ts: [types.FINITE] },
+        ];
+        goodValues[21] = [
+          DEFAULT_QUALIFIER,
+          types.ARRAY,
+          { min: 1 },
+          types.ARRAY,
+          {
+            ts: [types.FINITE],
+          },
+        ];
 
-        let results = vtu.testValues('isTypeset', isTypeset, goodValues, {fullyQualified: true});
+        let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
+          fullyQualified: true,
+        });
         expect(results.failures).to.eql([]);
 
         badValues.push(
-            // qualifier is always first
-            [function() {}, DEFAULT_QUALIFIER, types.ANY],
+          // qualifier is always first
+          [function () {}, DEFAULT_QUALIFIER, types.ANY],
 
-            // only one validator
-            [DEFAULT_QUALIFIER, types.ANY, function() {}, function() {}],
+          // only one validator
+          [DEFAULT_QUALIFIER, types.ANY, function () {}, function () {}],
 
-            // missing type (when not FQ'd, then ANY is implied)
-            [DEFAULT_QUALIFIER, function() {}],
+          // missing type (when not FQ'd, then ANY is implied)
+          [DEFAULT_QUALIFIER, function () {}],
 
-            // validator must be last element
-            [DEFAULT_QUALIFIER, types.STRING, function() {}, types.FINITE],
+          // validator must be last element
+          [DEFAULT_QUALIFIER, types.STRING, function () {}, types.FINITE],
 
-            // missing ARRAY type and args, and ARRAY shorthand notation is not
-            //  supported in fully-qualified typesets
-            [DEFAULT_QUALIFIER, [types.STRING]],
+          // missing ARRAY type and args, and ARRAY shorthand notation is not
+          //  supported in fully-qualified typesets
+          [DEFAULT_QUALIFIER, [types.STRING]],
 
-            // missing a type
-            [DEFAULT_QUALIFIER]
+          // missing a type
+          [DEFAULT_QUALIFIER]
         );
 
-        results = vtu.testValues('isTypeset', isTypeset, badValues, {fullyQualified: true});
+        results = vtu.testValues('isTypeset', isTypeset, badValues, {
+          fullyQualified: true,
+        });
         expect(results.passes).to.eql([]);
       });
 
-      it('should indicate shape in failure message if failure at index 0', function() {
+      it('should indicate shape in failure message if failure at index 0', function () {
         const options = {};
         isTypeset([1], options);
         expect(options.rootCause).to.contain(
-            'Unexpected value at index=0: Expecting object (shape)');
+          'Unexpected value at index=0: Expecting object (shape)'
+        );
       });
 
-      it('should indicate shape in failure message if failure at index 1 with qualifier',
-          function() {
-            const options = {};
-            isTypeset([DEFAULT_QUALIFIER, 1], options);
-            expect(options.rootCause).to.contain(
-                'Unexpected value at index=1: Expecting object (shape)');
-          });
+      it('should indicate shape in failure message if failure at index 1 with qualifier', function () {
+        const options = {};
+        isTypeset([DEFAULT_QUALIFIER, 1], options);
+        expect(options.rootCause).to.contain(
+          'Unexpected value at index=1: Expecting object (shape)'
+        );
+      });
 
       // eslint is being ridiculous about the indent here, maybe it's a bug?
       /* eslint-disable indent */
-      it('should indicate type args in failure message if failure at index >1 or index 1 ' +
-          'without qualifier', function() {
-            let options = {};
-            isTypeset([types.CLASS_OBJECT, 1], options);
-            expect(options.rootCause).to.contain(
-                'Unexpected value at index=1: Expecting object (type args)');
+      it(
+        'should indicate type args in failure message if failure at index >1 or index 1 ' +
+          'without qualifier',
+        function () {
+          let options = {};
+          isTypeset([types.CLASS_OBJECT, 1], options);
+          expect(options.rootCause).to.contain(
+            'Unexpected value at index=1: Expecting object (type args)'
+          );
 
-            options = {};
-            isTypeset([DEFAULT_QUALIFIER, types.PLAIN_OBJECT, 1], options);
-            expect(options.rootCause).to.contain(
-                'Unexpected value at index=2: Expecting object (type args)');
-          });
+          options = {};
+          isTypeset([DEFAULT_QUALIFIER, types.PLAIN_OBJECT, 1], options);
+          expect(options.rootCause).to.contain(
+            'Unexpected value at index=2: Expecting object (type args)'
+          );
+        }
+      );
       /* eslint-enable indent */
     });
 
-    describe('deep', function() {
+    describe('deep', function () {
       let goodValues; // @type {Array}
       let badValues; // @type {Array}
 
-      beforeEach(function() {
+      beforeEach(function () {
         const shapeWithNonEnumerable = {
-          foo: types.FUNCTION
+          foo: types.FUNCTION,
         };
         Object.defineProperty(shapeWithNonEnumerable, 'invalid', {
-          value: null // invalid typeset, but prop non-enumerable so shouldn't cause failure
+          value: null, // invalid typeset, but prop non-enumerable so shouldn't cause failure
         });
 
-        const shapeWithProtoProp = Object.create({
-          invalid: null // invalid typeset, but on prototype so shouldn't cause failure
-        }).foo = types.JSON;
+        const shapeWithProtoProp = (Object.create({
+          invalid: null, // invalid typeset, but on prototype so shouldn't cause failure
+        }).foo = types.JSON);
 
         goodValues = [
-          {foo: types.FINITE},
+          { foo: types.FINITE },
           types.STRING,
           [types.ANY],
-          function() {},
+          function () {},
           [types.STRING, [types.STRING]],
-          {foo: {bar: [types.STRING]}},
+          { foo: { bar: [types.STRING] } },
 
           // a shape with property 'foo' that's either an array of strings (maybe empty)
           //  or a finite number that is exactly 7
-          {foo: [[types.STRING], types.FINITE, {oneOf: 7}]},
+          { foo: [[types.STRING], types.FINITE, { oneOf: 7 }] },
 
           shapeWithNonEnumerable,
           shapeWithProtoProp,
-          [types.CLASS_OBJECT, {$: {foo: [types.PLAIN_OBJECT]}}],
+          [types.CLASS_OBJECT, { $: { foo: [types.PLAIN_OBJECT] } }],
 
           // should be fine deep as a class object without args (or a shape)
           types.CLASS_OBJECT,
           [qualifiers.OPTIONAL, types.CLASS_OBJECT],
 
-          [types.HASH_MAP, {count: 2}],
-          [types.ARRAY, {ts: types.FINITE}],
+          [types.HASH_MAP, { count: 2 }],
+          [types.ARRAY, { ts: types.FINITE }],
 
           // duplicate type
-          [{foo: [types.FUNCTION, types.FUNCTION]}],
+          [{ foo: [types.FUNCTION, types.FUNCTION] }],
           // STRING type appears more than once in the nested (array) typeset
-          [types.STRING, [types.STRING, types.STRING]]
+          [types.STRING, [types.STRING, types.STRING]],
         ];
 
         badValues = [
-          {foo: null},
+          { foo: null },
           undefined,
           null,
           1,
@@ -260,35 +309,50 @@ describe('module: lib/validation/isTypeset', function() {
 
           // 2 ARRAY types in one, and missing object type since object would
           //  be considered other args, not ARRAY args
-          [types.ARRAY, [types.STRING], {ts: types.FINITE}],
+          [types.ARRAY, [types.STRING], { ts: types.FINITE }],
 
           // nested shape with an invalid type
-          {foo: {bar: ['invalid-type']}},
+          { foo: { bar: ['invalid-type'] } },
 
           // validator is not last element in deep-nested typeset
-          [{foo: [{bar: [{baz: [types.STRING, function() {}, types.REGEXP]}] }] }], // eslint-disable-line object-curly-spacing
+          [
+            {
+              foo: [
+                {
+                  bar: [{ baz: [types.STRING, function () {}, types.REGEXP] }],
+                },
+              ],
+            },
+          ], // eslint-disable-line object-curly-spacing
 
           // for class object, we should be going deep into the shape property of
           //  the args object and finding the invalid typeset
-          [types.CLASS_OBJECT, {$: {foo: [types.STRING, DEFAULT_QUALIFIER]}}],
+          [
+            types.CLASS_OBJECT,
+            { $: { foo: [types.STRING, DEFAULT_QUALIFIER] } },
+          ],
 
           // nested shape is not a shape
-          [types.CLASS_OBJECT, {$: false}],
+          [types.CLASS_OBJECT, { $: false }],
 
           // nested typeset has invalid value
-          [types.ARRAY, {ts: false}]
+          [types.ARRAY, { ts: false }],
         ];
       });
 
-      it('should validate deep typesets', function() {
-        let results = vtu.testValues('isTypeset', isTypeset, goodValues, {deep: true});
+      it('should validate deep typesets', function () {
+        let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
+          deep: true,
+        });
         expect(results.failures).to.eql([]);
 
-        results = vtu.testValues('isTypeset', isTypeset, badValues, {deep: true});
+        results = vtu.testValues('isTypeset', isTypeset, badValues, {
+          deep: true,
+        });
         expect(results.passes).to.eql([]);
       });
 
-      it('should validate deep fully-qualified typesets', function() {
+      it('should validate deep fully-qualified typesets', function () {
         goodValues[0].foo = [DEFAULT_QUALIFIER, goodValues[0].foo];
         goodValues[0] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[0]];
 
@@ -297,16 +361,20 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[3] = [DEFAULT_QUALIFIER, types.ANY, goodValues[3]];
 
         goodValues[4][1].unshift(DEFAULT_QUALIFIER);
-        goodValues[4][1] = {ts: goodValues[4][1]};
+        goodValues[4][1] = { ts: goodValues[4][1] };
         goodValues[4].splice(1, 0, types.ARRAY);
         goodValues[4].unshift(DEFAULT_QUALIFIER);
 
         goodValues[5].foo.bar.unshift(DEFAULT_QUALIFIER);
-        goodValues[5].foo = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[5].foo];
+        goodValues[5].foo = [
+          DEFAULT_QUALIFIER,
+          DEFAULT_OBJECT_TYPE,
+          goodValues[5].foo,
+        ];
         goodValues[5] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[5]];
 
         goodValues[6].foo[0].unshift(DEFAULT_QUALIFIER);
-        goodValues[6].foo[0] = {ts: goodValues[6].foo[0]};
+        goodValues[6].foo[0] = { ts: goodValues[6].foo[0] };
         goodValues[6].foo.unshift(DEFAULT_QUALIFIER, types.ARRAY);
         goodValues[6] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[6]];
 
@@ -326,90 +394,142 @@ describe('module: lib/validation/isTypeset', function() {
         goodValues[13].unshift(DEFAULT_QUALIFIER);
 
         goodValues[14][0].foo.unshift(DEFAULT_QUALIFIER);
-        goodValues[14] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, ...goodValues[14]];
+        goodValues[14] = [
+          DEFAULT_QUALIFIER,
+          DEFAULT_OBJECT_TYPE,
+          ...goodValues[14],
+        ];
 
-        goodValues[15] = [DEFAULT_QUALIFIER, types.STRING, types.ARRAY, {
-          ts: [DEFAULT_QUALIFIER, types.STRING, types.STRING]
-        }];
+        goodValues[15] = [
+          DEFAULT_QUALIFIER,
+          types.STRING,
+          types.ARRAY,
+          {
+            ts: [DEFAULT_QUALIFIER, types.STRING, types.STRING],
+          },
+        ];
 
-        let results = vtu.testValues('isTypeset', isTypeset, goodValues,
-            {deep: true, fullyQualified: true});
+        let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
+          deep: true,
+          fullyQualified: true,
+        });
         expect(results.failures).to.eql([]);
 
         badValues.push(
-            // foo has invalid typeset
-            [DEFAULT_QUALIFIER, types.CLASS_OBJECT, {
+          // foo has invalid typeset
+          [
+            DEFAULT_QUALIFIER,
+            types.CLASS_OBJECT,
+            {
               $: {
-                foo: [types.STRING, DEFAULT_QUALIFIER]
-              }
-            }],
+                foo: [types.STRING, DEFAULT_QUALIFIER],
+              },
+            },
+          ],
 
-            [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
+          [
+            DEFAULT_QUALIFIER,
+            DEFAULT_OBJECT_TYPE,
+            {
               $: {
-                foo: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
-                  $: {
-                    bar: [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, {
-                      // validator is not last element here
-                      $: {
-                        baz: [DEFAULT_QUALIFIER, types.STRING, function() {}, types.REGEXP]
-                      }
-                    }]
-                  }
-                }]
-              }
-            }],
+                foo: [
+                  DEFAULT_QUALIFIER,
+                  DEFAULT_OBJECT_TYPE,
+                  {
+                    $: {
+                      bar: [
+                        DEFAULT_QUALIFIER,
+                        DEFAULT_OBJECT_TYPE,
+                        {
+                          // validator is not last element here
+                          $: {
+                            baz: [
+                              DEFAULT_QUALIFIER,
+                              types.STRING,
+                              function () {},
+                              types.REGEXP,
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
 
-            [DEFAULT_QUALIFIER, types.ARRAY, {ts: [DEFAULT_QUALIFIER, 'invalid-type']}]
+          [
+            DEFAULT_QUALIFIER,
+            types.ARRAY,
+            { ts: [DEFAULT_QUALIFIER, 'invalid-type'] },
+          ]
         );
 
-        results = vtu.testValues('isTypeset', isTypeset, badValues,
-            {deep: true, fullyQualified: true});
+        results = vtu.testValues('isTypeset', isTypeset, badValues, {
+          deep: true,
+          fullyQualified: true,
+        });
         expect(results.passes).to.eql([]);
       });
 
-      it('should fail if the given type args are not a valid shape', function() {
-        expect(isTypeset([types.PLAIN_OBJECT, {$: 1}], {deep: true})).to.be.false;
+      it('should fail if the given type args are not a valid shape', function () {
+        expect(isTypeset([types.PLAIN_OBJECT, { $: 1 }], { deep: true })).to.be
+          .false;
       });
 
-      it('should fail without index in failure message when deep-validating a non-qualified shape',
-          function() {
-            // NOTE: a little contrived, but the logic in the inner deepVerifyShape()
-            //  function should cover the case where the index isn't needed because it
-            //  shouldn't depend on the caller having checked that the value is a shape,
-            //  but in the case of a shape descriptor typeset, the caller must also
-            //  check that it's a shape...
-            let count = 0;
-            const isShapeStub = sinon.stub(isShapeMod, 'default').callsFake(function() {
-              count++;
-              return count < 3;
-            });
-
-            const options = {deep: true};
-            expect(isTypeset({}, options)).to.be.false;
-            expect(options.rootCause).to.include(`Expecting a valid shape descriptor for type="${types.OBJECT}"`);
-
-            isShapeStub.restore();
+      it('should fail without index in failure message when deep-validating a non-qualified shape', function () {
+        // NOTE: a little contrived, but the logic in the inner deepVerifyShape()
+        //  function should cover the case where the index isn't needed because it
+        //  shouldn't depend on the caller having checked that the value is a shape,
+        //  but in the case of a shape descriptor typeset, the caller must also
+        //  check that it's a shape...
+        let count = 0;
+        const isShapeStub = sinon
+          .stub(isShapeMod, 'default')
+          .callsFake(function () {
+            count++;
+            return count < 3;
           });
+
+        const options = { deep: true };
+        expect(isTypeset({}, options)).to.be.false;
+        expect(options.rootCause).to.include(
+          `Expecting a valid shape descriptor for type="${types.OBJECT}"`
+        );
+
+        isShapeStub.restore();
+      });
     });
 
-    describe('other', function() {
-      it('should not allow more than 1 custom validator', function() {
-        expect(isTypeset(function() {})).to.be.true;
-        expect(isTypeset([function() {}])).to.be.true;
-        expect(isTypeset([types.STRING, function() {}])).to.be.true;
+    describe('other', function () {
+      it('should not allow more than 1 custom validator', function () {
+        expect(isTypeset(function () {})).to.be.true;
+        expect(isTypeset([function () {}])).to.be.true;
+        expect(isTypeset([types.STRING, function () {}])).to.be.true;
 
         // too many
-        expect(isTypeset([function() {}, function() {}])).to.be.false;
-        expect(isTypeset([types.STRING, function() {}, function() {}])).to.be.false;
-        expect(isTypeset([types.STRING, [function() {}, function() {}]], {deep: true})).to.be.false;
-        expect(isTypeset([
-          DEFAULT_QUALIFIER,
-          types.STRING,
-          [DEFAULT_QUALIFIER, function() {}, function() {}]
-        ], {deep: true, fullyQualified: true})).to.be.false;
+        expect(isTypeset([function () {}, function () {}])).to.be.false;
+        expect(isTypeset([types.STRING, function () {}, function () {}])).to.be
+          .false;
+        expect(
+          isTypeset([types.STRING, [function () {}, function () {}]], {
+            deep: true,
+          })
+        ).to.be.false;
+        expect(
+          isTypeset(
+            [
+              DEFAULT_QUALIFIER,
+              types.STRING,
+              [DEFAULT_QUALIFIER, function () {}, function () {}],
+            ],
+            { deep: true, fullyQualified: true }
+          )
+        ).to.be.false;
       });
 
-      it('should not validate with only the qualifier', function() {
+      it('should not validate with only the qualifier', function () {
         expect(isTypeset(DEFAULT_QUALIFIER)).to.be.false;
         expect(isTypeset([])).to.be.false;
         expect(isTypeset([DEFAULT_QUALIFIER])).to.be.false;

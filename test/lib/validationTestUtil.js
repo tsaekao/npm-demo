@@ -1,10 +1,10 @@
 ////// Utility for testing validation modules
 
 import _ from 'lodash';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import types from '../../src/lib/types';
-import qualifiers, {DEFAULT_QUALIFIER} from '../../src/lib/qualifiers';
+import qualifiers, { DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
@@ -19,7 +19,7 @@ import RtvError from '../../src/lib/RtvError';
  *  `undefined`. If `type` is not specified, returns a map of type to array of
  *  valid values for each type.
  */
-export const getValidValues = function(type) {
+export const getValidValues = function (type) {
   // map of type to _valid_ values for that type
   const validValues = {
     //
@@ -36,7 +36,12 @@ export const getValidValues = function(type) {
 
     [types.STRING]: ['literal-string'],
     [types.BOOLEAN]: [true, false],
-    [types.SYMBOL]: [Symbol(), Symbol('symbol'), Symbol(1), Symbol.for('other')],
+    [types.SYMBOL]: [
+      Symbol(),
+      Symbol('symbol'),
+      Symbol(1),
+      Symbol.for('other'),
+    ],
 
     [types.NUMBER]: [
       -1.1,
@@ -55,7 +60,7 @@ export const getValidValues = function(type) {
       Number.MIN_SAFE_INTEGER - 1, // int, unsafe
       Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
+      Number.MAX_SAFE_INTEGER + 1, // int, unsafe
     ],
     [types.FINITE]: [
       -1.1,
@@ -70,7 +75,7 @@ export const getValidValues = function(type) {
       Number.MIN_SAFE_INTEGER - 1, // int, unsafe
       Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
+      Number.MAX_SAFE_INTEGER + 1, // int, unsafe
     ],
     [types.INT]: [
       -1,
@@ -81,7 +86,7 @@ export const getValidValues = function(type) {
       Number.MIN_SAFE_INTEGER - 1, // int, unsafe
       Number.MIN_SAFE_INTEGER, // largest negative safe int
       Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1 // int, unsafe
+      Number.MAX_SAFE_INTEGER + 1, // int, unsafe
     ],
     [types.SAFE_INT]: [
       -1,
@@ -89,7 +94,7 @@ export const getValidValues = function(type) {
       0,
       1,
       Number.MIN_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER
+      Number.MAX_SAFE_INTEGER,
     ],
     [types.FLOAT]: [
       -1.1,
@@ -97,32 +102,60 @@ export const getValidValues = function(type) {
       0,
       1.1,
       Number.EPSILON,
-      Number.MIN_VALUE // float, number closest to zero
+      Number.MIN_VALUE, // float, number closest to zero
     ],
 
     //
     // non-primitives
     //
 
-    [types.ARRAY]: [[], [1], [false], [{}], ['foo'], [function() {}]],
-    [types.MAP]: [new Map(), new Map([[1, 'one'], [2, 'two']])],
-    [types.WEAK_MAP]: (function() {
-      const pairs = [[{}, 'one'], [{}, 'two']]; // hold refs so objects don't get GC'ed during tests
+    [types.ARRAY]: [[], [1], [false], [{}], ['foo'], [function () {}]],
+    [types.MAP]: [
+      new Map(),
+      new Map([
+        [1, 'one'],
+        [2, 'two'],
+      ]),
+    ],
+    [types.WEAK_MAP]: (function () {
+      const pairs = [
+        [{}, 'one'],
+        [{}, 'two'],
+      ]; // hold refs so objects don't get GC'ed during tests
       return [new WeakMap(), new WeakMap(pairs)]; // keys must be objects
-    }()),
-    [types.SET]: [new Set(), new Set([undefined, null, 1, false, 'foo', {}, [],
-      function() {}, /regex/])],
-    [types.WEAK_SET]: (function() {
+    })(),
+    [types.SET]: [
+      new Set(),
+      new Set([
+        undefined,
+        null,
+        1,
+        false,
+        'foo',
+        {},
+        [],
+        function () {},
+        /regex/,
+      ]),
+    ],
+    [types.WEAK_SET]: (function () {
       // NOTE: weak sets can only contain objects
-      const values = [{}, [], function() {}, /regex/]; // hold refs so objects don't get GC'ed during tests
+      const values = [{}, [], function () {}, /regex/]; // hold refs so objects don't get GC'ed during tests
       return [new WeakSet(), new WeakSet(values)];
-    }()),
+    })(),
     [types.REGEXP]: [/regexp/, new RegExp('regexp')],
     [types.DATE]: [new Date()],
-    [types.ERROR]: [new Error(), new TypeError(), new URIError(), new ReferenceError(),
-      new RangeError(), new EvalError(), new SyntaxError()],
-    [types.PROMISE]: [new Promise(function() {})],
-    [types.FUNCTION]: [function() {}, new Function('a', 'b', 'return a + b;')], // eslint-disable-line no-new-func
+    [types.ERROR]: [
+      new Error(),
+      new TypeError(),
+      new URIError(),
+      new ReferenceError(),
+      new RangeError(),
+      new EvalError(),
+      new SyntaxError(),
+    ],
+    [types.PROMISE]: [new Promise(function () {})],
+    [types.FUNCTION]: [function () {}, new Function('a', 'b', 'return a + b;')], // eslint-disable-line no-new-func
 
     // while the JS type is objects, it's not an object type in this library
     [types.HASH_MAP]: [new Object(), {}, new (class {})()],
@@ -139,22 +172,11 @@ export const getValidValues = function(type) {
       new Object(),
       Object.create(null),
       {},
-      new (class {})()
+      new (class {})(),
     ],
-    [types.OBJECT]: [
-      new Object(),
-      Object.create(null),
-      {},
-      new (class {})()
-    ],
-    [types.PLAIN_OBJECT]: [
-      new Object(),
-      Object.create(null),
-      {}
-    ],
-    [types.CLASS_OBJECT]: [
-      new (class {})()
-    ]
+    [types.OBJECT]: [new Object(), Object.create(null), {}, new (class {})()],
+    [types.PLAIN_OBJECT]: [new Object(), Object.create(null), {}],
+    [types.CLASS_OBJECT]: [new (class {})()],
   };
 
   return type ? validValues[type] : validValues;
@@ -164,11 +186,11 @@ export const getValidValues = function(type) {
  * Get all values for all types in one single list.
  * @returns {Array} All types in a single, flat list.
  */
-export const getAllValues = function() {
+export const getAllValues = function () {
   const validValues = getValidValues();
   const values = [];
 
-  _.forEach(validValues, function(typeValues) {
+  _.forEach(validValues, function (typeValues) {
     values.concat(typeValues);
   });
 
@@ -179,7 +201,7 @@ export const getAllValues = function() {
  * Get valid JSON values.
  * @returns {Array} Valid JSON values for testing.
  */
-export const getJsonValues = function() {
+export const getJsonValues = function () {
   return [
     null,
     'string',
@@ -190,7 +212,7 @@ export const getJsonValues = function() {
     [],
     {},
     Object.create(null),
-    new Object()
+    new Object(),
   ];
 };
 
@@ -198,7 +220,7 @@ export const getJsonValues = function() {
  * Get invalid JSON values.
  * @returns {Array} Invalid JSON values for testing.
  */
-export const getInvalidJsonValues = function() {
+export const getInvalidJsonValues = function () {
   const validTypeValues = getValidValues();
 
   let invalidValues = [
@@ -212,20 +234,21 @@ export const getInvalidJsonValues = function() {
     new Boolean(true),
     new Boolean(false),
     new Number(1),
-    new (class {})()
+    new (class {})(),
   ];
 
   invalidValues = invalidValues.concat(
-      validTypeValues[types.SYMBOL],
-      validTypeValues[types.MAP],
-      validTypeValues[types.WEAK_MAP],
-      validTypeValues[types.SET],
-      validTypeValues[types.WEAK_SET],
-      validTypeValues[types.DATE],
-      validTypeValues[types.FUNCTION],
-      validTypeValues[types.REGEXP],
-      validTypeValues[types.ERROR],
-      validTypeValues[types.PROMISE]);
+    validTypeValues[types.SYMBOL],
+    validTypeValues[types.MAP],
+    validTypeValues[types.WEAK_MAP],
+    validTypeValues[types.SET],
+    validTypeValues[types.WEAK_SET],
+    validTypeValues[types.DATE],
+    validTypeValues[types.FUNCTION],
+    validTypeValues[types.REGEXP],
+    validTypeValues[types.ERROR],
+    validTypeValues[types.PROMISE]
+  );
 
   return invalidValues;
 };
@@ -234,7 +257,7 @@ export const getInvalidJsonValues = function() {
  * Get all JavaScript falsy values.
  * @returns {Array} Falsy values.
  */
-export const getFalsyValues = function() {
+export const getFalsyValues = function () {
   return [undefined, null, false, 0, '', NaN];
 };
 
@@ -247,7 +270,7 @@ export const getFalsyValues = function() {
  * @returns {Array} Restricted values.
  * @throws {Error} If the qualifier is unknown/invalid.
  */
-export const getRestrictedValues = function(q = qualifiers.REQUIRED) {
+export const getRestrictedValues = function (q = qualifiers.REQUIRED) {
   const values = getFalsyValues(); // for now, restricted values are same as falsy values
 
   if (q === qualifiers.REQUIRED) {
@@ -280,7 +303,7 @@ export const getRestrictedValues = function(q = qualifiers.REQUIRED) {
  * @returns {Array} Permitted values.
  * @throws {Error} If the qualifier is unknown/invalid.
  */
-export const getPermittedValues = function(q = qualifiers.REQUIRED) {
+export const getPermittedValues = function (q = qualifiers.REQUIRED) {
   if (q === qualifiers.REQUIRED) {
     return []; // all restricted
   }
@@ -307,8 +330,8 @@ export const getPermittedValues = function(q = qualifiers.REQUIRED) {
  * @param {(boolean|rtvref.RtvSuccess)} result Test result.
  * @returns {boolean} True if the result is a pass; false otherwise.
  */
-export const passed = function(result) {
-  return (result === true || result instanceof RtvSuccess);
+export const passed = function (result) {
+  return result === true || result instanceof RtvSuccess;
 };
 
 /**
@@ -316,8 +339,8 @@ export const passed = function(result) {
  * @param {(boolean|rtvref.RtvSuccess)} result Test result.
  * @returns {boolean} True if the result is a failure; false otherwise.
  */
-export const failed = function(result) {
-  return (result === false || result instanceof RtvError);
+export const failed = function (result) {
+  return result === false || result instanceof RtvError;
 };
 
 /**
@@ -338,17 +361,19 @@ export const failed = function(result) {
  *  - {Array.<string>} passes Empty array if all values failed validation (bad).
  *    Otherwise, messages indicating which values passed (good).
  */
-export const testValues = function(type, valFn, values, ...rest) {
+export const testValues = function (type, valFn, values, ...rest) {
   if (!values) {
     values = getValidValues(types.verify(type)); // get valid values for the type
     if (values.length === 0) {
-      throw new Error(`Missing test values for type="${type}", values=${util.print(values)}`);
+      throw new Error(
+        `Missing test values for type="${type}", values=${util.print(values)}`
+      );
     }
   }
 
   const passes = [];
   const failures = [];
-  _.forEach(values, function(v, i) {
+  _.forEach(values, function (v, i) {
     const result = valFn(v, ...rest);
     if (passed(result)) {
       passes.push(`${type}[${i}] passed, v=${util.print(v)}`);
@@ -359,7 +384,7 @@ export const testValues = function(type, valFn, values, ...rest) {
 
   return {
     passes,
-    failures
+    failures,
   };
 };
 
@@ -375,28 +400,38 @@ export const testValues = function(type, valFn, values, ...rest) {
  *  Otherwise, messages indicating which other values passed (bad). The opposite
  *  is true if `treatAsValid` is truthy.
  */
-export const testOtherValues = function(type, valFn, treatAsValid) {
+export const testOtherValues = function (type, valFn, treatAsValid) {
   const excludedTypes = _.isArray(type) ? type : [type];
   const validValues = getValidValues();
 
-  excludedTypes.forEach(function(excludedType) {
+  excludedTypes.forEach(function (excludedType) {
     types.verify(excludedType);
 
-    if (excludedType !== types.ANY && excludedType !== types.NULL &&
-        (!validValues.hasOwnProperty(excludedType) || validValues[excludedType].length === 0)) {
-      throw new Error(`Missing valid test values for excludedType="${excludedType}"`);
+    if (
+      excludedType !== types.ANY &&
+      excludedType !== types.NULL &&
+      (!validValues.hasOwnProperty(excludedType) ||
+        validValues[excludedType].length === 0)
+    ) {
+      throw new Error(
+        `Missing valid test values for excludedType="${excludedType}"`
+      );
     }
 
     delete validValues[excludedType]; // keep other (invalid) values
   });
 
   const violations = [];
-  _.forEach(validValues, function(otherValues, otherType) {
-    _.forEach(otherValues, function(v, i) {
+  _.forEach(validValues, function (otherValues, otherType) {
+    _.forEach(otherValues, function (v, i) {
       const result = valFn(v);
-      if ((passed(result) && !treatAsValid) || (failed(result) && treatAsValid)) {
+      if (
+        (passed(result) && !treatAsValid) ||
+        (failed(result) && treatAsValid)
+      ) {
         violations.push(
-            `${type}: ${otherType}[${i}] passed, v=${util.print(v)}`);
+          `${type}: ${otherType}[${i}] passed, v=${util.print(v)}`
+        );
       }
     });
   });
@@ -411,14 +446,14 @@ export const testOtherValues = function(type, valFn, treatAsValid) {
  *  the result's `failures` list to be empty, and the `passes` list to have a
  *  length equal to `values.length`.
  *
-* @param {string} type The type being tested. Not validated as a type if
+ * @param {string} type The type being tested. Not validated as a type if
  *  `values` is specified.
  * @param {function} valFn The type's validation function.
  * @param {Array} [values] Optional override list of values to test.
  * @param {*} [rest] Optional parameters to pass to the validation function.
  * @returns {Object} The results object returned by `testValues()`.
  */
-export const expectAllToPass = function(type, valFn, values, ...rest) {
+export const expectAllToPass = function (type, valFn, values, ...rest) {
   const results = testValues(type, valFn, values, ...rest);
 
   expect(results.passes.length).to.equal(values.length);
@@ -426,7 +461,10 @@ export const expectAllToPass = function(type, valFn, values, ...rest) {
   // print these BEFORE we fail the next expectation otherwise this code wouldn't
   //  get executed
   if (results.failures.length > 0) {
-    console.error('Failures that should have PASSED:\n%s', results.passes.join('\n'));
+    console.error(
+      'Failures that should have PASSED:\n%s',
+      results.passes.join('\n')
+    );
   }
 
   expect(results.failures.length).to.equal(0);
@@ -441,20 +479,23 @@ export const expectAllToPass = function(type, valFn, values, ...rest) {
  *  the result's `passes` list to be empty, and the `failures` list to have a
  *  length equal to `values.length`.
  *
-* @param {string} type The type being tested. Not validated as a type if
+ * @param {string} type The type being tested. Not validated as a type if
  *  `values` is specified.
  * @param {function} valFn The type's validation function.
  * @param {Array} [values] Optional override list of values to test.
  * @param {*} [rest] Optional parameters to pass to the validation function.
  * @returns {Object} The results object returned by `testValues()`.
  */
-export const expectAllToFail = function(type, valFn, values, ...rest) {
+export const expectAllToFail = function (type, valFn, values, ...rest) {
   const results = testValues(type, valFn, values, ...rest);
 
   // print these BEFORE we fail the next expectation otherwise this code wouldn't
   //  get executed
   if (results.passes.length > 0) {
-    console.error('Passes that should have FAILED:\n%s', results.passes.join('\n'));
+    console.error(
+      'Passes that should have FAILED:\n%s',
+      results.passes.join('\n')
+    );
   }
 
   expect(results.passes.length).to.equal(0);
@@ -475,7 +516,12 @@ export const expectAllToFail = function(type, valFn, values, ...rest) {
  *  will fail with an exception before the result is returned, if the result
  *  wasn't as expected).
  */
-export const expectValidatorSuccess = function(validator, value, qualifier, args) {
+export const expectValidatorSuccess = function (
+  validator,
+  value,
+  qualifier,
+  args
+) {
   const result = validator.default(value, qualifier, args);
 
   expect(result).to.be.an.instanceof(RtvSuccess);
@@ -501,7 +547,13 @@ export const expectValidatorSuccess = function(validator, value, qualifier, args
  *  will fail with an exception before the result is returned, if the result
  *  wasn't as expected).
  */
-export const expectValidatorError = function(validator, value, qualifier, args, expectations = {}) {
+export const expectValidatorError = function (
+  validator,
+  value,
+  qualifier,
+  args,
+  expectations = {}
+) {
   const result = validator.default(value, qualifier, args);
 
   expect(result).to.be.an.instanceof(RtvError);
@@ -536,8 +588,11 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
     if (expectations.hasOwnProperty('mismatch')) {
       expect(result.mismatch).to.eql(expectations.mismatch);
     } else {
-      expect(result.mismatch).to.eql(
-          [qualifier || DEFAULT_QUALIFIER, validator.type, args]);
+      expect(result.mismatch).to.eql([
+        qualifier || DEFAULT_QUALIFIER,
+        validator.type,
+        args,
+      ]);
     }
   } else {
     if (expectations.hasOwnProperty('typeset')) {
@@ -553,8 +608,10 @@ export const expectValidatorError = function(validator, value, qualifier, args, 
     if (expectations.hasOwnProperty('mismatch')) {
       expect(result.mismatch).to.eql(expectations.mismatch);
     } else {
-      expect(result.mismatch).to.eql(
-          [qualifier || DEFAULT_QUALIFIER, validator.type]);
+      expect(result.mismatch).to.eql([
+        qualifier || DEFAULT_QUALIFIER,
+        validator.type,
+      ]);
     }
   }
 

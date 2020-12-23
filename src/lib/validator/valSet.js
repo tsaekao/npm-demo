@@ -1,21 +1,21 @@
 ////// valSet validator
 
-import {type, default as isSet} from '../validation/isSet';
+import { type, default as isSet } from '../validation/isSet';
 
 import isFinite from '../validation/isFinite';
 import isTypeset from '../validation/isTypeset';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
-import {print} from '../util';
+import { print } from '../util';
 
 /**
  * Validator Module: valSet
  * @typedef {Module} rtvref.validator.valSet
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -25,20 +25,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valSet._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.SET SET}
  * @const {string} rtvref.validator.valSet.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valSet.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -61,10 +61,11 @@ export default function valSet(v, q = REQUIRED, args, context) {
   let valid = isSet(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
-  if (valid && args) { // then check args
+  if (valid && args) {
+    // then check args
     // start with the easiest/most efficient test: length
     if (valid && isFinite(args.length) && args.length >= 0) {
-      valid = (v.size === args.length);
+      valid = v.size === args.length;
     }
 
     // remaining args, if specified, require iterating potentially the entire set
@@ -75,24 +76,30 @@ export default function valSet(v, q = REQUIRED, args, context) {
       if (tsValues) {
         const it = v.values(); // iterator of straight values
 
-        for (let elem of it) {
+        for (const elem of it) {
           // check VALUE against typeset
           result = impl.check(elem, tsValues, {
             originalValue: v, // let this get overwritten if `context` is specified
             ...context,
             parent: v,
-            parentKey: undefined // Sets don't have keys
+            parentKey: undefined, // Sets don't have keys
           });
           valid = result.valid;
 
           if (!result.valid) {
             // create a new error from the original, but with the value prepended to
             //  the path (since sets don't have indexes; they just have unique values)
-            result = new RtvError(v, impl.toTypeset(type, q, args),
-                [print(elem)].concat(result.path), result.mismatch, result.rootCause);
+            result = new RtvError(
+              v,
+              impl.toTypeset(type, q, args),
+              [print(elem)].concat(result.path),
+              result.mismatch,
+              result.rootCause
+            );
           }
 
-          if (!valid) { // break on first invalid value
+          if (!valid) {
+            // break on first invalid value
             break;
           }
         }
@@ -104,8 +111,12 @@ export default function valSet(v, q = REQUIRED, args, context) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl.toTypeset(type, q, args), [],
-          impl.toTypeset(type, q, args, true));
+      result = new RtvError(
+        v,
+        impl.toTypeset(type, q, args),
+        [],
+        impl.toTypeset(type, q, args, true)
+      );
     }
   }
 

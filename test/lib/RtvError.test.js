@@ -1,11 +1,11 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import types from '../../src/lib/types';
 import qualifiers from '../../src/lib/qualifiers';
 import RtvError from '../../src/lib/RtvError';
 
-describe('module: lib/RtvError', function() {
-  it('should extend Error', function() {
+describe('module: lib/RtvError', function () {
+  it('should extend Error', function () {
     const value = null;
     const typeset = [types.STRING];
     const path = ['the', 'path'];
@@ -15,7 +15,7 @@ describe('module: lib/RtvError', function() {
     expect(err.name).to.equal('RtvError');
   });
 
-  it('should normalize falsy failures to undefined', function() {
+  it('should normalize falsy failures to undefined', function () {
     const value = null;
     const typeset = [types.STRING];
     const path = ['the', 'path'];
@@ -34,148 +34,187 @@ describe('module: lib/RtvError', function() {
     expect(err.rootCause).to.equal(undefined);
   });
 
-  it('should accept any value', function() {
-    const otherParams = [types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING]];
+  it('should accept any value', function () {
+    const otherParams = [
+      types.STRING,
+      ['path'],
+      [qualifiers.REQUIRED, types.STRING],
+    ];
 
-    expect(function() {
+    expect(function () {
       new RtvError(undefined, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError('', ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(true, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(function() {}, ...otherParams);
+    expect(function () {
+      new RtvError(function () {}, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError({}, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError([], ...otherParams);
     }).not.to.throw();
   });
 
-  it('should require a valid typeset', function() {
+  it('should require a valid typeset', function () {
     const otherParams = [['path'], [qualifiers.REQUIRED, types.STRING]];
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, [types.STRING], ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(null, function() {}, ...otherParams);
+    expect(function () {
+      new RtvError(null, function () {}, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(null, {key: types.STRING}, ...otherParams);
+    expect(function () {
+      new RtvError(null, { key: types.STRING }, ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, {}, ...otherParams); // empty shapes are OK
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, null, ...otherParams);
     }).to.throw(/invalid typeset/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, '', ...otherParams);
     }).to.throw(/invalid typeset/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, [], ...otherParams);
     }).to.throw(/invalid typeset/i);
   });
 
-  it('should require a valid path', function() {
+  it('should require a valid path', function () {
     const otherParams = [[qualifiers.REQUIRED, types.STRING]];
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, [], ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, ['path'], ...otherParams);
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, '', ...otherParams);
     }).to.throw(/invalid path/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, true, ...otherParams);
     }).to.throw(/invalid path/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, {}, ...otherParams);
     }).to.throw(/invalid path/i);
   });
 
-  it('should require a valid mismatch (fully-qualified typeset)', function() {
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING]);
+  it('should require a valid mismatch (fully-qualified typeset)', function () {
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING]
+      );
     }).not.to.throw();
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be FQ'ed
     }).to.throw(/invalid mismatch/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, ['path'], types.STRING); // must be FQ'ed
     }).to.throw(/invalid mismatch/i);
 
-    expect(function() {
+    expect(function () {
       new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be FQ'ed
     }).to.throw(/invalid mismatch/i);
   });
 
-  it('should require a valid rootCause if specified', function() {
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING], new Error());
+  it('should require a valid rootCause if specified', function () {
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING],
+        new Error()
+      );
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING],
-          new TypeError());
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING],
+        new TypeError()
+      );
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING],
-          new RangeError());
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING],
+        new RangeError()
+      );
     }).not.to.throw();
 
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING], 'Error');
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING],
+        'Error'
+      );
     }).to.throw(/Invalid rootCause/);
 
-    expect(function() {
-      new RtvError(null, types.STRING, ['path'], [qualifiers.REQUIRED, types.STRING], null); // falsy ignored
+    expect(function () {
+      new RtvError(
+        null,
+        types.STRING,
+        ['path'],
+        [qualifiers.REQUIRED, types.STRING],
+        null
+      ); // falsy ignored
     }).not.to.throw();
   });
 
-  it('should have a message including the value, path, mismatch', function() {
+  it('should have a message including the value, path, mismatch', function () {
     const value = null;
     const typeset = [types.STRING];
     const path = ['the', 'path'];
     const mismatch = [qualifiers.REQUIRED, types.STRING];
     const err = new RtvError(value, typeset, path, mismatch);
     expect(err.message).to.contain(` path="/${path.join('/')}"`);
-    expect(err.message).to.contain(` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`);
+    expect(err.message).to.contain(
+      ` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`
+    );
     expect(err.message).not.to.contain(' rootCause='); // rootCause not provided, so no rootCause message
     expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
@@ -184,7 +223,7 @@ describe('module: lib/RtvError', function() {
   });
 
   // eslint-disable-next-line max-len
-  it('should have a message including the value, path, mismatch, and rootCause message', function() {
+  it('should have a message including the value, path, mismatch, and rootCause message', function () {
     const value = null;
     const typeset = [types.STRING];
     const path = ['the', 'path'];
@@ -192,7 +231,9 @@ describe('module: lib/RtvError', function() {
     const rootCause = new Error('rootCause');
     const err = new RtvError(value, typeset, path, mismatch, rootCause);
     expect(err.message).to.contain(` path="/${path.join('/')}"`);
-    expect(err.message).to.contain(` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`);
+    expect(err.message).to.contain(
+      ` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`
+    );
     expect(err.message).to.contain(` rootCause="${rootCause.message}"`);
     expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
@@ -200,7 +241,7 @@ describe('module: lib/RtvError', function() {
     expect(err.message).not.to.contain(' value=');
   });
 
-  it('should have a message including path="/" with path array is empty', function() {
+  it('should have a message including path="/" with path array is empty', function () {
     const value = null;
     const typeset = [types.STRING];
     const path = [];
@@ -210,8 +251,8 @@ describe('module: lib/RtvError', function() {
   });
 
   // eslint-disable-next-line max-len
-  it('should provide readonly valid, value, typeset, path, mismatch, rootCause properties', function() {
-    const value = {the: {path: 123}};
+  it('should provide readonly valid, value, typeset, path, mismatch, rootCause properties', function () {
+    const value = { the: { path: 123 } };
     const typeset = [types.STRING];
     const path = ['the', 'path'];
     const mismatch = [qualifiers.REQUIRED, types.STRING];
@@ -225,22 +266,22 @@ describe('module: lib/RtvError', function() {
     expect(err.mismatch).to.equal(mismatch);
     expect(err.rootCause).to.equal(rootCause);
 
-    expect(function() {
+    expect(function () {
       err.valid = true;
     }).to.throw(/Cannot assign to read only property 'valid'/);
-    expect(function() {
+    expect(function () {
       err.value = true;
     }).to.throw(/Cannot set property value of .+ which has only a getter/);
-    expect(function() {
+    expect(function () {
       err.typeset = {};
     }).to.throw(/Cannot set property typeset of .+ which has only a getter/);
-    expect(function() {
+    expect(function () {
       err.path = [];
     }).to.throw(/Cannot set property path of .+ which has only a getter/);
-    expect(function() {
+    expect(function () {
       err.mismatch = [];
     }).to.throw(/Cannot set property mismatch of .+ which has only a getter/);
-    expect(function() {
+    expect(function () {
       err.rootCause = new Error();
     }).to.throw(/Cannot set property rootCause of .+ which has only a getter/);
 
@@ -253,33 +294,46 @@ describe('module: lib/RtvError', function() {
     expect(err.rootCause).to.equal(rootCause);
   });
 
-  it('should have custom string serialization', function() {
+  it('should have custom string serialization', function () {
     const value = null;
     const path = ['the', 'path'];
     const rootCause = new Error('custom validator failed');
 
-    let err = new RtvError(value, types.STRING, path, [qualifiers.REQUIRED, types.STRING]);
+    let err = new RtvError(value, types.STRING, path, [
+      qualifiers.REQUIRED,
+      types.STRING,
+    ]);
     let str = err + '';
 
     expect(str.match(/^Error: /)).to.equal(null); // not the default serialization
     expect(str.match(/^{.+}$/)).not.to.equal(null); // wrapped in brackets
     expect(str).to.contain('rtvref.RtvError');
     expect(str).to.contain(` path="/${path.join('/')}"`);
-    expect(str).to.contain(` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`);
+    expect(str).to.contain(
+      ` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`
+    );
     expect(str).to.contain(' rootCause=<none>');
     expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
     //  contains sensitive information like passwords
     expect(str).not.to.contain(' value=');
 
-    err = new RtvError(value, types.STRING, path, [qualifiers.REQUIRED, types.STRING], rootCause);
+    err = new RtvError(
+      value,
+      types.STRING,
+      path,
+      [qualifiers.REQUIRED, types.STRING],
+      rootCause
+    );
     str = err + '';
 
     expect(str.match(/^Error: /)).to.equal(null); // not the default serialization
     expect(str.match(/^{.+}$/)).not.to.equal(null); // wrapped in brackets
     expect(str).to.contain('rtvref.RtvError');
     expect(str).to.contain(` path="/${path.join('/')}"`);
-    expect(str).to.contain(` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`);
+    expect(str).to.contain(
+      ` mismatch=["${qualifiers.REQUIRED}","${types.STRING}"]`
+    );
     expect(str).to.contain(` rootCause="${rootCause.message}"`);
     expect(err.message).not.to.contain(' typeset='); // typeset not provided, so no typeset message
     // for security reasons, should NOT contain the value in case it
@@ -288,8 +342,8 @@ describe('module: lib/RtvError', function() {
   });
 
   // TODO: DEPRECATED@2.2.0, remove in 3.0.0
-  describe('#cause (DEPRECATED@2.2.0)', function() {
-    it('should return the #mismatch', function() {
+  describe('#cause (DEPRECATED@2.2.0)', function () {
+    it('should return the #mismatch', function () {
       const mismatch = [qualifiers.REQUIRED, types.STRING];
       const err = new RtvError(1, types.STRING, [], mismatch);
 
@@ -299,10 +353,16 @@ describe('module: lib/RtvError', function() {
   });
 
   // TODO: DEPRECATED@2.2.0, remove in 3.0.0
-  describe('#failure (DEPRECATED@2.2.0)', function() {
-    it('should return the #rootCause', function() {
+  describe('#failure (DEPRECATED@2.2.0)', function () {
+    it('should return the #rootCause', function () {
       const rootCause = new Error('rootCause');
-      const err = new RtvError(1, types.STRING, [], [qualifiers.REQUIRED, types.STRING], rootCause);
+      const err = new RtvError(
+        1,
+        types.STRING,
+        [],
+        [qualifiers.REQUIRED, types.STRING],
+        rootCause
+      );
 
       expect(err.rootCause).to.equal(rootCause);
       expect(err.failure).to.equal(rootCause);

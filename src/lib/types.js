@@ -625,11 +625,11 @@ import Enumeration from './Enumeration';
 //  it describes a shape (either directly as its args object, e.g. PLAIN_OBJECT,
 //  or indirectly as a property inside it's args object, e.g. CLASS_OBJECT).
 // @returns {{value: boolean, hasArgs: boolean, isObject: boolean}} Type definition.
-const def = function(value, hasArgs, isObject) {
+const def = function (value, hasArgs, isObject) {
   return {
     value,
     hasArgs: !!hasArgs,
-    isObject: !!isObject
+    isObject: !!isObject,
   };
 };
 
@@ -1283,7 +1283,7 @@ const defs = {
    * @const {string}
    * @see {@link rtvref.qualifiers}
    */
-  JSON: def('JSON')
+  JSON: def('JSON'),
 };
 
 //
@@ -1308,15 +1308,18 @@ export const DEFAULT_OBJECT_TYPE = defs.OBJECT.value;
  * @name rtvref.types.objTypes
  * @type {rtvref.Enumeration}
  */
-export const objTypes = new Enumeration(function() {
-  const types = {};
-  Object.keys(defs).forEach(function(name) {
-    if (defs[name].isObject) {
-      types[name] = defs[name].value;
-    }
-  });
-  return types;
-}(), 'objTypes');
+export const objTypes = new Enumeration(
+  (function () {
+    const types = {};
+    Object.keys(defs).forEach(function (name) {
+      if (defs[name].isObject) {
+        types[name] = defs[name].value;
+      }
+    });
+    return types;
+  })(),
+  'objTypes'
+);
 
 /**
  * Enumeration (`string -> string`) of types that accept arguments:
@@ -1340,15 +1343,18 @@ export const objTypes = new Enumeration(function() {
  * @name rtvref.types.argTypes
  * @type {rtvref.Enumeration}
  */
-export const argTypes = new Enumeration(function() {
-  const types = {};
-  Object.keys(defs).forEach(function(name) {
-    if (defs[name].hasArgs) {
-      types[name] = defs[name].value;
-    }
-  });
-  return types;
-}(), 'argTypes');
+export const argTypes = new Enumeration(
+  (function () {
+    const types = {};
+    Object.keys(defs).forEach(function (name) {
+      if (defs[name].hasArgs) {
+        types[name] = defs[name].value;
+      }
+    });
+    return types;
+  })(),
+  'argTypes'
+);
 
 /**
  * Enumeration (`string -> string`) of all types:
@@ -1383,10 +1389,13 @@ export const argTypes = new Enumeration(function() {
  * @name rtvref.types.types
  * @type {rtvref.Enumeration}
  */
-export default new Enumeration(function() {
-  const types = {};
-  Object.keys(defs).forEach(function(name) {
-    types[name] = defs[name].value;
-  });
-  return types;
-}(), 'types');
+export default new Enumeration(
+  (function () {
+    const types = {};
+    Object.keys(defs).forEach(function (name) {
+      types[name] = defs[name].value;
+    });
+    return types;
+  })(),
+  'types'
+);

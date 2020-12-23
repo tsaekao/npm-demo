@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
@@ -7,17 +7,17 @@ import * as val from '../../../src/lib/validation/isClassObject';
 
 /* eslint-disable no-new-wrappers */
 
-describe('module: lib/validation/isClassObject', function() {
-  it('#type', function() {
+describe('module: lib/validation/isClassObject', function () {
+  it('#type', function () {
     expect(val.type).to.equal(types.CLASS_OBJECT);
   });
 
-  describe('#default', function() {
-    it('valid values', function() {
+  describe('#default', function () {
+    it('valid values', function () {
       expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
     });
 
-    it('other types/values', function() {
+    it('other types/values', function () {
       const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
       const overlaps = [
@@ -25,14 +25,14 @@ describe('module: lib/validation/isClassObject', function() {
         types.OBJECT,
         types.PLAIN_OBJECT,
         types.CLASS_OBJECT,
-        types.HASH_MAP
+        types.HASH_MAP,
       ];
 
       // remove overlaps
       _.pullAll(validTypes, overlaps);
 
       let invalidValues = [];
-      _.forEach(validTypes, function(type) {
+      _.forEach(validTypes, function (type) {
         invalidValues = invalidValues.concat(validValues[type]);
       });
 
@@ -44,11 +44,13 @@ describe('module: lib/validation/isClassObject', function() {
         new Number(1),
         new Object(),
         Object.create(null),
-        {}
+        {},
       ]);
 
       // nothing should pass
-      expect(vtu.testValues(val.type, val.default, invalidValues).passes).to.eql([]);
+      expect(
+        vtu.testValues(val.type, val.default, invalidValues).passes
+      ).to.eql([]);
     });
   });
 });

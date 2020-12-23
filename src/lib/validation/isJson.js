@@ -28,10 +28,12 @@ export const type = types.JSON;
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
 export default function isJson(v) {
-  return isNull(v) ||
-      isString(v, {allowEmpty: true}) ||
-      isBoolean(v) ||
-      isFinite(v) ||
-      isPlainObject(v) ||
-      isArray(v);
+  return (
+    isNull(v) ||
+    isString(v, { allowEmpty: true }) ||
+    isBoolean(v) ||
+    isFinite(v) ||
+    isPlainObject(v) ||
+    isArray(v)
+  );
 }

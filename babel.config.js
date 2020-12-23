@@ -9,13 +9,14 @@ module.exports = {
 
     test: {
       presets: [
-        ['@babel/preset-env', {
-          modules: 'commonjs'
-        }]
+        [
+          '@babel/preset-env',
+          {
+            modules: 'commonjs',
+          },
+        ],
       ],
-      plugins: [
-        'istanbul'
-      ]
-    }
-  }
+      plugins: ['istanbul'],
+    },
+  },
 };

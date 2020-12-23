@@ -1,10 +1,10 @@
 ////// valSafeInt validator
 
-import {type, default as isSafeInt} from '../validation/isSafeInt';
+import { type, default as isSafeInt } from '../validation/isSafeInt';
 
 import isArray from '../validation/isArray';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -13,7 +13,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valSafeInt
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -23,20 +23,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valSafeInt._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.SAFE_INT SAFE_INT}
  * @const {string} rtvref.validator.valSafeInt.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valSafeInt.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -62,11 +62,15 @@ export default function valSafeInt(v, q = REQUIRED, args) {
 
   let valid = isSafeInt(v);
 
-  if (valid && args) { // then check args against normal type range
-    if (isSafeInt(args.oneOf) || (isArray(args.oneOf) && args.oneOf.length > 0)) {
+  if (valid && args) {
+    // then check args against normal type range
+    if (
+      isSafeInt(args.oneOf) ||
+      (isArray(args.oneOf) && args.oneOf.length > 0)
+    ) {
       const possibilities = [].concat(args.oneOf);
       // flip the result so that valid is set to false if no values match
-      valid = !possibilities.every(function(possibility) {
+      valid = !possibilities.every(function (possibility) {
         // return false on first match to break the loop
         return !(isSafeInt(possibility) && v === possibility);
       });
@@ -74,12 +78,12 @@ export default function valSafeInt(v, q = REQUIRED, args) {
       let min;
       if (valid && isSafeInt(args.min)) {
         min = args.min;
-        valid = (v >= min);
+        valid = v >= min;
       }
 
       if (valid && isSafeInt(args.max)) {
         if (min === undefined || args.max >= min) {
-          valid = (v <= args.max);
+          valid = v <= args.max;
         } // else, ignore
       }
     }
@@ -89,6 +93,10 @@ export default function valSafeInt(v, q = REQUIRED, args) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q, args), [],
-      impl.toTypeset(type, q, args, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q, args),
+    [],
+    impl.toTypeset(type, q, args, true)
+  );
 }

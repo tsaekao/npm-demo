@@ -1,6 +1,6 @@
 ////// isRegExp validation
 
-import {default as _isRegExp} from 'lodash/isRegExp';
+import { default as _isRegExp } from 'lodash/isRegExp';
 
 import types from '../types';
 

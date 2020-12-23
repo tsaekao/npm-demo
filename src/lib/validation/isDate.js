@@ -1,6 +1,6 @@
 ////// isDate validation
 
-import {default as _isDate} from 'lodash/isDate';
+import { default as _isDate } from 'lodash/isDate';
 
 import types from '../types';
 

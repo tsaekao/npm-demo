@@ -1,6 +1,6 @@
 ////// isNumber validation
 
-import {default as _isNaN} from 'lodash/isNaN';
+import { default as _isNaN } from 'lodash/isNaN';
 
 import types from '../types';
 
@@ -29,5 +29,5 @@ export const type = types.NUMBER;
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
 export default function isNumber(v) {
-  return (typeof v === 'number' && !_isNaN(v)); // allows +/-Infinity
+  return typeof v === 'number' && !_isNaN(v); // allows +/-Infinity
 }

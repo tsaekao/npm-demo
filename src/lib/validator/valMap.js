@@ -1,23 +1,23 @@
 ////// valMap validator
 
-import {type, default as isMap} from '../validation/isMap';
+import { type, default as isMap } from '../validation/isMap';
 
 import isFinite from '../validation/isFinite';
 import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
 import types from '../types';
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
-import {print} from '../util';
+import { print } from '../util';
 
 /**
  * Validator Module: valMap
  * @typedef {Module} rtvref.validator.valMap
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -27,20 +27,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valMap._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.MAP MAP}
  * @const {string} rtvref.validator.valMap.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valMap.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -49,11 +49,11 @@ export const config = function(settings) {
 // @param {rtvref.types.typeset} ts Typeset to check.
 // @return {boolean} `true` if so; `false` otherwise.
 //
-const isStringTypeset = function(ts) {
+const isStringTypeset = function (ts) {
   const fqts = impl.fullyQualify(ts);
 
   // must be `[qualifier, STRING]`, otherwise no
-  return (fqts.length === 2 && fqts[1] === types.STRING);
+  return fqts.length === 2 && fqts[1] === types.STRING;
 };
 
 /**
@@ -75,10 +75,11 @@ export default function valMap(v, q = REQUIRED, args, context) {
   let valid = isMap(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
-  if (valid && args) { // then check args
+  if (valid && args) {
+    // then check args
     // start with the easiest/most efficient test: length
     if (valid && isFinite(args.length) && args.length >= 0) {
-      valid = (v.size === args.length);
+      valid = v.size === args.length;
     }
 
     // remaining args, if specified, require iterating potentially the entire map
@@ -87,11 +88,15 @@ export default function valMap(v, q = REQUIRED, args, context) {
       const tsKeys = isTypeset(args.keys) ? args.keys : undefined;
       // get the key expression only if the keys are expected to be strings
       const tsKeysIsString = !!(tsKeys && isStringTypeset(tsKeys));
-      const keyExp = (tsKeysIsString && args.keyExp && isString(args.keyExp)) ?
-        args.keyExp : undefined;
+      const keyExp =
+        tsKeysIsString && args.keyExp && isString(args.keyExp)
+          ? args.keyExp
+          : undefined;
       // get the key expression flags only if we have a key expression
-      const keyFlags = (keyExp && args.keyFlags && isString(args.keyFlags)) ?
-        args.keyFlags : undefined;
+      const keyFlags =
+        keyExp && args.keyFlags && isString(args.keyFlags)
+          ? args.keyFlags
+          : undefined;
       // get the typeset for values
       const tsValues = isTypeset(args.values) ? args.values : undefined;
 
@@ -99,7 +104,7 @@ export default function valMap(v, q = REQUIRED, args, context) {
         const reKeys = keyExp ? new RegExp(keyExp, keyFlags) : undefined;
         const it = v.entries(); // iterator
 
-        for (let elem of it) {
+        for (const elem of it) {
           const [key, value] = elem;
 
           if (tsKeys) {
@@ -108,21 +113,30 @@ export default function valMap(v, q = REQUIRED, args, context) {
               originalValue: v, // let this get overwritten if `context` is specified
               ...context,
               parent: v,
-              parentKey: undefined // key is main value being checked in this case
+              parentKey: undefined, // key is main value being checked in this case
             });
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but with the KEY prepended to the path
-              result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`key=${print(key)}`].concat(result.path), result.mismatch, result.rootCause);
+              result = new RtvError(
+                v,
+                impl.toTypeset(type, q, args),
+                [`key=${print(key)}`].concat(result.path),
+                result.mismatch,
+                result.rootCause
+              );
             }
 
             if (valid && tsKeysIsString && reKeys) {
               valid = reKeys.test(key); // check key against regex since it's a string
               if (!valid) {
-                result = new RtvError(v, impl.toTypeset(type, q, args),
-                    [`key=${print(key)}`], impl.toTypeset(type, q, args, true));
+                result = new RtvError(
+                  v,
+                  impl.toTypeset(type, q, args),
+                  [`key=${print(key)}`],
+                  impl.toTypeset(type, q, args, true)
+                );
               }
             }
           }
@@ -133,18 +147,24 @@ export default function valMap(v, q = REQUIRED, args, context) {
               originalValue: v, // let this get overwritten if `context` is specified
               ...context,
               parent: v,
-              parentKey: key
+              parentKey: key,
             });
             valid = result.valid;
 
             if (!result.valid) {
               // create a new error from the original, but still with the KEY added to the path
-              result = new RtvError(v, impl.toTypeset(type, q, args),
-                  [`valueKey=${print(key)}`].concat(result.path), result.mismatch, result.rootCause);
+              result = new RtvError(
+                v,
+                impl.toTypeset(type, q, args),
+                [`valueKey=${print(key)}`].concat(result.path),
+                result.mismatch,
+                result.rootCause
+              );
             }
           }
 
-          if (!valid) { // break on first invalid key or value
+          if (!valid) {
+            // break on first invalid key or value
             break;
           }
         }
@@ -156,8 +176,12 @@ export default function valMap(v, q = REQUIRED, args, context) {
     if (valid) {
       result = new RtvSuccess();
     } else {
-      result = new RtvError(v, impl.toTypeset(type, q, args), [],
-          impl.toTypeset(type, q, args, true));
+      result = new RtvError(
+        v,
+        impl.toTypeset(type, q, args),
+        [],
+        impl.toTypeset(type, q, args, true)
+      );
     }
   }
 

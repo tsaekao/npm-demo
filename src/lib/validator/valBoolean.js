@@ -1,8 +1,8 @@
 ////// valBoolean validator
 
-import {type, default as isBoolean} from '../validation/isBoolean';
+import { type, default as isBoolean } from '../validation/isBoolean';
 
-import {default as qualifiers, valuePermitted} from '../qualifiers';
+import { default as qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
@@ -11,7 +11,7 @@ import RtvError from '../RtvError';
  * @typedef {Module} rtvref.validator.valBoolean
  */
 
-const {REQUIRED} = qualifiers;
+const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}
 
 /**
@@ -21,20 +21,20 @@ let impl; // @type {rtvref.impl}
  * @name rtvref.validator.valBoolean._impl
  * @type {rtvref.impl}
  */
-export {impl as _impl};
+export { impl as _impl };
 
 /**
  * Type: {@link rtvref.types.BOOLEAN BOOLEAN}
  * @const {string} rtvref.validator.valBoolean.type
  */
-export {type};
+export { type };
 
 /**
  * {@link rtvref.validator.validator_config Configuration Function}
  * @function rtvref.validator.valBoolean.config
  * @param {rtvref.validator.validator_config_settings} settings Configuration settings.
  */
-export const config = function(settings) {
+export const config = function (settings) {
   impl = settings.impl;
 };
 
@@ -61,5 +61,10 @@ export default function valBoolean(v, q = REQUIRED) {
     return new RtvSuccess();
   }
 
-  return new RtvError(v, impl.toTypeset(type, q), [], impl.toTypeset(type, q, true));
+  return new RtvError(
+    v,
+    impl.toTypeset(type, q),
+    [],
+    impl.toTypeset(type, q, true)
+  );
 }

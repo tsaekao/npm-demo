@@ -19,23 +19,22 @@
  * @returns {string} Pretty-printed value. It's not perfect and may not catch
  *  all types, but attempts to be good enough.
  */
-export const print = function(printValue, printOptions = {}) {
-  const {
-    isTypeset = false
-  } = printOptions;
+export const print = function (printValue, printOptions = {}) {
+  const { isTypeset = false } = printOptions;
 
   // NOTE: key will be undefined when the replacer is called outside of the
   //  JSON.stringify() call, as well as for the first stringify() call
-  const replacer = function(stringifying, key, value) {
+  const replacer = function (stringifying, key, value) {
     if (value === undefined || value === null) {
-      return stringifying ? value : (value + '');
+      return stringifying ? value : value + '';
     }
 
     if (typeof value === 'string') {
       return stringifying ? value : `"${value}"`;
     }
 
-    if (typeof value === 'number') { // also catches NaN
+    if (typeof value === 'number') {
+      // also catches NaN
       return stringifying ? value : `${value}`;
     }
 

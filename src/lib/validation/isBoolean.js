@@ -26,5 +26,5 @@ export const type = types.BOOLEAN;
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
 export default function isBoolean(v) {
-  return (v === true || v === false);
+  return v === true || v === false;
 }

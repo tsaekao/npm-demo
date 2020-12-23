@@ -20,7 +20,7 @@ run-build-lib:
   script:
     - npm run build:lib
   artifacts:
-    name: "build-lib-${CI_COMMIT_REF_SLUG}"
+    name: 'build-lib-${CI_COMMIT_REF_SLUG}'
     paths:
       - dist/
 
@@ -29,7 +29,7 @@ run-build-internals:
   script:
     - npm run build:internals
   artifacts:
-    name: "build-internals-${CI_COMMIT_REF_SLUG}"
+    name: 'build-internals-${CI_COMMIT_REF_SLUG}'
     paths:
       - dist_tools/
 
@@ -38,6 +38,6 @@ run-tests:
   script:
     - npm run test:ci
   artifacts:
-    name: "coverage-${CI_COMMIT_REF_SLUG}"
+    name: 'coverage-${CI_COMMIT_REF_SLUG}'
     paths:
       - coverage/

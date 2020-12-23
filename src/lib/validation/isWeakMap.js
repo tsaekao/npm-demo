@@ -1,6 +1,6 @@
 ////// isWeakMap validation
 
-import {default as _isWeakMap} from 'lodash/isWeakMap';
+import { default as _isWeakMap } from 'lodash/isWeakMap';
 
 import types from '../types';
 

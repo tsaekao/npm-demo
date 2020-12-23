@@ -23,9 +23,12 @@ export const type = undefined;
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
 export default function isPrimitive(v) {
-  return v === undefined || v === null ||
-      isString(v, {allowEmpty: true}) ||
-      isBoolean(v) ||
-      isNumber(v) ||
-      isSymbol(v);
+  return (
+    v === undefined ||
+    v === null ||
+    isString(v, { allowEmpty: true }) ||
+    isBoolean(v) ||
+    isNumber(v) ||
+    isSymbol(v)
+  );
 }
