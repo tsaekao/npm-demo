@@ -340,32 +340,4 @@ describe('module: lib/RtvError', function () {
     //  contains sensitive information like passwords
     expect(str).not.to.contain(' value=');
   });
-
-  // TODO: DEPRECATED@2.2.0, remove in 3.0.0
-  describe('#cause (DEPRECATED@2.2.0)', function () {
-    it('should return the #mismatch', function () {
-      const mismatch = [qualifiers.REQUIRED, types.STRING];
-      const err = new RtvError(1, types.STRING, [], mismatch);
-
-      expect(err.mismatch).to.equal(mismatch);
-      expect(err.cause).to.equal(mismatch);
-    });
-  });
-
-  // TODO: DEPRECATED@2.2.0, remove in 3.0.0
-  describe('#failure (DEPRECATED@2.2.0)', function () {
-    it('should return the #rootCause', function () {
-      const rootCause = new Error('rootCause');
-      const err = new RtvError(
-        1,
-        types.STRING,
-        [],
-        [qualifiers.REQUIRED, types.STRING],
-        rootCause
-      );
-
-      expect(err.rootCause).to.equal(rootCause);
-      expect(err.failure).to.equal(rootCause);
-    });
-  });
 });

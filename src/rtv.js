@@ -50,31 +50,6 @@ const rtv = {
   /**
    * Enumeration of {@link rtvref.types.types types}.
    *
-   * __DEPRECATED__ since version 2.1.0. Please use `rtv.types.<TYPE>`
-   *  or `rtv.<TYPE>` instead.
-   *
-   * @deprecated
-   * @readonly
-   * @name rtv.t
-   * @type {rtvref.Enumeration}
-   */
-  get t() {
-    /* istanbul ignore next -- test code runs as Prod so skip */
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.warn(
-        'DEPRECATED in 2.1.0: rtv.t has been deprecated and ' +
-          'will be removed in the next major release. Please migrate your code to ' +
-          'use `rtv.types.<TYPE>` or just `rtv.<TYPE>` such as `rtv.STRING`.'
-      );
-    }
-
-    return types;
-  },
-
-  /**
-   * Enumeration of {@link rtvref.types.types types}.
-   *
    * __For convenience, each type is also available directly from this object__,
    *  e.g. `rtv.STRING`, `rtv.FINITE`, etc.
    *
@@ -94,32 +69,6 @@ const rtv = {
   // also spread ALL enumerable properties of the enumeration into here so that
   //  we can just call `rtv.STRING` instead of `rtv.types.STRING`
   ...types,
-
-  /**
-   * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
-   *
-   * __DEPRECATED__ since version 2.1.0. Please use `rtv.qualifiers.<QUALIFIER>`
-   *  or `rtv.<QUALIFIER>` instead.
-   *
-   * @deprecated
-   * @readonly
-   * @name rtv.q
-   * @type {rtvref.Enumeration}
-   */
-  get q() {
-    /* istanbul ignore next -- test code runs as Prod so skip */
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.warn(
-        'DEPRECATED in 2.1.0: rtv.q has been deprecated and ' +
-          'will be removed in the next major release. Please migrate your code to ' +
-          'use `rtv.qualifiers.<QUALIFIER>` or just `rtv.<QUALIFIER>` such as ' +
-          '`rtv.EXPECTED`.'
-      );
-    }
-
-    return qualifiers;
-  },
 
   /**
    * Enumeration of {@link rtvref.qualifiers.qualifiers qualifiers}.
@@ -160,30 +109,6 @@ const rtv = {
    */
   get fullyQualify() {
     return impl.fullyQualify;
-  },
-
-  /**
-   * Shortcut proxy for reading {@link rtv.config.enabled}.
-   *
-   * __DEPRECATED__ since version 2.1.0. Please use `rtv.enabled` instead.
-   *
-   * @deprecated
-   * @readonly
-   * @name rtv.e
-   * @type {boolean}
-   */
-  get e() {
-    /* istanbul ignore next -- test code runs as Prod so skip */
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.warn(
-        'DEPRECATED in 2.1.0: rtv.e has been deprecated and ' +
-          'will be removed in the next major release. Please migrate your code to ' +
-          'use `rtv.enabled`.'
-      );
-    }
-
-    return this.config.enabled;
   },
 
   /**

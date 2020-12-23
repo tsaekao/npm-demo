@@ -18,6 +18,12 @@ Date format is YYYY-MM-DD.
     -   The CJS build depends on `@babel/runtime` and `lodash`, which are now declared as peer dependencies of this package, rather than pre-bundling them and adding unnecessary bloat when the consuming project is already using Babel and/or Lodash.
     -   The new ESM build is available in `./dist/rtv.esm.js` and also requires defining the `process.env.NODE_ENV` global.
     -   NOTE: The UMD builds are still two files, Dev and Prod versions, and bundle _everything_. They are meant for self-contained, direct use in a browser. The package purposely does not reference the UMD build via the `browser` property because Webpack will prioritize that type of bundle by default, and this is not how this package should be consumed by another bundler who is also preparing a package to run in the browser. Doing so would lead to unnecessary duplication of code between Babel Runtime Helpers and Lodash functions, as well as prevent any level of tree shaking.
+-   __REMOVED__ the following 🚫 deprecations:
+    -   `RtvError.cause`, replaced with `RtvError.mismatch`.
+    -   `RtvError.failure`, replaced with `RtvError.rootCause`.
+    -   `rtv.t`, being replaced by `rtv.types`.
+    -   `rtv.q`, being replaced by `rtv.qualifiers`.
+    -   `rtv.e`, being replaced by `rtv.enabled`.
 
 ## 2.4.0
 
@@ -53,8 +59,8 @@ Release date: 2020-02-17
 ### Changed
 -   When printing a typeset that contains a custom validator function, the validator is printed as `"<validator>"` instead of `"<function>"` (hopefully that's more helpful when reading the typeset, typically in an `RtvError`'s string representation).
 -   When a verification is failed by a custom validator that does not throw an error (instead, it just returns a _falsy_ value), the generated error has been changed from `"Verification failed due to custom validator"` to `"Verification failed by the custom validator"`, which hopefully better indicates that the verification failed because the custom validator chose to fail it, not because of the _presence_ of a custom validator (as if it shouldn't have been there).
--   __DEPRECATED__ `RtvError.cause`, replaced with `RtvError.mismatch`.
--   __DEPRECATED__ `RtvError.failure`, replaced with `RtvError.rootCause`.
+-   🚫 __DEPRECATED__ `RtvError.cause`, replaced with `RtvError.mismatch`.
+-   🚫 __DEPRECATED__ `RtvError.failure`, replaced with `RtvError.rootCause`.
 
 ### Fixed
 -   API documentation for the `rtv.t`, `rtv.q`, and `rtv.e` deprecated properties. `rtv.enabled` (the newer one) no longer appears twice, once deprecated, once not.
@@ -68,9 +74,9 @@ Release date: 2019-10-05
 -   All types and qualifiers are now directly accessible on the `rtv` object (e.g. `rtv.STRING`).
 -   It's now possible to have the same type appear multiple times in the same typeset (this makes typeset _composition_ much easier, avoiding the need for custom validators in lots of cases).
 -   `RtvError`'s message and string serialization no longer includes the `typeset` to reduce log bloat/noise (they could be _very_ long), but the `typeset` is still available as a property of the object.
--   __DEPRECATED__ `rtv.t`, being replaced by `rtv.types`.
--   __DEPRECATED__ `rtv.q`, being replaced by `rtv.qualifiers`.
--   __DEPRECATED__ `rtv.e`, being replaced by `rtv.enabled`.
+-   🚫 __DEPRECATED__ `rtv.t`, being replaced by `rtv.types`.
+-   🚫 __DEPRECATED__ `rtv.q`, being replaced by `rtv.qualifiers`.
+-   🚫 __DEPRECATED__ `rtv.e`, being replaced by `rtv.enabled`.
 
 ### Fixed
 -   If an exception is thrown in `impl`, it's no longer wrapped in an "outer" exception, resulting in a cleaner error message (e.g. what was once, "Cannot check value: Cannot check value: Invalid typeset..." for an invalid typeset nested 2 levels deep is now just, "Invalid typeset...").

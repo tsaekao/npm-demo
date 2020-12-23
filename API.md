@@ -28,11 +28,8 @@ Provides the externally-facing API. It wraps the
 **Kind**: global namespace  
 
 * [rtv](#rtv) : <code>object</code>
-    * ~~[.t](#rtv.t) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
     * [.types](#rtv.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * ~~[.q](#rtv.q) : [<code>Enumeration</code>](#rtvref.Enumeration)~~
     * [.qualifiers](#rtv.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * ~~[.e](#rtv.e) : <code>boolean</code>~~
     * [.enabled](#rtv.enabled) : <code>boolean</code>
     * [.version](#rtv.version) : <code>string</code>
     * [.RtvSuccess](#rtv.RtvSuccess) : <code>function</code>
@@ -44,18 +41,6 @@ Provides the externally-facing API. It wraps the
     * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.verify(value, typeset)](#rtv.verify) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
 
-<a name="rtv.t"></a>
-
-## ~~rtv.t : [<code>Enumeration</code>](#rtvref.Enumeration)~~
-***Deprecated***
-
-Enumeration of [types](#rtvref.types.types).
-
-__DEPRECATED__ since version 2.1.0. Please use `rtv.types.<TYPE>`
- or `rtv.<TYPE>` instead.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
-**Read only**: true  
 <a name="rtv.types"></a>
 
 ## rtv.types : [<code>Enumeration</code>](#rtvref.Enumeration)
@@ -71,18 +56,6 @@ The Enumeration can be used to perform additional validations (e.g.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.q"></a>
-
-## ~~rtv.q : [<code>Enumeration</code>](#rtvref.Enumeration)~~
-***Deprecated***
-
-Enumeration of [qualifiers](#rtvref.qualifiers.qualifiers).
-
-__DEPRECATED__ since version 2.1.0. Please use `rtv.qualifiers.<QUALIFIER>`
- or `rtv.<QUALIFIER>` instead.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
-**Read only**: true  
 <a name="rtv.qualifiers"></a>
 
 ## rtv.qualifiers : [<code>Enumeration</code>](#rtvref.Enumeration)
@@ -95,17 +68,6 @@ The Enumeration can be used to perform additional validations (e.g.
  `rtv.qualifiers.verify('x')` would throw because "x" is not a valid qualifier),
  however whether the qualifier is referenced as `rtv.EXPECTED` or
  `rtv.qualifiers.EXPECTED`` makes no difference to typeset validation.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
-**Read only**: true  
-<a name="rtv.e"></a>
-
-## ~~rtv.e : <code>boolean</code>~~
-***Deprecated***
-
-Shortcut proxy for reading [enabled](#rtv.config.enabled).
-
-__DEPRECATED__ since version 2.1.0. Please use `rtv.enabled` instead.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
@@ -311,9 +273,7 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
         * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
         * [.mismatch](#rtvref.RtvError+mismatch) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-        * ~~[.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
         * [.rootCause](#rtvref.RtvError+rootCause) : <code>Error</code> \| <code>undefined</code>
-        * ~~[.failure](#rtvref.RtvError+failure) : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
     * [.RtvSuccess](#rtvref.RtvSuccess)
         * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
@@ -718,9 +678,7 @@ A string representation of this Enumeration.
     * [.typeset](#rtvref.RtvError+typeset) : [<code>typeset</code>](#rtvref.types.typeset)
     * [.path](#rtvref.RtvError+path) : <code>Array.&lt;string&gt;</code>
     * [.mismatch](#rtvref.RtvError+mismatch) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-    * ~~[.cause](#rtvref.RtvError+cause) : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
     * [.rootCause](#rtvref.RtvError+rootCause) : <code>Error</code> \| <code>undefined</code>
-    * ~~[.failure](#rtvref.RtvError+failure) : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
     * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
 
 <a name="new_rtvref.RtvError_new"></a>
@@ -826,17 +784,6 @@ Remember that the fully-qualified `typeset` would be
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
-<a name="rtvref.RtvError+cause"></a>
-
-### ~~rtvError.cause : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)~~
-***Deprecated***
-
-This property was renamed [mismatch](#rtvref.RtvError+mismatch).
-
-__DEPRECATED__ since version 2.2.0. Please use the `mismatch` property instead.
-
-**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
-**Read only**: true  
 <a name="rtvref.RtvError+rootCause"></a>
 
 ### rtvError.rootCause : <code>Error</code> \| <code>undefined</code>
@@ -845,17 +792,6 @@ Validation error thrown by a [Custom Validator](#rtvref.types.custom_validator),
  of a failed custom validation. If the custom validator throw an error, this will
  be a reference to the error it threw; otherwise, it'll be a generic `Error`
  generated by the library.
-
-**Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
-**Read only**: true  
-<a name="rtvref.RtvError+failure"></a>
-
-### ~~rtvError.failure : [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> \| <code>undefined</code>~~
-***Deprecated***
-
-This property was renamed [rootCause](#rtvref.RtvError+rootCause).
-
-__DEPRECATED__ since version 2.2.0. Please use the `rootCause` property instead.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
 **Read only**: true  
@@ -2547,7 +2483,7 @@ There is one __disadvantage__ to using a custom validator: It cannot be serializ
  value to fail it. The validator may also throw an `Error` to fail the verification.
 
  If a _falsy_ value (other than `undefined`) is returned, an `Error` will be generated and
-  included in the resulting `RtvError` as its [failure](#rtvref.RtvError+failure) property,
+  included in the resulting `RtvError` as its [failure](rtvref.RtvError#failure) property,
   as well as part of its `message`.
 
  While `undefined` is _falsy_, it's also the result of a function that did not return anything,
@@ -2559,7 +2495,7 @@ There is one __disadvantage__ to using a custom validator: It cannot be serializ
 
 - <code>Error</code> (Optional) If the validation fails. This error will fail the overall
  verification, and will be included in the resulting `RtvError` as its
- [failure](#rtvref.RtvError+failure) property, as well as part of its
+ [failure](rtvref.RtvError#failure) property, as well as part of its
  `message`.
 
   Although not required, it's recommended to throw an error with a message that will

@@ -12,15 +12,6 @@ import RtvError from '../src/lib/RtvError';
 import pkg from '../package.json';
 
 describe('module: rtv', function () {
-  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
-  describe('#t (DEPRECATED@2.1.0)', function () {
-    it('should provide all types', function () {
-      expect('t' in rtv).to.equal(true);
-      expect(rtv.t).to.equal(types);
-      expect(rtv.t instanceof Enumeration).to.equal(true);
-    });
-  });
-
   describe('#types', function () {
     it('should provide all types', function () {
       expect('types' in rtv).to.equal(true);
@@ -36,15 +27,6 @@ describe('module: rtv', function () {
           return rtv[key] === types[key];
         })
       ).to.be.true;
-    });
-  });
-
-  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
-  describe('#q (DEPRECATED@2.1.0)', function () {
-    it('should provide all qualifiers', function () {
-      expect('q' in rtv).to.equal(true);
-      expect(rtv.q).to.equal(qualifiers);
-      expect(rtv.q instanceof Enumeration).to.equal(true);
     });
   });
 
@@ -125,16 +107,6 @@ describe('module: rtv', function () {
     it('should provide version property', function () {
       expect('version' in rtv).to.equal(true);
       expect(rtv.version).to.equal(pkg.version);
-    });
-  });
-
-  // TODO: DEPRECATED@2.1.0, remove in 3.0.0
-  describe('#e proxy (DEPRECATED@2.1.0)', function () {
-    it('should have a shortcut proxy rtv.e -> rtv.config.enabled', function () {
-      expect('e' in rtv).to.equal(true);
-      expect(rtv.e).to.equal(rtv.config.enabled);
-      rtv.config.enabled = false;
-      expect(rtv.e).to.equal(rtv.config.enabled);
     });
   });
 

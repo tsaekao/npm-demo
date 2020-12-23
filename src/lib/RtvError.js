@@ -218,34 +218,6 @@ const RtvError = function (value, typeset, path, mismatch, rootCause) {
     },
 
     /**
-     * This property was renamed {@link rtvref.RtvError#mismatch mismatch}.
-     *
-     * __DEPRECATED__ since version 2.2.0. Please use the `mismatch` property instead.
-     *
-     * @deprecated
-     * @readonly
-     * @name rtvref.RtvError#cause
-     * @type {rtvref.types.fully_qualified_typeset}
-     */
-    cause: {
-      enumerable: true,
-      configurable: true,
-      get() {
-        /* istanbul ignore next -- test code runs as Prod so skip */
-        if (process.env.NODE_ENV === 'development') {
-          // eslint-disable-next-line no-console
-          console.warn(
-            'DEPRECATED in 2.2.0: RtvError#cause has been deprecated and ' +
-              'will be removed in the next major release. Please migrate your code to ' +
-              'use `RtvError#mismatch`.'
-          );
-        }
-
-        return mismatch;
-      },
-    },
-
-    /**
      * Validation error thrown by a {@link rtvref.types.custom_validator Custom Validator},
      *  which resulted in this `RtvError`. `undefined` if this error was not the result
      *  of a failed custom validation. If the custom validator throw an error, this will
@@ -259,34 +231,6 @@ const RtvError = function (value, typeset, path, mismatch, rootCause) {
       enumerable: true,
       configurable: true,
       get() {
-        return rootCause;
-      },
-    },
-
-    /**
-     * This property was renamed {@link rtvref.RtvError#rootCause rootCause}.
-     *
-     * __DEPRECATED__ since version 2.2.0. Please use the `rootCause` property instead.
-     *
-     * @deprecated
-     * @readonly
-     * @name rtvref.RtvError#failure
-     * @type {(rtvref.RtvError|Error|undefined)}
-     */
-    failure: {
-      enumerable: true,
-      configurable: true,
-      get() {
-        /* istanbul ignore next -- test code runs as Prod so skip */
-        if (process.env.NODE_ENV === 'development') {
-          // eslint-disable-next-line no-console
-          console.warn(
-            'DEPRECATED in 2.2.0: RtvError#failure has been deprecated and ' +
-              'will be removed in the next major release. Please migrate your code to ' +
-              'use `RtvError#rootCause`.'
-          );
-        }
-
         return rootCause;
       },
     },
