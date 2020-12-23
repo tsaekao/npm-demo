@@ -2,7 +2,7 @@
 
 import { default as _isSymbol } from 'lodash/isSymbol';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isSymbol

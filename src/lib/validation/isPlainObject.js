@@ -2,7 +2,7 @@
 
 import { default as _isPlainObject } from 'lodash/isPlainObject';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isPlainObject

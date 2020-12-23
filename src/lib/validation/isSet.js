@@ -2,7 +2,7 @@
 
 import { default as _isSet } from 'lodash/isSet';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isSet

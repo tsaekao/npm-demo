@@ -2,7 +2,7 @@
 
 import { default as _isSafeInteger } from 'lodash/isSafeInteger';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isSafeInt

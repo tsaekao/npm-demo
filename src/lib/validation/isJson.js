@@ -7,7 +7,7 @@ import isFinite from './isFinite';
 import isPlainObject from './isPlainObject';
 import isArray from './isArray';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isJson

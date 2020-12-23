@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import * as vtu from '../validationTestUtil';
-import types from '../../../src/lib/types';
+import { types } from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isSet';
 
 describe('module: lib/validation/isSet', function () {

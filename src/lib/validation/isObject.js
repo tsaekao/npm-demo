@@ -12,7 +12,7 @@ import isDate from './isDate';
 import isError from './isError';
 import isPromise from './isPromise';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isObject

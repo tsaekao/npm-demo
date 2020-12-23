@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
-import types from '../../../src/lib/types';
+import { types } from '../../../src/lib/types';
 import qualifiers from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valSafeInt';
 

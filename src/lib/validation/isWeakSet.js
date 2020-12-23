@@ -2,7 +2,7 @@
 
 import { default as _isWeakSet } from 'lodash/isWeakSet';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isWeakSet

@@ -2,7 +2,7 @@
 
 import { default as _isFinite } from 'lodash/isFinite';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isFinite

@@ -8,12 +8,7 @@ import isTypeArgs from './isTypeArgs';
 import isString from './isString';
 import isCustomValidator from './isCustomValidator';
 
-import {
-  default as types,
-  argTypes,
-  objTypes,
-  DEFAULT_OBJECT_TYPE,
-} from '../types';
+import { types, argTypes, objTypes, DEFAULT_OBJECT_TYPE } from '../types';
 import qualifiers from '../qualifiers';
 import { print } from '../util';
 

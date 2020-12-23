@@ -2,7 +2,7 @@
 
 import { default as _isFunction } from 'lodash/isFunction';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isFunction

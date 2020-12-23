@@ -2,7 +2,7 @@
 
 import { default as _isRegExp } from 'lodash/isRegExp';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isRegExp

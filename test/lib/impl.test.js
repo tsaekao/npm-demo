@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 import '../../src/rtv'; // so that types get registered with `impl`
 import impl from '../../src/lib/impl';
-import { DEFAULT_OBJECT_TYPE, default as types } from '../../src/lib/types';
+import { DEFAULT_OBJECT_TYPE, types } from '../../src/lib/types';
 import {
   DEFAULT_QUALIFIER,
   default as qualifiers,

@@ -2,7 +2,7 @@
 
 import { default as _isObject } from 'lodash/isObject';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isAnyObject

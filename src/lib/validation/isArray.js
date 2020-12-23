@@ -2,7 +2,7 @@
 
 import { default as _isArray } from 'lodash/isArray';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isArray

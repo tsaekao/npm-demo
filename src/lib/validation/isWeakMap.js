@@ -2,7 +2,7 @@
 
 import { default as _isWeakMap } from 'lodash/isWeakMap';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isWeakMap

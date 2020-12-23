@@ -2,7 +2,7 @@
 
 import { default as _isError } from 'lodash/isError';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isError

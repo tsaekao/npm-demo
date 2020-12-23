@@ -1,6 +1,6 @@
 ////// isString validation
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isString

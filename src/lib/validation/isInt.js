@@ -2,7 +2,7 @@
 
 import { default as _isInteger } from 'lodash/isInteger';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isInt

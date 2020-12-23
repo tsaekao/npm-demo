@@ -15,7 +15,7 @@ import isShape from './validation/isShape';
 import isTypeArgs from './validation/isTypeArgs';
 import isCustomValidator from './validation/isCustomValidator';
 
-import { DEFAULT_OBJECT_TYPE, argTypes, default as types } from './types';
+import { DEFAULT_OBJECT_TYPE, argTypes, types } from './types';
 import { DEFAULT_QUALIFIER, default as qualifiers } from './qualifiers';
 import { print } from './util';
 import RtvSuccess from './RtvSuccess';

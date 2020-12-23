@@ -2,7 +2,7 @@
 
 import { default as _isDate } from 'lodash/isDate';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isDate

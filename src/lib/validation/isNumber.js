@@ -2,7 +2,7 @@
 
 import { default as _isNaN } from 'lodash/isNaN';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isNumber

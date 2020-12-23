@@ -2,7 +2,7 @@
 
 import { default as _isMap } from 'lodash/isMap';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isMap

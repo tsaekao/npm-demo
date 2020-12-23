@@ -3,7 +3,7 @@
 import isObject from './isObject';
 import isPlainObject from './isPlainObject';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isClassObject

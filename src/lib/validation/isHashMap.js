@@ -2,7 +2,7 @@
 
 import isObject from './isObject';
 
-import types from '../types';
+import { types } from '../types';
 
 /**
  * Validation Module: isHashMap
