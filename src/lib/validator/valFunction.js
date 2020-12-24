@@ -3,8 +3,8 @@
 import { type, default as isFunction } from '../validation/isFunction';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 const { REQUIRED } = qualifiers;
 let impl; // @type {rtvref.impl}

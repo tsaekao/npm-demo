@@ -9,7 +9,7 @@
  *
  * @class rtvref.RtvSuccess
  */
-export default class RtvSuccess {
+export class RtvSuccess {
   // JSDoc is provided at the @class level
   constructor() {
     Object.defineProperties(this, {

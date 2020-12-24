@@ -3,8 +3,8 @@
 import { type, default as isBoolean } from '../validation/isBoolean';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 /**
  * Validator Module: valBoolean

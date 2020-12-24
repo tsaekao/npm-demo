@@ -3,8 +3,8 @@
 import { type, default as isAny } from '../validation/isAny';
 
 import { qualifiers } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 /**
  * Validator Module: valAny

@@ -18,8 +18,8 @@ import isCustomValidator from './validation/isCustomValidator';
 import { DEFAULT_OBJECT_TYPE, argTypes, types } from './types';
 import { DEFAULT_QUALIFIER, qualifiers } from './qualifiers';
 import { print } from './util';
-import RtvSuccess from './RtvSuccess';
-import RtvError from './RtvError';
+import { RtvSuccess } from './RtvSuccess';
+import { RtvError } from './RtvError';
 
 const objHasOwnProp = Object.prototype.hasOwnProperty;
 

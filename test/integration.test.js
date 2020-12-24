@@ -4,8 +4,8 @@ import { expect } from 'chai';
 
 import rtv from '../src/rtv';
 
-import RtvSuccess from '../src/lib/RtvSuccess';
-import RtvError from '../src/lib/RtvError';
+import { RtvSuccess } from '../src/lib/RtvSuccess';
+import { RtvError } from '../src/lib/RtvError';
 
 describe('Integration', function () {
   describe('Typesets', function () {

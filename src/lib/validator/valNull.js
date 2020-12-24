@@ -3,8 +3,8 @@
 import { type, default as isNull } from '../validation/isNull';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 /**
  * Validator Module: valNull

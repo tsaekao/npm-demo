@@ -8,8 +8,8 @@ import isTypeset from '../validation/isTypeset';
 
 import { types } from '../types';
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 import { print } from '../util';
 
 /**

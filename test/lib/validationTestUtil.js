@@ -6,8 +6,8 @@ import { expect } from 'chai';
 import { types } from '../../src/lib/types';
 import { qualifiers, DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
-import RtvSuccess from '../../src/lib/RtvSuccess';
-import RtvError from '../../src/lib/RtvError';
+import { RtvSuccess } from '../../src/lib/RtvSuccess';
+import { RtvError } from '../../src/lib/RtvError';
 
 /* eslint-disable no-new-wrappers, no-console */
 

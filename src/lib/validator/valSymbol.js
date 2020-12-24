@@ -5,8 +5,8 @@ import { type, default as isSymbol } from '../validation/isSymbol';
 import isArray from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 /**
  * Validator Module: valSymbol

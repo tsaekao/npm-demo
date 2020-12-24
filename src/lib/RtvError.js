@@ -48,7 +48,7 @@ const renderPath = function (path) {
  *  exception; or some other nested error that was the root cause for the failed validation.
  * @throws {Error} If `typeset`, `path`, or `mismatch` is invalid.
  */
-const RtvError = function (value, typeset, path, mismatch, rootCause) {
+export const RtvError = function (value, typeset, path, mismatch, rootCause) {
   // NOTE: We're using the old ES5 way of doing classical inheritance rather than
   //  an ES6 'class' because extending from Error doesn't appear to work very well,
   //  at least not with Babel 6.x. It seems OK in Node 9.x, however. Anyway,
@@ -266,5 +266,3 @@ RtvError.prototype.toString = function () {
 
   return str;
 };
-
-export default RtvError;

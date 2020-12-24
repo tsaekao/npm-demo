@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { types } from '../../src/lib/types';
 import { qualifiers } from '../../src/lib/qualifiers';
-import RtvSuccess from '../../src/lib/RtvSuccess';
+import { RtvSuccess } from '../../src/lib/RtvSuccess';
 
 describe('module: lib/RtvSuccess', function () {
   it('should extend Object', function () {

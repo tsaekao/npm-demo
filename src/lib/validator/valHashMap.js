@@ -9,8 +9,8 @@ import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 import { print } from '../util';
 
 /**

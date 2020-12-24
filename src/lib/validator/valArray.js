@@ -8,8 +8,8 @@ import isFinite from '../validation/isFinite';
 import isTypeset from '../validation/isTypeset';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
-import RtvSuccess from '../RtvSuccess';
-import RtvError from '../RtvError';
+import { RtvSuccess } from '../RtvSuccess';
+import { RtvError } from '../RtvError';
 
 /**
  * Validator Module: valArray
