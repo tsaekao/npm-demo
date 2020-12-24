@@ -1,5 +1,7 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 
+import * as pqs from '../../src/lib/pureQualifiers';
 import * as mod from '../../src/lib/qualifiers';
 import Enumeration from '../../src/lib/Enumeration';
 import isString from '../../src/lib/validation/isString';
@@ -7,12 +9,18 @@ import isFalsy from '../../src/lib/validation/isFalsy';
 import * as vtu from '../../test/lib/validationTestUtil';
 
 describe('module: lib/qualifiers', function () {
-  const qualifiers = mod.default;
+  const qualifiers = mod.qualifiers;
 
   describe('#qualifiers', function () {
     it('should be an enumeration', function () {
       expect(qualifiers instanceof Enumeration).to.equal(true);
       expect(qualifiers.$name).to.equal('qualifiers');
+    });
+
+    it('should have as many qualifiers as pureQualifiers', function () {
+      expect(_.difference(Object.keys(qualifiers), Object.keys(pqs))).to.eql(
+        []
+      );
     });
 
     it('should have non-empty strings as qualifiers', function () {

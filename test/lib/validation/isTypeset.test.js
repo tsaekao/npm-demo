@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
 import { types, DEFAULT_OBJECT_TYPE } from '../../../src/lib/types';
-import qualifiers, { DEFAULT_QUALIFIER } from '../../../src/lib/qualifiers';
+import { qualifiers, DEFAULT_QUALIFIER } from '../../../src/lib/qualifiers';
 import * as isShapeMod from '../../../src/lib/validation/isShape';
 import {
   default as isTypeset,

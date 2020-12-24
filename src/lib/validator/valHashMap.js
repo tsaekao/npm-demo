@@ -8,7 +8,7 @@ import isFinite from '../validation/isFinite';
 import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import { print } from '../util';

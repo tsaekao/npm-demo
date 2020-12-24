@@ -4,10 +4,7 @@ import sinon from 'sinon';
 import '../../src/rtv'; // so that types get registered with `impl`
 import impl from '../../src/lib/impl';
 import { DEFAULT_OBJECT_TYPE, types } from '../../src/lib/types';
-import {
-  DEFAULT_QUALIFIER,
-  default as qualifiers,
-} from '../../src/lib/qualifiers';
+import { DEFAULT_QUALIFIER, qualifiers } from '../../src/lib/qualifiers';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';
 import isObject from '../../src/lib/validation/isObject';

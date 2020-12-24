@@ -289,11 +289,11 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.checkWithArray(value, arrayTs, [context])](#rtvref.impl.checkWithArray) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.check(value, typeset, [context])](#rtvref.impl.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
+        * [.REQUIRED](#rtvref.qualifiers.REQUIRED)
+        * [.EXPECTED](#rtvref.qualifiers.EXPECTED)
+        * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL)
+        * [.TRUTHY](#rtvref.qualifiers.TRUTHY)
         * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
-        * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
-        * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
-        * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
-        * [.TRUTHY](#rtvref.qualifiers.TRUTHY) : <code>string</code>
         * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
         * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
         * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
@@ -1044,29 +1044,18 @@ Qualifiers determine the degree at which a value must be of a given type.
 **Kind**: static namespace of [<code>rtvref</code>](#rtvref)  
 
 * [.qualifiers](#rtvref.qualifiers) : <code>object</code>
+    * [.REQUIRED](#rtvref.qualifiers.REQUIRED)
+    * [.EXPECTED](#rtvref.qualifiers.EXPECTED)
+    * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL)
+    * [.TRUTHY](#rtvref.qualifiers.TRUTHY)
     * [.qualifiers](#rtvref.qualifiers.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.REQUIRED](#rtvref.qualifiers.REQUIRED) : <code>string</code>
-    * [.EXPECTED](#rtvref.qualifiers.EXPECTED) : <code>string</code>
-    * [.OPTIONAL](#rtvref.qualifiers.OPTIONAL) : <code>string</code>
-    * [.TRUTHY](#rtvref.qualifiers.TRUTHY) : <code>string</code>
     * [.DEFAULT_QUALIFIER](#rtvref.qualifiers.DEFAULT_QUALIFIER) : <code>string</code>
     * [.valuePermitted(v, [q])](#rtvref.qualifiers.valuePermitted) ⇒ <code>boolean</code>
     * [.restricted_values](#rtvref.qualifiers.restricted_values) : <code>void</code>
 
-<a name="rtvref.qualifiers.qualifiers"></a>
-
-### qualifiers.qualifiers : [<code>Enumeration</code>](#rtvref.Enumeration)
-Enumeration (`string -> string`) of all qualifiers:
-
-- [REQUIRED](#rtvref.qualifiers.REQUIRED)
-- [EXPECTED](#rtvref.qualifiers.EXPECTED)
-- [OPTIONAL](#rtvref.qualifiers.OPTIONAL)
-- [TRUTHY](#rtvref.qualifiers.TRUTHY)
-
-**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 <a name="rtvref.qualifiers.REQUIRED"></a>
 
-### qualifiers.REQUIRED : <code>string</code>
+### qualifiers.REQUIRED
 Required qualifier: The value __must__ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
@@ -1082,7 +1071,7 @@ Note the fact the value cannot be `undefined` implicitly requires a
 
 See specific type for additional rules.
 
-**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**
 
 - [types](#rtvref.types)
@@ -1090,7 +1079,7 @@ See specific type for additional rules.
 
 <a name="rtvref.qualifiers.EXPECTED"></a>
 
-### qualifiers.EXPECTED : <code>string</code>
+### qualifiers.EXPECTED
 Expected qualifier: The value _should_ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
@@ -1106,7 +1095,7 @@ Note the fact the value cannot be `undefined` implicitly requires a
 
 See specific type for additional rules.
 
-**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**
 
 - [types](#rtvref.types)
@@ -1114,7 +1103,7 @@ See specific type for additional rules.
 
 <a name="rtvref.qualifiers.OPTIONAL"></a>
 
-### qualifiers.OPTIONAL : <code>string</code>
+### qualifiers.OPTIONAL
 Optional qualifier: The value _may_ be of the expected type. Depending on
  the type, additional requirements may be enforced.
 
@@ -1127,11 +1116,11 @@ Note the fact the value can be `undefined` implies it does _not_ require a
 
 See specific type for additional rules.
 
-**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**: [types](#rtvref.types)  
 <a name="rtvref.qualifiers.TRUTHY"></a>
 
-### qualifiers.TRUTHY : <code>string</code>
+### qualifiers.TRUTHY
 Truthy qualifier: If the value is _truthy_, it must be of the expected type.
  Depending on the type, additional requirements may be enforced.
 
@@ -1147,8 +1136,19 @@ Note the fact the value can be `undefined` implies it does _not_ require a
 
 See specific type for additional rules.
 
-**Kind**: static constant of [<code>qualifiers</code>](#rtvref.qualifiers)  
+**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 **See**: [types](#rtvref.types)  
+<a name="rtvref.qualifiers.qualifiers"></a>
+
+### qualifiers.qualifiers : [<code>Enumeration</code>](#rtvref.Enumeration)
+Enumeration (`string -> string`) of all qualifiers:
+
+- [REQUIRED](#rtvref.qualifiers.REQUIRED)
+- [EXPECTED](#rtvref.qualifiers.EXPECTED)
+- [OPTIONAL](#rtvref.qualifiers.OPTIONAL)
+- [TRUTHY](#rtvref.qualifiers.TRUTHY)
+
+**Kind**: static property of [<code>qualifiers</code>](#rtvref.qualifiers)  
 <a name="rtvref.qualifiers.DEFAULT_QUALIFIER"></a>
 
 ### qualifiers.DEFAULT\_QUALIFIER : <code>string</code>

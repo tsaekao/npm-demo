@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { expect } from 'chai';
 
 import { types } from '../../src/lib/types';
-import qualifiers, { DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
+import { qualifiers, DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
 import RtvSuccess from '../../src/lib/RtvSuccess';
 import RtvError from '../../src/lib/RtvError';

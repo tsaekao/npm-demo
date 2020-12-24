@@ -2,7 +2,7 @@
 
 import { type, default as isRegExp } from '../validation/isRegExp';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

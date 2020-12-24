@@ -4,7 +4,7 @@ import _forEach from 'lodash/forEach';
 
 import { type, default as isObject } from '../validation/isObject';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import isShape from '../validation/isShape';

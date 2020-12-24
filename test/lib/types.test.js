@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
-import * as pureTypes from '../../src/lib/pureTypes';
+import * as pts from '../../src/lib/pureTypes';
 import * as mod from '../../src/lib/types';
 import Enumeration from '../../src/lib/Enumeration';
 import isString from '../../src/lib/validation/isString';
@@ -15,7 +15,7 @@ describe('module: lib/types', function () {
   });
 
   it('should have as many types as pureTypes', function () {
-    expect(_.difference(Object.keys(types), Object.keys(pureTypes))).to.eql([]);
+    expect(_.difference(Object.keys(types), Object.keys(pts))).to.eql([]);
   });
 
   it('should export a default object type', function () {

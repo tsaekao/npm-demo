@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
-import qualifiers from '../../../src/lib/qualifiers';
+import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valMap';
 
 describe('module: lib/validator/valMap', function () {

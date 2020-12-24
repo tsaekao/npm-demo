@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { types } from '../../src/lib/types';
-import qualifiers from '../../src/lib/qualifiers';
+import { qualifiers } from '../../src/lib/qualifiers';
 import RtvError from '../../src/lib/RtvError';
 
 describe('module: lib/RtvError', function () {

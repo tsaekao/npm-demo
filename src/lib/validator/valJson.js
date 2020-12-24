@@ -2,7 +2,7 @@
 
 import { type, default as isJson } from '../validation/isJson';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

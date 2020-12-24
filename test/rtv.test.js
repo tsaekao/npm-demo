@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import rtv from '../src/rtv';
 import { types } from '../src/lib/types';
-import qualifiers from '../src/lib/qualifiers';
+import { qualifiers } from '../src/lib/qualifiers';
 import impl from '../src/lib/impl';
 import Enumeration from '../src/lib/Enumeration';
 import RtvSuccess from '../src/lib/RtvSuccess';

@@ -6,7 +6,7 @@ import { type, default as isNumber } from '../validation/isNumber';
 
 import isArray from '../validation/isArray';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

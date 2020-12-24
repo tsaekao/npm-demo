@@ -7,7 +7,7 @@ import isString from '../validation/isString';
 import isTypeset from '../validation/isTypeset';
 
 import { types } from '../types';
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import { print } from '../util';

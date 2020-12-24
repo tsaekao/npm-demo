@@ -1,5 +1,6 @@
 ////// Qualifier Definitions
 
+import * as pqs from './pureQualifiers';
 import Enumeration from './Enumeration';
 import isFalsy from './validation/isFalsy';
 
@@ -27,101 +28,10 @@ import isFalsy from './validation/isFalsy';
  */
 
 /**
- * Required qualifier: The value __must__ be of the expected type. Depending on
- *  the type, additional requirements may be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier does not
- *  permit the value to be `null` or `undefined`.
- *
- * Note the fact the value cannot be `undefined` implicitly requires a
- *  {@link rtvref.types.shape_descriptor shape}'s property to be defined _somewhere_
- *  its prototype chain (if it weren't, then its value would be `undefined`,
- *  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
- *  would require the `name` property to exist and not be `undefined`, but would
- *  permit it to be `null` or even an empty string.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.REQUIRED
- * @const {string}
- * @see {@link rtvref.types}
- * @see {@link rtvref.types.STRING}
- */
-const REQUIRED = '!';
-
-/**
- * Expected qualifier: The value _should_ be of the expected type. Depending on
- *  the type, additional requirements may be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier does _not_ permit
- *  the value to be `undefined`, but does _permit_ it to be `null`.
- *
- * Note the fact the value cannot be `undefined` implicitly requires a
- *  {@link rtvref.types.shape_descriptor shape}'s property to be defined _somewhere_
- *  its prototype chain (if it weren't, then its value would be `undefined`,
- *  violating the requirements). For example, the shape `{name: [EXPECTED, STRING]}`
- *  would require the `name` property to exist and not be `undefined`, but would
- *  permit it to be `null` or even an empty string.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.EXPECTED
- * @const {string}
- * @see {@link rtvref.types}
- * @see {@link rtvref.types.STRING}
- */
-const EXPECTED = '*';
-
-/**
- * Optional qualifier: The value _may_ be of the expected type. Depending on
- *  the type, additional requirements may be enforced.
- *
- * Unless otherwise stated in type-specific rules, this qualifier _permits_ a
- *  the value to be `null` as well as `undefined`.
- *
- * Note the fact the value can be `undefined` implies it does _not_ require a
- *  {@link rtvref.types.shape_descriptor shape}'s property to be defined anywhere in
- *  its prototype chain.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.OPTIONAL
- * @const {string}
- * @see {@link rtvref.types}
- */
-const OPTIONAL = '?';
-
-/**
- * Truthy qualifier: If the value is _truthy_, it must be of the expected type.
- *  Depending on the type, additional requirements may be enforced.
- *
- * Think of this qualifier as, "if _truthy_, the value is
- *  {@link rtvref.qualifiers.REQUIRED required} to be of the specified type."
- *
- * Unless otherwise stated in type-specific rules, this qualifier does _permit_
- *  the value to be any {@link rtvref.types.falsy_values falsy value}.
- *
- * Note the fact the value can be `undefined` implies it does _not_ require a
- *  {@link rtvref.types.shape_descriptor shape}'s property to be defined anywhere in
- *  its prototype chain.
- *
- * See specific type for additional rules.
- *
- * @name rtvref.qualifiers.TRUTHY
- * @const {string}
- * @see {@link rtvref.types}
- */
-const TRUTHY = '+';
-
-//
-// ^^^^^^^ INSERT NEW QUALIFIERS ^^^^^^^ ABOVE THIS SECTION ^^^^^^^
-//
-
-/**
  * Default qualifier: {@link rtvref.qualifiers.REQUIRED}
  * @const {string} rtvref.qualifiers.DEFAULT_QUALIFIER
  */
-export const DEFAULT_QUALIFIER = REQUIRED;
+export const DEFAULT_QUALIFIER = pqs.REQUIRED;
 
 /**
  * Convenience function to check if a value is permitted under basic qualifier rules:
@@ -148,16 +58,16 @@ export const DEFAULT_QUALIFIER = REQUIRED;
  *  - `valuePermitted(false, OPTIONAL) === false` because the value `false` is
  *    not permitted by OPTIONAL
  */
-export const valuePermitted = function (v, q = REQUIRED) {
-  if (q === REQUIRED) {
+export const valuePermitted = function (v, q = pqs.REQUIRED) {
+  if (q === pqs.REQUIRED) {
     return false;
   }
 
-  if (q === EXPECTED) {
+  if (q === pqs.EXPECTED) {
     return v === null;
   }
 
-  if (q === OPTIONAL) {
+  if (q === pqs.OPTIONAL) {
     return v === undefined || v === null;
   }
 
@@ -176,12 +86,4 @@ export const valuePermitted = function (v, q = REQUIRED) {
  * @name rtvref.qualifiers.qualifiers
  * @type {rtvref.Enumeration}
  */
-export default new Enumeration(
-  {
-    REQUIRED,
-    EXPECTED,
-    OPTIONAL,
-    TRUTHY,
-  },
-  'qualifiers'
-);
+export const qualifiers = new Enumeration(pqs, 'qualifiers');

@@ -4,7 +4,7 @@ import { type, default as isSymbol } from '../validation/isSymbol';
 
 import isArray from '../validation/isArray';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

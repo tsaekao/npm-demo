@@ -3,7 +3,7 @@
 import { version as VERSION } from '../package.json';
 import impl from './lib/impl';
 import { types } from './lib/types';
-import qualifiers from './lib/qualifiers';
+import { qualifiers } from './lib/qualifiers';
 import RtvSuccess from './lib/RtvSuccess';
 import RtvError from './lib/RtvError';
 import isTypeset from './lib/validation/isTypeset';

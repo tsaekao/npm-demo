@@ -2,7 +2,7 @@
 
 import { type, default as isWeakSet } from '../validation/isWeakSet';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

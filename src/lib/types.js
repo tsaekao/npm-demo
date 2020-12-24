@@ -1,7 +1,7 @@
 ////// Type Definitions
 
 import Enumeration from './Enumeration';
-import * as pureTypes from './pureTypes';
+import * as pts from './pureTypes';
 
 /**
  * <h3>Types</h3>
@@ -640,32 +640,32 @@ const def = function (value, hasArgs, isObject) {
 
 // map of type key (string) to type definition (see def() for shape)
 const defs = {
-  [pureTypes.ANY]: def(pureTypes.ANY),
-  [pureTypes.NULL]: def(pureTypes.NULL),
-  [pureTypes.STRING]: def(pureTypes.STRING, true),
-  [pureTypes.BOOLEAN]: def(pureTypes.BOOLEAN),
-  [pureTypes.SYMBOL]: def(pureTypes.SYMBOL, true),
-  [pureTypes.NUMBER]: def(pureTypes.NUMBER, true),
-  [pureTypes.FINITE]: def(pureTypes.FINITE, true),
-  [pureTypes.INT]: def(pureTypes.INT, true),
-  [pureTypes.SAFE_INT]: def(pureTypes.SAFE_INT, true),
-  [pureTypes.FLOAT]: def(pureTypes.FLOAT, true),
-  [pureTypes.FUNCTION]: def(pureTypes.FUNCTION),
-  [pureTypes.REGEXP]: def(pureTypes.REGEXP),
-  [pureTypes.DATE]: def(pureTypes.DATE),
-  [pureTypes.ERROR]: def(pureTypes.ERROR),
-  [pureTypes.PROMISE]: def(pureTypes.PROMISE),
-  [pureTypes.ARRAY]: def(pureTypes.ARRAY, true),
-  [pureTypes.ANY_OBJECT]: def(pureTypes.ANY_OBJECT, true, true),
-  [pureTypes.OBJECT]: def(pureTypes.OBJECT, true, true),
-  [pureTypes.PLAIN_OBJECT]: def(pureTypes.PLAIN_OBJECT, true, true),
-  [pureTypes.CLASS_OBJECT]: def(pureTypes.CLASS_OBJECT, true, true),
-  [pureTypes.HASH_MAP]: def(pureTypes.HASH_MAP, true), // NOTE: NOT an object type (unrelated to shapes)
-  [pureTypes.MAP]: def(pureTypes.MAP, true),
-  [pureTypes.WEAK_MAP]: def(pureTypes.WEAK_MAP), // not iterable, so does not accept any collection args
-  [pureTypes.SET]: def(pureTypes.SET, true),
-  [pureTypes.WEAK_SET]: def(pureTypes.WEAK_SET), // not iterable, so does not accept any collection args
-  [pureTypes.JSON]: def(pureTypes.JSON),
+  [pts.ANY]: def(pts.ANY),
+  [pts.NULL]: def(pts.NULL),
+  [pts.STRING]: def(pts.STRING, true),
+  [pts.BOOLEAN]: def(pts.BOOLEAN),
+  [pts.SYMBOL]: def(pts.SYMBOL, true),
+  [pts.NUMBER]: def(pts.NUMBER, true),
+  [pts.FINITE]: def(pts.FINITE, true),
+  [pts.INT]: def(pts.INT, true),
+  [pts.SAFE_INT]: def(pts.SAFE_INT, true),
+  [pts.FLOAT]: def(pts.FLOAT, true),
+  [pts.FUNCTION]: def(pts.FUNCTION),
+  [pts.REGEXP]: def(pts.REGEXP),
+  [pts.DATE]: def(pts.DATE),
+  [pts.ERROR]: def(pts.ERROR),
+  [pts.PROMISE]: def(pts.PROMISE),
+  [pts.ARRAY]: def(pts.ARRAY, true),
+  [pts.ANY_OBJECT]: def(pts.ANY_OBJECT, true, true),
+  [pts.OBJECT]: def(pts.OBJECT, true, true),
+  [pts.PLAIN_OBJECT]: def(pts.PLAIN_OBJECT, true, true),
+  [pts.CLASS_OBJECT]: def(pts.CLASS_OBJECT, true, true),
+  [pts.HASH_MAP]: def(pts.HASH_MAP, true), // NOTE: NOT an object type (unrelated to shapes)
+  [pts.MAP]: def(pts.MAP, true),
+  [pts.WEAK_MAP]: def(pts.WEAK_MAP), // not iterable, so does not accept any collection args
+  [pts.SET]: def(pts.SET, true),
+  [pts.WEAK_SET]: def(pts.WEAK_SET), // not iterable, so does not accept any collection args
+  [pts.JSON]: def(pts.JSON),
 };
 
 //

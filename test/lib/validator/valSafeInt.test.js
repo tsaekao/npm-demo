@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
-import qualifiers from '../../../src/lib/qualifiers';
+import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valSafeInt';
 
 describe('module: lib/validator/valSafeInt', function () {

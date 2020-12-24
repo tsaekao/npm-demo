@@ -5,7 +5,7 @@ import { type, default as isSet } from '../validation/isSet';
 import isFinite from '../validation/isFinite';
 import isTypeset from '../validation/isTypeset';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 import { print } from '../util';

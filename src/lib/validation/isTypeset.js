@@ -9,7 +9,7 @@ import isString from './isString';
 import isCustomValidator from './isCustomValidator';
 
 import { types, argTypes, objTypes, DEFAULT_OBJECT_TYPE } from '../types';
-import qualifiers from '../qualifiers';
+import { qualifiers } from '../qualifiers';
 import { print } from '../util';
 
 const objHasOwnProp = Object.prototype.hasOwnProperty;

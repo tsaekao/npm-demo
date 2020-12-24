@@ -7,7 +7,7 @@ import { type, default as isArray } from '../validation/isArray';
 import isFinite from '../validation/isFinite';
 import isTypeset from '../validation/isTypeset';
 
-import { default as qualifiers, valuePermitted } from '../qualifiers';
+import { qualifiers, valuePermitted } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 

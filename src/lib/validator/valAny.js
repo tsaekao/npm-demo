@@ -2,7 +2,7 @@
 
 import { type, default as isAny } from '../validation/isAny';
 
-import qualifiers from '../qualifiers';
+import { qualifiers } from '../qualifiers';
 import RtvSuccess from '../RtvSuccess';
 import RtvError from '../RtvError';
 
