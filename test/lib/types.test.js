@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
-import * as pts from '../../src/lib/pureTypes';
+import * as pts from '../../src/lib/onlyTypes';
 import * as mod from '../../src/lib/types';
 import { Enumeration } from '../../src/lib/Enumeration';
 import { check as isString } from '../../src/lib/validation/isString';
@@ -14,7 +14,7 @@ describe('module: lib/types', function () {
     expect(types.$name).to.equal('types');
   });
 
-  it('should have as many types as pureTypes', function () {
+  it('should have as many types as onlyTypes', function () {
     expect(_.difference(Object.keys(types), Object.keys(pts))).to.eql([]);
   });
 

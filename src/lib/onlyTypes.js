@@ -1,4 +1,4 @@
-////// Pure Type Definitions
+////// Nothing but Type Definitions
 
 /**
  * The any type is special in that it allows _anything_, which includes `null`

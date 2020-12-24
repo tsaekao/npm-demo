@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
-import * as pqs from '../../src/lib/pureQualifiers';
+import * as pqs from '../../src/lib/onlyQualifiers';
 import * as mod from '../../src/lib/qualifiers';
 import { Enumeration } from '../../src/lib/Enumeration';
 import { check as isString } from '../../src/lib/validation/isString';
@@ -17,7 +17,7 @@ describe('module: lib/qualifiers', function () {
       expect(qualifiers.$name).to.equal('qualifiers');
     });
 
-    it('should have as many qualifiers as pureQualifiers', function () {
+    it('should have as many qualifiers as onlyQualifiers', function () {
       expect(_.difference(Object.keys(qualifiers), Object.keys(pqs))).to.eql(
         []
       );

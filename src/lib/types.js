@@ -1,7 +1,7 @@
 ////// Type Definitions
 
 import { Enumeration } from './Enumeration';
-import * as pts from './pureTypes';
+import * as pts from './onlyTypes';
 
 /**
  * <h3>Types</h3>

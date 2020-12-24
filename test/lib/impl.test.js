@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import '../../src/rtv'; // so that types get registered with `impl`
-import impl from '../../src/lib/impl';
+import * as impl from '../../src/lib/impl';
 import { DEFAULT_OBJECT_TYPE, types } from '../../src/lib/types';
 import { DEFAULT_QUALIFIER, qualifiers } from '../../src/lib/qualifiers';
 import { RtvSuccess } from '../../src/lib/RtvSuccess';
@@ -14,13 +14,7 @@ import * as isAnyMod from '../../src/lib/validation/isAny';
 
 describe('module: lib/impl', function () {
   describe('._validatorMap', function () {
-    it('should be an internal property', function () {
-      expect(Object.getOwnPropertyDescriptor(impl, '_validatorMap')).to.eql({
-        enumerable: false,
-        configurable: true,
-        writable: true,
-        value: impl._validatorMap,
-      });
+    it('should map all known types', function () {
       expect(isObject(impl._validatorMap)).to.be.true;
       expect(Object.keys(impl._validatorMap).length).to.equal(26); // # of known types
     });
@@ -44,13 +38,7 @@ describe('module: lib/impl', function () {
       impl._validatorMap[types.STRING] = stringValidator;
     });
 
-    it('should be an internal method', function () {
-      expect(Object.getOwnPropertyDescriptor(impl, '_registerType')).to.eql({
-        enumerable: false,
-        configurable: true,
-        writable: true,
-        value: impl._registerType,
-      });
+    it('should be a function', function () {
       expect(isFunction(impl._registerType)).to.be.true;
     });
 
@@ -73,8 +61,8 @@ describe('module: lib/impl', function () {
       expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
     });
 
-    it('should throw if validator is invalid: missing #default()', function () {
-      validator.default = 123;
+    it('should throw if validator is invalid: missing #validate()', function () {
+      validator.validate = 123;
       expect(impl._registerType.bind(impl, validator)).to.throw(errorRE);
     });
   });

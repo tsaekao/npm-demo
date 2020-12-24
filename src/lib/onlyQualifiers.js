@@ -1,4 +1,4 @@
-////// Pure Qualifier Definitions
+////// Nothing but Qualifier Definitions
 
 /**
  * Required qualifier: The value __must__ be of the expected type. Depending on

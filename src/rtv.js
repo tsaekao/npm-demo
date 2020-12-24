@@ -1,7 +1,7 @@
 ////// Main entry point
 
 import { version as VERSION } from '../package.json';
-import impl from './lib/impl';
+import * as impl from './lib/impl';
 import { types } from './lib/types';
 import { qualifiers } from './lib/qualifiers';
 import { RtvSuccess } from './lib/RtvSuccess';
@@ -344,12 +344,14 @@ export default rtv;
     valWeakSet,
   ];
 
-  const publicImpl = {}; // impl for validators, excluding any internal parts
-
-  Object.keys(impl).forEach(function (k) {
-    // only enumerable methods/properties
-    publicImpl[k] = impl[k];
-  });
+  // impl for validators, excluding any internal parts (i.e. methods/properties that
+  //  are prefixed with an underscore)
+  const publicImpl = Object.keys(impl)
+    .filter((k) => k.indexOf('_') < 0)
+    .reduce((obj, k) => {
+      obj[k] = impl[k];
+      return obj;
+    }, {});
 
   validators.forEach(function (val) {
     val.config({ impl: publicImpl });

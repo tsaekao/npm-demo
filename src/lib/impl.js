@@ -38,7 +38,7 @@ const objHasOwnProp = Object.prototype.hasOwnProperty;
  * @name rtvref.impl._validatorMap
  * @type {Object.<string,rtvref.validator.type_validator>}
  */
-const _validatorMap = {};
+export const _validatorMap = {};
 
 /**
  * Get the qualifier given any kind of typeset.
@@ -52,7 +52,7 @@ const _validatorMap = {};
  * @returns {string} The applicable {@link rtvref.qualifiers qualifier} for the
  *  specified typeset, which is assumed to be valid.
  */
-const getQualifier = function (typeset) {
+export const getQualifier = function (typeset) {
   let qualifier = DEFAULT_QUALIFIER;
 
   if (isArray(typeset)) {
@@ -97,7 +97,7 @@ const getQualifier = function (typeset) {
  *  fully-qualified.
  * @throws {Error} If `type`, `qualifier`, or `args` is invalid.
  */
-const toTypeset = function (type, ...rest) {
+export const toTypeset = function (type, ...rest) {
   const params = rest.filter((p) => p !== undefined);
   let qualifier = DEFAULT_QUALIFIER;
   let typeArgs;
@@ -201,7 +201,7 @@ const toTypeset = function (type, ...rest) {
  *  to elements within the input typeset.
  * @throws {Error} If `typeset` or `qualifier` is not a valid.
  */
-const fullyQualify = function (typeset, qualifier) {
+export const fullyQualify = function (typeset, qualifier) {
   if (!isTypeset(typeset)) {
     // start by validating so we can be confident later
     throw new Error(`Invalid typeset=${print(typeset, { isTypeset: true })}`);
@@ -330,7 +330,7 @@ const fullyQualify = function (typeset, qualifier) {
  * @throws {Error} If `typeset` is not empty and not a valid Array typeset.
  * @throws {Error} If `qualifier` is specified but not valid.
  */
-const extractNextType = function (typeset, qualifier) {
+export const extractNextType = function (typeset, qualifier) {
   if (qualifier && !isBoolean(qualifier)) {
     qualifiers.verify(qualifier);
   }
@@ -397,7 +397,7 @@ const extractNextType = function (typeset, qualifier) {
  * @returns {rtvref.validator.type_validator_context} The `context` that was validated.
  * @throws {Error} If `context` is not valid.
  */
-const _validateContext = function (context) {
+export const _validateContext = function (context) {
   // NOTE: since the original value could be `undefined`, we only test for the
   //  presence of the property, not the value
   // WARNING: to avoid a possible infinite loop, we validate manually instead of
@@ -436,7 +436,7 @@ const _validateContext = function (context) {
  * @returns {rtvref.validator.type_validator_context} New context with an empty/root
  *  path.
  */
-const _createContext = function ({ originalValue, parent, parentKey }) {
+export const _createContext = function ({ originalValue, parent, parentKey }) {
   return {
     originalValue,
     parent,
@@ -462,7 +462,7 @@ const _createContext = function ({ originalValue, parent, parentKey }) {
  *  if the validator failed.
  * @throws {Error} If the specified `context` is not valid.
  */
-const _callCustomValidator = function (
+export const _callCustomValidator = function (
   validator,
   value,
   match,
@@ -524,7 +524,7 @@ const _callCustomValidator = function (
  * @see {@link rtvref.impl.checkWithShape}
  * @see {@link rtvref.impl.checkWithArray}
  */
-const _getCheckOptions = function (current = {}) {
+export const _getCheckOptions = function (current = {}) {
   if (current.path && !isArray(current.path)) {
     throw new Error(
       `current.path must be an Array when specified, current.path=${print(
@@ -584,7 +584,11 @@ const _getCheckOptions = function (current = {}) {
  * @see {@link rtvref.types}
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithType = function (value, singleType, context /*, options*/) {
+export const checkWithType = function (
+  value,
+  singleType,
+  context /*, options*/
+) {
   context = _validateContext(
     context || _createContext({ originalValue: value })
   );
@@ -674,7 +678,7 @@ const checkWithType = function (value, singleType, context /*, options*/) {
  * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithShape = function (value, shape, context /*, options*/) {
+export const checkWithShape = function (value, shape, context /*, options*/) {
   context = _validateContext(
     context || _createContext({ originalValue: value })
   );
@@ -707,7 +711,7 @@ const checkWithShape = function (value, shape, context /*, options*/) {
  * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const checkWithArray = function (value, arrayTs, context /*, options*/) {
+export const checkWithArray = function (value, arrayTs, context /*, options*/) {
   context = _validateContext(
     context || _createContext({ originalValue: value })
   );
@@ -848,7 +852,7 @@ const checkWithArray = function (value, arrayTs, context /*, options*/) {
  * @throws {Error} If the specified `context` is not valid.
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
-const check = function (value, typeset, context /*, options*/) {
+export const check = function (value, typeset, context /*, options*/) {
   context = _validateContext(
     context || _createContext({ originalValue: value })
   );
@@ -932,7 +936,7 @@ const check = function (value, typeset, context /*, options*/) {
  *  registered.
  * @throws {Error} if `validator` does not have the expected interface.
  */
-const _registerType = function (validator) {
+export const _registerType = function (validator) {
   // NOTE: we can't dogfood and describe a shape to check() because the types
   //  needed may not have been registered yet
   if (
@@ -950,42 +954,3 @@ const _registerType = function (validator) {
 
   _validatorMap[validator.type] = validator.validate;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// Define and export the module
-
-// define the module to be exported: properties/methods with an underscore prefix
-//  will be converted to non-enumerable properties/methods
-const impl = {
-  // internal
-  _validatorMap, // exposed mainly to support unit testing
-  _registerType,
-  _validateContext,
-  _createContext,
-  _callCustomValidator,
-  _getCheckOptions,
-  // public
-  getQualifier,
-  toTypeset,
-  fullyQualify,
-  extractNextType,
-  checkWithType,
-  checkWithShape,
-  checkWithArray,
-  check,
-};
-
-// make properties/methods with underscore prefix internal by making them
-//  non-enumerable (but otherwise, a normal property)
-Object.keys(impl).forEach(function (prop) {
-  if (prop.indexOf('_') === 0) {
-    Object.defineProperty(impl, prop, {
-      enumerable: false,
-      configurable: true,
-      writable: true,
-      value: impl[prop],
-    });
-  }
-});
-
-export default impl;
