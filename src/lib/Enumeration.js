@@ -33,7 +33,7 @@ import { print } from './util';
  * @throws {Error} If `map` has a key that is a restricted property (starts with
  *  "$").
  */
-export default class Enumeration {
+export class Enumeration {
   // JSDoc is provided at the @class level
   constructor(map, name) {
     map = map || {};

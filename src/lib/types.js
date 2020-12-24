@@ -1,6 +1,6 @@
 ////// Type Definitions
 
-import Enumeration from './Enumeration';
+import { Enumeration } from './Enumeration';
 import * as pts from './pureTypes';
 
 /**

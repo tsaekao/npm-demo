@@ -1,7 +1,7 @@
 ////// Qualifier Definitions
 
 import * as pqs from './pureQualifiers';
-import Enumeration from './Enumeration';
+import { Enumeration } from './Enumeration';
 import isFalsy from './validation/isFalsy';
 
 /**

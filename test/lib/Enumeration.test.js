@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import _ from 'lodash';
 
-import Enumeration from '../../src/lib/Enumeration';
+import { Enumeration } from '../../src/lib/Enumeration';
 
 describe('module: lib/Enumeration', function () {
   let en;
