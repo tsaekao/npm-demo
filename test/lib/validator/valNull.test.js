@@ -27,10 +27,10 @@ describe('module: lib/validator/valNull', function () {
     });
 
     it('other types/values', function () {
-      vtu.expectAllToFail(val.type, val.default, restrictedValues);
+      vtu.expectAllToFail(val.type, val.validate, restrictedValues);
 
       // this does not test for undefined/null
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
     });
   });
 
@@ -39,7 +39,7 @@ describe('module: lib/validator/valNull', function () {
       it('REQUIRED (other than values previously tested)', function () {
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.REQUIRED
         );
@@ -51,7 +51,7 @@ describe('module: lib/validator/valNull', function () {
       it('EXPECTED', function () {
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.EXPECTED
         );
@@ -64,7 +64,7 @@ describe('module: lib/validator/valNull', function () {
         restrictedValues.splice(restrictedValues.indexOf(undefined), 1);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.OPTIONAL
         );
@@ -78,7 +78,7 @@ describe('module: lib/validator/valNull', function () {
         // here, ALL restricted values succeed because the qualifier permits them
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.TRUTHY
         );

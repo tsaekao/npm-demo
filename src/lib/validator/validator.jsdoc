@@ -12,7 +12,7 @@
  *
  * __Every validator module must provide the following interface:__
  *
- * - `{function} default` (the default export): The
+ * - `{function} validate`: The
  *   {@link rtvref.validator.type_validator type validator} itself.
  * - `{string} type`: The {@link rtvref.types type} verified.
  * - `{function} config`: The

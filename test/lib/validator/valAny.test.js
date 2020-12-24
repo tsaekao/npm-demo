@@ -28,12 +28,14 @@ describe('module: lib/validator/valAny', function () {
         values = values.concat(validValues[type]);
       });
 
-      expect(vtu.testValues(val.type, val.default, values).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.validate, values).failures).to.eql(
+        []
+      );
     });
 
     it('other types/values', function () {
       // for ANY, _all_ other values should be _valid_ also
-      expect(vtu.testOtherValues(val.type, val.default, true)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.validate, true)).to.eql([]);
     });
   });
 
@@ -51,7 +53,7 @@ describe('module: lib/validator/valAny', function () {
       it('REQUIRED (other than values previously tested)', function () {
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.REQUIRED
         );
@@ -60,7 +62,7 @@ describe('module: lib/validator/valAny', function () {
       it('EXPECTED', function () {
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.EXPECTED
         );
@@ -69,7 +71,7 @@ describe('module: lib/validator/valAny', function () {
       it('OPTIONAL', function () {
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.OPTIONAL
         );
@@ -78,7 +80,7 @@ describe('module: lib/validator/valAny', function () {
       it('TRUTHY', function () {
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.TRUTHY
         );

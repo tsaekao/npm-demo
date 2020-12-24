@@ -46,13 +46,13 @@ export const config = function (settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Boolean(true)`, which is an object that is a boolean.
  *
- * @function rtvref.validator.valBoolean.default
+ * @function rtvref.validator.valBoolean.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valBoolean(v, q = REQUIRED) {
+export const validate = function valBoolean(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -67,4 +67,4 @@ export default function valBoolean(v, q = REQUIRED) {
     [],
     impl.toTypeset(type, q, true)
   );
-}
+};

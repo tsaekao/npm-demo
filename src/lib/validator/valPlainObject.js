@@ -44,7 +44,7 @@ export const config = function (settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.PLAIN_OBJECT PLAIN_OBJECT} type.
- * @function rtvref.validator.valPlainObject.default
+ * @function rtvref.validator.valPlainObject.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
@@ -52,7 +52,12 @@ export const config = function (settings) {
  * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valPlainObject(v, q = REQUIRED, args, context) {
+export const validate = function valPlainObject(
+  v,
+  q = REQUIRED,
+  args,
+  context
+) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -94,4 +99,4 @@ export default function valPlainObject(v, q = REQUIRED, args, context) {
   });
 
   return err || new RtvSuccess();
-}
+};

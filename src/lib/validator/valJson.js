@@ -41,13 +41,13 @@ export const config = function (settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.JSON JSON} type.
- * @function rtvref.validator.valJson.default
+ * @function rtvref.validator.valJson.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valJson(v, q = REQUIRED) {
+export const validate = function valJson(v, q = REQUIRED) {
   // NOTE: this test, when the qualifier is TRUTHY, will permit `undefined` since it's
   //  falsy, even though it isn't a valid JSON value; this is the intended behavior
   if (valuePermitted(v, q)) {
@@ -64,4 +64,4 @@ export default function valJson(v, q = REQUIRED) {
     [],
     impl.toTypeset(type, q, true)
   );
-}
+};

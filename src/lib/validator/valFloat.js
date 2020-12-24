@@ -48,14 +48,14 @@ export const config = function (settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1.5)`, which is an object that is a number.
  *
- * @function rtvref.validator.valFloat.default
+ * @function rtvref.validator.valFloat.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.numeric_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valFloat(v, q = REQUIRED, args) {
+export const validate = function valFloat(v, q = REQUIRED, args) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -96,4 +96,4 @@ export default function valFloat(v, q = REQUIRED, args) {
     [],
     impl.toTypeset(type, q, args, true)
   );
-}
+};

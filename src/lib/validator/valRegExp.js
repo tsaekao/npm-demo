@@ -41,13 +41,13 @@ export const config = function (settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.REGEXP REGEXP} type.
- * @function rtvref.validator.valRegExp.default
+ * @function rtvref.validator.valRegExp.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valRegExp(v, q = REQUIRED) {
+export const validate = function valRegExp(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -62,4 +62,4 @@ export default function valRegExp(v, q = REQUIRED) {
     [],
     impl.toTypeset(type, q, true)
   );
-}
+};

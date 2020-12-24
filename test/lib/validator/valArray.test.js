@@ -19,11 +19,11 @@ describe('module: lib/validator/valArray', function () {
     });
 
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
     });
 
     it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
     });
   });
 
@@ -39,7 +39,7 @@ describe('module: lib/validator/valArray', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.REQUIRED
         );
@@ -47,7 +47,7 @@ describe('module: lib/validator/valArray', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.REQUIRED);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.REQUIRED
         );
@@ -57,7 +57,7 @@ describe('module: lib/validator/valArray', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.EXPECTED
         );
@@ -65,7 +65,7 @@ describe('module: lib/validator/valArray', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.EXPECTED);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.EXPECTED
         );
@@ -75,7 +75,7 @@ describe('module: lib/validator/valArray', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.OPTIONAL
         );
@@ -83,7 +83,7 @@ describe('module: lib/validator/valArray', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.OPTIONAL);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.OPTIONAL
         );
@@ -93,7 +93,7 @@ describe('module: lib/validator/valArray', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.TRUTHY
         );
@@ -101,7 +101,7 @@ describe('module: lib/validator/valArray', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.TRUTHY);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.TRUTHY
         );
@@ -261,7 +261,7 @@ describe('module: lib/validator/valArray', function () {
     it('should set parent to array and parentKey to index', function () {
       const validator = sinon.spy();
       const value = ['bar'];
-      val.default(value, undefined, { ts: validator });
+      val.validate(value, undefined, { ts: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([

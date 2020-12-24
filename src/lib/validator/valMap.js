@@ -59,7 +59,7 @@ const isStringTypeset = function (ts) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.MAP MAP} type.
- * @function rtvref.validator.valMap.default
+ * @function rtvref.validator.valMap.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
@@ -67,7 +67,7 @@ const isStringTypeset = function (ts) {
  * @param {rtvref.validator.type_validator_context} context Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valMap(v, q = REQUIRED, args, context) {
+export const validate = function valMap(v, q = REQUIRED, args, context) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -186,4 +186,4 @@ export default function valMap(v, q = REQUIRED, args, context) {
   }
 
   return result;
-}
+};

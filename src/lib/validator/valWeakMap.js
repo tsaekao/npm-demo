@@ -41,13 +41,13 @@ export const config = function (settings) {
 /**
  * {@link rtvref.validator.type_validator Validator} for the
  *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
- * @function rtvref.validator.valWeakMap.default
+ * @function rtvref.validator.valWeakMap.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valWeakMap(v, q = REQUIRED) {
+export const validate = function valWeakMap(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
     return new RtvSuccess();
   }
@@ -62,4 +62,4 @@ export default function valWeakMap(v, q = REQUIRED) {
     [],
     impl.toTypeset(type, q, true)
   );
-}
+};

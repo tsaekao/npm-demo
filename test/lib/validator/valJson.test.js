@@ -25,15 +25,15 @@ describe('module: lib/validator/valJson', function () {
     });
 
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default, jsonValues).failures).to.eql(
-        []
-      );
+      expect(
+        vtu.testValues(val.type, val.validate, jsonValues).failures
+      ).to.eql([]);
     });
 
     it('other types/values', function () {
       // nothing should pass
       expect(
-        vtu.testValues(val.type, val.default, invalidValues).passes
+        vtu.testValues(val.type, val.validate, invalidValues).passes
       ).to.eql([]);
     });
   });

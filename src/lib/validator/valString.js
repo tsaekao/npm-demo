@@ -49,14 +49,14 @@ export const config = function (settings) {
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new String('value')`, which is an object that is a string.
  *
- * @function rtvref.validator.valString.default
+ * @function rtvref.validator.valString.validate
  * @param {*} v Value to validate.
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.STRING_args} [args] Type arguments.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
-export default function valString(v, q = REQUIRED, args) {
+export const validate = function valString(v, q = REQUIRED, args) {
   // NOTE: this test, when the qualifier is TRUTHY, will permit an empty string regardless
   //  of any args that may not, which is the intended behavior
   if (valuePermitted(v, q)) {
@@ -133,4 +133,4 @@ export default function valString(v, q = REQUIRED, args) {
     [],
     impl.toTypeset(type, q, args, true)
   );
-}
+};

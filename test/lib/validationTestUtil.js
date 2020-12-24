@@ -522,7 +522,7 @@ export const expectValidatorSuccess = function (
   qualifier,
   args
 ) {
-  const result = validator.default(value, qualifier, args);
+  const result = validator.validate(value, qualifier, args);
 
   expect(result).to.be.an.instanceof(RtvSuccess);
   expect(result.valid).to.be.true;
@@ -554,7 +554,7 @@ export const expectValidatorError = function (
   args,
   expectations = {}
 ) {
-  const result = validator.default(value, qualifier, args);
+  const result = validator.validate(value, qualifier, args);
 
   expect(result).to.be.an.instanceof(RtvError);
   expect(result.valid).to.be.false;

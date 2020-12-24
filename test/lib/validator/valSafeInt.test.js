@@ -18,7 +18,7 @@ describe('module: lib/validator/valSafeInt', function () {
     });
 
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
     });
 
     it('other types/values', function () {
@@ -57,7 +57,7 @@ describe('module: lib/validator/valSafeInt', function () {
 
       // nothing should pass
       expect(
-        vtu.testValues(val.type, val.default, invalidValues).passes
+        vtu.testValues(val.type, val.validate, invalidValues).passes
       ).to.eql([]);
     });
   });
@@ -80,7 +80,7 @@ describe('module: lib/validator/valSafeInt', function () {
           .filter((v) => v !== 0);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.REQUIRED
         );
@@ -88,7 +88,7 @@ describe('module: lib/validator/valSafeInt', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.REQUIRED);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.REQUIRED
         );
@@ -100,7 +100,7 @@ describe('module: lib/validator/valSafeInt', function () {
           .filter((v) => v !== 0 && !isNaN(v));
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.EXPECTED
         );
@@ -108,7 +108,7 @@ describe('module: lib/validator/valSafeInt', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.EXPECTED);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.EXPECTED
         );
@@ -120,7 +120,7 @@ describe('module: lib/validator/valSafeInt', function () {
           .filter((v) => v !== 0 && !isNaN(v));
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.OPTIONAL
         );
@@ -128,7 +128,7 @@ describe('module: lib/validator/valSafeInt', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.OPTIONAL);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.OPTIONAL
         );
@@ -138,7 +138,7 @@ describe('module: lib/validator/valSafeInt', function () {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
-          val.default,
+          val.validate,
           restrictedValues,
           qualifiers.TRUTHY
         );
@@ -146,7 +146,7 @@ describe('module: lib/validator/valSafeInt', function () {
         const permittedValues = vtu.getPermittedValues(qualifiers.TRUTHY);
         vtu.expectAllToPass(
           val.type,
-          val.default,
+          val.validate,
           permittedValues,
           qualifiers.TRUTHY
         );

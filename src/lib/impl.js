@@ -939,16 +939,16 @@ const _registerType = function (validator) {
     !isObject(validator) ||
     !types.check(validator.type) ||
     !isFunction(validator.config) ||
-    !isFunction(validator.default)
+    !isFunction(validator.validate)
   ) {
     throw new Error(
       `Cannot register an invalid validator for type=${print(
         validator && validator.type
-      )}: missing at least one required property in [type, config, default]`
+      )}: missing at least one required property in [type, config, validate]`
     );
   }
 
-  _validatorMap[validator.type] = validator.default;
+  _validatorMap[validator.type] = validator.validate;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
