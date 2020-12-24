@@ -229,7 +229,7 @@ const getCjsConfig = function () {
     ...baseOutput(),
     file: `${DIR_DIST}/${FILE_NAME}.js`,
     format,
-    exports: 'default',
+    exports: 'named',
   };
 
   return config;

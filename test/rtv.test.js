@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 
-import rtv from '../src/rtv';
+import * as rtv from '../src/rtv';
 import { types } from '../src/lib/types';
 import { qualifiers } from '../src/lib/qualifiers';
 import * as impl from '../src/lib/impl';
@@ -110,16 +110,7 @@ describe('module: rtv', function () {
     });
   });
 
-  describe('#enabled proxy', function () {
-    it('should have a shortcut proxy rtv.enabled -> rtv.config.enabled', function () {
-      expect('enabled' in rtv).to.equal(true);
-      expect(rtv.enabled).to.equal(rtv.config.enabled);
-      rtv.config.enabled = false;
-      expect(rtv.enabled).to.equal(rtv.config.enabled);
-    });
-  });
-
-  describe('.config', function () {
+  describe('#config', function () {
     let rtvVerifySpy;
     let implCheckSpy;
 
@@ -140,15 +131,16 @@ describe('module: rtv', function () {
         expect(_.isBoolean(rtv.config.enabled)).to.equal(true);
       });
 
-      it('should verify a boolean is being set', function () {
-        rtv.config.enabled = false;
-        expect(rtvVerifySpy.called).to.equal(true);
-        expect(rtvVerifySpy.calledWith(false, rtv.BOOLEAN)).to.equal(true);
+      it('should cast non-boolean values to booleans', function () {
+        rtv.config.enabled = 0;
+        expect(rtv.config.enabled).to.equal(false);
+
+        rtv.config.enabled = {};
+        expect(rtv.config.enabled).to.equal(true);
       });
 
       it('should not check when disabled', function () {
         rtv.config.enabled = false;
-        implCheckSpy.resetHistory(); // call above would have called spy
         expect(rtv.check('foobar', rtv.BOOLEAN)).to.be.an.instanceof(
           RtvSuccess
         );
@@ -158,7 +150,6 @@ describe('module: rtv', function () {
       it('should not verify when disabled', function () {
         rtvVerifySpy.restore(); // disable spy
         rtv.config.enabled = false;
-        implCheckSpy.resetHistory(); // call above would have called spy
         expect(rtv.verify('foobar', rtv.BOOLEAN)).to.be.an.instanceof(
           RtvSuccess
         );

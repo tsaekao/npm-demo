@@ -2,7 +2,7 @@
 
 /* eslint-disable node/no-unsupported-features/es-syntax */
 
-import rtv from '../src/rtv';
+import * as rtv from '../src/rtv';
 import * as impl from '../src/lib/impl';
 import * as types from '../src/lib/types';
 import * as qualifiers from '../src/lib/qualifiers';

@@ -23,7 +23,13 @@ Date format is YYYY-MM-DD.
     -   `RtvError.failure`, replaced with `RtvError.rootCause`.
     -   `rtv.t`, being replaced by `rtv.types`.
     -   `rtv.q`, being replaced by `rtv.qualifiers`.
-    -   `rtv.e`, being replaced by `rtv.enabled`.
+    -   `rtv.e`, being replaced by `rtv.enabled` (and then also removed; see below).
+-   __REMOVED__ the `rtv.enabled` convenience accessor. Use `rtv.config.enabled` instead, or define your own environment variable, e.g. `DEV_ENV && rtv.verify(...)`
+-   __REMOVED__ the default export. All exports are now named. To get the same behavior as before, change `import rtv from 'rtvjs'; -> import * as rtv from 'rtvjs';`. Default exports are generally a bad idea, especially when converting from ESM to CJS. The elimination of the default export should make bundling RTV.js much easier, regardless of your target format (CJS, ESM, UMD, ...).
+
+### Changed
+
+-   Setting `rtv.config.enabled` to a value that is not strictly a `boolean` will no longer cause an `RtvError` exception; instead, the value will simply be _cast_ as a `boolean`.
 
 ## 2.4.0
 

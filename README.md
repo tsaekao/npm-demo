@@ -159,6 +159,18 @@ Tutorials and example uses of the RTV.js library.
 
 ## Getting Started
 
+To make it clear, in this tutorial, which properties and functions from RTV.js, we'll start by importing everything into an `rtv` object:
+
+```javascript
+import * as rtv from 'rtvjs';
+```
+
+You could also drop the object and import individual names, such as:
+
+```javascript
+import { check, verify, STRING, ... } from 'rtvjs';
+```
+
 ### Checks and Verifications
 
 RTV.js provides two functions for verifying values against [typesets](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset). A _typeset_ is simply a set of one or more types that form an expectation about the value:
@@ -540,21 +552,23 @@ rtv.verify('foo', rtv.INT); // no-op, always returns RtvSuccess
 rtv.check('foo', rtv.INT); // no-op, always returns RtvSuccess
 ```
 
-But why even make the function call?
+But why even make the call at all?
 
 ```javascript
 if (rtv.config.enabled) {
   rtv.verify('foo', rtv.INT);
 }
+
+// OR more terse:
+
+rtv.config.enabled && rtv.verify('foo', rtv.INT);
+
+// OR with your own global:
+
+DO_TYPE_CHECKS && rtv.verify('foo', rtv.INT);
 ```
 
-Even better, since `rtv.enabled` is a getter that returns the value of `rtv.config.enabled`, we can make this terse:
-
-```javascript
-rtv.enabled && rtv.verify('foo', rtv.INT);
-```
-
-Finally, a JavaScript bundler that supports _tree shaking_ (e.g. Webpack or Rollup) can be configured to completely _exclude_ the entire code for a build. This could be handy if you're concerned about script download size over runtime checks, say, in a production build. See the [Rollup example](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#enabled-example-rollup) for more information.
+Now, a JavaScript bundler that supports _tree shaking_ (e.g. Webpack or Rollup) can be configured to completely _exclude_ the entire code for a build. This could be handy if you're concerned about script download size over runtime checks, say, in a production build. See the [Rollup example](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#enabled-example-rollup) for more information.
 
 ## Verifications
 

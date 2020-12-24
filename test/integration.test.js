@@ -2,7 +2,7 @@
 
 import { expect } from 'chai';
 
-import rtv from '../src/rtv';
+import * as rtv from '../src/rtv';
 
 import { RtvSuccess } from '../src/lib/RtvSuccess';
 import { RtvError } from '../src/lib/RtvError';

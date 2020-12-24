@@ -30,14 +30,13 @@ Provides the externally-facing API. It wraps the
 * [rtv](#rtv) : <code>object</code>
     * [.types](#rtv.types) : [<code>Enumeration</code>](#rtvref.Enumeration)
     * [.qualifiers](#rtv.qualifiers) : [<code>Enumeration</code>](#rtvref.Enumeration)
-    * [.enabled](#rtv.enabled) : <code>boolean</code>
     * [.version](#rtv.version) : <code>string</code>
-    * [.RtvSuccess](#rtv.RtvSuccess) : <code>function</code>
-    * [.RtvError](#rtv.RtvError) : <code>function</code>
     * [.config](#rtv.config) : <code>object</code>
         * [.enabled](#rtv.config.enabled) : <code>boolean</code>
     * [.isTypeset()](#rtv.isTypeset)
     * [.fullyQualify()](#rtv.fullyQualify)
+    * [.RtvSuccess()](#rtv.RtvSuccess)
+    * [.RtvError()](#rtv.RtvError)
     * [.check(value, typeset)](#rtv.check) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
     * [.verify(value, typeset)](#rtv.verify) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess)
 
@@ -46,12 +45,12 @@ Provides the externally-facing API. It wraps the
 ## rtv.types : [<code>Enumeration</code>](#rtvref.Enumeration)
 Enumeration of [types](#rtvref.types.types).
 
-__For convenience, each type is also available directly from this object__,
- e.g. `rtv.STRING`, `rtv.FINITE`, etc.
+__For convenience, each type is also available directly from this module__,
+ e.g. `STRING`, `FINITE`, etc.
 
 The Enumeration can be used to perform additional validations (e.g.
- `rtv.types.verify('foo')` would throw because "foo" is not a valid type),
- however whether the type is referenced as `rtv.STRING` or `rtv.types.STRING`
+ `types.verify('foo')` would throw because "foo" is not a valid type),
+ however whether the type is referenced as `STRING` or `types.STRING`
  makes no difference to typeset validation.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
@@ -61,20 +60,13 @@ The Enumeration can be used to perform additional validations (e.g.
 ## rtv.qualifiers : [<code>Enumeration</code>](#rtvref.Enumeration)
 Enumeration of [qualifiers](#rtvref.qualifiers.qualifiers).
 
-__For convenience, each qualifier is also available directly from this object__,
- e.g. `rtv.EXPECTED`, `rtv.OPTIONAL`, etc.
+__For convenience, each qualifier is also available directly from this module__,
+ e.g. `EXPECTED`, `OPTIONAL`, etc.
 
 The Enumeration can be used to perform additional validations (e.g.
- `rtv.qualifiers.verify('x')` would throw because "x" is not a valid qualifier),
- however whether the qualifier is referenced as `rtv.EXPECTED` or
- `rtv.qualifiers.EXPECTED`` makes no difference to typeset validation.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
-**Read only**: true  
-<a name="rtv.enabled"></a>
-
-## rtv.enabled : <code>boolean</code>
-Shortcut proxy for reading [enabled](#rtv.config.enabled).
+ `qualifiers.verify('x')` would throw because "x" is not a valid qualifier),
+ however whether the qualifier is referenced as `EXPECTED` or
+ `qualifiers.EXPECTED`` makes no difference to typeset validation.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
@@ -85,27 +77,6 @@ Library version.
 
 **Kind**: static property of [<code>rtv</code>](#rtv)  
 **Read only**: true  
-<a name="rtv.RtvSuccess"></a>
-
-## rtv.RtvSuccess : <code>function</code>
-Reference to the [RtvSuccess](#rtvref.RtvSuccess) class/constructor.
-
-This can be used to determine, for example, if the result of [rtv.check()](#rtv.check)
- is the success indicator: `if (result instanceof rtv.RtvSuccess) ...` Note that both
- [RtvSuccess](#rtvref.RtvSuccess) and [RtvError](#rtvref.RtvError) have a
- `valid: boolean` property which you can also use to easily test for success or failure.
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
-**See**: [check](#rtv.check)  
-<a name="rtv.RtvError"></a>
-
-## rtv.RtvError : <code>function</code>
-Reference to the [RtvError](#rtvref.RtvError) class/constructor.
-
-This is useful if you need to determine whether an `Error` is an `RtvError`
- using the `instanceof` operator: `if (err instanceof rtv.RtvError) ...`
-
-**Kind**: static property of [<code>rtv</code>](#rtv)  
 <a name="rtv.config"></a>
 
 ## rtv.config : <code>object</code>
@@ -116,13 +87,13 @@ This is useful if you need to determine whether an `Error` is an `RtvError`
 
 ### config.enabled : <code>boolean</code>
 Globally enables or disables [verify](#rtv.verify) and [check](#rtv.check). When set
- to `false`, these methods are no-ops.
+ to `false`, these methods are no-ops and always return success.
 
-Use this, or the shortcut [enabled](#rtv.enabled), to enable code optimization
- when building source with a bundler that supports _tree shaking_, like
- [Rollup](https://rollupjs.org/) or [Webpack](https://webpack.js.org/).
+Use this to enable code optimization when building source with a bundler that supports
+ _tree shaking_, like [Rollup](https://rollupjs.org/) or
+ [Webpack](https://webpack.js.org/).
 
-The following plugins can redefine the statement `rtv.enabled` or `rtv.config.enabled`
+The following plugins can redefine the statement `rtv.config.enabled`
  as `false` prior to code optimizations that remove unreachable code:
 
 - Rollup: [rollup-plugin-replace](https://github.com/rollup/rollup-plugin-replace)
@@ -142,7 +113,7 @@ if (rtv.config.enabled) {
  rtv.verify(jsonResult, expectedShape);
 }
 
-rtv.enabled && rtv.verify(jsonResult, expectedShape); // shorter
+rtv.config.enabled && rtv.verify(jsonResult, expectedShape); // a bit shorter
 
 ...
 </code></pre>
@@ -156,8 +127,27 @@ module.exports = {
   plugins: [
     // invoke this plugin _before_ any other plugins
     replacePlugin({
-      'rtv.enabled': 'false',
-      'rtv.config.enabled': 'false'
+      'rtv.config.enabled': JSON.stringify(false)
+    }),
+    ...
+  ]
+};
+</code></pre>
+
+You could also define your own global to achieve the same result:
+
+<pre><code>...
+DO_TYPE_CHECKS && rtv.verify(...);
+</code></pre>
+
+<pre><code>const replacePlugin = require('rollup-plugin-replace');
+
+module.exports = {
+  ...
+  plugins: [
+    // invoke this plugin _before_ any other plugins
+    replacePlugin({
+      DO_TYPE_CHECKS: JSON.stringify(false)
     }),
     ...
   ]
@@ -167,8 +157,17 @@ module.exports = {
 The code in the module snippet above would be completely removed from the
  build's output, thereby removing any rtv.js overhead from production.
 
+If you're using Webpack, be sure to also _not_ explicitly mark the `rtvjs`
+ module as an external when disabling RTV.js: Doing so will result in the
+ module always being required as an external, even when tree shaking eliminates
+ all the code that comes from it.
+
 **Kind**: static property of [<code>config</code>](#rtv.config)  
-**See**: [enabled](#rtv.enabled)  
+**See**
+
+- [check](#rtv.check)
+- [verify](#rtv.verify)
+
 <a name="rtv.isTypeset"></a>
 
 ## rtv.isTypeset()
@@ -183,6 +182,28 @@ Fully-qualifies a given typeset.
 
 **Kind**: static method of [<code>rtv</code>](#rtv)  
 **See**: [fullyQualify](#rtvref.impl.fullyQualify)  
+<a name="rtv.RtvSuccess"></a>
+
+## rtv.RtvSuccess()
+Reference to the [RtvSuccess](#rtvref.RtvSuccess) class/constructor.
+
+This can be used to determine, for example, if the result of [rtv.check()](#rtv.check)
+ is the success indicator: `if (result instanceof rtv.RtvSuccess) ...` Note that both
+ [RtvSuccess](#rtvref.RtvSuccess) and [RtvError](#rtvref.RtvError) have a
+ `valid: boolean` property which you can also use to easily test for success or failure.
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+**See**: [RtvSuccess](#rtvref.RtvSuccess)  
+<a name="rtv.RtvError"></a>
+
+## rtv.RtvError()
+Reference to the [RtvError](#rtvref.RtvError) class/constructor.
+
+This is useful if you need to determine whether an `Error` is an `RtvError`
+ using the `instanceof` operator: `if (err instanceof rtv.RtvError) ...`
+
+**Kind**: static method of [<code>rtv</code>](#rtv)  
+**See**: [RtvError](#rtvref.RtvError)  
 <a name="rtv.check"></a>
 
 ## rtv.check(value, typeset) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
