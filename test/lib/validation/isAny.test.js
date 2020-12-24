@@ -20,12 +20,12 @@ describe('module: lib/validation/isAny', function () {
         values = values.concat(validValues[type]);
       });
 
-      expect(vtu.testValues(val.type, val.default, values).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.check, values).failures).to.eql([]);
     });
 
     it('other types/values', function () {
       // for ANY, _all_ other values should be _valid_ also
-      expect(vtu.testOtherValues(val.type, val.default, true)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check, true)).to.eql([]);
     });
   });
 });

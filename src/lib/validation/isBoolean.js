@@ -21,10 +21,10 @@ export const type = types.BOOLEAN;
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Boolean(true)`, which is an object that is a boolean.
  *
- * @function rtvref.validation.isBoolean.default
+ * @function rtvref.validation.isBoolean.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isBoolean(v) {
+export const check = function isBoolean(v) {
   return v === true || v === false;
-}
+};

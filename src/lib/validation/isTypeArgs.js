@@ -1,6 +1,6 @@
 ////// isTypeArgs validation module
 
-import isObject from './isObject';
+import { check as isObject } from './isObject';
 
 /**
  * Validation Module: isTypeArgs
@@ -16,13 +16,13 @@ export const type = undefined;
 /**
  * Determines if a value is a {@link rtvref.types.type_arguments type arguments}
  *  object.
- * @function rtvref.validation.isTypeArgs.default
+ * @function rtvref.validation.isTypeArgs.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
-export default function isTypeArgs(v) {
+export const check = function isTypeArgs(v) {
   // NOTE: Since shapes are also type args, this check must always validate a
   //  shape; and since at this time, OBJECT === shape === type args, we just
   //  check for an OBJECT type
   return isObject(v);
-}
+};

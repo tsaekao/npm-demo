@@ -4,7 +4,7 @@ import _ from 'lodash';
 import * as pts from '../../src/lib/pureTypes';
 import * as mod from '../../src/lib/types';
 import { Enumeration } from '../../src/lib/Enumeration';
-import isString from '../../src/lib/validation/isString';
+import { check as isString } from '../../src/lib/validation/isString';
 
 describe('module: lib/types', function () {
   const types = mod.types;

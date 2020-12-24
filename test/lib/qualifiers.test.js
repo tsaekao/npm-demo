@@ -4,8 +4,8 @@ import _ from 'lodash';
 import * as pqs from '../../src/lib/pureQualifiers';
 import * as mod from '../../src/lib/qualifiers';
 import { Enumeration } from '../../src/lib/Enumeration';
-import isString from '../../src/lib/validation/isString';
-import isFalsy from '../../src/lib/validation/isFalsy';
+import { check as isString } from '../../src/lib/validation/isString';
+import { check as isFalsy } from '../../src/lib/validation/isFalsy';
 import * as vtu from '../../test/lib/validationTestUtil';
 
 describe('module: lib/qualifiers', function () {

@@ -1,6 +1,6 @@
 ////// valNull validator
 
-import { type, default as isNull } from '../validation/isNull';
+import { type, check as isNull } from '../validation/isNull';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

@@ -2,9 +2,9 @@
 
 import { default as _isNaN } from 'lodash/isNaN';
 
-import { type, default as isNumber } from '../validation/isNumber';
+import { type, check as isNumber } from '../validation/isNumber';
 
-import isArray from '../validation/isArray';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

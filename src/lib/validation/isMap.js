@@ -18,10 +18,10 @@ export const type = types.MAP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.MAP MAP} type.
- * @function rtvref.validation.isMap.default
+ * @function rtvref.validation.isMap.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isMap(v) {
+export const check = function isMap(v) {
   return _isMap(v);
-}
+};

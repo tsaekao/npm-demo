@@ -12,7 +12,7 @@ describe('module: lib/validation/isFloat', function () {
 
   describe('#default', function () {
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.check).failures).to.eql([]);
     });
 
     it('other types/values', function () {
@@ -47,9 +47,9 @@ describe('module: lib/validation/isFloat', function () {
       });
 
       // nothing should pass
-      expect(
-        vtu.testValues(val.type, val.default, invalidValues).passes
-      ).to.eql([]);
+      expect(vtu.testValues(val.type, val.check, invalidValues).passes).to.eql(
+        []
+      );
     });
   });
 });

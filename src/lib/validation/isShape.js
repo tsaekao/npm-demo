@@ -1,6 +1,6 @@
 ////// isShape validation module
 
-import isObject from './isObject';
+import { check as isObject } from './isObject';
 
 /**
  * Validation Module: isShape
@@ -15,10 +15,10 @@ export const type = undefined;
 
 /**
  * Determines if a value is a {@link rtvref.types.shape_descriptor shape}.
- * @function rtvref.validation.isShape.default
+ * @function rtvref.validation.isShape.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
-export default function isShape(v) {
+export const check = function isShape(v) {
   return isObject(v);
-}
+};

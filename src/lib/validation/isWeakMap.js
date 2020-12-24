@@ -18,10 +18,10 @@ export const type = types.WEAK_MAP;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.WEAK_MAP WEAK_MAP} type.
- * @function rtvref.validation.isWeakMap.default
+ * @function rtvref.validation.isWeakMap.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isWeakMap(v) {
+export const check = function isWeakMap(v) {
   return _isWeakMap(v);
-}
+};

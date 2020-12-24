@@ -23,10 +23,10 @@ export const type = types.FINITE;
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
- * @function rtvref.validation.isFinite.default
+ * @function rtvref.validation.isFinite.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isFinite(v) {
+export const check = function isFinite(v) {
   return _isFinite(v); // eliminates NaN, +/-Infinity
-}
+};

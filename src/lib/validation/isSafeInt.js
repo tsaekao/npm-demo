@@ -23,10 +23,10 @@ export const type = types.SAFE_INT;
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
- * @function rtvref.validation.isSafeInt.default
+ * @function rtvref.validation.isSafeInt.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isSafeInt(v) {
+export const check = function isSafeInt(v) {
   return _isSafeInteger(v); // eliminates NaN, +/-Infinity, floats, unsafe ints
-}
+};

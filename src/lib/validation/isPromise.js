@@ -16,10 +16,10 @@ export const type = types.PROMISE;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.PROMISE PROMISE} type.
- * @function rtvref.validation.isPromise.default
+ * @function rtvref.validation.isPromise.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isPromise(v) {
+export const check = function isPromise(v) {
   return v instanceof Promise;
-}
+};

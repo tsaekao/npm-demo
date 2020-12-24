@@ -19,16 +19,16 @@ describe('module: lib/validation/isJson', function () {
     });
 
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default, jsonValues).failures).to.eql(
+      expect(vtu.testValues(val.type, val.check, jsonValues).failures).to.eql(
         []
       );
     });
 
     it('other types/values', function () {
       // nothing should pass
-      expect(
-        vtu.testValues(val.type, val.default, invalidValues).passes
-      ).to.eql([]);
+      expect(vtu.testValues(val.type, val.check, invalidValues).passes).to.eql(
+        []
+      );
     });
   });
 });

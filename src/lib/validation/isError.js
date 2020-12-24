@@ -18,10 +18,10 @@ export const type = types.ERROR;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.ERROR ERROR} type.
- * @function rtvref.validation.isError.default
+ * @function rtvref.validation.isError.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isError(v) {
+export const check = function isError(v) {
   return _isError(v);
-}
+};

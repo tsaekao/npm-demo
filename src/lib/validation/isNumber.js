@@ -24,10 +24,10 @@ export const type = types.NUMBER;
  *  `new Number(1)`, which is an object that is a number, neither does it
  *  validate `NaN`.
  *
- * @function rtvref.validation.isNumber.default
+ * @function rtvref.validation.isNumber.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isNumber(v) {
+export const check = function isNumber(v) {
   return typeof v === 'number' && !_isNaN(v); // allows +/-Infinity
-}
+};

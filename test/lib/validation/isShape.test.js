@@ -21,8 +21,7 @@ describe('module: lib/validation/isShape', function () {
 
     it('should validate shape descriptors', function () {
       expect(
-        vtu.testValues('isShape', val.default, validValues[types.OBJECT])
-          .failures
+        vtu.testValues('isShape', val.check, validValues[types.OBJECT]).failures
       ).to.eql([]);
     });
 
@@ -53,9 +52,9 @@ describe('module: lib/validation/isShape', function () {
       ]);
 
       // nothing should pass
-      expect(
-        vtu.testValues('isShape', val.default, invalidValues).passes
-      ).to.eql([]);
+      expect(vtu.testValues('isShape', val.check, invalidValues).passes).to.eql(
+        []
+      );
     });
   });
 });

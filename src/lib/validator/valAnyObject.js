@@ -2,12 +2,12 @@
 
 import _forEach from 'lodash/forEach';
 
-import { type, default as isAnyObject } from '../validation/isAnyObject';
+import { type, check as isAnyObject } from '../validation/isAnyObject';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';
 import { RtvError } from '../RtvError';
-import isShape from '../validation/isShape';
+import { check as isShape } from '../validation/isShape';
 
 /**
  * Validator Module: valAnyObject

@@ -2,15 +2,15 @@
 
 import { default as _isObjectLike } from 'lodash/isObjectLike';
 
-import isArray from './isArray';
-import isMap from './isMap';
-import isWeakMap from './isWeakMap';
-import isSet from './isSet';
-import isWeakSet from './isWeakSet';
-import isRegExp from './isRegExp';
-import isDate from './isDate';
-import isError from './isError';
-import isPromise from './isPromise';
+import { check as isArray } from './isArray';
+import { check as isMap } from './isMap';
+import { check as isWeakMap } from './isWeakMap';
+import { check as isSet } from './isSet';
+import { check as isWeakSet } from './isWeakSet';
+import { check as isRegExp } from './isRegExp';
+import { check as isDate } from './isDate';
+import { check as isError } from './isError';
+import { check as isPromise } from './isPromise';
 
 import { types } from '../types';
 
@@ -28,11 +28,11 @@ export const type = types.OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.OBJECT OBJECT} type.
- * @function rtvref.validation.isObject.default
+ * @function rtvref.validation.isObject.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isObject(v) {
+export const check = function isObject(v) {
   // no qualifier rules, no args
   return (
     _isObjectLike(v) && // excludes primitives and functions
@@ -49,4 +49,4 @@ export default function isObject(v) {
     !isError(v) &&
     !isPromise(v)
   );
-}
+};

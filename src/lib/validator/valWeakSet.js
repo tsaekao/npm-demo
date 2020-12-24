@@ -1,6 +1,6 @@
 ////// valWeakSet validator
 
-import { type, default as isWeakSet } from '../validation/isWeakSet';
+import { type, check as isWeakSet } from '../validation/isWeakSet';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

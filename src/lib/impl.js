@@ -2,18 +2,18 @@
 
 // NOTE: These validators are used for internal purposes. Validation of actual
 //  VALUES being checked should always be done via the _validatorMap.
-import isArray from './validation/isArray';
-import isObject from './validation/isObject';
-import isString from './validation/isString';
-import isFunction from './validation/isFunction';
-import isBoolean from './validation/isBoolean';
-import isMap from './validation/isMap';
-import isSet from './validation/isSet';
+import { check as isArray } from './validation/isArray';
+import { check as isObject } from './validation/isObject';
+import { check as isString } from './validation/isString';
+import { check as isFunction } from './validation/isFunction';
+import { check as isBoolean } from './validation/isBoolean';
+import { check as isMap } from './validation/isMap';
+import { check as isSet } from './validation/isSet';
 
-import isTypeset from './validation/isTypeset';
-import isShape from './validation/isShape';
-import isTypeArgs from './validation/isTypeArgs';
-import isCustomValidator from './validation/isCustomValidator';
+import { check as isTypeset } from './validation/isTypeset';
+import { check as isShape } from './validation/isShape';
+import { check as isTypeArgs } from './validation/isTypeArgs';
+import { check as isCustomValidator } from './validation/isCustomValidator';
 
 import { DEFAULT_OBJECT_TYPE, argTypes, types } from './types';
 import { DEFAULT_QUALIFIER, qualifiers } from './qualifiers';

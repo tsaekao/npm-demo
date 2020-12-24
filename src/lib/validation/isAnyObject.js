@@ -18,10 +18,10 @@ export const type = types.ANY_OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.ANY_OBJECT ANY_OBJECT} type.
- * @function rtvref.validation.isAnyObject.default
+ * @function rtvref.validation.isAnyObject.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isAnyObject(v) {
+export const check = function isAnyObject(v) {
   return _isObject(v);
-}
+};

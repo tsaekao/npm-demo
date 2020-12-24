@@ -18,10 +18,10 @@ export const type = types.SET;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.SET SET} type.
- * @function rtvref.validation.isSet.default
+ * @function rtvref.validation.isSet.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isSet(v) {
+export const check = function isSet(v) {
   return _isSet(v);
-}
+};

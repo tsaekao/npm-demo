@@ -1,6 +1,6 @@
 ////// valFunction validator
 
-import { type, default as isFunction } from '../validation/isFunction';
+import { type, check as isFunction } from '../validation/isFunction';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

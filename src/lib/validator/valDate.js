@@ -1,6 +1,6 @@
 ////// valDate validator
 
-import { type, default as isDate } from '../validation/isDate';
+import { type, check as isDate } from '../validation/isDate';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

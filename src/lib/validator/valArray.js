@@ -2,10 +2,10 @@
 
 import { default as _forEach } from 'lodash/forEach';
 
-import { type, default as isArray } from '../validation/isArray';
+import { type, check as isArray } from '../validation/isArray';
 
-import isFinite from '../validation/isFinite';
-import isTypeset from '../validation/isTypeset';
+import { check as isFinite } from '../validation/isFinite';
+import { check as isTypeset } from '../validation/isTypeset';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

@@ -89,7 +89,7 @@ describe('module: lib/validator/valAny', function () {
       let isAnyStub;
 
       beforeEach(function () {
-        isAnyStub = sinon.stub(isAnyMod, 'default').returns(false);
+        isAnyStub = sinon.stub(isAnyMod, 'check').returns(false);
       });
 
       afterEach(function () {

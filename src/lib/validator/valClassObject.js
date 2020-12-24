@@ -2,13 +2,13 @@
 
 import _forEach from 'lodash/forEach';
 
-import { type, default as isClassObject } from '../validation/isClassObject';
+import { type, check as isClassObject } from '../validation/isClassObject';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';
 import { RtvError } from '../RtvError';
-import isShape from '../validation/isShape';
-import isFunction from '../validation/isFunction';
+import { check as isShape } from '../validation/isShape';
+import { check as isFunction } from '../validation/isFunction';
 
 /**
  * Validator Module: valClassObject

@@ -348,100 +348,100 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.method(value)](#rtvref.validation.method) ⇒ <code>boolean</code>
         * [.isAny](#rtvref.validation.isAny) : <code>Module</code>
             * [.type](#rtvref.validation.isAny.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isAny.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isAny.check) ⇒ <code>boolean</code>
         * [.isAnyObject](#rtvref.validation.isAnyObject) : <code>Module</code>
             * [.type](#rtvref.validation.isAnyObject.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isAnyObject.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isAnyObject.check) ⇒ <code>boolean</code>
         * [.isArray](#rtvref.validation.isArray) : <code>Module</code>
             * [.type](#rtvref.validation.isArray.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isArray.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isArray.check) ⇒ <code>boolean</code>
         * [.isBoolean](#rtvref.validation.isBoolean) : <code>Module</code>
             * [.type](#rtvref.validation.isBoolean.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isBoolean.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isBoolean.check) ⇒ <code>boolean</code>
         * [.isClassObject](#rtvref.validation.isClassObject) : <code>Module</code>
             * [.type](#rtvref.validation.isClassObject.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isClassObject.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isClassObject.check) ⇒ <code>boolean</code>
         * [.isCustomValidator](#rtvref.validation.isCustomValidator) : <code>Module</code>
             * [.type](#rtvref.validation.isCustomValidator.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isCustomValidator.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isCustomValidator.check) ⇒ <code>boolean</code>
         * [.isDate](#rtvref.validation.isDate) : <code>Module</code>
             * [.type](#rtvref.validation.isDate.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isDate.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isDate.check) ⇒ <code>boolean</code>
         * [.isError](#rtvref.validation.isError) : <code>Module</code>
             * [.type](#rtvref.validation.isError.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isError.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isError.check) ⇒ <code>boolean</code>
         * [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
             * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isFalsy.check) ⇒ <code>boolean</code>
         * [.isFinite](#rtvref.validation.isFinite) : <code>Module</code>
             * [.type](#rtvref.validation.isFinite.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isFinite.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isFinite.check) ⇒ <code>boolean</code>
         * [.isFloat](#rtvref.validation.isFloat) : <code>Module</code>
             * [.type](#rtvref.validation.isFloat.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isFloat.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isFloat.check) ⇒ <code>boolean</code>
         * [.isFunction](#rtvref.validation.isFunction) : <code>Module</code>
             * [.type](#rtvref.validation.isFunction.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isFunction.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isFunction.check) ⇒ <code>boolean</code>
         * [.isHashMap](#rtvref.validation.isHashMap) : <code>Module</code>
             * [.type](#rtvref.validation.isHashMap.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isHashMap.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isHashMap.check) ⇒ <code>boolean</code>
         * [.isInt](#rtvref.validation.isInt) : <code>Module</code>
             * [.type](#rtvref.validation.isInt.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isInt.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isInt.check) ⇒ <code>boolean</code>
         * [.isJson](#rtvref.validation.isJson) : <code>Module</code>
             * [.type](#rtvref.validation.isJson.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isJson.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isJson.check) ⇒ <code>boolean</code>
         * [.isMap](#rtvref.validation.isMap) : <code>Module</code>
             * [.type](#rtvref.validation.isMap.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isMap.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isMap.check) ⇒ <code>boolean</code>
         * [.isNull](#rtvref.validation.isNull) : <code>Module</code>
             * [.type](#rtvref.validation.isNull.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isNull.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isNull.check) ⇒ <code>boolean</code>
         * [.isNumber](#rtvref.validation.isNumber) : <code>Module</code>
             * [.type](#rtvref.validation.isNumber.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isNumber.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isNumber.check) ⇒ <code>boolean</code>
         * [.isObject](#rtvref.validation.isObject) : <code>Module</code>
             * [.type](#rtvref.validation.isObject.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isObject.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isObject.check) ⇒ <code>boolean</code>
         * [.isPlainObject](#rtvref.validation.isPlainObject) : <code>Module</code>
             * [.type](#rtvref.validation.isPlainObject.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isPlainObject.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isPlainObject.check) ⇒ <code>boolean</code>
         * [.isPrimitive](#rtvref.validation.isPrimitive) : <code>Module</code>
             * [.type](#rtvref.validation.isPrimitive.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isPrimitive.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isPrimitive.check) ⇒ <code>boolean</code>
         * [.isPromise](#rtvref.validation.isPromise) : <code>Module</code>
             * [.type](#rtvref.validation.isPromise.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isPromise.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isPromise.check) ⇒ <code>boolean</code>
         * [.isRegExp](#rtvref.validation.isRegExp) : <code>Module</code>
             * [.type](#rtvref.validation.isRegExp.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isRegExp.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isRegExp.check) ⇒ <code>boolean</code>
         * [.isSafeInt](#rtvref.validation.isSafeInt) : <code>Module</code>
             * [.type](#rtvref.validation.isSafeInt.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isSafeInt.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isSafeInt.check) ⇒ <code>boolean</code>
         * [.isSet](#rtvref.validation.isSet) : <code>Module</code>
             * [.type](#rtvref.validation.isSet.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isSet.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isSet.check) ⇒ <code>boolean</code>
         * [.isShape](#rtvref.validation.isShape) : <code>Module</code>
             * [.type](#rtvref.validation.isShape.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isShape.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isShape.check) ⇒ <code>boolean</code>
         * [.isString](#rtvref.validation.isString) : <code>Module</code>
             * [.type](#rtvref.validation.isString.type) : <code>string</code>
-            * [.default(v, [options])](#rtvref.validation.isString.default) ⇒ <code>boolean</code>
+            * [.check(v, [options])](#rtvref.validation.isString.check) ⇒ <code>boolean</code>
         * [.isSymbol](#rtvref.validation.isSymbol) : <code>Module</code>
             * [.type](#rtvref.validation.isSymbol.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isSymbol.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isSymbol.check) ⇒ <code>boolean</code>
         * [.isTypeArgs](#rtvref.validation.isTypeArgs) : <code>Module</code>
             * [.type](#rtvref.validation.isTypeArgs.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isTypeArgs.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isTypeArgs.check) ⇒ <code>boolean</code>
         * [.isTypeset](#rtvref.validation.isTypeset) : <code>Module</code>
             * [.type](#rtvref.validation.isTypeset.type) : <code>string</code>
-            * [.default(v, [options])](#rtvref.validation.isTypeset.default) ⇒ <code>boolean</code>
+            * [.check(v, [options])](#rtvref.validation.isTypeset.check) ⇒ <code>boolean</code>
         * [.isWeakMap](#rtvref.validation.isWeakMap) : <code>Module</code>
             * [.type](#rtvref.validation.isWeakMap.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isWeakMap.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isWeakMap.check) ⇒ <code>boolean</code>
         * [.isWeakSet](#rtvref.validation.isWeakSet) : <code>Module</code>
             * [.type](#rtvref.validation.isWeakSet.type) : <code>string</code>
-            * [.default(v)](#rtvref.validation.isWeakSet.default) ⇒ <code>boolean</code>
+            * [.check(v)](#rtvref.validation.isWeakSet.check) ⇒ <code>boolean</code>
     * [.validator](#rtvref.validator) : <code>object</code>
         * [.type_validator(value, qualifier, args, context)](#rtvref.validator.type_validator) ⇒ [<code>RtvSuccess</code>](#rtvref.RtvSuccess) \| [<code>RtvError</code>](#rtvref.RtvError)
         * [.validator_config(settings)](#rtvref.validator.validator_config)
@@ -2550,7 +2550,7 @@ Validations may also check for pseudo-types, such as the
 
 __Every validation module must provide the following interface:__
 
-- `{function} default` (the default export): The
+- `{function} check`: The
   [validation method](#rtvref.validation.method) itself.
 - `{(string|undefined)} type`: The [type](#rtvref.types) verified;
   `undefined` for a pseudo-type (e.g. [primitive](#rtvref.types.primitives)
@@ -2573,100 +2573,100 @@ NOTE: Where possible, validations should use the other validations rather than
     * [.method(value)](#rtvref.validation.method) ⇒ <code>boolean</code>
     * [.isAny](#rtvref.validation.isAny) : <code>Module</code>
         * [.type](#rtvref.validation.isAny.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isAny.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isAny.check) ⇒ <code>boolean</code>
     * [.isAnyObject](#rtvref.validation.isAnyObject) : <code>Module</code>
         * [.type](#rtvref.validation.isAnyObject.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isAnyObject.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isAnyObject.check) ⇒ <code>boolean</code>
     * [.isArray](#rtvref.validation.isArray) : <code>Module</code>
         * [.type](#rtvref.validation.isArray.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isArray.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isArray.check) ⇒ <code>boolean</code>
     * [.isBoolean](#rtvref.validation.isBoolean) : <code>Module</code>
         * [.type](#rtvref.validation.isBoolean.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isBoolean.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isBoolean.check) ⇒ <code>boolean</code>
     * [.isClassObject](#rtvref.validation.isClassObject) : <code>Module</code>
         * [.type](#rtvref.validation.isClassObject.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isClassObject.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isClassObject.check) ⇒ <code>boolean</code>
     * [.isCustomValidator](#rtvref.validation.isCustomValidator) : <code>Module</code>
         * [.type](#rtvref.validation.isCustomValidator.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isCustomValidator.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isCustomValidator.check) ⇒ <code>boolean</code>
     * [.isDate](#rtvref.validation.isDate) : <code>Module</code>
         * [.type](#rtvref.validation.isDate.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isDate.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isDate.check) ⇒ <code>boolean</code>
     * [.isError](#rtvref.validation.isError) : <code>Module</code>
         * [.type](#rtvref.validation.isError.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isError.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isError.check) ⇒ <code>boolean</code>
     * [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
         * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isFalsy.check) ⇒ <code>boolean</code>
     * [.isFinite](#rtvref.validation.isFinite) : <code>Module</code>
         * [.type](#rtvref.validation.isFinite.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isFinite.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isFinite.check) ⇒ <code>boolean</code>
     * [.isFloat](#rtvref.validation.isFloat) : <code>Module</code>
         * [.type](#rtvref.validation.isFloat.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isFloat.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isFloat.check) ⇒ <code>boolean</code>
     * [.isFunction](#rtvref.validation.isFunction) : <code>Module</code>
         * [.type](#rtvref.validation.isFunction.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isFunction.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isFunction.check) ⇒ <code>boolean</code>
     * [.isHashMap](#rtvref.validation.isHashMap) : <code>Module</code>
         * [.type](#rtvref.validation.isHashMap.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isHashMap.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isHashMap.check) ⇒ <code>boolean</code>
     * [.isInt](#rtvref.validation.isInt) : <code>Module</code>
         * [.type](#rtvref.validation.isInt.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isInt.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isInt.check) ⇒ <code>boolean</code>
     * [.isJson](#rtvref.validation.isJson) : <code>Module</code>
         * [.type](#rtvref.validation.isJson.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isJson.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isJson.check) ⇒ <code>boolean</code>
     * [.isMap](#rtvref.validation.isMap) : <code>Module</code>
         * [.type](#rtvref.validation.isMap.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isMap.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isMap.check) ⇒ <code>boolean</code>
     * [.isNull](#rtvref.validation.isNull) : <code>Module</code>
         * [.type](#rtvref.validation.isNull.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isNull.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isNull.check) ⇒ <code>boolean</code>
     * [.isNumber](#rtvref.validation.isNumber) : <code>Module</code>
         * [.type](#rtvref.validation.isNumber.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isNumber.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isNumber.check) ⇒ <code>boolean</code>
     * [.isObject](#rtvref.validation.isObject) : <code>Module</code>
         * [.type](#rtvref.validation.isObject.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isObject.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isObject.check) ⇒ <code>boolean</code>
     * [.isPlainObject](#rtvref.validation.isPlainObject) : <code>Module</code>
         * [.type](#rtvref.validation.isPlainObject.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isPlainObject.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isPlainObject.check) ⇒ <code>boolean</code>
     * [.isPrimitive](#rtvref.validation.isPrimitive) : <code>Module</code>
         * [.type](#rtvref.validation.isPrimitive.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isPrimitive.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isPrimitive.check) ⇒ <code>boolean</code>
     * [.isPromise](#rtvref.validation.isPromise) : <code>Module</code>
         * [.type](#rtvref.validation.isPromise.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isPromise.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isPromise.check) ⇒ <code>boolean</code>
     * [.isRegExp](#rtvref.validation.isRegExp) : <code>Module</code>
         * [.type](#rtvref.validation.isRegExp.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isRegExp.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isRegExp.check) ⇒ <code>boolean</code>
     * [.isSafeInt](#rtvref.validation.isSafeInt) : <code>Module</code>
         * [.type](#rtvref.validation.isSafeInt.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isSafeInt.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isSafeInt.check) ⇒ <code>boolean</code>
     * [.isSet](#rtvref.validation.isSet) : <code>Module</code>
         * [.type](#rtvref.validation.isSet.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isSet.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isSet.check) ⇒ <code>boolean</code>
     * [.isShape](#rtvref.validation.isShape) : <code>Module</code>
         * [.type](#rtvref.validation.isShape.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isShape.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isShape.check) ⇒ <code>boolean</code>
     * [.isString](#rtvref.validation.isString) : <code>Module</code>
         * [.type](#rtvref.validation.isString.type) : <code>string</code>
-        * [.default(v, [options])](#rtvref.validation.isString.default) ⇒ <code>boolean</code>
+        * [.check(v, [options])](#rtvref.validation.isString.check) ⇒ <code>boolean</code>
     * [.isSymbol](#rtvref.validation.isSymbol) : <code>Module</code>
         * [.type](#rtvref.validation.isSymbol.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isSymbol.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isSymbol.check) ⇒ <code>boolean</code>
     * [.isTypeArgs](#rtvref.validation.isTypeArgs) : <code>Module</code>
         * [.type](#rtvref.validation.isTypeArgs.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isTypeArgs.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isTypeArgs.check) ⇒ <code>boolean</code>
     * [.isTypeset](#rtvref.validation.isTypeset) : <code>Module</code>
         * [.type](#rtvref.validation.isTypeset.type) : <code>string</code>
-        * [.default(v, [options])](#rtvref.validation.isTypeset.default) ⇒ <code>boolean</code>
+        * [.check(v, [options])](#rtvref.validation.isTypeset.check) ⇒ <code>boolean</code>
     * [.isWeakMap](#rtvref.validation.isWeakMap) : <code>Module</code>
         * [.type](#rtvref.validation.isWeakMap.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isWeakMap.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isWeakMap.check) ⇒ <code>boolean</code>
     * [.isWeakSet](#rtvref.validation.isWeakSet) : <code>Module</code>
         * [.type](#rtvref.validation.isWeakSet.type) : <code>string</code>
-        * [.default(v)](#rtvref.validation.isWeakSet.default) ⇒ <code>boolean</code>
+        * [.check(v)](#rtvref.validation.isWeakSet.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.method"></a>
 
@@ -2691,7 +2691,7 @@ Validation Module: isAny
 
 * [.isAny](#rtvref.validation.isAny) : <code>Module</code>
     * [.type](#rtvref.validation.isAny.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isAny.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isAny.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isAny.type"></a>
 
@@ -2699,9 +2699,9 @@ Validation Module: isAny
 Type: [ANY](#rtvref.types.ANY)
 
 **Kind**: static constant of [<code>isAny</code>](#rtvref.validation.isAny)  
-<a name="rtvref.validation.isAny.default"></a>
+<a name="rtvref.validation.isAny.check"></a>
 
-#### isAny.default(v) ⇒ <code>boolean</code>
+#### isAny.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [ANY](#rtvref.types.ANY) type.
 
@@ -2721,7 +2721,7 @@ Validation Module: isAnyObject
 
 * [.isAnyObject](#rtvref.validation.isAnyObject) : <code>Module</code>
     * [.type](#rtvref.validation.isAnyObject.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isAnyObject.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isAnyObject.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isAnyObject.type"></a>
 
@@ -2729,9 +2729,9 @@ Validation Module: isAnyObject
 Type: [ANY_OBJECT](#rtvref.types.ANY_OBJECT)
 
 **Kind**: static constant of [<code>isAnyObject</code>](#rtvref.validation.isAnyObject)  
-<a name="rtvref.validation.isAnyObject.default"></a>
+<a name="rtvref.validation.isAnyObject.check"></a>
 
-#### isAnyObject.default(v) ⇒ <code>boolean</code>
+#### isAnyObject.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [ANY_OBJECT](#rtvref.types.ANY_OBJECT) type.
 
@@ -2751,7 +2751,7 @@ Validation Module: isArray
 
 * [.isArray](#rtvref.validation.isArray) : <code>Module</code>
     * [.type](#rtvref.validation.isArray.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isArray.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isArray.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isArray.type"></a>
 
@@ -2759,9 +2759,9 @@ Validation Module: isArray
 Type: [ARRAY](#rtvref.types.ARRAY)
 
 **Kind**: static constant of [<code>isArray</code>](#rtvref.validation.isArray)  
-<a name="rtvref.validation.isArray.default"></a>
+<a name="rtvref.validation.isArray.check"></a>
 
-#### isArray.default(v) ⇒ <code>boolean</code>
+#### isArray.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [ARRAY](#rtvref.types.ARRAY) type.
 
@@ -2781,7 +2781,7 @@ Validation Module: isBoolean
 
 * [.isBoolean](#rtvref.validation.isBoolean) : <code>Module</code>
     * [.type](#rtvref.validation.isBoolean.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isBoolean.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isBoolean.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isBoolean.type"></a>
 
@@ -2789,9 +2789,9 @@ Validation Module: isBoolean
 Type: [BOOLEAN](#rtvref.types.BOOLEAN)
 
 **Kind**: static constant of [<code>isBoolean</code>](#rtvref.validation.isBoolean)  
-<a name="rtvref.validation.isBoolean.default"></a>
+<a name="rtvref.validation.isBoolean.check"></a>
 
-#### isBoolean.default(v) ⇒ <code>boolean</code>
+#### isBoolean.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [BOOLEAN](#rtvref.types.BOOLEAN) type.
 
@@ -2815,7 +2815,7 @@ Validation Module: isClassObject
 
 * [.isClassObject](#rtvref.validation.isClassObject) : <code>Module</code>
     * [.type](#rtvref.validation.isClassObject.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isClassObject.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isClassObject.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isClassObject.type"></a>
 
@@ -2823,9 +2823,9 @@ Validation Module: isClassObject
 Type: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT)
 
 **Kind**: static constant of [<code>isClassObject</code>](#rtvref.validation.isClassObject)  
-<a name="rtvref.validation.isClassObject.default"></a>
+<a name="rtvref.validation.isClassObject.check"></a>
 
-#### isClassObject.default(v) ⇒ <code>boolean</code>
+#### isClassObject.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT) type.
 
@@ -2845,7 +2845,7 @@ Validation Module: isCustomValidator
 
 * [.isCustomValidator](#rtvref.validation.isCustomValidator) : <code>Module</code>
     * [.type](#rtvref.validation.isCustomValidator.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isCustomValidator.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isCustomValidator.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isCustomValidator.type"></a>
 
@@ -2853,9 +2853,9 @@ Validation Module: isCustomValidator
 Type: `undefined`, [custom validator](#rtvref.types.custom_validator) pseudo-type.
 
 **Kind**: static constant of [<code>isCustomValidator</code>](#rtvref.validation.isCustomValidator)  
-<a name="rtvref.validation.isCustomValidator.default"></a>
+<a name="rtvref.validation.isCustomValidator.check"></a>
 
-#### isCustomValidator.default(v) ⇒ <code>boolean</code>
+#### isCustomValidator.check(v) ⇒ <code>boolean</code>
 Determines if a value is a [custom validator](#rtvref.types.custom_validator).
 
 **Kind**: static method of [<code>isCustomValidator</code>](#rtvref.validation.isCustomValidator)  
@@ -2874,7 +2874,7 @@ Validation Module: isDate
 
 * [.isDate](#rtvref.validation.isDate) : <code>Module</code>
     * [.type](#rtvref.validation.isDate.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isDate.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isDate.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isDate.type"></a>
 
@@ -2882,9 +2882,9 @@ Validation Module: isDate
 Type: [DATE](#rtvref.types.DATE)
 
 **Kind**: static constant of [<code>isDate</code>](#rtvref.validation.isDate)  
-<a name="rtvref.validation.isDate.default"></a>
+<a name="rtvref.validation.isDate.check"></a>
 
-#### isDate.default(v) ⇒ <code>boolean</code>
+#### isDate.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [DATE](#rtvref.types.DATE) type.
 
@@ -2904,7 +2904,7 @@ Validation Module: isError
 
 * [.isError](#rtvref.validation.isError) : <code>Module</code>
     * [.type](#rtvref.validation.isError.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isError.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isError.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isError.type"></a>
 
@@ -2912,9 +2912,9 @@ Validation Module: isError
 Type: [ERROR](#rtvref.types.ERROR)
 
 **Kind**: static constant of [<code>isError</code>](#rtvref.validation.isError)  
-<a name="rtvref.validation.isError.default"></a>
+<a name="rtvref.validation.isError.check"></a>
 
-#### isError.default(v) ⇒ <code>boolean</code>
+#### isError.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [ERROR](#rtvref.types.ERROR) type.
 
@@ -2934,7 +2934,7 @@ Validation Module: isFalsy
 
 * [.isFalsy](#rtvref.validation.isFalsy) : <code>Module</code>
     * [.type](#rtvref.validation.isFalsy.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isFalsy.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isFalsy.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isFalsy.type"></a>
 
@@ -2942,9 +2942,9 @@ Validation Module: isFalsy
 Type: `undefined`, [falsy value](#rtvref.types.falsy_values) pseudo-type.
 
 **Kind**: static constant of [<code>isFalsy</code>](#rtvref.validation.isFalsy)  
-<a name="rtvref.validation.isFalsy.default"></a>
+<a name="rtvref.validation.isFalsy.check"></a>
 
-#### isFalsy.default(v) ⇒ <code>boolean</code>
+#### isFalsy.check(v) ⇒ <code>boolean</code>
 Determines if a value is a JavaScript [falsy value](#rtvref.types.falsy_values).
 
 **Kind**: static method of [<code>isFalsy</code>](#rtvref.validation.isFalsy)  
@@ -2963,7 +2963,7 @@ Validation Module: isFinite
 
 * [.isFinite](#rtvref.validation.isFinite) : <code>Module</code>
     * [.type](#rtvref.validation.isFinite.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isFinite.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isFinite.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isFinite.type"></a>
 
@@ -2971,9 +2971,9 @@ Validation Module: isFinite
 Type: [FINITE](#rtvref.types.FINITE)
 
 **Kind**: static constant of [<code>isFinite</code>](#rtvref.validation.isFinite)  
-<a name="rtvref.validation.isFinite.default"></a>
+<a name="rtvref.validation.isFinite.check"></a>
 
-#### isFinite.default(v) ⇒ <code>boolean</code>
+#### isFinite.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [FINITE](#rtvref.types.FINITE) type.
 
@@ -2997,7 +2997,7 @@ Validation Module: isFloat
 
 * [.isFloat](#rtvref.validation.isFloat) : <code>Module</code>
     * [.type](#rtvref.validation.isFloat.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isFloat.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isFloat.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isFloat.type"></a>
 
@@ -3005,9 +3005,9 @@ Validation Module: isFloat
 Type: [FLOAT](#rtvref.types.FLOAT)
 
 **Kind**: static constant of [<code>isFloat</code>](#rtvref.validation.isFloat)  
-<a name="rtvref.validation.isFloat.default"></a>
+<a name="rtvref.validation.isFloat.check"></a>
 
-#### isFloat.default(v) ⇒ <code>boolean</code>
+#### isFloat.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [FLOAT](#rtvref.types.FLOAT) type.
 
@@ -3031,7 +3031,7 @@ Validation Module: isFunction
 
 * [.isFunction](#rtvref.validation.isFunction) : <code>Module</code>
     * [.type](#rtvref.validation.isFunction.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isFunction.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isFunction.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isFunction.type"></a>
 
@@ -3039,9 +3039,9 @@ Validation Module: isFunction
 Type: [FUNCTION](#rtvref.types.FUNCTION)
 
 **Kind**: static constant of [<code>isFunction</code>](#rtvref.validation.isFunction)  
-<a name="rtvref.validation.isFunction.default"></a>
+<a name="rtvref.validation.isFunction.check"></a>
 
-#### isFunction.default(v) ⇒ <code>boolean</code>
+#### isFunction.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [FUNCTION](#rtvref.types.FUNCTION) type.
 
@@ -3061,7 +3061,7 @@ Validation Module: isHashMap
 
 * [.isHashMap](#rtvref.validation.isHashMap) : <code>Module</code>
     * [.type](#rtvref.validation.isHashMap.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isHashMap.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isHashMap.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isHashMap.type"></a>
 
@@ -3069,9 +3069,9 @@ Validation Module: isHashMap
 Type: [HASH_MAP](#rtvref.types.HASH_MAP)
 
 **Kind**: static constant of [<code>isHashMap</code>](#rtvref.validation.isHashMap)  
-<a name="rtvref.validation.isHashMap.default"></a>
+<a name="rtvref.validation.isHashMap.check"></a>
 
-#### isHashMap.default(v) ⇒ <code>boolean</code>
+#### isHashMap.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [HASH_MAP](#rtvref.types.HASH_MAP) type.
 
@@ -3091,7 +3091,7 @@ Validation Module: isInt
 
 * [.isInt](#rtvref.validation.isInt) : <code>Module</code>
     * [.type](#rtvref.validation.isInt.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isInt.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isInt.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isInt.type"></a>
 
@@ -3099,9 +3099,9 @@ Validation Module: isInt
 Type: [INT](#rtvref.types.INT)
 
 **Kind**: static constant of [<code>isInt</code>](#rtvref.validation.isInt)  
-<a name="rtvref.validation.isInt.default"></a>
+<a name="rtvref.validation.isInt.check"></a>
 
-#### isInt.default(v) ⇒ <code>boolean</code>
+#### isInt.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [INT](#rtvref.types.INT) type.
 
@@ -3125,7 +3125,7 @@ Validation Module: isJson
 
 * [.isJson](#rtvref.validation.isJson) : <code>Module</code>
     * [.type](#rtvref.validation.isJson.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isJson.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isJson.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isJson.type"></a>
 
@@ -3133,9 +3133,9 @@ Validation Module: isJson
 Type: [JSON](#rtvref.types.JSON)
 
 **Kind**: static constant of [<code>isJson</code>](#rtvref.validation.isJson)  
-<a name="rtvref.validation.isJson.default"></a>
+<a name="rtvref.validation.isJson.check"></a>
 
-#### isJson.default(v) ⇒ <code>boolean</code>
+#### isJson.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [JSON](#rtvref.types.JSON) type.
 
@@ -3155,7 +3155,7 @@ Validation Module: isMap
 
 * [.isMap](#rtvref.validation.isMap) : <code>Module</code>
     * [.type](#rtvref.validation.isMap.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isMap.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isMap.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isMap.type"></a>
 
@@ -3163,9 +3163,9 @@ Validation Module: isMap
 Type: [MAP](#rtvref.types.MAP)
 
 **Kind**: static constant of [<code>isMap</code>](#rtvref.validation.isMap)  
-<a name="rtvref.validation.isMap.default"></a>
+<a name="rtvref.validation.isMap.check"></a>
 
-#### isMap.default(v) ⇒ <code>boolean</code>
+#### isMap.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [MAP](#rtvref.types.MAP) type.
 
@@ -3185,7 +3185,7 @@ Validation Module: isNull
 
 * [.isNull](#rtvref.validation.isNull) : <code>Module</code>
     * [.type](#rtvref.validation.isNull.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isNull.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isNull.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isNull.type"></a>
 
@@ -3193,9 +3193,9 @@ Validation Module: isNull
 Type: [NULL](#rtvref.types.NULL)
 
 **Kind**: static constant of [<code>isNull</code>](#rtvref.validation.isNull)  
-<a name="rtvref.validation.isNull.default"></a>
+<a name="rtvref.validation.isNull.check"></a>
 
-#### isNull.default(v) ⇒ <code>boolean</code>
+#### isNull.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [NULL](#rtvref.types.NULL) type.
 
@@ -3215,7 +3215,7 @@ Validation Module: isNumber
 
 * [.isNumber](#rtvref.validation.isNumber) : <code>Module</code>
     * [.type](#rtvref.validation.isNumber.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isNumber.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isNumber.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isNumber.type"></a>
 
@@ -3223,9 +3223,9 @@ Validation Module: isNumber
 Type: [NUMBER](#rtvref.types.NUMBER)
 
 **Kind**: static constant of [<code>isNumber</code>](#rtvref.validation.isNumber)  
-<a name="rtvref.validation.isNumber.default"></a>
+<a name="rtvref.validation.isNumber.check"></a>
 
-#### isNumber.default(v) ⇒ <code>boolean</code>
+#### isNumber.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [NUMBER](#rtvref.types.NUMBER) type.
 
@@ -3250,7 +3250,7 @@ Validation Module: isObject
 
 * [.isObject](#rtvref.validation.isObject) : <code>Module</code>
     * [.type](#rtvref.validation.isObject.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isObject.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isObject.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isObject.type"></a>
 
@@ -3258,9 +3258,9 @@ Validation Module: isObject
 Type: [OBJECT](#rtvref.types.OBJECT)
 
 **Kind**: static constant of [<code>isObject</code>](#rtvref.validation.isObject)  
-<a name="rtvref.validation.isObject.default"></a>
+<a name="rtvref.validation.isObject.check"></a>
 
-#### isObject.default(v) ⇒ <code>boolean</code>
+#### isObject.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [OBJECT](#rtvref.types.OBJECT) type.
 
@@ -3280,7 +3280,7 @@ Validation Module: isPlainObject
 
 * [.isPlainObject](#rtvref.validation.isPlainObject) : <code>Module</code>
     * [.type](#rtvref.validation.isPlainObject.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isPlainObject.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isPlainObject.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isPlainObject.type"></a>
 
@@ -3288,9 +3288,9 @@ Validation Module: isPlainObject
 Type: [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
 
 **Kind**: static constant of [<code>isPlainObject</code>](#rtvref.validation.isPlainObject)  
-<a name="rtvref.validation.isPlainObject.default"></a>
+<a name="rtvref.validation.isPlainObject.check"></a>
 
-#### isPlainObject.default(v) ⇒ <code>boolean</code>
+#### isPlainObject.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT) type.
 
@@ -3310,7 +3310,7 @@ Validation Module: isPrimitive
 
 * [.isPrimitive](#rtvref.validation.isPrimitive) : <code>Module</code>
     * [.type](#rtvref.validation.isPrimitive.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isPrimitive.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isPrimitive.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isPrimitive.type"></a>
 
@@ -3318,9 +3318,9 @@ Validation Module: isPrimitive
 Type: `undefined`, [primitive](#rtvref.types.primitives) pseudo-type.
 
 **Kind**: static constant of [<code>isPrimitive</code>](#rtvref.validation.isPrimitive)  
-<a name="rtvref.validation.isPrimitive.default"></a>
+<a name="rtvref.validation.isPrimitive.check"></a>
 
-#### isPrimitive.default(v) ⇒ <code>boolean</code>
+#### isPrimitive.check(v) ⇒ <code>boolean</code>
 Determines if a value is a JavaScript [primitive](#rtvref.types.primitives).
 
 **Kind**: static method of [<code>isPrimitive</code>](#rtvref.validation.isPrimitive)  
@@ -3339,7 +3339,7 @@ Validation Module: isPromise
 
 * [.isPromise](#rtvref.validation.isPromise) : <code>Module</code>
     * [.type](#rtvref.validation.isPromise.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isPromise.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isPromise.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isPromise.type"></a>
 
@@ -3347,9 +3347,9 @@ Validation Module: isPromise
 Type: [PROMISE](#rtvref.types.PROMISE)
 
 **Kind**: static constant of [<code>isPromise</code>](#rtvref.validation.isPromise)  
-<a name="rtvref.validation.isPromise.default"></a>
+<a name="rtvref.validation.isPromise.check"></a>
 
-#### isPromise.default(v) ⇒ <code>boolean</code>
+#### isPromise.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [PROMISE](#rtvref.types.PROMISE) type.
 
@@ -3369,7 +3369,7 @@ Validation Module: isRegExp
 
 * [.isRegExp](#rtvref.validation.isRegExp) : <code>Module</code>
     * [.type](#rtvref.validation.isRegExp.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isRegExp.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isRegExp.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isRegExp.type"></a>
 
@@ -3377,9 +3377,9 @@ Validation Module: isRegExp
 Type: [REGEXP](#rtvref.types.REGEXP)
 
 **Kind**: static constant of [<code>isRegExp</code>](#rtvref.validation.isRegExp)  
-<a name="rtvref.validation.isRegExp.default"></a>
+<a name="rtvref.validation.isRegExp.check"></a>
 
-#### isRegExp.default(v) ⇒ <code>boolean</code>
+#### isRegExp.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [REGEXP](#rtvref.types.REGEXP) type.
 
@@ -3399,7 +3399,7 @@ Validation Module: isSafeInt
 
 * [.isSafeInt](#rtvref.validation.isSafeInt) : <code>Module</code>
     * [.type](#rtvref.validation.isSafeInt.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isSafeInt.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isSafeInt.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isSafeInt.type"></a>
 
@@ -3407,9 +3407,9 @@ Validation Module: isSafeInt
 Type: [SAFE_INT](#rtvref.types.SAFE_INT)
 
 **Kind**: static constant of [<code>isSafeInt</code>](#rtvref.validation.isSafeInt)  
-<a name="rtvref.validation.isSafeInt.default"></a>
+<a name="rtvref.validation.isSafeInt.check"></a>
 
-#### isSafeInt.default(v) ⇒ <code>boolean</code>
+#### isSafeInt.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [SAFE_INT](#rtvref.types.SAFE_INT) type.
 
@@ -3433,7 +3433,7 @@ Validation Module: isSet
 
 * [.isSet](#rtvref.validation.isSet) : <code>Module</code>
     * [.type](#rtvref.validation.isSet.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isSet.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isSet.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isSet.type"></a>
 
@@ -3441,9 +3441,9 @@ Validation Module: isSet
 Type: [SET](#rtvref.types.SET)
 
 **Kind**: static constant of [<code>isSet</code>](#rtvref.validation.isSet)  
-<a name="rtvref.validation.isSet.default"></a>
+<a name="rtvref.validation.isSet.check"></a>
 
-#### isSet.default(v) ⇒ <code>boolean</code>
+#### isSet.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [SET](#rtvref.types.SET) type.
 
@@ -3463,7 +3463,7 @@ Validation Module: isShape
 
 * [.isShape](#rtvref.validation.isShape) : <code>Module</code>
     * [.type](#rtvref.validation.isShape.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isShape.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isShape.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isShape.type"></a>
 
@@ -3471,9 +3471,9 @@ Validation Module: isShape
 Type: `undefined`, [shape](#rtvref.types.shape_descriptor) pseudo-type.
 
 **Kind**: static constant of [<code>isShape</code>](#rtvref.validation.isShape)  
-<a name="rtvref.validation.isShape.default"></a>
+<a name="rtvref.validation.isShape.check"></a>
 
-#### isShape.default(v) ⇒ <code>boolean</code>
+#### isShape.check(v) ⇒ <code>boolean</code>
 Determines if a value is a [shape](#rtvref.types.shape_descriptor).
 
 **Kind**: static method of [<code>isShape</code>](#rtvref.validation.isShape)  
@@ -3492,7 +3492,7 @@ Validation Module: isString
 
 * [.isString](#rtvref.validation.isString) : <code>Module</code>
     * [.type](#rtvref.validation.isString.type) : <code>string</code>
-    * [.default(v, [options])](#rtvref.validation.isString.default) ⇒ <code>boolean</code>
+    * [.check(v, [options])](#rtvref.validation.isString.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isString.type"></a>
 
@@ -3500,9 +3500,9 @@ Validation Module: isString
 Type: [STRING](#rtvref.types.STRING)
 
 **Kind**: static constant of [<code>isString</code>](#rtvref.validation.isString)  
-<a name="rtvref.validation.isString.default"></a>
+<a name="rtvref.validation.isString.check"></a>
 
-#### isString.default(v, [options]) ⇒ <code>boolean</code>
+#### isString.check(v, [options]) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [STRING](#rtvref.types.STRING) type.
 
@@ -3529,7 +3529,7 @@ Validation Module: isSymbol
 
 * [.isSymbol](#rtvref.validation.isSymbol) : <code>Module</code>
     * [.type](#rtvref.validation.isSymbol.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isSymbol.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isSymbol.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isSymbol.type"></a>
 
@@ -3537,9 +3537,9 @@ Validation Module: isSymbol
 Type: [SYMBOL](#rtvref.types.SYMBOL)
 
 **Kind**: static constant of [<code>isSymbol</code>](#rtvref.validation.isSymbol)  
-<a name="rtvref.validation.isSymbol.default"></a>
+<a name="rtvref.validation.isSymbol.check"></a>
 
-#### isSymbol.default(v) ⇒ <code>boolean</code>
+#### isSymbol.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [SYMBOL](#rtvref.types.SYMBOL) type.
 
@@ -3559,7 +3559,7 @@ Validation Module: isTypeArgs
 
 * [.isTypeArgs](#rtvref.validation.isTypeArgs) : <code>Module</code>
     * [.type](#rtvref.validation.isTypeArgs.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isTypeArgs.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isTypeArgs.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isTypeArgs.type"></a>
 
@@ -3567,9 +3567,9 @@ Validation Module: isTypeArgs
 Type: `undefined`, [type arguments](#rtvref.types.type_arguments) pseudo-type.
 
 **Kind**: static constant of [<code>isTypeArgs</code>](#rtvref.validation.isTypeArgs)  
-<a name="rtvref.validation.isTypeArgs.default"></a>
+<a name="rtvref.validation.isTypeArgs.check"></a>
 
-#### isTypeArgs.default(v) ⇒ <code>boolean</code>
+#### isTypeArgs.check(v) ⇒ <code>boolean</code>
 Determines if a value is a [type arguments](#rtvref.types.type_arguments)
  object.
 
@@ -3589,7 +3589,7 @@ Validation Module: isTypeset
 
 * [.isTypeset](#rtvref.validation.isTypeset) : <code>Module</code>
     * [.type](#rtvref.validation.isTypeset.type) : <code>string</code>
-    * [.default(v, [options])](#rtvref.validation.isTypeset.default) ⇒ <code>boolean</code>
+    * [.check(v, [options])](#rtvref.validation.isTypeset.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isTypeset.type"></a>
 
@@ -3597,9 +3597,9 @@ Validation Module: isTypeset
 Type: `undefined`, [typeset](#rtvref.types.typeset) pseudo-type.
 
 **Kind**: static constant of [<code>isTypeset</code>](#rtvref.validation.isTypeset)  
-<a name="rtvref.validation.isTypeset.default"></a>
+<a name="rtvref.validation.isTypeset.check"></a>
 
-#### isTypeset.default(v, [options]) ⇒ <code>boolean</code>
+#### isTypeset.check(v, [options]) ⇒ <code>boolean</code>
 Determines if a value is a typeset.
 
 **Kind**: static method of [<code>isTypeset</code>](#rtvref.validation.isTypeset)  
@@ -3623,7 +3623,7 @@ Validation Module: isWeakMap
 
 * [.isWeakMap](#rtvref.validation.isWeakMap) : <code>Module</code>
     * [.type](#rtvref.validation.isWeakMap.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isWeakMap.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isWeakMap.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isWeakMap.type"></a>
 
@@ -3631,9 +3631,9 @@ Validation Module: isWeakMap
 Type: [WEAK_MAP](#rtvref.types.WEAK_MAP)
 
 **Kind**: static constant of [<code>isWeakMap</code>](#rtvref.validation.isWeakMap)  
-<a name="rtvref.validation.isWeakMap.default"></a>
+<a name="rtvref.validation.isWeakMap.check"></a>
 
-#### isWeakMap.default(v) ⇒ <code>boolean</code>
+#### isWeakMap.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [WEAK_MAP](#rtvref.types.WEAK_MAP) type.
 
@@ -3653,7 +3653,7 @@ Validation Module: isWeakSet
 
 * [.isWeakSet](#rtvref.validation.isWeakSet) : <code>Module</code>
     * [.type](#rtvref.validation.isWeakSet.type) : <code>string</code>
-    * [.default(v)](#rtvref.validation.isWeakSet.default) ⇒ <code>boolean</code>
+    * [.check(v)](#rtvref.validation.isWeakSet.check) ⇒ <code>boolean</code>
 
 <a name="rtvref.validation.isWeakSet.type"></a>
 
@@ -3661,9 +3661,9 @@ Validation Module: isWeakSet
 Type: [WEAK_SET](#rtvref.types.WEAK_SET)
 
 **Kind**: static constant of [<code>isWeakSet</code>](#rtvref.validation.isWeakSet)  
-<a name="rtvref.validation.isWeakSet.default"></a>
+<a name="rtvref.validation.isWeakSet.check"></a>
 
-#### isWeakSet.default(v) ⇒ <code>boolean</code>
+#### isWeakSet.check(v) ⇒ <code>boolean</code>
 [Validation](#rtvref.validation.method) for the
  [WEAK_SET](#rtvref.types.WEAK_SET) type.
 

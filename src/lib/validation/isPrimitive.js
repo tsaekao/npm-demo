@@ -1,9 +1,9 @@
 ////// isPrimitive validation module
 
-import isString from './isString';
-import isBoolean from './isBoolean';
-import isNumber from './isNumber';
-import isSymbol from './isSymbol';
+import { check as isString } from './isString';
+import { check as isBoolean } from './isBoolean';
+import { check as isNumber } from './isNumber';
+import { check as isSymbol } from './isSymbol';
 
 /**
  * Validation Module: isPrimitive
@@ -18,11 +18,11 @@ export const type = undefined;
 
 /**
  * Determines if a value is a JavaScript {@link rtvref.types.primitives primitive}.
- * @function rtvref.validation.isPrimitive.default
+ * @function rtvref.validation.isPrimitive.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
-export default function isPrimitive(v) {
+export const check = function isPrimitive(v) {
   return (
     v === undefined ||
     v === null ||
@@ -31,4 +31,4 @@ export default function isPrimitive(v) {
     isNumber(v) ||
     isSymbol(v)
   );
-}
+};

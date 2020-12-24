@@ -11,19 +11,19 @@ describe('module: lib/validation/isString', function () {
 
   describe('#default', function () {
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.check).failures).to.eql([]);
     });
 
     it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check)).to.eql([]);
     });
 
     it('does not allow an empty string by default', function () {
-      expect(val.default('')).to.be.false;
+      expect(val.check('')).to.be.false;
     });
 
     it('allows an empty string when options.allowEmpty is truthy', function () {
-      expect(val.default('', { allowEmpty: true })).to.be.true;
+      expect(val.check('', { allowEmpty: true })).to.be.true;
     });
   });
 });

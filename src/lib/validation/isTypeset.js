@@ -2,17 +2,20 @@
 
 import { default as _forEach } from 'lodash/forEach';
 
-import isArray from './isArray';
-import isShape from './isShape';
-import isTypeArgs from './isTypeArgs';
-import isString from './isString';
-import isCustomValidator from './isCustomValidator';
+import { check as isArray } from './isArray';
+import { check as isShape } from './isShape';
+import { check as isTypeArgs } from './isTypeArgs';
+import { check as isString } from './isString';
+import { check as isCustomValidator } from './isCustomValidator';
 
 import { types, argTypes, objTypes, DEFAULT_OBJECT_TYPE } from '../types';
 import { qualifiers } from '../qualifiers';
 import { print } from '../util';
 
 const objHasOwnProp = Object.prototype.hasOwnProperty;
+
+// eslint-disable-next-line prefer-const -- needs to be declared, then defined, to allow helper functions to call isTypeset internally
+let isTypeset; // {function}
 
 // Deep-verify a shape.
 // @param {string} type The in-scope type (should be an object type from types.objTypes).
@@ -91,7 +94,7 @@ export const type = undefined;
 
 /**
  * Determines if a value is a typeset.
- * @function rtvref.validation.isTypeset.default
+ * @function rtvref.validation.isTypeset.check
  * @param {*} v Value to validate.
  * @param {Object} [options] Validation options.
  * @param {boolean} [options.deep=false] If truthy, deeply-validates any nested
@@ -104,10 +107,7 @@ export const type = undefined;
  * @returns {boolean} `true` if it is; `false` otherwise.
  * @see {@link rtvref.types.typeset}
  */
-export default function isTypeset(
-  v,
-  options = { deep: false, fullyQualified: false }
-) {
+isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
   const deep = !!options.deep;
   const fullyQualified = !!options.fullyQualified;
 
@@ -422,4 +422,6 @@ export default function isTypeset(
   // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid
 
   return valid;
-}
+};
+
+export const check = isTypeset;

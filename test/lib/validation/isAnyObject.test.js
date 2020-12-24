@@ -37,13 +37,11 @@ describe('module: lib/validation/isAnyObject', function () {
 
       // all the any object values should pass
       expect(
-        vtu.testValues(val.type, val.default, anyObjectValues).failures
+        vtu.testValues(val.type, val.check, anyObjectValues).failures
       ).to.eql([]);
 
       // all the primitives should fail
-      expect(vtu.testValues(val.type, val.default, primitives).passes).to.eql(
-        []
-      );
+      expect(vtu.testValues(val.type, val.check, primitives).passes).to.eql([]);
     });
   });
 });

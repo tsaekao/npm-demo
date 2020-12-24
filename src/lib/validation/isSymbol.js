@@ -18,10 +18,10 @@ export const type = types.SYMBOL;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.SYMBOL SYMBOL} type.
- * @function rtvref.validation.isSymbol.default
+ * @function rtvref.validation.isSymbol.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isSymbol(v) {
+export const check = function isSymbol(v) {
   return _isSymbol(v);
-}
+};

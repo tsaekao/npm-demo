@@ -22,13 +22,13 @@ export const type = types.STRING;
  *  It does not validate `new String('value')`, which is an object that is a
  *  string.
  *
- * @function rtvref.validation.isString.default
+ * @function rtvref.validation.isString.check
  * @param {*} v Value to validate.
  * @param {Object} [options] Validation options.
  * @param {boolean} [options.allowEmpty=false] If truthy, empty strings are
  *  permitted.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isString(v, { allowEmpty = false } = {}) {
+export const check = function isString(v, { allowEmpty = false } = {}) {
   return typeof v === 'string' && (v !== '' || allowEmpty);
-}
+};

@@ -1,7 +1,7 @@
 ////// isClassObject validation
 
-import isObject from './isObject';
-import isPlainObject from './isPlainObject';
+import { check as isObject } from './isObject';
+import { check as isPlainObject } from './isPlainObject';
 
 import { types } from '../types';
 
@@ -19,10 +19,10 @@ export const type = types.CLASS_OBJECT;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT} type.
- * @function rtvref.validation.isClassObject.default
+ * @function rtvref.validation.isClassObject.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isClassObject(v) {
+export const check = function isClassObject(v) {
   return isObject(v) && !isPlainObject(v);
-}
+};

@@ -16,7 +16,7 @@
  *
  * __Every validation module must provide the following interface:__
  *
- * - `{function} default` (the default export): The
+ * - `{function} check`: The
  *   {@link rtvref.validation.method validation method} itself.
  * - `{(string|undefined)} type`: The {@link rtvref.types type} verified;
  *   `undefined` for a pseudo-type (e.g. {@link rtvref.types.primitives primitive}

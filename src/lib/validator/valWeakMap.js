@@ -1,6 +1,6 @@
 ////// valWeakMap validator
 
-import { type, default as isWeakMap } from '../validation/isWeakMap';
+import { type, check as isWeakMap } from '../validation/isWeakMap';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

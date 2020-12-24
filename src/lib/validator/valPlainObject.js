@@ -2,12 +2,12 @@
 
 import _forEach from 'lodash/forEach';
 
-import { type, default as isPlainObject } from '../validation/isPlainObject';
+import { type, check as isPlainObject } from '../validation/isPlainObject';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';
 import { RtvError } from '../RtvError';
-import isShape from '../validation/isShape';
+import { check as isShape } from '../validation/isShape';
 
 /**
  * Validator Module: valPlainObject

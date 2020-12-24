@@ -2,11 +2,11 @@
 
 import _forEach from 'lodash/forEach';
 
-import { type, default as isHashMap } from '../validation/isHashMap';
+import { type, check as isHashMap } from '../validation/isHashMap';
 
-import isFinite from '../validation/isFinite';
-import isString from '../validation/isString';
-import isTypeset from '../validation/isTypeset';
+import { check as isFinite } from '../validation/isFinite';
+import { check as isString } from '../validation/isString';
+import { check as isTypeset } from '../validation/isTypeset';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

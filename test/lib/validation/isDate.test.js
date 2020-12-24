@@ -11,11 +11,11 @@ describe('module: lib/validation/isDate', function () {
 
   describe('#default', function () {
     it('valid values', function () {
-      expect(vtu.testValues(val.type, val.default).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.check).failures).to.eql([]);
     });
 
     it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check)).to.eql([]);
     });
   });
 });

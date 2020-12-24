@@ -1,11 +1,11 @@
 ////// isJson validation
 
-import isNull from './isNull';
-import isString from './isString';
-import isBoolean from './isBoolean';
-import isFinite from './isFinite';
-import isPlainObject from './isPlainObject';
-import isArray from './isArray';
+import { check as isNull } from './isNull';
+import { check as isString } from './isString';
+import { check as isBoolean } from './isBoolean';
+import { check as isFinite } from './isFinite';
+import { check as isPlainObject } from './isPlainObject';
+import { check as isArray } from './isArray';
 
 import { types } from '../types';
 
@@ -23,11 +23,11 @@ export const type = types.JSON;
 /**
  * {@link rtvref.validation.method Validation} for the
  *  {@link rtvref.types.JSON JSON} type.
- * @function rtvref.validation.isJson.default
+ * @function rtvref.validation.isJson.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isJson(v) {
+export const check = function isJson(v) {
   return (
     isNull(v) ||
     isString(v, { allowEmpty: true }) ||
@@ -36,4 +36,4 @@ export default function isJson(v) {
     isPlainObject(v) ||
     isArray(v)
   );
-}
+};

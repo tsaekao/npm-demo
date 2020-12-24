@@ -1,9 +1,9 @@
 ////// valSet validator
 
-import { type, default as isSet } from '../validation/isSet';
+import { type, check as isSet } from '../validation/isSet';
 
-import isFinite from '../validation/isFinite';
-import isTypeset from '../validation/isTypeset';
+import { check as isFinite } from '../validation/isFinite';
+import { check as isTypeset } from '../validation/isTypeset';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

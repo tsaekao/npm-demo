@@ -1,8 +1,8 @@
 ////// RtvError Class
 
-import isTypeset from './validation/isTypeset';
-import isArray from './validation/isArray';
-import isError from './validation/isError';
+import { check as isTypeset } from './validation/isTypeset';
+import { check as isArray } from './validation/isArray';
+import { check as isError } from './validation/isError';
 
 import { print } from './util';
 

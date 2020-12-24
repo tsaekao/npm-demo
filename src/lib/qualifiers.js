@@ -2,7 +2,7 @@
 
 import * as pqs from './pureQualifiers';
 import { Enumeration } from './Enumeration';
-import isFalsy from './validation/isFalsy';
+import { check as isFalsy } from './validation/isFalsy';
 
 /**
  * <h3>Qualifiers</h3>

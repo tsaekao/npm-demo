@@ -1,9 +1,9 @@
 ////// valString validator
 
-import { type, default as isString } from '../validation/isString';
+import { type, check as isString } from '../validation/isString';
 
-import isFinite from '../validation/isFinite';
-import isArray from '../validation/isArray';
+import { check as isFinite } from '../validation/isFinite';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

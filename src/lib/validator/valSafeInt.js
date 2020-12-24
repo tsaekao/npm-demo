@@ -1,8 +1,8 @@
 ////// valSafeInt validator
 
-import { type, default as isSafeInt } from '../validation/isSafeInt';
+import { type, check as isSafeInt } from '../validation/isSafeInt';
 
-import isArray from '../validation/isArray';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

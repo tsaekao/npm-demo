@@ -1,8 +1,8 @@
 ////// valSymbol validator
 
-import { type, default as isSymbol } from '../validation/isSymbol';
+import { type, check as isSymbol } from '../validation/isSymbol';
 
-import isArray from '../validation/isArray';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

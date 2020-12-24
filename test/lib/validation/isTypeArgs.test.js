@@ -21,7 +21,7 @@ describe('module: lib/validation/isTypeArgs', function () {
 
     it('should validate type arguments', function () {
       expect(
-        vtu.testValues('isTypeArgs', val.default, validValues[types.OBJECT])
+        vtu.testValues('isTypeArgs', val.check, validValues[types.OBJECT])
           .failures
       ).to.eql([]);
     });
@@ -54,7 +54,7 @@ describe('module: lib/validation/isTypeArgs', function () {
 
       // nothing should pass
       expect(
-        vtu.testValues('isTypeArgs', val.default, invalidValues).passes
+        vtu.testValues('isTypeArgs', val.check, invalidValues).passes
       ).to.eql([]);
     });
   });

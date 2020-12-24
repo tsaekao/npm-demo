@@ -7,8 +7,8 @@ import { DEFAULT_OBJECT_TYPE, types } from '../../src/lib/types';
 import { DEFAULT_QUALIFIER, qualifiers } from '../../src/lib/qualifiers';
 import { RtvSuccess } from '../../src/lib/RtvSuccess';
 import { RtvError } from '../../src/lib/RtvError';
-import isObject from '../../src/lib/validation/isObject';
-import isFunction from '../../src/lib/validation/isFunction';
+import { check as isObject } from '../../src/lib/validation/isObject';
+import { check as isFunction } from '../../src/lib/validation/isFunction';
 import * as isTypesetMod from '../../src/lib/validation/isTypeset';
 import * as isAnyMod from '../../src/lib/validation/isAny';
 
@@ -1583,7 +1583,7 @@ describe('module: lib/impl', function () {
 
     describe('Options', function () {
       it('should assume typeset is valid', function () {
-        const isTypesetStub = sinon.stub(isTypesetMod, 'default').callThrough();
+        const isTypesetStub = sinon.stub(isTypesetMod, 'check').callThrough();
 
         expect(function () {
           impl.checkWithArray(1, ['invalid-type'], undefined, {
@@ -1725,7 +1725,7 @@ describe('module: lib/impl', function () {
     });
 
     it(`should not call the validator if the "${types.ANY}" validator fails`, function () {
-      const stub = sinon.stub(isAnyMod, 'default').returns(false);
+      const stub = sinon.stub(isAnyMod, 'check').returns(false);
       const validator = sinon.spy();
 
       impl.check(1, validator);
@@ -1736,7 +1736,7 @@ describe('module: lib/impl', function () {
 
     describe('Options', function () {
       it('should not validate the typeset if isTypeset is true', function () {
-        const isTypesetSpy = sinon.stub(isTypesetMod, 'default').callThrough();
+        const isTypesetSpy = sinon.stub(isTypesetMod, 'check').callThrough();
 
         impl.check(1, types.FINITE, undefined, { isTypeset: true });
         expect(isTypesetSpy.called).to.be.false;
@@ -1783,7 +1783,7 @@ describe('module: lib/impl', function () {
       });
 
       it('should throw if typeset type is not supported', function () {
-        const isTypesetStub = sinon.stub(isTypesetMod, 'default').returns(true);
+        const isTypesetStub = sinon.stub(isTypesetMod, 'check').returns(true);
 
         let err;
         try {

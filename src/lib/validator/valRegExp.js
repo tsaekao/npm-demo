@@ -1,6 +1,6 @@
 ////// valRegExp validator
 
-import { type, default as isRegExp } from '../validation/isRegExp';
+import { type, check as isRegExp } from '../validation/isRegExp';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

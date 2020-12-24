@@ -20,11 +20,11 @@ describe('module: lib/validation/isCustomValidator', function () {
       expect(
         vtu.testValues(
           'isCustomValidator',
-          val.default,
+          val.check,
           validValues[types.FUNCTION]
         ).failures
       ).to.eql([]);
-      expect(vtu.testOtherValues(types.FUNCTION, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(types.FUNCTION, val.check)).to.eql([]);
     });
   });
 });

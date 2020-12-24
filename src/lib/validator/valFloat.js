@@ -1,8 +1,8 @@
 ////// valFloat validator
 
-import { type, default as isFloat } from '../validation/isFloat';
+import { type, check as isFloat } from '../validation/isFloat';
 
-import isArray from '../validation/isArray';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

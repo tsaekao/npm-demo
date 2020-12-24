@@ -11,14 +11,14 @@ describe('module: lib/validation/isNull', function () {
 
   describe('#default', function () {
     it('valid values', function () {
-      expect(val.default(null)).to.be.true;
+      expect(val.check(null)).to.be.true;
     });
 
     it('other types/values', function () {
-      expect(val.default(undefined)).to.be.false;
+      expect(val.check(undefined)).to.be.false;
 
       // does not test for undefined/null
-      expect(vtu.testOtherValues(val.type, val.default)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check)).to.eql([]);
     });
   });
 });

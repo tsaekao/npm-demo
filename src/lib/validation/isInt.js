@@ -23,10 +23,10 @@ export const type = types.INT;
  *  {@link rtvref.types.primitives primitive}). It does not validate
  *  `new Number(1)`, which is an object that is a number.
  *
- * @function rtvref.validation.isInt.default
+ * @function rtvref.validation.isInt.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if validated; `false` otherwise.
  */
-export default function isInt(v) {
+export const check = function isInt(v) {
   return _isInteger(v); // eliminates NaN, +/-Infinity, floats
-}
+};

@@ -12,7 +12,7 @@ describe('module: lib/validation/isFalsy', function () {
     const falsyValues = vtu.getFalsyValues();
 
     it('should validate JavaScript falsy values', function () {
-      vtu.expectAllToPass('isFalsy', val.default, falsyValues);
+      vtu.expectAllToPass('isFalsy', val.check, falsyValues);
     });
 
     it('should be validating values that are actually falsy', function () {

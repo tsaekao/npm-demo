@@ -23,9 +23,9 @@ describe('module: lib/validation/isPrimitive', function () {
         validValues[types.NUMBER],
         validValues[types.SYMBOL]
       );
-      expect(
-        vtu.testValues('isPrimitive', val.default, values).failures
-      ).to.eql([]);
+      expect(vtu.testValues('isPrimitive', val.check, values).failures).to.eql(
+        []
+      );
     });
   });
 });

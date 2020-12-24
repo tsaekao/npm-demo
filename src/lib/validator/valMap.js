@@ -1,10 +1,10 @@
 ////// valMap validator
 
-import { type, default as isMap } from '../validation/isMap';
+import { type, check as isMap } from '../validation/isMap';
 
-import isFinite from '../validation/isFinite';
-import isString from '../validation/isString';
-import isTypeset from '../validation/isTypeset';
+import { check as isFinite } from '../validation/isFinite';
+import { check as isString } from '../validation/isString';
+import { check as isTypeset } from '../validation/isTypeset';
 
 import { types } from '../types';
 import { qualifiers, valuePermitted } from '../qualifiers';

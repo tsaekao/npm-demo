@@ -1,6 +1,6 @@
 ////// valError validator
 
-import { type, default as isError } from '../validation/isError';
+import { type, check as isError } from '../validation/isError';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

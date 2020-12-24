@@ -1,6 +1,6 @@
 ////// valBoolean validator
 
-import { type, default as isBoolean } from '../validation/isBoolean';
+import { type, check as isBoolean } from '../validation/isBoolean';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

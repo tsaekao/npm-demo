@@ -1,6 +1,6 @@
 ////// valAny validator
 
-import { type, default as isAny } from '../validation/isAny';
+import { type, check as isAny } from '../validation/isAny';
 
 import { qualifiers } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

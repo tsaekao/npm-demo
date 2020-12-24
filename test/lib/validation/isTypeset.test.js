@@ -6,7 +6,7 @@ import { types, DEFAULT_OBJECT_TYPE } from '../../../src/lib/types';
 import { qualifiers, DEFAULT_QUALIFIER } from '../../../src/lib/qualifiers';
 import * as isShapeMod from '../../../src/lib/validation/isShape';
 import {
-  default as isTypeset,
+  check as isTypeset,
   type as isTypesetType,
 } from '../../../src/lib/validation/isTypeset';
 
@@ -486,7 +486,7 @@ describe('module: lib/validation/isTypeset', function () {
         //  check that it's a shape...
         let count = 0;
         const isShapeStub = sinon
-          .stub(isShapeMod, 'default')
+          .stub(isShapeMod, 'check')
           .callsFake(function () {
             count++;
             return count < 3;

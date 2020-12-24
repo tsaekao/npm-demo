@@ -1,8 +1,8 @@
 ////// valInt validator
 
-import { type, default as isInt } from '../validation/isInt';
+import { type, check as isInt } from '../validation/isInt';
 
-import isArray from '../validation/isArray';
+import { check as isArray } from '../validation/isArray';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

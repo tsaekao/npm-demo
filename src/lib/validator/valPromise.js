@@ -1,6 +1,6 @@
 ////// valPromise validator
 
-import { type, default as isPromise } from '../validation/isPromise';
+import { type, check as isPromise } from '../validation/isPromise';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';

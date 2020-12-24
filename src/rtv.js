@@ -6,7 +6,7 @@ import { types } from './lib/types';
 import { qualifiers } from './lib/qualifiers';
 import { RtvSuccess } from './lib/RtvSuccess';
 import { RtvError } from './lib/RtvError';
-import isTypeset from './lib/validation/isTypeset';
+import { check as isTypeset } from './lib/validation/isTypeset';
 
 // all known types
 // TODO[plugins]: In the future, with plugins, this should be dynamically-generated somehow.

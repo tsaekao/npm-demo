@@ -15,11 +15,11 @@ export const type = undefined;
 
 /**
  * Determines if a value is a JavaScript {@link rtvref.types.falsy_values falsy value}.
- * @function rtvref.validation.isFalsy.default
+ * @function rtvref.validation.isFalsy.check
  * @param {*} v Value to validate.
  * @returns {boolean} `true` if it is; `false` otherwise.
  */
-export default function isFalsy(v) {
+export const check = function isFalsy(v) {
   return (
     v === undefined ||
     v === null ||
@@ -28,4 +28,4 @@ export default function isFalsy(v) {
     v === '' ||
     _isNaN(v)
   );
-}
+};

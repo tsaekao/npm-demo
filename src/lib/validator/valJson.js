@@ -1,6 +1,6 @@
 ////// valJson validator
 
-import { type, default as isJson } from '../validation/isJson';
+import { type, check as isJson } from '../validation/isJson';
 
 import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';
