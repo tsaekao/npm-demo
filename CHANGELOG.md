@@ -36,6 +36,7 @@ Date format is YYYY-MM-DD.
     -   This can be overridden on an individual shape basis by using the new `exact: boolean` flag in the _Shape Object Arguments_.
     -   The default behavior remains unchanged: Shape validation only concerns itself with own-properties on the shape and ignores any additional own-properties the object being verified may have.
     -   This applies to the following types: `OBJECT`, `ANY_OBJECT`, `PLAIN_OBJECT`, `CLASS_OBJECT`.
+-   New _Collection Argument_ `deep`, which applies to `HASH_MAP` only: When `true`, if a value in the map does not match the `$values` typeset, it's expected to be a nested `HASH_MAP` whose keys and values match the parent map's structure (i.e. the same arguments used on the parent map are used to verify the value of its key).
 
 ### Changed
 

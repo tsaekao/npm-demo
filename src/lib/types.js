@@ -345,6 +345,16 @@ import * as pts from './onlyTypes';
  *
  *  Applies to: All collection types.
  *
+ * @property {boolean} [deep] If `true`, the property value being tested does not
+ *  match the `$values` typeset, and the property value
+ *  {@link rtvref.types.HASH_MAP is a hash map}, then verification will recurse
+ *  into the property value and will attempt to verify its properties against
+ *  the typeset in `$values`.
+ *
+ *  If `false` (default), the property value must match the `$values` typeset.
+ *
+ *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP}.
+ *
  * @see {@link rtvref.types.HASH_MAP}
  * @see {@link rtvref.types.MAP}
  * @see {@link rtvref.types.SET}

@@ -113,6 +113,18 @@ export const validate = function valHashMap(v, q = REQUIRED, args, context) {
             }); // check VALUE against typeset
             valid = result.valid;
 
+            if (!valid && args.deep) {
+              // check the key's value as a nested hash map with the same structure
+              //  as is expected for values on this parent hash map
+              result = impl.check(value, [q, type, args], {
+                originalValue: v, // let this get overwritten if `context` is specified
+                ...context,
+                parent: v,
+                parentKey: key,
+              });
+              valid = result.valid;
+            }
+
             if (!result.valid) {
               // create a new error from the original, but still with the KEY added to the path
               result = new RtvError(

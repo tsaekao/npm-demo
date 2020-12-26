@@ -281,6 +281,44 @@ describe('module: lib/validator/valHashMap', function () {
         mismatch: [qualifiers.REQUIRED, types.HASH_MAP, valuesTypeset[1]],
       });
     });
+
+    it('recurses into nested hash maps when deep=true', function () {
+      map[0] = {
+        4: 'four',
+        5: 'five',
+        6: 'six',
+      };
+      const args = {
+        keyExp: '\\d',
+        $values: types.STRING,
+      };
+
+      // this will fail because `map[0]` is an object, not a string
+      vtu.expectValidatorError(val, map, undefined, args, {
+        path: ['valueKey="0"'],
+        mismatch: [qualifiers.REQUIRED, types.STRING],
+      });
+
+      // now it will succeed because we enable `deep` and `map[0]` is another
+      //  hash map with the same structure as its parent
+      args.deep = true;
+      vtu.expectValidatorSuccess(val, map, undefined, args);
+    });
+
+    it('only recurses into nested hash maps when deep=true', function () {
+      map[0] = [4, 5, 6];
+      const args = {
+        deep: true,
+        keyExp: '\\d',
+        $values: types.STRING,
+      };
+
+      // this will fail because `map[0]` is not a hash map
+      vtu.expectValidatorError(val, map, undefined, args, {
+        path: ['valueKey="0"'],
+        mismatch: [qualifiers.REQUIRED, types.HASH_MAP, args],
+      });
+    });
   });
 
   describe('context', function () {
