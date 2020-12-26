@@ -153,9 +153,11 @@ describe('module: lib/validator/valSet', function () {
     it('checks for values with specified typeset', function () {
       let set = new Set(['one', 'two', 'three']);
 
-      vtu.expectValidatorSuccess(val, set, undefined, { values: types.STRING });
+      vtu.expectValidatorSuccess(val, set, undefined, {
+        $values: types.STRING,
+      });
 
-      let args = { values: types.BOOLEAN };
+      let args = { $values: types.BOOLEAN };
       vtu.expectValidatorError(val, set, undefined, args, {
         path: ['"one"'],
         mismatch: [qualifiers.REQUIRED, types.BOOLEAN],
@@ -164,7 +166,7 @@ describe('module: lib/validator/valSet', function () {
       set = new Set(['one', 'two', '']);
 
       args = {
-        values: types.STRING, // required by default, so will fail
+        $values: types.STRING, // required by default, so will fail
       };
       vtu.expectValidatorError(val, set, undefined, args, {
         path: ['""'],
@@ -172,41 +174,41 @@ describe('module: lib/validator/valSet', function () {
       });
 
       vtu.expectValidatorSuccess(val, set, undefined, {
-        values: [qualifiers.EXPECTED, types.STRING],
+        $values: [qualifiers.EXPECTED, types.STRING],
       });
 
       set = new Set([new Set(['1']), new Set(['2']), new Set(['3'])]);
 
       vtu.expectValidatorSuccess(val, set, undefined, {
-        values: [
+        $values: [
           types.SET,
           {
-            keys: types.STRING, // ignored: sets don't have keys
+            $keys: types.STRING, // ignored: sets don't have keys
           },
         ],
       });
 
       vtu.expectValidatorSuccess(val, set, undefined, {
-        values: [
+        $values: [
           types.SET,
           {
-            values: types.STRING,
+            $values: types.STRING,
           },
         ],
       });
 
       args = {
-        values: [
+        $values: [
           types.SET,
           {
             length: 2, // nested sets do not have length >= 2 so this should fail
-            values: types.STRING,
+            $values: types.STRING,
           },
         ],
       };
       vtu.expectValidatorError(val, set, undefined, args, {
         path: [print(set.values().next().value)],
-        mismatch: [qualifiers.REQUIRED, ...args.values],
+        mismatch: [qualifiers.REQUIRED, ...args.$values],
       });
     });
   });
@@ -215,7 +217,7 @@ describe('module: lib/validator/valSet', function () {
     it('should set parent to Set and parentKey to undefined', function () {
       const validator = sinon.spy();
       const value = new Set(['bar']);
-      val.validate(value, undefined, { values: validator });
+      val.validate(value, undefined, { $values: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([

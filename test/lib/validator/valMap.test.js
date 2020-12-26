@@ -160,13 +160,13 @@ describe('module: lib/validator/valMap', function () {
         [3, 'three'],
       ]);
 
-      vtu.expectValidatorSuccess(val, map, undefined, { keys: types.FINITE });
+      vtu.expectValidatorSuccess(val, map, undefined, { $keys: types.FINITE });
 
       vtu.expectValidatorError(
         val,
         map,
         undefined,
-        { keys: types.STRING },
+        { $keys: types.STRING },
         {
           path: ['key=1'],
           mismatch: [qualifiers.REQUIRED, types.STRING],
@@ -174,7 +174,7 @@ describe('module: lib/validator/valMap', function () {
       );
 
       vtu.expectValidatorSuccess(val, new Map(), undefined, {
-        keys: types.REGEXP,
+        $keys: types.REGEXP,
       });
     });
 
@@ -185,7 +185,7 @@ describe('module: lib/validator/valMap', function () {
       ]);
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.FINITE,
+        $keys: types.FINITE,
         keyExp: 'key', // ignored: keys aren't expected to be strings
       });
 
@@ -193,7 +193,7 @@ describe('module: lib/validator/valMap', function () {
         ['key1', 1],
         ['key2', 2],
       ]);
-      let args = { keys: types.FINITE };
+      let args = { $keys: types.FINITE };
 
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['key="key1"'],
@@ -201,24 +201,24 @@ describe('module: lib/validator/valMap', function () {
       }); // keys are not numbers in this map
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.STRING,
+        $keys: types.STRING,
         keyExp: 'key\\d',
       });
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.STRING,
+        $keys: types.STRING,
         keyExp: function () {}, // ignored: not string
       });
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [types.STRING],
+        $keys: [types.STRING],
         keyExp: 'key\\d',
       });
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [qualifiers.EXPECTED, types.STRING],
+        $keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'key\\d',
       });
 
       args = {
-        keys: [qualifiers.EXPECTED, types.STRING],
+        $keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'KEY\\d',
       };
       vtu.expectValidatorError(val, map, undefined, args, {
@@ -227,13 +227,13 @@ describe('module: lib/validator/valMap', function () {
       }); // case-sensitive by default
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: [qualifiers.EXPECTED, types.STRING],
+        $keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'KEY\\d',
         keyFlags: 'i', // case-insensitive flag
       });
 
       args = {
-        keys: [qualifiers.EXPECTED, types.STRING],
+        $keys: [qualifiers.EXPECTED, types.STRING],
         keyExp: 'KEY\\d',
         keyFlags: {}, // ignored: not string (so still case-sensitive)
       };
@@ -251,10 +251,10 @@ describe('module: lib/validator/valMap', function () {
       ]);
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        values: types.STRING,
+        $values: types.STRING,
       });
 
-      let args = { values: types.BOOLEAN };
+      let args = { $values: types.BOOLEAN };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=1'],
         mismatch: [qualifiers.REQUIRED, types.BOOLEAN],
@@ -267,7 +267,7 @@ describe('module: lib/validator/valMap', function () {
       ]);
 
       args = {
-        values: types.STRING, // required by default, so will fail
+        $values: types.STRING, // required by default, so will fail
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=3'],
@@ -275,7 +275,7 @@ describe('module: lib/validator/valMap', function () {
       });
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        values: [qualifiers.EXPECTED, types.STRING],
+        $values: [qualifiers.EXPECTED, types.STRING],
       });
     });
 
@@ -287,12 +287,12 @@ describe('module: lib/validator/valMap', function () {
       ]);
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        keys: types.FINITE,
-        values: [
+        $keys: types.FINITE,
+        $values: [
           types.MAP,
           {
-            keys: types.STRING,
-            values: types.BOOLEAN,
+            $keys: types.STRING,
+            $values: types.BOOLEAN,
           },
         ],
       });
@@ -301,13 +301,13 @@ describe('module: lib/validator/valMap', function () {
       const valuesTypeset = [
         types.MAP,
         {
-          keys: [types.STRING, { min: 2 }],
-          values: types.BOOLEAN,
+          $keys: [types.STRING, { min: 2 }],
+          $values: types.BOOLEAN,
         },
       ];
       const args = {
-        keys: types.FINITE,
-        values: valuesTypeset,
+        $keys: types.FINITE,
+        $values: valuesTypeset,
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=1', 'key="a"'],
@@ -320,7 +320,7 @@ describe('module: lib/validator/valMap', function () {
     it('should set parent to Map and parentKey to undefined for keys', function () {
       const validator = sinon.spy();
       const value = new Map([['key', 'bar']]);
-      val.validate(value, undefined, { keys: validator });
+      val.validate(value, undefined, { $keys: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([
@@ -334,7 +334,7 @@ describe('module: lib/validator/valMap', function () {
     it('should set parent to Map and parentKey to key for values', function () {
       const validator = sinon.spy();
       const value = new Map([['key', 'bar']]);
-      val.validate(value, undefined, { values: validator });
+      val.validate(value, undefined, { $values: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([

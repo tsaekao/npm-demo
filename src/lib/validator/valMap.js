@@ -85,7 +85,7 @@ export const validate = function valMap(v, q = REQUIRED, args, context) {
     // remaining args, if specified, require iterating potentially the entire map
     if (valid) {
       // get the typeset for keys
-      const tsKeys = isTypeset(args.keys) ? args.keys : undefined;
+      const tsKeys = isTypeset(args.$keys) ? args.$keys : undefined;
       // get the key expression only if the keys are expected to be strings
       const tsKeysIsString = !!(tsKeys && isStringTypeset(tsKeys));
       const keyExp =
@@ -98,7 +98,7 @@ export const validate = function valMap(v, q = REQUIRED, args, context) {
           ? args.keyFlags
           : undefined;
       // get the typeset for values
-      const tsValues = isTypeset(args.values) ? args.values : undefined;
+      const tsValues = isTypeset(args.$values) ? args.$values : undefined;
 
       if (tsKeys || tsValues) {
         const reKeys = keyExp ? new RegExp(keyExp, keyFlags) : undefined;

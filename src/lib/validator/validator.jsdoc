@@ -132,7 +132,7 @@
  *
  *  <pre><code>[rtv.HASH_MAP, {
  *    keyExp: '\\w+',
- *    values: [[rtv.STRING, (value, match, typeset, context) => {
+ *    $values: [[rtv.STRING, (value, match, typeset, context) => {
  *      // called for each element of both arrays
  *      value; // 'apple', 'orange', ..., 'cucumber', 'kale'
  *      context.originalValue; // `foods`
@@ -153,7 +153,7 @@
  *    rtv.HASH_MAP,
  *    {
  *      keyExp: '\\w+',
- *      values: [[rtv.STRING]]
+ *      $values: [[rtv.STRING]]
  *    },
  *    (value, match, typeset, context) => {
  *      // called once for the hash map itself

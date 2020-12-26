@@ -27,6 +27,7 @@ Date format is YYYY-MM-DD.
 -   __REMOVED__ the `rtv.enabled` convenience accessor. Use `rtv.config.enabled` instead, or define your own environment variable, e.g. `DEV_ENV && rtv.verify(...)`
 -   __REMOVED__ the default export. All exports are now named. To get the same behavior as before, change `import rtv from 'rtvjs'; -> import * as rtv from 'rtvjs';`. Default exports are generally a bad idea, especially when converting from ESM to CJS. The elimination of the default export should make bundling RTV.js much easier, regardless of your target format (CJS, ESM, UMD, ...).
 -   The fully-qualified `ARRAY` form's `ts` argument (which provides the typeset to use when verifying an array's elements) has been renamed to `$` to be consistent with the `$` property used in the fully-qualified form of the `OBJECT`, `ANY_OBJECT`, `PLAIN_OBJECT`, and `CLASS_OBJECt` types. In the end, whether with an `ARRAY` or one of the 4 object types, it's still a typeset, so there was no reason to confuse things by using different property names. `$` is unique and will be used for the same purpose should new features require nested typesets on other types.
+-   The _Collection Arguments_ `keys` and `values` properties have been renamed to `$keys` and `$values`, respectively, because they represent typesets, and this brings the property names inline with the distinctive `$` used for typeset arguments on `ARRAY` and object types.
 
 ### Added
 

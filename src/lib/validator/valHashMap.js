@@ -84,7 +84,7 @@ export const validate = function valHashMap(v, q = REQUIRED, args, context) {
           ? args.keyFlags
           : undefined;
       // get the typeset for values
-      const tsValues = isTypeset(args.values) ? args.values : undefined;
+      const tsValues = isTypeset(args.$values) ? args.$values : undefined;
 
       if (keyExp || tsValues) {
         const reKeys = keyExp ? new RegExp(keyExp, keyFlags) : undefined;

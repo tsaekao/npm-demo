@@ -224,10 +224,10 @@ describe('module: lib/validator/valHashMap', function () {
 
     it('checks for values with specified typeset', function () {
       vtu.expectValidatorSuccess(val, map, undefined, {
-        values: types.STRING,
+        $values: types.STRING,
       });
 
-      let args = { values: types.BOOLEAN };
+      let args = { $values: types.BOOLEAN };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="1"'],
         mismatch: [qualifiers.REQUIRED, types.BOOLEAN],
@@ -236,7 +236,7 @@ describe('module: lib/validator/valHashMap', function () {
       map[3] = '';
 
       args = {
-        values: types.STRING, // required by default, so will fail
+        $values: types.STRING, // required by default, so will fail
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="3"'],
@@ -244,7 +244,7 @@ describe('module: lib/validator/valHashMap', function () {
       });
 
       vtu.expectValidatorSuccess(val, map, undefined, {
-        values: [qualifiers.EXPECTED, types.STRING],
+        $values: [qualifiers.EXPECTED, types.STRING],
       });
     });
 
@@ -255,11 +255,11 @@ describe('module: lib/validator/valHashMap', function () {
 
       vtu.expectValidatorSuccess(val, map, undefined, {
         keyExp: '\\d',
-        values: [
+        $values: [
           types.HASH_MAP,
           {
             keyExp: '\\w',
-            values: types.BOOLEAN,
+            $values: types.BOOLEAN,
           },
         ],
       });
@@ -269,12 +269,12 @@ describe('module: lib/validator/valHashMap', function () {
         types.HASH_MAP,
         {
           keyExp: '\\w{2,}',
-          values: types.BOOLEAN,
+          $values: types.BOOLEAN,
         },
       ];
       const args = {
         keyExp: '\\d',
-        values: valuesTypeset,
+        $values: valuesTypeset,
       };
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="1"', 'key="a"'],
@@ -289,7 +289,7 @@ describe('module: lib/validator/valHashMap', function () {
       const value = {
         foo: 'bar',
       };
-      val.validate(value, undefined, { values: validator });
+      val.validate(value, undefined, { $values: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([

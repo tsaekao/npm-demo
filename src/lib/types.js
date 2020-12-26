@@ -289,8 +289,8 @@ import * as pts from './onlyTypes';
  * For example, the following arguments both verify a collection of 3-letter
  *  string keys (upper- or lowercase) to finite numbers:
  *
- * - `{keyExp: '[a-z]{3}', keyFlags: 'i', values: FINITE}`
- * - `{keyExp: '[a-zA-Z]{3}', values: FINITE}`
+ * - `{keyExp: '[a-z]{3}', keyFlags: 'i', $values: FINITE}`
+ * - `{keyExp: '[a-zA-Z]{3}', $values: FINITE}`
  *
  * Note that {@link rtvref.types.ARRAY ARRAY} is __not__ included in this list
  *  because the array type has special syntax for describing the type of its items.
@@ -308,7 +308,7 @@ import * as pts from './onlyTypes';
  *
  *  Applies to: All collection types.
  *
- * @property {rtvref.types.typeset} [keys] A typeset describing each key
+ * @property {rtvref.types.typeset} [$keys] A typeset describing each key
  *  in the collection.
  *
  *  If the type is {@link rtvref.types.HASH_MAP HASH_MAP}, this argument is ignored
@@ -320,7 +320,7 @@ import * as pts from './onlyTypes';
  * @property {string} [keyExp] A string-based regular expression describing the
  *  names of keys found in the collection. By default, there are no restrictions
  *  on key names. Ignored if the key type is not {@link rtvref.types.STRING STRING},
- *  as specified in `keys` (when `keys` is applicable to the collection type).
+ *  as specified in `$keys` (when `$keys` is applicable to the collection type).
  *
  *  For example, to require numerical keys, the following expression could be
  *   used: `"^\\d+$"`.
@@ -335,7 +335,7 @@ import * as pts from './onlyTypes';
  *
  *  Applies to: {@link rtvref.types.HASH_MAP HASH_MAP}, {@link rtvref.types.MAP MAP}.
  *
- * @property {rtvref.types.typeset} [values] A typeset describing each value in
+ * @property {rtvref.types.typeset} [$values] A typeset describing each value in
  *  the collection. If specified, all values must match this typeset (but the
  *  collection is not required to have any elements to be considered valid, unless
  *  `length` is specified). If not specified, no validation is performed on values.

@@ -71,7 +71,7 @@ export const validate = function valSet(v, q = REQUIRED, args, context) {
     // remaining args, if specified, require iterating potentially the entire set
     if (valid) {
       // get the typeset for values
-      const tsValues = isTypeset(args.values) ? args.values : undefined;
+      const tsValues = isTypeset(args.$values) ? args.$values : undefined;
 
       if (tsValues) {
         const it = v.values(); // iterator of straight values
