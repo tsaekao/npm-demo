@@ -1,9 +1,9 @@
-image: node:dubnium
+image: node:fermium
 
 before_script:
   - node --version
   - npm --version
-  - npm install
+  - npm ci
 
 stages:
   - build

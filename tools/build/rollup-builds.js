@@ -8,7 +8,7 @@ const {
   getBabelOutputPlugin,
 } = require('@rollup/plugin-babel');
 const replacePlugin = require('@rollup/plugin-replace');
-const { uglify: uglifyEs5Plugin } = require('rollup-plugin-uglify');
+const { terser: terserPlugin } = require('rollup-plugin-terser');
 
 const {
   RU_FORMAT_CJS,
@@ -157,8 +157,8 @@ const getBaseConfig = function (
   return config;
 };
 
-// uglify plugin (ES5 and ES6) configuration
-const getUglifyPluginConfig = function () {
+// terser plugin configuration
+const getTerserConfig = function () {
   return {
     output: {
       // comments: /^\/\*!/
@@ -213,8 +213,8 @@ const getUmdConfig = function (isDev = false) {
   };
 
   if (!isDev) {
-    const uglifyConfig = getUglifyPluginConfig();
-    config.plugins.push(uglifyEs5Plugin(uglifyConfig));
+    const terserConfig = getTerserConfig();
+    config.plugins.push(terserPlugin(terserConfig));
   }
 
   return config;
