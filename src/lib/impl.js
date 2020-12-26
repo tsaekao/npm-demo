@@ -270,7 +270,7 @@ export const fullyQualify = function (typeset, qualifier) {
     } else {
       // must be an array: move Array typeset into args
       curType = types.ARRAY;
-      fqts.push(curType, { ts: rule });
+      fqts.push(curType, { $: rule });
     }
   });
 

@@ -804,7 +804,7 @@ For example, of `typeset` is `[[rtv.STRING]]` (a required array of required stri
  `rtv.STRING` typeset.
 
 Remember that the fully-qualified `typeset` would be
- `[rtv.REQUIRED, rtv.ARRAY, {ts: [rtv.REQUIRED, rtv.STRING]}]`, which demonstrates
+ `[rtv.REQUIRED, rtv.ARRAY, {$: [rtv.REQUIRED, rtv.STRING]}]`, which demonstrates
  that `[rtv.REQUIRED, rtv.STRING]` is indeed a subset/subtype.
 
 **Kind**: instance property of [<code>RtvError</code>](#rtvref.RtvError)  
@@ -1655,7 +1655,7 @@ The `value` property must be an array (possibly empty) of finite numbers of
  any value (nested typeset is not fully-qualified).
 
 <pre><code>{
-  value: [REQUIRED, ARRAY, {ts: [FINITE]}]
+  value: [REQUIRED, ARRAY, {$: [FINITE]}]
 }
 </code></pre>
 
@@ -1666,7 +1666,7 @@ The `value` property must be either a boolean; or an array (possibly empty) of
  (nested typeset is not fully-qualified).
 
 <pre><code>{
-  value: [REQUIRED, BOOLEAN, ARRAY, {ts: [FINITE, STRING]}]
+  value: [REQUIRED, BOOLEAN, ARRAY, {$: [FINITE, STRING]}]
 }
 </code></pre>
 
@@ -2086,6 +2086,9 @@ The shape descriptor itself must be an [OBJECT](#rtvref.types.OBJECT). An empty
  other than whether its type is the
  [default object type](#rtvref.types.DEFAULT_OBJECT_TYPE).
 
+__NOTE:__ A shape is simply a specific _type_ of typeset since a typeset can come
+ in the form of multiple value types, including an object which represents a shape.
+
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  
 **See**
 
@@ -2220,7 +2223,7 @@ Applicable to all object types that may have a shape:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [ts] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in the  array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
+| [$] | [<code>typeset</code>](#rtvref.types.typeset) | The typeset which every value in the  array must match. Defaults to [ANY](#rtvref.types.ANY) which means any  value will match. |
 | [length] | <code>number</code> | Exact length. Ignored if not a  [FINITE](#rtvref.types.FINITE) number >= 0. |
 | [min] | <code>number</code> | Minimum inclusive length. Ignored if `length` is  specified, or `min` is not a [FINITE](#rtvref.types.FINITE) number >= 0.  Defaults to 0. |
 | [max] | <code>number</code> | Maximum inclusive length. Negative means no maximum.  Ignored if `length` is specified, `max` is not a  [FINITE](#rtvref.types.FINITE) number, or `max` is less than `min`. Defaults  to -1 (unlimited). |
@@ -2465,7 +2468,7 @@ For example:
 
 - `STRING` -> `[REQUIRED, STRING]`
 - `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
-- `[[FINITE]]` -> `[REQUIRED, ARRAY, {ts: [REQUIRED, FINITE]}]`
+- `[[FINITE]]` -> `[REQUIRED, ARRAY, {$: [REQUIRED, FINITE]}]`
 - `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
 
 **Kind**: static typedef of [<code>types</code>](#rtvref.types)  

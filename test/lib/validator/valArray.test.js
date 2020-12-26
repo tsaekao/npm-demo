@@ -214,32 +214,32 @@ describe('module: lib/validator/valArray', function () {
 
     it('checks each element against typeset', function () {
       let arr = ['a', 'b', ''];
-      let args = { ts: [qualifiers.EXPECTED, types.STRING] };
+      let args = { $: [qualifiers.EXPECTED, types.STRING] };
 
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
-      args = { ts: [qualifiers.REQUIRED, types.STRING] };
+      args = { $: [qualifiers.REQUIRED, types.STRING] };
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['2'],
-        mismatch: args.ts,
+        mismatch: args.$,
       });
 
       arr = [1, 'a'];
-      args = { ts: [types.FINITE, { min: 1 }, types.STRING, { oneOf: 'a' }] };
+      args = { $: [types.FINITE, { min: 1 }, types.STRING, { oneOf: 'a' }] };
       vtu.expectValidatorSuccess(val, arr, undefined, args);
 
       arr = [1, 'a'];
-      args = { ts: [types.FINITE, { min: 2 }, types.STRING, { oneOf: 'a' }] };
+      args = { $: [types.FINITE, { min: 2 }, types.STRING, { oneOf: 'a' }] };
       vtu.expectValidatorError(val, arr, undefined, args, {
         path: ['0'],
         mismatch: (function () {
-          const ts = args.ts.concat();
+          const ts = args.$.concat();
           ts.unshift(qualifiers.REQUIRED);
           return ts;
         })(),
       });
 
-      args = { ts: /invalid typeset/ }; // ignored
+      args = { $: /invalid typeset/ }; // ignored
       vtu.expectValidatorSuccess(val, arr, undefined, args);
     });
 
@@ -248,7 +248,7 @@ describe('module: lib/validator/valArray', function () {
         val,
         ['a', 2],
         undefined,
-        { ts: types.STRING },
+        { $: types.STRING },
         {
           path: ['1'], // index as a string, not a number, since RtvError#path is array of strings
           mismatch: [qualifiers.REQUIRED, types.STRING],
@@ -261,7 +261,7 @@ describe('module: lib/validator/valArray', function () {
     it('should set parent to array and parentKey to index', function () {
       const validator = sinon.spy();
       const value = ['bar'];
-      val.validate(value, undefined, { ts: validator });
+      val.validate(value, undefined, { $: validator });
 
       expect(validator.callCount).to.equal(1);
       expect(validator.firstCall.args).to.eql([

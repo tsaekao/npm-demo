@@ -307,7 +307,7 @@ export const PROMISE = 'PROMISE';
  *  any value (nested typeset is not fully-qualified).
  *
  * <pre><code>{
- *   value: [REQUIRED, ARRAY, {ts: [FINITE]}]
+ *   value: [REQUIRED, ARRAY, {$: [FINITE]}]
  * }
  * </code></pre>
  *
@@ -318,7 +318,7 @@ export const PROMISE = 'PROMISE';
  *  (nested typeset is not fully-qualified).
  *
  * <pre><code>{
- *   value: [REQUIRED, BOOLEAN, ARRAY, {ts: [FINITE, STRING]}]
+ *   value: [REQUIRED, BOOLEAN, ARRAY, {$: [FINITE, STRING]}]
  * }
  * </code></pre>
  *

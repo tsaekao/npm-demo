@@ -212,7 +212,7 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
 
           // only go deep if the rule is shape object args with `$` specified (which
           //  means the current in-scope type must be an object type) or ARRAY args with
-          //  `ts` specified
+          //  `$` specified
           if (
             valid &&
             deep &&
@@ -224,10 +224,10 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
             valid &&
             deep &&
             curType === types.ARRAY &&
-            hasOwnProp(rule, 'ts')
+            hasOwnProp(rule, '$')
           ) {
-            // ARRAY type with args.ts specified, and we're deep-validating
-            valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
+            // ARRAY type with args.$ specified, and we're deep-validating
+            valid = deepVerifyArray(rule.$, options, failurePrefix, idx);
           }
           // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
           //  the rule (object) needs no further validation
@@ -351,10 +351,10 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
           valid &&
           deep &&
           curType === types.ARRAY &&
-          hasOwnProp(rule, 'ts')
+          hasOwnProp(rule, '$')
         ) {
-          // ARRAY type with args.ts specified, and we're deep-validating
-          valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
+          // ARRAY type with args.$ specified, and we're deep-validating
+          valid = deepVerifyArray(rule.$, options, failurePrefix, idx);
         }
         // else, either not valid, not deep, or neither shape object nor ARRAY args, so assume
         //  the rule (object) needs no further validation

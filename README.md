@@ -397,10 +397,10 @@ This would verify that an Array contains non-empty string values, but the Array 
 
 What the example above defines is an Array typeset that has a single _implied_ `ARRAY` type with an element typeset of `STRING` that will be applied to all elements found in the Array.
 
-When the __full notation__ is used, the element typeset __moves into the `ts` argument__:
+When the __full notation__ is used, the element typeset __moves into the `$` argument__:
 
 ```javascript
-[rtv.ARRAY, {ts: [rtv.STRING]}] // same as before, but in full notation
+[rtv.ARRAY, {$: [rtv.STRING]}] // same as before, but in full notation
 ```
 
 Either form is acceptable, and either form can show-up anywhere in a typeset. Therefore, we could verify a value is either a boolean, an Array of non-empty strings, or an Array of integers like this:
@@ -427,7 +427,7 @@ const shape = {
   created: [OPTIONAL, DATE],
   priority: [INT, {oneOf: [0, 1, 2]}],
   note: [EXPECTED, ARRAY, { // <- null, or non-empty Array of notes
-    ts: {
+    $: {
       text: STRING,
       updated: DATE
     },
@@ -524,7 +524,7 @@ const shape = {
   ],
   priority: [INT, {oneOf: [0, 1, 2]}],
   note: [EXPECTED, ARRAY, {
-    ts: {
+    $: {
       text: STRING,
       updated: DATE
     },
@@ -581,7 +581,7 @@ const item = {
   priority: 1,
   notes: [
     {
-      text: 'Ingredients: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
+      text: 'Ingredien$: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
       updated: new Date('09/20/2018')
     },
     {

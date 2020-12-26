@@ -84,6 +84,9 @@ import * as pts from './onlyTypes';
  *  other than whether its type is the
  *  {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type}.
  *
+ * __NOTE:__ A shape is simply a specific _type_ of typeset since a typeset can come
+ *  in the form of multiple value types, including an object which represents a shape.
+ *
  * @typedef {Object} rtvref.types.shape_descriptor
  * @see {@link rtvref.validation.isShape}
  * @see {@link rtvref.types.typeset}
@@ -257,7 +260,7 @@ import * as pts from './onlyTypes';
 /**
  * <h3>Array Arguments</h3>
  * @typedef {Object} rtvref.types.ARRAY_args
- * @property {rtvref.types.typeset} [ts] The typeset which every value in the
+ * @property {rtvref.types.typeset} [$] The typeset which every value in the
  *  array must match. Defaults to {@link rtvref.types.ANY} which means any
  *  value will match.
  * @property {number} [length] Exact length. Ignored if not a
@@ -541,7 +544,7 @@ import * as pts from './onlyTypes';
  *
  * - `STRING` -> `[REQUIRED, STRING]`
  * - `{note: STRING}` -> `[REQUIRED, OBJECT, {$: {note: [REQUIRED, STRING]}}]`
- * - `[[FINITE]]` -> `[REQUIRED, ARRAY, {ts: [REQUIRED, FINITE]}]`
+ * - `[[FINITE]]` -> `[REQUIRED, ARRAY, {$: [REQUIRED, FINITE]}]`
  * - `(v) => if (!v) { throw new Error(); }` -> `[REQUIRED, ANY, (v) => if (!v) { throw new Error(); }]`
  *
  * @typedef {Array} rtvref.types.fully_qualified_typeset

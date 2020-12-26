@@ -379,7 +379,7 @@ describe('module: lib/impl', function () {
       expect(fqts).to.eql([
         DEFAULT_QUALIFIER,
         types.ARRAY,
-        { ts: [types.FLOAT] },
+        { $: [types.FLOAT] },
       ]); // not deep
 
       const shape = {};
@@ -391,7 +391,7 @@ describe('module: lib/impl', function () {
         DEFAULT_OBJECT_TYPE,
         { $: shape },
         types.ARRAY,
-        { ts: [types.STRING] },
+        { $: [types.STRING] },
       ]); // object is treated as shape, not array params
       expect(fqts[2].$).to.equal(shape); // same object, not cloned
 
@@ -402,19 +402,19 @@ describe('module: lib/impl', function () {
         DEFAULT_QUALIFIER,
         types.FINITE,
         types.ARRAY,
-        { ts: [types.STRING] },
+        { $: [types.STRING] },
       ]);
 
-      ts = [types.ARRAY, { ts: types.STRING }];
+      ts = [types.ARRAY, { $: types.STRING }];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
       expect(fqts).to.eql([
         DEFAULT_QUALIFIER,
         types.ARRAY,
-        { ts: types.STRING },
+        { $: types.STRING },
       ]);
 
-      const args = { min: 1, ts: [types.STRING] };
+      const args = { min: 1, $: [types.STRING] };
       ts = [shape, types.ARRAY, args];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array
@@ -593,7 +593,7 @@ describe('module: lib/impl', function () {
       expect(typeset).to.eql([]);
       expect(nextType).to.eql([qualifiers.REQUIRED, arr]);
 
-      const args = { ts: arr };
+      const args = { $: arr };
       typeset = [types.ARRAY, args];
       nextType = impl.extractNextType(typeset);
 
@@ -1618,7 +1618,7 @@ describe('module: lib/impl', function () {
       const value = [['foo', 'bar']];
       const context = { originalValue: value, parent: value[0], parentKey: 1 };
 
-      const typeset = [types.ARRAY, { ts: [types.ARRAY, { ts: validator }] }];
+      const typeset = [types.ARRAY, { $: [types.ARRAY, { $: validator }] }];
       const result = impl.checkWithArray(value, typeset);
 
       // the validator should get called 2 times, and fail only the second time

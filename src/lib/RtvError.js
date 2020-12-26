@@ -202,7 +202,7 @@ export const RtvError = function (value, typeset, path, mismatch, rootCause) {
      *  `rtv.STRING` typeset.
      *
      * Remember that the fully-qualified `typeset` would be
-     *  `[rtv.REQUIRED, rtv.ARRAY, {ts: [rtv.REQUIRED, rtv.STRING]}]`, which demonstrates
+     *  `[rtv.REQUIRED, rtv.ARRAY, {$: [rtv.REQUIRED, rtv.STRING]}]`, which demonstrates
      *  that `[rtv.REQUIRED, rtv.STRING]` is indeed a subset/subtype.
      *
      * @readonly

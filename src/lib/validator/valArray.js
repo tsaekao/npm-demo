@@ -80,10 +80,10 @@ export const validate = function valArray(v, q = REQUIRED, args, context) {
       }
     }
 
-    if (valid && isTypeset(args.ts)) {
+    if (valid && isTypeset(args.$)) {
       // check each element in `value` against the typeset
       _forEach(v, function (elem, idx) {
-        result = impl.check(elem, args.ts, {
+        result = impl.check(elem, args.$, {
           originalValue: v, // let this get overwritten if `context` is specified
           ...context,
           parent: v,
