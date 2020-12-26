@@ -27,15 +27,24 @@ Date format is YYYY-MM-DD.
 -   __REMOVED__ the `rtv.enabled` convenience accessor. Use `rtv.config.enabled` instead, or define your own environment variable, e.g. `DEV_ENV && rtv.verify(...)`
 -   __REMOVED__ the default export. All exports are now named. To get the same behavior as before, change `import rtv from 'rtvjs'; -> import * as rtv from 'rtvjs';`. Default exports are generally a bad idea, especially when converting from ESM to CJS. The elimination of the default export should make bundling RTV.js much easier, regardless of your target format (CJS, ESM, UMD, ...).
 
+### Added
+
+-   New `rtv.check() / rtv.verify()` option, `exactShapes: boolean` (default: `false`), and new _Shape Object Argument_, `exact: boolean` (default: `false`):
+    -   With `exactShapes: true`, any shape encountered will require its related object value to have exactly the same own-properties that it has.
+    -   This can be overridden on an individual shape basis by using the new `exact: boolean` flag in the _Shape Object Arguments_.
+    -   The default behavior remains unchanged: Shape validation only concerns itself with own-properties on the shape and ignores any additional own-properties the object being verified may have.
+    -   This applies to the following types: `OBJECT`, `ANY_OBJECT`, `PLAIN_OBJECT`, `CLASS_OBJECT`.
+
 ### Changed
 
 -   Setting `rtv.config.enabled` to a value that is not strictly a `boolean` will no longer cause an `RtvError` exception; instead, the value will simply be _cast_ as a `boolean`.
+-   Fixed a bug where the `RtvError.typeset` and `RtvError.mismatch` typesets, resulting from a failed type validation with the `OBJECT`, `ANY_OBJECT`, or `PLAIN_OBJECT` types, would not contain type arguments when they were specified as part of the original typeset. Difficult to explain, but just know that things are working better, even in obscure cases.
 
 ## 2.4.0
 
 Release date: 2020-07-09
 
--   Prevent some potential denial-of-service security vulnerabilities by ensuring that active code doesn't call `.hasOwnProperty()` directly on objects. Instead, use `Object.prototype.hasOwnProperty.call(obj, 'property')`.
+-   Prevent some potential denial-of-service security vulnerabilities by ensuring that active code doesn't call `.hasOwnProperty()` directly on objects. Instead, uses `Object.prototype.hasOwnProperty.call(obj, 'property')`.
 -   Add `parent` and `parentKey` properties to Type Validator Context to provide more flexibility to _reactive validations_ (see example in [README](./README.md#parent-and-parentkey)).
 
 ## 2.3.1

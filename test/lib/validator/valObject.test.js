@@ -207,6 +207,27 @@ describe('module: lib/validator/valObject', function () {
       );
       expect(checkStub.called).to.be.true;
     });
+
+    it('should require exact own-properties if exact=true', function () {
+      checkStub.callThrough();
+
+      const obj = { foo: 1, bar: true };
+      const args = { $: { foo: types.NUMBER } };
+
+      // by default, exact=false
+      vtu.expectValidatorSuccess(val, obj, undefined, args);
+
+      args.exact = true;
+      vtu.expectValidatorError(val, obj, undefined, args);
+    });
+
+    it('should require an empty object if shape is empty and exact=true', function () {
+      checkStub.callThrough();
+      vtu.expectValidatorError(val, { foo: 1 }, undefined, {
+        $: {},
+        exact: true,
+      });
+    });
   });
 
   describe('context', function () {
@@ -227,6 +248,55 @@ describe('module: lib/validator/valObject', function () {
         validator,
         { originalValue: value, parent: value, parentKey: 'foo' },
       ]);
+    });
+
+    it('should check for exact shapes if exactShapes=true', function () {
+      const obj = { foo: 1, bar: true };
+      const args = { $: { foo: types.NUMBER } };
+      const context = {};
+
+      // by default, exactShapes=false
+      vtu.expectValidatorSuccess(val, obj, undefined, args, context);
+
+      context.exactShapes = true;
+      vtu.expectValidatorError(val, obj, undefined, args, undefined, context);
+    });
+
+    it('should allow args.exact to override exactShapes=true', function () {
+      let context = { exactShapes: true };
+      let obj = { foo: 1, bar: true };
+      let args = { $: { foo: types.NUMBER }, exact: false };
+
+      // exact=false overrides exactShapes=true
+      vtu.expectValidatorSuccess(val, obj, undefined, args, context);
+
+      // exact=true overrides exactShapes=false
+      args.exact = true;
+      context.exactShapes = false;
+      vtu.expectValidatorError(val, obj, undefined, args, undefined, context);
+
+      // deep override
+      context = { exactShapes: true }; // all shapes, nested included, must be exact
+      obj = {
+        foo: 1,
+        bar: true,
+        baz: { one: 1, two: 2 },
+      };
+      args = {
+        $: {
+          foo: types.NUMBER,
+          bar: types.BOOLEAN,
+          baz: [
+            types.OBJECT,
+            {
+              $: { one: types.NUMBER },
+              exact: false, // override exactShapes=true such that obj.baz validates
+            },
+          ],
+        },
+        // exact=false by default, therefore shape must be exact because of exactShapes=true
+      };
+      vtu.expectValidatorSuccess(val, obj, undefined, args, context);
     });
   });
 });

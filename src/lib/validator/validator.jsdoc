@@ -68,6 +68,29 @@
  *  `RtvError` if not.
  */
 
+/**
+ * <h3>Type Validator Context Options</h3>
+ *
+ * General options for configuring the behavior of one or more {@link rtvref.validator validators}
+ *  invoked during a {@link rtv.check check} or {@link rtv.verify verification} based
+ *  on the specified {@link rtvref.types.typeset typeset}. __All__ validators will
+ *  receive these options.
+ *
+ * Validator-specific _options_ are known as {@link rtvref.types.type_arguments type arguments}
+ *  and are specified inline within a {@link rtvref.types.typeset typeset}.
+ *
+ * @typedef {Object} rtvref.validator.type_validator_context_options
+ * @property {boolean} [exactShapes] If `true`, any
+ *  {@link rtvref.types.shape_descriptor shape} encountered, top-level or nested,
+ *  unless specifically configured not to, will require that the related object's
+ *  own-properties be _exactly_ those specified in the shape, no more, no less.
+ *  By default, extra properties on the object (i.e. not in the shape) being
+ *  verified are ignored.
+ *
+ *  This flag can be overridden on an individual shape basis with the shape's
+ *   {@link rtvref.types.shape_object_args exact argument}.
+ */
+
 // TODO[plugins]: Consider using the context to pass-in the `impl` reference instead
 //  of having the configuration mechanism. That could make the architecture cleaner,
 //  unless plugins shouldn't have access to the `impl`? The current mechanism could
@@ -157,6 +180,8 @@
  *  - `Object` (i.e. {@link rtvref.types.HASH_MAP HASH_MAP}): `string`, the key name.
  *  - `Array`: `number`, the element's index.
  *  - `undefined`: `undefined`.
+ * @property {rtvref.validator.type_validator_context_options} [options]
+ *  Configuration options.
  */
 
 // TODO[plugins]: Plugins should also be given access to the types and qualifiers

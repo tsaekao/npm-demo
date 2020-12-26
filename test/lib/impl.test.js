@@ -11,6 +11,7 @@ import { check as isObject } from '../../src/lib/validation/isObject';
 import { check as isFunction } from '../../src/lib/validation/isFunction';
 import * as isTypesetMod from '../../src/lib/validation/isTypeset';
 import * as isAnyMod from '../../src/lib/validation/isAny';
+import * as vtu from './validationTestUtil';
 
 describe('module: lib/impl', function () {
   describe('._validatorMap', function () {
@@ -678,6 +679,25 @@ describe('module: lib/impl', function () {
           parentKey: function () {},
         });
       }).not.to.throw();
+
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        expect(function () {
+          impl._validateContext({
+            originalValue: true,
+            parent: undefined,
+            parentKey: undefined,
+            options: falsyValue, // ignored when falsy
+          });
+        }).not.to.throw();
+      });
+      expect(function () {
+        impl._validateContext({
+          originalValue: true,
+          parent: undefined,
+          parentKey: undefined,
+          options: {}, // when truthy, must be an object
+        });
+      }).not.to.throw();
     });
 
     it('should throw for an invalid context', function () {
@@ -719,6 +739,8 @@ describe('module: lib/impl', function () {
       expect(function () {
         impl._validateContext({ parent: {}, parentKey: 'foo' });
       }).to.throw(msg);
+
+      //// with all 3 required properties, but invalid values
 
       expect(function () {
         impl._validateContext({ originalValue: 1, parent: null, parentKey: 1 });
@@ -771,6 +793,17 @@ describe('module: lib/impl', function () {
           originalValue: 1,
           parent: new WeakSet(),
           parentKey: 1,
+        });
+      }).to.throw(msg);
+
+      //// with invalid options
+
+      expect(function () {
+        impl._validateContext({
+          originalValue: 1,
+          parent: [],
+          parentKey: 1,
+          options: [],
         });
       }).to.throw(msg);
     });
@@ -917,6 +950,50 @@ describe('module: lib/impl', function () {
         parent,
         parentKey,
       });
+    });
+  });
+
+  describe('#_getContext', function () {
+    it('should use the given context when valid', function () {
+      const context = {
+        originalValue: 123,
+        parent: undefined,
+        parentKey: undefined,
+      };
+      expect(impl._getContext(context, { originalValue: 456 })).to.equal(
+        context
+      );
+
+      context.options = {}; // with options
+      expect(impl._getContext(context, { originalValue: 456 })).to.equal(
+        context
+      );
+    });
+
+    it('should create a new context when invalid', function () {
+      const context = []; // should be an object, not an array
+      expect(impl._getContext(context, { originalValue: 456 })).not.to.equal(
+        context
+      );
+    });
+
+    it('should use options from given context when creating new context and options is valid', function () {
+      const context = { originalValue: 123, options: { exactShapes: true } };
+      const result = impl._getContext(context, { originalValue: 456 });
+      expect(result).not.to.equal(context); // new object
+      expect(result.originalValue).to.equal(456); // used specified instead of given in context
+      expect(result.options).not.to.equal(context.options); // new options object created
+      Object.keys(context.options).forEach((key) => {
+        expect(result.options[key]).to.eql(context.options[key]); // incorporated given options into default options
+      });
+    });
+
+    it('should not use options from given context when creating new context and options are invalid', function () {
+      const context = { originalValue: 123, options: [] }; // options must be an object
+      const result = impl._getContext(context, { originalValue: 456 });
+      expect(result).not.to.equal(context); // new object
+      expect(result.originalValue).to.equal(456); // used specified instead of given in context
+      expect(result.options).to.equal(undefined); // did not use given options because invalid
     });
   });
 

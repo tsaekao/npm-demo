@@ -10,9 +10,7 @@ import { check as isCustomValidator } from './isCustomValidator';
 
 import { types, argTypes, objTypes, DEFAULT_OBJECT_TYPE } from '../types';
 import { qualifiers } from '../qualifiers';
-import { print } from '../util';
-
-const objHasOwnProp = Object.prototype.hasOwnProperty;
+import { print, hasOwnProp } from '../util';
 
 // eslint-disable-next-line prefer-const -- needs to be declared, then defined, to allow helper functions to call isTypeset internally
 let isTypeset; // {function}
@@ -219,14 +217,14 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
             valid &&
             deep &&
             objTypes.check(curType) &&
-            objHasOwnProp.call(rule, '$')
+            hasOwnProp(rule, '$')
           ) {
             valid = deepVerifyShape(curType, rule, options, failurePrefix, idx);
           } else if (
             valid &&
             deep &&
             curType === types.ARRAY &&
-            objHasOwnProp.call(rule, 'ts')
+            hasOwnProp(rule, 'ts')
           ) {
             // ARRAY type with args.ts specified, and we're deep-validating
             valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);
@@ -346,14 +344,14 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
           valid &&
           deep &&
           objTypes.check(curType) &&
-          objHasOwnProp.call(soArgs, '$')
+          hasOwnProp(soArgs, '$')
         ) {
           valid = deepVerifyShape(curType, soArgs, options, failurePrefix, idx);
         } else if (
           valid &&
           deep &&
           curType === types.ARRAY &&
-          objHasOwnProp.call(rule, 'ts')
+          hasOwnProp(rule, 'ts')
         ) {
           // ARRAY type with args.ts specified, and we're deep-validating
           valid = deepVerifyArray(rule.ts, options, failurePrefix, idx);

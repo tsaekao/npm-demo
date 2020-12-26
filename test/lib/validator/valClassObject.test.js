@@ -12,6 +12,7 @@ import * as val from '../../../src/lib/validator/valClassObject';
 class Shape {
   constructor(name = 'shape') {
     this.name = name;
+    this.color = 0x00ff00; // green
   }
 }
 
@@ -249,6 +250,27 @@ describe('module: lib/validator/valClassObject', function () {
       });
       expect(checkStub.called).to.be.false;
     });
+
+    it('should require exact own-properties if exact=true', function () {
+      checkStub.callThrough();
+
+      const args = { $: { name: types.STRING } };
+
+      // by default, exact=false
+      vtu.expectValidatorSuccess(val, classObject, undefined, args);
+
+      // cause failure because of extra `color` property
+      args.exact = true;
+      vtu.expectValidatorError(val, classObject, undefined, args);
+    });
+
+    it('should require an empty object if shape is empty and exact=true', function () {
+      checkStub.callThrough();
+      vtu.expectValidatorError(val, classObject, undefined, {
+        $: {},
+        exact: true,
+      });
+    });
   });
 
   describe('context', function () {
@@ -266,6 +288,65 @@ describe('module: lib/validator/valClassObject', function () {
         validator,
         { originalValue: classObject, parent: classObject, parentKey: 'name' },
       ]);
+    });
+
+    it('should check for exact shapes if exactShapes=true', function () {
+      const args = { $: { name: types.STRING } };
+      const context = {};
+
+      // by default, exactShapes=false
+      vtu.expectValidatorSuccess(val, classObject, undefined, args, context);
+
+      // cause failure because of extra `color` property
+      context.exactShapes = true;
+      vtu.expectValidatorError(
+        val,
+        classObject,
+        undefined,
+        args,
+        undefined,
+        context
+      );
+    });
+
+    it('should allow args.exact to override exactShapes=true', function () {
+      let context = { exactShapes: true };
+      let args = { $: { name: types.STRING }, exact: false };
+
+      // exact=false overrides exactShapes=true
+      vtu.expectValidatorSuccess(val, classObject, undefined, args, context);
+
+      // exact=true overrides exactShapes=false
+      // cause failure because of extra `color` property
+      args.exact = true;
+      context.exactShapes = false;
+      vtu.expectValidatorError(
+        val,
+        classObject,
+        undefined,
+        args,
+        undefined,
+        context
+      );
+
+      // deep override
+      context = { exactShapes: true }; // all shapes, nested included, must be exact
+      classObject.other = { one: 1, two: 2 };
+      args = {
+        $: {
+          name: types.STRING,
+          color: types.NUMBER,
+          other: [
+            types.OBJECT,
+            {
+              $: { one: types.NUMBER },
+              exact: false, // override exactShapes=true such that obj.baz validates
+            },
+          ],
+        },
+        // exact=false by default, therefore shape must be exact because of exactShapes=true
+      };
+      vtu.expectValidatorSuccess(val, classObject, undefined, args, context);
     });
   });
 });

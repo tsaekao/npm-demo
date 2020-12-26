@@ -61,3 +61,15 @@ export const print = function (printValue, printOptions = {}) {
 
   return JSON.stringify(result, replacer.bind(null, true)); // recursive
 };
+
+/**
+ * Safely determines if a property is an own-property of an object.
+ * @function rtvref.util.hasOwnProp
+ * @param {Object} obj Object to check. Can be _falsy_.
+ * @param {string} prop Own-property to check.
+ * @returns {boolean} `true` if it is; `false` otherwise. Also `false` if `obj`
+ *  is _falsy_.
+ */
+export const hasOwnProp = function (obj, prop) {
+  return !!(obj && Object.prototype.hasOwnProperty.call(obj, prop));
+};

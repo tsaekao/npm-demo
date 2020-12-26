@@ -17,11 +17,9 @@ import { check as isCustomValidator } from './validation/isCustomValidator';
 
 import { DEFAULT_OBJECT_TYPE, argTypes, types } from './types';
 import { DEFAULT_QUALIFIER, qualifiers } from './qualifiers';
-import { print } from './util';
+import { print, hasOwnProp } from './util';
 import { RtvSuccess } from './RtvSuccess';
 import { RtvError } from './RtvError';
-
-const objHasOwnProp = Object.prototype.hasOwnProperty;
 
 /**
  * <h3>RTV.js Implementation</h3>
@@ -394,18 +392,22 @@ export const extractNextType = function (typeset, qualifier) {
  * @private
  * @function rtvref.impl._validateContext
  * @param {rtvref.validator.type_validator_context} context Context to validate.
- * @returns {rtvref.validator.type_validator_context} The `context` that was validated.
- * @throws {Error} If `context` is not valid.
+ * @param {boolean} [silent=false] If `true` and the context is invalid, `false`
+ *  is returned instead of an exception being thrown.
+ * @returns {(rtvref.validator.type_validator_context|undefined)} The `context`
+ *  that was validated; `undefined` if `silent` is `true` and the `context` is
+ *  invalid.
+ * @throws {Error} If `context` is invalid and `silent` is `false`.
  */
-export const _validateContext = function (context) {
+export const _validateContext = function (context, silent = false) {
   // NOTE: since the original value could be `undefined`, we only test for the
   //  presence of the property, not the value
   // WARNING: to avoid a possible infinite loop, we validate manually instead of
   //  being _smart_ and defining a typeset and using the `check()` function...
   if (
     !isObject(context) ||
-    !objHasOwnProp.call(context, 'originalValue') ||
-    !objHasOwnProp.call(context, 'parent') ||
+    !hasOwnProp(context, 'originalValue') ||
+    !hasOwnProp(context, 'parent') ||
     !(
       context.parent === undefined ||
       isObject(context.parent) ||
@@ -413,8 +415,13 @@ export const _validateContext = function (context) {
       isMap(context.parent) ||
       isSet(context.parent)
     ) ||
-    !objHasOwnProp.call(context, 'parentKey')
+    !hasOwnProp(context, 'parentKey') ||
+    (context.options && !isObject(context.options))
   ) {
+    if (silent) {
+      return undefined;
+    }
+
     // SECURITY: don't print the context since it may contain an original value,
     //  which could be sensitive information
     throw new Error('Invalid type validator context');
@@ -442,6 +449,41 @@ export const _createContext = function ({ originalValue, parent, parentKey }) {
     parent,
     parentKey,
   };
+};
+
+/**
+ * [Internal] Checks the given context as being a valid
+ *  {@link rtvref.validator.type_validator_context type validator context} and
+ *  either creates a new context from it, or returns it as-is.
+ * @private
+ * @param {rtvref.validator.type_validator_context} givenContext Context to validate
+ *  and use, or (if possible) use as the source for a new valid context.
+ * @param {Object} spec Specification for a new context, if one needs to be created.
+ *  __Ignored if `givenContext` is valid.__
+ * @param {*} [spec.originalValue] The original value.
+ * @param {(Object|Array|Map|Set|undefined)} [spec.parent] The parent reference.
+ * @param {*} [spec.parentKey] The key accessed in the parent.
+ * @returns {rtvref.validator.type_validator_context} A valid context. This is
+ *  either `givenContext` verbatim, or a new context object based on `spec`. If new,
+ *  it may use parts of the `givenContext` if it was usable.
+ */
+export const _getContext = function (givenContext, spec) {
+  if (_validateContext(givenContext, true)) {
+    return givenContext;
+  }
+
+  const context = _createContext(spec);
+
+  if (givenContext && isObject(givenContext.options)) {
+    // the context is invalid, but we can at least use the options is has (most
+    //  likely, only options were given in the context to initiate a `check()`)
+    context.options = {
+      ...context.options,
+      ...givenContext.options, // override default options, if any
+    };
+  }
+
+  return context;
 };
 
 /**
@@ -541,7 +583,7 @@ export const _getCheckOptions = function (current = {}) {
 
   // careful with isTypeset since it's a boolean: check for property existence
   //  so we don't misinterpret undefined as a falsy value we should use
-  if (objHasOwnProp.call(current, 'isTypeset')) {
+  if (hasOwnProp(current, 'isTypeset')) {
     options.isTypeset = !!current.isTypeset;
   }
 
@@ -587,11 +629,10 @@ export const _getCheckOptions = function (current = {}) {
 export const checkWithType = function (
   value,
   singleType,
-  context /*, options*/
+  context
+  //, options
 ) {
-  context = _validateContext(
-    context || _createContext({ originalValue: value })
-  );
+  context = _getContext(context, { originalValue: value });
 
   const options = _getCheckOptions(
     arguments.length > 3 ? arguments[3] : undefined
@@ -679,9 +720,7 @@ export const checkWithType = function (
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 export const checkWithShape = function (value, shape, context /*, options*/) {
-  context = _validateContext(
-    context || _createContext({ originalValue: value })
-  );
+  context = _getContext(context, { originalValue: value });
 
   if (!isShape(shape)) {
     throw new Error(`Invalid shape=${print(shape, { isTypeset: true })}`);
@@ -712,9 +751,7 @@ export const checkWithShape = function (value, shape, context /*, options*/) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 export const checkWithArray = function (value, arrayTs, context /*, options*/) {
-  context = _validateContext(
-    context || _createContext({ originalValue: value })
-  );
+  context = _getContext(context, { originalValue: value });
 
   const options = _getCheckOptions(
     arguments.length > 3 ? arguments[3] : undefined
@@ -853,9 +890,7 @@ export const checkWithArray = function (value, arrayTs, context /*, options*/) {
  */
 // @param {rtvref.impl._checkOptions} [options] (internal parameter)
 export const check = function (value, typeset, context /*, options*/) {
-  context = _validateContext(
-    context || _createContext({ originalValue: value })
-  );
+  context = _getContext(context, { originalValue: value });
 
   const options = _getCheckOptions(
     arguments.length > 3 ? arguments[3] : undefined

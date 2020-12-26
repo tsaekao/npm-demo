@@ -225,7 +225,28 @@ import * as pts from './onlyTypes';
  *  property is not serializable to JSON. Ignored if not a
  *  {@link rtvref.types.FUNCTION function}.
  *
- * Applies to: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}.
+ *  Applies to: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}.
+ *
+ * @property {boolean} [exact] If `true`, this will restrict the object being
+ *  verified to having the exact set of own-properties as those specified on the
+ *  shape. By default, _additional_ own-properties on the object are ignored.
+ *
+ *  In other words, the object must always have all of the shape's properties, but
+ *   (by default) it may also have additional properties that are not in the shape.
+ *   Setting `exact: true` would cause the verification to fail if the object has
+ *   more properties than those specified in the shape.
+ *
+ *  If specified, whether `true` or `false`, this flag overrides the `exactShapes`
+ *   option for the verification __for this shape only__. Nested shapes will not
+ *   be affected. The `exactShapes` flag that may be set in the verification's
+ *   {@link rtvref.validator.type_validator_context_options context options} via
+ *   a call to {@link rtv.check} or {@link rtv.verify}.
+ *
+ *  __NOTE:__ If this flag is `true` and the shape is empty or not specified, it
+ *   will restrict the object being verified to an empty object (i.e. no
+ *   own-properties).
+ *
+ *  Applies to all shape object types.
  *
  * @see {@link rtvref.types.ANY_OBJECT}
  * @see {@link rtvref.types.OBJECT}
@@ -258,7 +279,7 @@ import * as pts from './onlyTypes';
  *  the following types:
  *
  * - {@link rtvref.types.HASH_MAP HASH_MAP} (NOTE: only __own-enumerable
- *   properties__ are considered part of this type of collection)
+ *   properties__ are considered part of this collection type)
  * - {@link rtvref.types.MAP MAP}
  * - {@link rtvref.types.SET SET} (with some exceptions)
  *

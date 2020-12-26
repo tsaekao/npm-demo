@@ -140,7 +140,7 @@ export { RtvError };
  * @namespace rtv.config
  */
 
-export const config = Object.defineProperties(
+const rtvConfig = Object.defineProperties(
   {},
   {
     /**
@@ -240,6 +240,7 @@ export const config = Object.defineProperties(
     })(),
   }
 );
+export { rtvConfig as config };
 
 /**
  * Checks a value against a typeset for compliance.
@@ -248,6 +249,7 @@ export const config = Object.defineProperties(
  * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
  *  the `value`. A shape is a kind of typeset. Normally, this is a
  *  {@link rtvref.types.shape_descriptor shape descriptor}.
+ * @param {rtvref.validator.type_validator_context_options} [options] Configuration options.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} Success indicator if the
  *  `value` is compliant to the `shape`; `RtvError` if not. __Unlike
  *  {@link rtv.verify verify()}, an exception is not thrown__ if the
@@ -268,9 +270,9 @@ export const config = Object.defineProperties(
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.shape_descriptor}
  */
-export const check = function (value, typeset) {
-  if (config.enabled) {
-    return impl.check(value, typeset);
+export const check = function (value, typeset, config) {
+  if (rtvConfig.enabled) {
+    return impl.check(value, typeset, { config });
   }
 
   return new RtvSuccess();
@@ -279,14 +281,15 @@ export const check = function (value, typeset) {
 /**
  * __Requires__ a value to be compliant to a shape.
  *
- * NOTE: This method does nothing if RTV.js is currently
- *  {@link rtv.config.enabled disabled}.
+ *  __NOTE:__ This method always returns a success indicator if RTV.js is currently
+ *   {@link rtv.config.enabled disabled}.
  *
  * @function rtv.verify
  * @param {*} value Value to check.
  * @param {rtvref.types.typeset} typeset Expected shape of (or typeset describing)
  *  the `value`. A shape is a kind of typeset. Normally, this is a
  *  {@link rtvref.types.shape_descriptor shape descriptor}.
+ * @param {rtvref.validator.type_validator_context_options} [options] Configuration options.
  * @returns {rtvref.RtvSuccess} Success indicator IIF the `value` is compliant
  *  to the `shape`. Otherwise, an {@link rtvref.RtvError RtvError} __is thrown__.
  * @throws {rtvref.RtvError} If the `value` is not compliant to the `shape`.
@@ -296,9 +299,9 @@ export const check = function (value, typeset) {
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.shape_descriptor}
  */
-export const verify = function (value, typeset) {
-  if (config.enabled) {
-    const result = check(value, typeset);
+export const verify = function (value, typeset, config) {
+  if (rtvConfig.enabled) {
+    const result = check(value, typeset, { config });
     if (result instanceof RtvSuccess) {
       return result;
     }

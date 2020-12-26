@@ -1,6 +1,7 @@
 ////// valAnyObject validator
 
 import _forEach from 'lodash/forEach';
+import _difference from 'lodash/difference';
 
 import { type, check as isAnyObject } from '../validation/isAnyObject';
 
@@ -8,6 +9,7 @@ import { qualifiers, valuePermitted } from '../qualifiers';
 import { RtvSuccess } from '../RtvSuccess';
 import { RtvError } from '../RtvError';
 import { check as isShape } from '../validation/isShape';
+import { hasOwnProp } from '../util';
 
 /**
  * Validator Module: valAnyObject
@@ -49,7 +51,7 @@ export const config = function (settings) {
  * @param {string} [q] Validation qualifier. Defaults to
  *  {@link rtvref.qualifiers.REQUIRED REQUIRED}.
  * @param {rtvref.types.shape_object_args} [args] Type arguments.
- * @param {rtvref.validator.type_validator_context} context Validation context.
+ * @param {rtvref.validator.type_validator_context} [context] Validation context.
  * @returns {(rtvref.RtvSuccess|rtvref.RtvError)} An `RtvSuccess` if valid; `RtvError` if not.
  */
 export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
@@ -57,17 +59,24 @@ export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
     return new RtvSuccess();
   }
 
-  if (!isAnyObject(v)) {
+  // validate the shape, if any
+  const shape = args && args.$ && isShape(args.$) ? args.$ : {};
+  const exact = !!(hasOwnProp(args, 'exact') // args take precedence if specified
+    ? args.exact
+    : context && context.exactShapes);
+
+  if (
+    !isAnyObject(v) ||
+    (exact && _difference(Object.keys(v), Object.keys(shape)).length > 0)
+  ) {
     return new RtvError(
       v,
-      impl.toTypeset(type, q),
+      impl.toTypeset(type, q, args),
       [],
-      impl.toTypeset(type, q, true)
+      impl.toTypeset(type, q, args, true)
     );
   }
 
-  // validate the shape, if any
-  const shape = args && args.$ && isShape(args.$) ? args.$ : undefined;
   let err; // @type {(RtvError|undefined)}
 
   // only consider enumerable, own-properties of the shape

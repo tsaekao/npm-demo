@@ -512,6 +512,7 @@ export const expectAllToFail = function (type, valFn, values, ...rest) {
  * @param {string} [qualifier] Optional qualifier, one of
  *  {@link rtvref.qualifiers qualifiers}.
  * @param {rtvref.types.type_arguments} [args] Optional type args.
+ * @param {rtvref.validator.type_validator_context} [context] Optional context.
  * @returns {rtvref.RtvSuccess} The resulting success that has been validated (test
  *  will fail with an exception before the result is returned, if the result
  *  wasn't as expected).
@@ -520,9 +521,10 @@ export const expectValidatorSuccess = function (
   validator,
   value,
   qualifier,
-  args
+  args,
+  context
 ) {
-  const result = validator.validate(value, qualifier, args);
+  const result = validator.validate(value, qualifier, args, context);
 
   expect(result).to.be.an.instanceof(RtvSuccess);
   expect(result.valid).to.be.true;
@@ -543,6 +545,7 @@ export const expectValidatorSuccess = function (
  *  alter the expectation for the error's `cause` property to be `eql` to
  *  `[EXPECTED, FINITE]`. All `RtvError` properties are tested using `eql`
  *  except for `value` which is tested using `equal`.
+ * @param {rtvref.validator.type_validator_context} [context] Optional context.
  * @returns {rtvref.RtvError} The resulting error that has been validated (test
  *  will fail with an exception before the result is returned, if the result
  *  wasn't as expected).
@@ -552,9 +555,10 @@ export const expectValidatorError = function (
   value,
   qualifier,
   args,
-  expectations = {}
+  expectations = {},
+  context
 ) {
-  const result = validator.validate(value, qualifier, args);
+  const result = validator.validate(value, qualifier, args, context);
 
   expect(result).to.be.an.instanceof(RtvError);
   expect(result.valid).to.be.false;
