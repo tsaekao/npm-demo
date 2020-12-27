@@ -39,27 +39,33 @@ Make sure you have also installed the following (peer) dependencies:
 -   [@babel/runtime](https://babeljs.io/docs/en/babel-runtime)
 -   [lodash](https://lodash.com/)
 
-Also make sure you set `process.env.NODE_ENV = "development"` if you want to enable the dev code it contains (e.g. deprecation warnings).
+Also make sure you set `process.env.NODE_ENV = "development"` if you want to enable the dev code it contains (e.g. deprecation warnings). To exclude the dev code, set `process.env.NODE_ENV = "production"` (or any value other than `"development"`).
 
 Use the [Webpack Define Plugin](https://webpack.js.org/plugins/define-plugin/) or the [Rollup Replace Plugin](https://www.npmjs.com/package/@rollup/plugin-replace), for example, to configure this in your build.
 
 ## ESM
 
-The ESM build can be used like this:
+The ESM build can be used like this (note a default export is not provided):
 
 ```javascript
-import rtv from 'rtvjs';
+import * as rtv from 'rtvjs'; // import all into an `rtv` namespace
+import { verify, STRING, ... } from 'rtvjs'; // selective imports only
 ```
 
-The CJS considerations above also apply to this build (externals and environment).
+> The CJS considerations above also apply to this build (externals and environment).
 
 ## UMD
 
-The UMD build can be used like this:
+The UMD build comes in two files:
+
+-   `./dist/rtv.umd.dev.js`: For development. Non-minified, and includes dev code such as deprecation warnings (if any).
+-   `./dist/rtv.umd.js`: For production. Minified, and excludes any dev code.
+
+Use it like this:
 
 ```javascript
 // as a CommonJS module (e.g. Node.js)
-const rtv = require('./dist/rtv.umd.js');
+const rtv = require('./dist/rtv.umd.js'); // OR: `./dist/rtv.umd.dev.js`
 
 // as an AMD module (e.g. RequireJS)
 define(['rtvjs'], function(rtv) {
