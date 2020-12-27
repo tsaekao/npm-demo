@@ -18,9 +18,9 @@ npm install rtvjs
 
 The package's `./dist` directory contains 3 types of builds:
 
-*   `rtv.js`: CJS (i.e. `const rtv = require('rtvjs')`)
-*   `rtv.esm.js`: ESM (i.e. `import rtv from 'rtvjs'`)
-*   `rtv.umd[.dev].js`: UMD (i.e. `window.rtvjs` global, for use in browsers, self-contained), the non-dev build is also minified.
+*   `rtv.js`: CJS (for use by bundlers)
+*   `rtv.esm.js`: ESM (for use by bundlers)
+*   `rtv.umd[.dev].js`: UMD (for use in browsers, self-contained)
 
 > Both the CJS and ESM builds depend on [@babel/runtime](https://babeljs.io/docs/en/babel-runtime) and [lodash](https://lodash.com/), and require defining the `process.env.NODE_ENV` to either `"development"` or `"production"`. Both builds rely on the consumer's bundler to do the final bundling and tree shaking.
 >
