@@ -79,7 +79,7 @@ This is a self-contained build optimized for browsers.
 
 # Documentation
 
-[API](API.md)
+This `README`, as well as the [API](API.md), are hosted at [rtvjs.stefcameron.com](https://rtvjs.stefcameron.com/api).
 
 # Changes
 
