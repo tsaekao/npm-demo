@@ -14,3 +14,10 @@ The release/publishing process is as follows:
     ```bash
     $ npm run release:minor
     ```
+5.  Update the [documentation site](https://gitlab.com/stefcameron/rtvjs-web):
+    1.  Copy the `README.md` and `API.md` files over to the repo:
+        -   `README.md` -> `/index.md`
+        -   `API.md` -> `/pages/API.md`
+    2.  Be sure to restore the correct front matter that the existing files are currently using.
+    3.  Add the library version to the top of the content in `API.md`.
+    4.  Push changes to `master` to get CI to update the site.
