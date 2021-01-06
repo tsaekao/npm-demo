@@ -14,6 +14,7 @@ Release date: 2020-12-26
 ### 🚨 BREAKING
 
 -   New package builds:
+    -   All builds (CJS, ESM, UMD) depend on new peer dependencies: `@babel/runtime` and `lodash`: These are no longer bundled, in order to reduce duplication when bundling RTV.js into an app, since they are very common dependencies.
     -   The CJS (as before) and ESM (new) builds depend on `process.env.NODE_ENV` being defined during bundling as either `"development"` or `"production"`. This is a fairly standard global definition, so it shouldn't really cause any trouble, and had previously been required for the CJS build anyway.
     -   The CJS builds are now combined into a single file (`./dist/rtv.js`) with `process.env.NODE_ENV === "development"` checks where appropriate for dev-only behavior (e.g. deprecation warnings). It is targeted for consumption by app bundlers such as Webpack or Rollup.
     -   The CJS build is no longer minified. Again, the app bundler should take care of this.
