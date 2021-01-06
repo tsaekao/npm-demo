@@ -13,7 +13,8 @@ The latest versions of major browsers, and maintained Node.js releases, are supp
 # Installation
 
 ```bash
-npm install rtvjs
+# RTV.js and peer dependencies
+npm install rtvjs @babel/runtime lodash
 ```
 
 The package's `./dist` directory contains 3 types of builds:
