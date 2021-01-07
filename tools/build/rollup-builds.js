@@ -15,6 +15,7 @@ const {
   RU_FORMAT_ESM,
   RU_FORMAT_UMD,
   OUTPUT_DEV,
+  OUTPUT_SLIM,
   DIR_SRC,
   DIR_DIST,
 } = require('./rollup-utils');
@@ -30,7 +31,15 @@ const banner = `/*!
  */`;
 
 // base Babel configuration
-const getBabelConfig = function ({ format }) {
+// - format {string}: (REQUIRED) set to Rollup build format
+// - isSlim: set to true for a slimmer non-bundled build
+const getBabelConfig = function (
+  options = {
+    isSlim: false,
+  }
+) {
+  const { isSlim, format } = options;
+
   if (
     !format ||
     ![RU_FORMAT_CJS, RU_FORMAT_ESM, RU_FORMAT_UMD].includes(format)
@@ -56,14 +65,13 @@ const getBabelConfig = function ({ format }) {
     plugins: [],
   };
 
-  // CJS and ESM rely on external Babel helpers
-  if (format !== RU_FORMAT_UMD) {
-    // NOTE: because of this, rtvjs declares a peer of @babel/runtime and we
-    //  build it with 'runtime' Babel helpers using `@rollup/plugin-babel`
-    //  when targetting CJS and ESM
+  // slim builds (except for UMD) rely on external Babel helpers
+  if (isSlim && format !== RU_FORMAT_UMD) {
+    // NOTE: because of this, @babel/runtime must also be installed to use a slim
+    //  build, and we build it with 'runtime' Babel helpers using `@rollup/plugin-babel`
+    //  when targetting slim
     config.plugins.push('@babel/plugin-transform-runtime');
   }
-  // else, in UMD, we bundle all the necessary helpers
 
   return config;
 };
@@ -71,12 +79,14 @@ const getBabelConfig = function ({ format }) {
 // base config with NO outputs, relative to the repo root
 // - format {string}: (REQUIRED) set to Rollup build format
 // - isDev: set to true for a development (i.e. non-minified) build
+// - isSlim: set to true for a slimmer non-bundled build
 const getBaseConfig = function (
   options = {
     isDev: false,
+    isSlim: false,
   }
 ) {
-  const { isDev, format } = options;
+  const { isDev, isSlim, format } = options;
 
   if (
     !format ||
@@ -85,12 +95,22 @@ const getBaseConfig = function (
     throw new Error(`A valid output format is required, format=${format}`);
   }
 
-  // UMD builds bundle everything
-  const externals =
-    format === RU_FORMAT_UMD ? [] : Object.keys(pkg.peerDependencies || {}); // {Array<string>}
+  // slim builds bundle noting; fat ones bundle everything
+  const externals = isSlim ? Object.keys(pkg.peerDependencies || {}) : []; // {Array<string>}
+
+  if (isSlim && format === RU_FORMAT_UMD) {
+    // never mark @babel/runtime dependencies as external for UMD because
+    //  that package isn't meant to be used directly in the browser (i.e. it's
+    //  meant to be bundled, or referenced externally in a CJS/ESM scenario
+    //  where some other build will bundle them)
+    const idx = externals.indexOf('@babel/runtime');
+    if (idx >= 0) {
+      externals.splice(idx, 1);
+    }
+  }
 
   const replaceTokens = {};
-  const babelConfig = getBabelConfig({ format });
+  const babelConfig = getBabelConfig({ format, isSlim });
 
   if (format === RU_FORMAT_UMD) {
     replaceTokens['process.env.NODE_ENV'] = JSON.stringify(
@@ -130,6 +150,7 @@ const getBaseConfig = function (
   };
 
   // for CJS and ESM, we transpile during the bundling process
+  // for UMD, we transpile AFTER bundling (see `output` config)
   if (format !== RU_FORMAT_UMD) {
     config.plugins.push(
       // NOTE: As of Babel 7, this plugin now ensures that Babel helpers are not
@@ -142,13 +163,12 @@ const getBaseConfig = function (
         ...babelConfig,
         exclude: 'node_modules/**',
 
-        // for UMD builds, bundle all the helpers;
-        // for CJS and ESM builds, have all Babel helpers reference an external
+        // for CJS and ESM builds, IIF SLIM, have all Babel helpers reference an external
         //  @babel/runtime dependency that consumers can provide and bundle into their
         //  app code; this is the recommendation for library modules, which is what
         //  this package is, and we use this in conjunction with `@babel/plugin-transform-runtime`
         // @see https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
-        babelHelpers: 'runtime',
+        babelHelpers: isSlim ? 'runtime' : 'bundled',
       })
     );
   }
@@ -187,14 +207,24 @@ const baseOutput = function () {
 };
 
 // UMD (ES5) build config
-const getUmdConfig = function (isDev = false) {
+// - isDev: set to true for a development (i.e. non-minified) build
+// - isSlim: set to true for a slimmer non-bundled build
+const getUmdConfig = function (
+  options = {
+    isDev: false,
+    isSlim: false,
+  }
+) {
+  const { isDev, isSlim } = options;
   const format = RU_FORMAT_UMD;
-  const config = getBaseConfig({ isDev, format });
-  const babelConfig = getBabelConfig({ format });
+  const config = getBaseConfig({ isDev, isSlim, format });
+  const babelConfig = getBabelConfig({ format, isSlim });
 
   config.output = {
     ...baseOutput(),
-    file: `${DIR_DIST}/${FILE_NAME}.umd${isDev ? `.${OUTPUT_DEV}` : ''}.js`,
+    file: `${DIR_DIST}/${FILE_NAME}.umd${isSlim ? `.${OUTPUT_SLIM}` : ''}${
+      isDev ? `.${OUTPUT_DEV}` : ''
+    }.js`,
     format,
     name: pkg.name,
     noConflict: true,
@@ -212,6 +242,25 @@ const getUmdConfig = function (isDev = false) {
     ],
   };
 
+  if (isSlim) {
+    // provide Lodash-related globals for external references
+    // NOTE: per https://unpkg.com/lodash, Lodash registers the `_` global
+    config.output.globals = (id) => {
+      // `id` is module name like 'lodash'
+      if (id === 'lodash') {
+        return '_';
+      } else if (id.startsWith('lodash/')) {
+        // a deep reference like `import isObjectLike from 'lodash/isObjectLike'`
+        //  becomes `_.isObjectLike`
+        return `_.${id.substr('lodash/'.length)}`;
+      } else if (id === pkg.name) {
+        return pkg.name;
+      }
+
+      throw new Error(`Unexpected external package reference, id="${id}"`);
+    };
+  }
+
   if (!isDev) {
     const terserConfig = getTerserConfig();
     config.plugins.push(terserPlugin(terserConfig));
@@ -221,13 +270,19 @@ const getUmdConfig = function (isDev = false) {
 };
 
 // CJS (ES5) build config
-const getCjsConfig = function () {
+// - isSlim: set to true for a slimmer non-bundled build
+const getCjsConfig = function (
+  options = {
+    isSlim: false,
+  }
+) {
+  const { isSlim } = options;
   const format = RU_FORMAT_CJS;
-  const config = getBaseConfig({ format });
+  const config = getBaseConfig({ format, isSlim });
 
   config.output = {
     ...baseOutput(),
-    file: `${DIR_DIST}/${FILE_NAME}.js`,
+    file: `${DIR_DIST}/${FILE_NAME}${isSlim ? `.${OUTPUT_SLIM}` : ''}.js`,
     format,
     exports: 'named',
   };
@@ -236,13 +291,19 @@ const getCjsConfig = function () {
 };
 
 // ESM (ES6+) build config
-const getEsmConfig = function () {
+// - isSlim: set to true for a slimmer non-bundled build
+const getEsmConfig = function (
+  options = {
+    isSlim: false,
+  }
+) {
+  const { isSlim } = options;
   const format = RU_FORMAT_ESM;
-  const config = getBaseConfig({ format });
+  const config = getBaseConfig({ format, isSlim });
 
   config.output = {
     ...baseOutput(),
-    file: `${DIR_DIST}/${FILE_NAME}.esm.js`,
+    file: `${DIR_DIST}/${FILE_NAME}.esm${isSlim ? `.${OUTPUT_SLIM}` : ''}.js`,
     format,
   };
 

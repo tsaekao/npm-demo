@@ -13,19 +13,29 @@ The latest versions of major browsers, and maintained Node.js releases, are supp
 # Installation
 
 ```bash
-# RTV.js and peer dependencies
-npm install rtvjs @babel/runtime lodash
+npm install rtvjs
 ```
 
 The package's `./dist` directory contains 3 types of builds:
 
-*   `rtv.js`: CJS (for use by bundlers)
-*   `rtv.esm.js`: ESM (for use by bundlers)
-*   `rtv.umd[.dev].js`: UMD (for use in browsers, self-contained)
+*   `rtv[.slim].js`: CJS (for use by bundlers)
+*   `rtv.esm[.slim].js`: ESM (for use by bundlers)
+*   `rtv.umd[.slim][.dev].js`: UMD (for use in browsers, self-contained)
 
-> Both the CJS and ESM builds depend on [@babel/runtime](https://babeljs.io/docs/en/babel-runtime) and [lodash](https://lodash.com/), and require defining the `process.env.NODE_ENV` to either `"development"` or `"production"`. Both builds rely on the consumer's bundler to do the final bundling and tree shaking.
->
-> The UMD 'dev' build is the equivalent of defining `process.env.NODE_ENV = "development"`.
+The CJS and ESM builds require defining the `process.env.NODE_ENV` to either `"development"` or `"production"`. The UMD 'dev' build is the equivalent of defining `process.env.NODE_ENV = "development"`.
+
+## Slim
+
+These builds are smaller in size to optimize on download time and bundling efficiency.
+
+The `.slim` CJS and ESM builds depend on [@babel/runtime](https://babeljs.io/docs/en/babel-runtime) and [lodash](https://lodash.com/) external dependencies. You will need to install those packages in addition to `rtvjs`.
+
+The `.slim` UMD builds only depend on [lodash](https://lodash.com/) being defined as the `_` global:
+
+```html
+<script src="https://unpkg.com/lodash"></script>
+<script src="./dist/rtv.umd.slim.js"></script>
+```
 
 ## CJS
 
@@ -35,12 +45,7 @@ The CJS build can be used like this, typically in Node.js, or with a bundler lik
 const rtv = require('rtvjs');
 ```
 
-Make sure you have also installed the following (peer) dependencies:
-
--   [@babel/runtime](https://babeljs.io/docs/en/babel-runtime)
--   [lodash](https://lodash.com/)
-
-Also make sure you set `process.env.NODE_ENV = "development"` if you want to enable the dev code it contains (e.g. deprecation warnings). To exclude the dev code, set `process.env.NODE_ENV = "production"` (or any value other than `"development"`).
+Be sure to set `process.env.NODE_ENV = "development"` if you want to enable the dev code it contains (e.g. deprecation warnings). To exclude the dev code, set `process.env.NODE_ENV = "production"` (or any value other than `"development"`).
 
 Use the [Webpack Define Plugin](https://webpack.js.org/plugins/define-plugin/) or the [Rollup Replace Plugin](https://www.npmjs.com/package/@rollup/plugin-replace), for example, to configure this in your build.
 
@@ -59,24 +64,30 @@ import { verify, STRING, ... } from 'rtvjs'; // selective imports only
 
 The UMD build comes in two files:
 
--   `./dist/rtv.umd.dev.js`: For development. Non-minified, and includes dev code such as deprecation warnings (if any).
--   `./dist/rtv.umd.js`: For production. Minified, and excludes any dev code.
+-   `./dist/rtv.umd[.slim].dev.js`: For development. Non-minified, and includes dev code such as deprecation warnings (if any).
+-   `./dist/rtv.umd[.slim].js`: For production. Minified, and excludes any dev code.
+-   `.slim` depends on `_` as the `lodash` global in both cases.
 
 Use it like this:
 
 ```javascript
 // as a CommonJS module (e.g. Node.js)
-const rtv = require('./dist/rtv.umd.js'); // OR: `./dist/rtv.umd.dev.js`
+const rtvjs = require('./dist/rtv.umd.js'); // OR: `./dist/rtv.umd.dev.js`
+rtvjs.verify(...);
 
 // as an AMD module (e.g. RequireJS)
-define(['rtvjs'], function(rtv) {
+define(['rtvjs'], function(rtvjs) {
+  rtvjs.verify(...);
 });
-
-// as a global, when loaded via a <script> tag in HTML
-window.rtvjs;
 ```
 
-This is a self-contained build optimized for browsers.
+```html
+<!-- as a global, when loaded via a <script> tag in HTML -->
+<script src="./dist/rtv.umd.js"></script>
+<script>rtvjs.verify(...)</script>
+```
+
+> The __non-slim__ builds are self-contained and optimized for browsers.
 
 # Documentation
 

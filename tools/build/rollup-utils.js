@@ -12,6 +12,9 @@ const RU_FORMAT_UMD = 'umd';
 // {string} Sub-extension used in development (i.e. non-minified) builds
 const OUTPUT_DEV = 'dev';
 
+// {string} Sub-extension used for slim (i.e. non-bundled) builds
+const OUTPUT_SLIM = 'slim';
+
 // {string} input directory relative path, no trailing slash
 const DIR_SRC = 'src';
 
@@ -23,6 +26,7 @@ module.exports = {
   RU_FORMAT_ESM,
   RU_FORMAT_UMD,
   OUTPUT_DEV,
+  OUTPUT_SLIM,
   DIR_SRC,
   DIR_DIST,
 };
