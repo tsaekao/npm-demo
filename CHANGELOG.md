@@ -7,15 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
-## UNRELEASED
+## 3.1.0
 
-Release date: TBD
+Release date: 2021-01-07
 
 ### Changed
 
--   Additional builds, and changes to existing builds:
-    -   Default CJS build (`./dist/rtv.js`) is now __fully bundled__ again, like it was before.
-    -   Default ESM build (`./dist/rtv.esm.js`) is now __fully bundled__.
+-   Additional builds, and non-breaking changes to existing builds:
+    -   The default CJS build (`main` field in `package.json`, unchanged, referencing `./dist/rtv.js`) is now __fully bundled__ again, like it was before.
+    -   The default ESM build (`module` field in `package.json`, unchanged, referencing `./dist/rtv.esm.js`) is now __fully bundled__.
     -   The UMD builds (`./dist/rtv.umd.dev.js` and `./dist/rtv.umd.js`) are now __fully bundled__.
     -   For each build type (CJS, ESM, UMD), there is now a `.slim` alternative which is __non-bundled__ and relies on the following external dependencies:
         -   `lodash`
