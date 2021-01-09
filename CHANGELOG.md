@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+Release date: TBD
+
+### Changed
+
+-   The following peer dependencies have been removed from the package to avoid unnecessary "missing peer dependency" warnings when installing the package, since the default CJS and ESM builds are fully bundled and don't require them:
+    -   `@babel/runtime: ^7.0.0`
+    -   `lodash: ^4.0.0`
+
 ## 3.1.0
 
 Release date: 2021-01-07

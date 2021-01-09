@@ -83,10 +83,6 @@
     "README.md",
     "dist/"
   ],
-  "peerDependencies": {
-    "@babel/runtime": "^7.0.0",
-    "lodash": "^4.0.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-runtime": "^7.12.10",

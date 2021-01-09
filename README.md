@@ -30,6 +30,8 @@ These builds are smaller in size to optimize on download time and bundling effic
 
 The `.slim` CJS and ESM builds depend on [@babel/runtime](https://babeljs.io/docs/en/babel-runtime) and [lodash](https://lodash.com/) external dependencies. You will need to install those packages in addition to `rtvjs`.
 
+> See the [package.json](./package.json)'s `devDependencies` to know what versions of those dependencies are required when using slim builds.
+
 The `.slim` UMD builds only depend on [lodash](https://lodash.com/) being defined as the `_` global:
 
 ```html
