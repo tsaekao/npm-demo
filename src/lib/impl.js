@@ -387,6 +387,20 @@ export const extractNextType = function (typeset, qualifier) {
 };
 
 /**
+ * [Internal] Checks for a valid `options` property in a
+ *  {@link rtvref.validator.type_validator_context type validator context}.
+ * @private
+ * @function rtvref.impl._validateContextOptions
+ * @param {rtvref.validator.type_validator_context} context Context to validate.
+ * @returns {boolean} True if `context.options` is valid; false otherwise.
+ */
+export const _checkContextOptions = function (context) {
+  // NOTE: for now, we would only have `context.options.exactShapes` as truthy/falsy,
+  //  defaulting to falsy, so there's no need to check further into `context.options`
+  return !!(context && (!context.options || isObject(context.options)));
+};
+
+/**
  * [Internal] Validates an object as being a valid
  *  {@link rtvref.validator.type_validator_context type validator context}.
  * @private
@@ -416,7 +430,7 @@ export const _validateContext = function (context, silent = false) {
       isSet(context.parent)
     ) ||
     !hasOwnProp(context, 'parentKey') ||
-    (context.options && !isObject(context.options))
+    !_checkContextOptions(context)
   ) {
     if (silent) {
       return undefined;
@@ -448,6 +462,7 @@ export const _createContext = function ({ originalValue, parent, parentKey }) {
     originalValue,
     parent,
     parentKey,
+    // options (no defaults at this time)
   };
 };
 
@@ -472,18 +487,18 @@ export const _getContext = function (givenContext, spec) {
     return givenContext;
   }
 
-  const context = _createContext(spec);
+  const newContext = _createContext(spec);
 
-  if (givenContext && isObject(givenContext.options)) {
-    // the context is invalid, but we can at least use the options is has (most
-    //  likely, only options were given in the context to initiate a `check()`)
-    context.options = {
-      ...context.options,
+  if (_checkContextOptions(givenContext)) {
+    // the `givenContext` is invalid as a whole, but we can at least use the options it
+    //  has (most likely, only options were given in the context to initiate a `check()`)
+    newContext.options = {
+      ...newContext.options,
       ...givenContext.options, // override default options, if any
     };
   }
 
-  return context;
+  return newContext;
 };
 
 /**

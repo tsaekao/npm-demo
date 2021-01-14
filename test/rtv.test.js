@@ -70,6 +70,19 @@ describe('module: rtv', function () {
     it('should check a value', function () {
       expect(rtv.check('foo', rtv.STRING)).to.be.an.instanceof(RtvSuccess);
     });
+
+    it('should support exactShapes option', function () {
+      const obj = { parent: { child: 1, sibbling: 2 } };
+      const shape = {
+        parent: {
+          child: rtv.SAFE_INT,
+        },
+      };
+
+      expect(rtv.check(obj, shape, { exactShapes: true })).to.be.an.instanceof(
+        RtvError
+      );
+    });
   });
 
   describe('#verify()', function () {
@@ -82,6 +95,22 @@ describe('module: rtv', function () {
     it('should throw an RtvError if verify fails', function () {
       try {
         rtv.verify('foo', rtv.BOOLEAN);
+        expect('statement above should have thrown').to.be.true; // fail this test
+      } catch (err) {
+        expect(err).to.be.an.instanceof(RtvError);
+      }
+    });
+
+    it('should support exactShapes option', function () {
+      const obj = { parent: { child: 1, sibbling: 2 } };
+      const shape = {
+        parent: {
+          child: rtv.SAFE_INT,
+        },
+      };
+
+      try {
+        rtv.verify(obj, shape, { exactShapes: true });
         expect('statement above should have thrown').to.be.true; // fail this test
       } catch (err) {
         expect(err).to.be.an.instanceof(RtvError);

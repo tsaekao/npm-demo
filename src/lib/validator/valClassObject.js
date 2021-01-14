@@ -67,6 +67,7 @@ export const validate = function valClassObject(
 
   let valid = isClassObject(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  let extraProps; // {Array<string>}
 
   if (valid && args) {
     // then check args
@@ -79,14 +80,11 @@ export const validate = function valClassObject(
     const shape = args.$ && isShape(args.$) ? args.$ : {};
     const exact = !!(hasOwnProp(args, 'exact') // args take precedence if specified
       ? args.exact
-      : context && context.exactShapes);
+      : context && context.options && context.options.exactShapes);
 
-    if (
-      valid &&
-      exact &&
-      _difference(Object.keys(v), Object.keys(shape)).length > 0
-    ) {
-      valid = false;
+    if (valid && exact) {
+      extraProps = _difference(Object.keys(v), Object.keys(shape));
+      valid = extraProps.length <= 0;
     }
 
     if (valid) {
@@ -128,7 +126,11 @@ export const validate = function valClassObject(
         v,
         impl.toTypeset(type, q, args),
         [],
-        impl.toTypeset(type, q, args, true)
+        impl.toTypeset(type, q, args, true),
+        extraProps &&
+          new Error(
+            `Found unexpected properties in value: [${extraProps.join(', ')}]`
+          )
       );
     }
   }

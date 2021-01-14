@@ -230,9 +230,9 @@ import * as pts from './onlyTypes';
  *
  *  Applies to: {@link rtvref.types.CLASS_OBJECT CLASS_OBJECT}.
  *
- * @property {boolean} [exact] If `true`, this will restrict the object being
- *  verified to having the exact set of own-properties as those specified on the
- *  shape. By default, _additional_ own-properties on the object are ignored.
+ * @property {boolean} [exact] If `true`, this will restrict the __immediate__ object
+ *  being verified to having the exact set of own-properties as those specified on
+ *  the shape. By default, _additional_ own-properties on the object are ignored.
  *
  *  In other words, the object must always have all of the shape's properties, but
  *   (by default) it may also have additional properties that are not in the shape.

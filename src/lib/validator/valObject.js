@@ -63,17 +63,21 @@ export const validate = function valObject(v, q = REQUIRED, args, context) {
   const shape = args && args.$ && isShape(args.$) ? args.$ : {};
   const exact = !!(hasOwnProp(args, 'exact') // args take precedence if specified
     ? args.exact
-    : context && context.exactShapes);
+    : context && context.options && context.options.exactShapes);
+  const extraProps = exact
+    ? _difference(Object.keys(v), Object.keys(shape))
+    : [];
 
-  if (
-    !isObject(v) ||
-    (exact && _difference(Object.keys(v), Object.keys(shape)).length > 0)
-  ) {
+  if (!isObject(v) || extraProps.length > 0) {
     return new RtvError(
       v,
       impl.toTypeset(type, q, args),
       [],
-      impl.toTypeset(type, q, args, true)
+      impl.toTypeset(type, q, args, true),
+      extraProps &&
+        new Error(
+          `Found unexpected properties in value: [${extraProps.join(', ')}]`
+        )
     );
   }
 

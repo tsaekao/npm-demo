@@ -297,20 +297,22 @@ describe('module: lib/validator/valClassObject', function () {
       // by default, exactShapes=false
       vtu.expectValidatorSuccess(val, classObject, undefined, args, context);
 
-      // cause failure because of extra `color` property
-      context.exactShapes = true;
+      context.options = {}; // still default as false
+      vtu.expectValidatorSuccess(val, classObject, undefined, args, context);
+
+      context.options.exactShapes = true;
       vtu.expectValidatorError(
         val,
         classObject,
         undefined,
         args,
-        undefined,
+        { rootCause: 'Found unexpected properties in value: [color]' },
         context
       );
     });
 
     it('should allow args.exact to override exactShapes=true', function () {
-      let context = { exactShapes: true };
+      let context = { options: { exactShapes: true } };
       let args = { $: { name: types.STRING }, exact: false };
 
       // exact=false overrides exactShapes=true
@@ -319,7 +321,7 @@ describe('module: lib/validator/valClassObject', function () {
       // exact=true overrides exactShapes=false
       // cause failure because of extra `color` property
       args.exact = true;
-      context.exactShapes = false;
+      context.options.exactShapes = false;
       vtu.expectValidatorError(
         val,
         classObject,

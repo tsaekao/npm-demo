@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## 3.1.2
+
+Release date: 2021-01-14
+
+### Changed
+
+-   Fixed: Setting the new `exactShapes` option in `rtv.check()` and `rtv.verify()` now properly fails the validation if any extra properties are found on the object being validated.
+-   The `rootCause` of the resulting `RtvError`, when `exactShapes=true` (Type Validator Context Options) or `exact=true` (Shape Object Arguments) is the direct cause, is now an `Error` object which indicates the extra properties that were found on the value.
+
 ## 3.1.1
 
 Release date: 2021-01-09

@@ -241,19 +241,29 @@ describe('module: lib/validator/valAnyObject', function () {
     });
 
     it('should check for exact shapes if exactShapes=true', function () {
-      const obj = { foo: 1, bar: true };
+      const obj = { foo: 1, bar: true, baz: 'a' };
       const args = { $: { foo: types.NUMBER } };
       const context = {};
 
       // by default, exactShapes=false
       vtu.expectValidatorSuccess(val, obj, undefined, args, context);
 
-      context.exactShapes = true;
-      vtu.expectValidatorError(val, obj, undefined, args, undefined, context);
+      context.options = {}; // still default as false
+      vtu.expectValidatorSuccess(val, obj, undefined, args, context);
+
+      context.options.exactShapes = true;
+      vtu.expectValidatorError(
+        val,
+        obj,
+        undefined,
+        args,
+        { rootCause: 'Found unexpected properties in value: [bar, baz]' },
+        context
+      );
     });
 
     it('should allow args.exact to override exactShapes=true', function () {
-      let context = { exactShapes: true };
+      let context = { options: { exactShapes: true } };
       let obj = { foo: 1, bar: true };
       let args = { $: { foo: types.NUMBER }, exact: false };
 
@@ -262,7 +272,7 @@ describe('module: lib/validator/valAnyObject', function () {
 
       // exact=true overrides exactShapes=false
       args.exact = true;
-      context.exactShapes = false;
+      context.options.exactShapes = false;
       vtu.expectValidatorError(val, obj, undefined, args, undefined, context);
 
       // deep override

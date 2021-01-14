@@ -180,6 +180,7 @@
  *  - `Object` (i.e. {@link rtvref.types.HASH_MAP HASH_MAP}): `string`, the key name.
  *  - `Array`: `number`, the element's index.
  *  - `undefined`: `undefined`.
+ *
  * @property {rtvref.validator.type_validator_context_options} [options]
  *  Configuration options.
  */

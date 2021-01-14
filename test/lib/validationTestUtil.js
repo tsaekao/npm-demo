@@ -625,5 +625,16 @@ export const expectValidatorError = function (
     expect(result.path).to.eql([]);
   }
 
+  if (expectations.hasOwnProperty('rootCause')) {
+    if (expectations.rootCause instanceof Error) {
+      // expect rootCause to match the instance
+      expect(result.rootCause).to.equal(expectations.rootCause);
+    } else if (typeof expectations.rootCause === 'string') {
+      // expect rootCause to be an Error with the expectation as the message
+      expect(result.rootCause).to.be.an.instanceof(Error);
+      expect(result.rootCause.message).to.equal(expectations.rootCause);
+    }
+  }
+
   return result;
 };

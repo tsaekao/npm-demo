@@ -270,9 +270,9 @@ export { rtvConfig as config };
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.shape_descriptor}
  */
-export const check = function (value, typeset, config) {
+export const check = function (value, typeset, options) {
   if (rtvConfig.enabled) {
-    return impl.check(value, typeset, { config });
+    return impl.check(value, typeset, { options });
   }
 
   return new RtvSuccess();
@@ -299,9 +299,9 @@ export const check = function (value, typeset, config) {
  * @see {@link rtvref.types}
  * @see {@link rtvref.types.shape_descriptor}
  */
-export const verify = function (value, typeset, config) {
+export const verify = function (value, typeset, options) {
   if (rtvConfig.enabled) {
-    const result = check(value, typeset, { config });
+    const result = check(value, typeset, options);
     if (result instanceof RtvSuccess) {
       return result;
     }
