@@ -306,8 +306,32 @@ describe('module: lib/validator/valClassObject', function () {
         classObject,
         undefined,
         args,
-        { rootCause: 'Found unexpected properties in value: [color]' },
+        { rootCause: "Found unexpected properties in value: 'color'" },
         context
+      );
+    });
+
+    it('should NOT check for exact shapes if exactShapes=false', function () {
+      const args = { $: { type: types.STRING } };
+
+      vtu.expectValidatorError(
+        val,
+        null, // value to check
+        undefined, // default qualifier
+        args,
+        { rootCause: false } // NO rootCause
+      );
+
+      vtu.expectValidatorError(
+        val,
+        classObject, // value to check
+        undefined, // default qualifier
+        args,
+        {
+          mismatch: [qualifiers.REQUIRED, types.STRING],
+          path: ['type'],
+          rootCause: false, // NO rootCause
+        }
       );
     });
 

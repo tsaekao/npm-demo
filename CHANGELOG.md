@@ -14,6 +14,7 @@ Release date: TBD
 ### Changed
 
 -   Fixed: The `rtv.fullyQualify()` method was not properly supporting Array typesets with a qualifier and a shape, e.g. `[rtv.OPTIONAL, {foo: rtv.STRING}]`. The method now correctly returns `[rtv.OPTIONAL, rtv.OBJECT, {$ {foo: rtv.STRING}}]`.
+-   Fixed: When validating objects against shapes, the `rootCause` of the `RtvError` object resulting from a failed validation would sometimes report that extra properties were found in the object even though the `exact` Shape Argument, or `exactShapes` validation option was not set to `true`. This is no longer the case.
 
 ## 3.1.2
 

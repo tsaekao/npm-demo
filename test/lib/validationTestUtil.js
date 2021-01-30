@@ -633,6 +633,8 @@ export const expectValidatorError = function (
       // expect rootCause to be an Error with the expectation as the message
       expect(result.rootCause).to.be.an.instanceof(Error);
       expect(result.rootCause.message).to.equal(expectations.rootCause);
+    } else if (!expectations.rootCause) {
+      expect(result.rootCause).to.be.undefined;
     }
   }
 

@@ -74,10 +74,11 @@ export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
       impl.toTypeset(type, q, args),
       [],
       impl.toTypeset(type, q, args, true),
-      extraProps &&
-        new Error(
-          `Found unexpected properties in value: [${extraProps.join(', ')}]`
-        )
+      extraProps.length > 0
+        ? new Error(
+            `Found unexpected properties in value: '${extraProps.join("', '")}'`
+          )
+        : undefined
     );
   }
 

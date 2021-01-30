@@ -67,7 +67,7 @@ export const validate = function valClassObject(
 
   let valid = isClassObject(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
-  let extraProps; // {Array<string>}
+  let extraProps = []; // {Array<string>}
 
   if (valid && args) {
     // then check args
@@ -127,10 +127,13 @@ export const validate = function valClassObject(
         impl.toTypeset(type, q, args),
         [],
         impl.toTypeset(type, q, args, true),
-        extraProps &&
-          new Error(
-            `Found unexpected properties in value: [${extraProps.join(', ')}]`
-          )
+        extraProps.length > 0
+          ? new Error(
+              `Found unexpected properties in value: '${extraProps.join(
+                "', '"
+              )}'`
+            )
+          : undefined
       );
     }
   }

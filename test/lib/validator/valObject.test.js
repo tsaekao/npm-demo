@@ -267,8 +267,33 @@ describe('module: lib/validator/valObject', function () {
         obj,
         undefined,
         args,
-        { rootCause: 'Found unexpected properties in value: [bar, baz]' },
+        { rootCause: "Found unexpected properties in value: 'bar', 'baz'" },
         context
+      );
+    });
+
+    it('should NOT check for exact shapes if exactShapes=false', function () {
+      const args = { $: { foo: types.NUMBER } };
+
+      vtu.expectValidatorError(
+        val,
+        null, // value to check
+        undefined, // default qualifier
+        args,
+        { rootCause: false } // NO rootCause
+      );
+
+      vtu.expectValidatorError(
+        val,
+        {}, // value to check
+        undefined, // default qualifier
+        args,
+        {
+          typeset: args.$,
+          mismatch: [qualifiers.REQUIRED, types.NUMBER],
+          path: ['foo'],
+          rootCause: false, // NO rootCause
+        }
       );
     });
 
