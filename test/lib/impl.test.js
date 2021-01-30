@@ -383,6 +383,26 @@ describe('module: lib/impl', function () {
       ]); // not deep
 
       const shape = {};
+      ts = [shape];
+      fqts = impl.fullyQualify(ts);
+      expect(ts).not.to.equal(fqts); // should be a new array
+      expect(fqts).to.eql([
+        DEFAULT_QUALIFIER,
+        DEFAULT_OBJECT_TYPE,
+        { $: shape },
+      ]); // object is treated as shape, not array params
+      expect(fqts[2].$).to.equal(shape); // same object, not cloned
+
+      ts = [qualifiers.EXPECTED, shape];
+      fqts = impl.fullyQualify(ts);
+      expect(ts).not.to.equal(fqts); // should be a new array
+      expect(fqts).to.eql([
+        qualifiers.EXPECTED,
+        DEFAULT_OBJECT_TYPE,
+        { $: shape },
+      ]); // object is treated as shape, not array params
+      expect(fqts[2].$).to.equal(shape); // same object, not cloned
+
       ts = [shape, [types.STRING]];
       fqts = impl.fullyQualify(ts);
       expect(ts).not.to.equal(fqts); // should be a new array

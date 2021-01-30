@@ -233,6 +233,7 @@ export const fullyQualify = function (typeset, qualifier) {
   }
 
   const fqts = []; // ALWAYS a new array
+  let hasQualifier = false; // true if a qualifier was found in first position
   let curType; // @type {(string|undefined)} current type in scope or undefined if none
 
   // typeset is an array: iterate its elements and build fqts iteratively
@@ -240,6 +241,7 @@ export const fullyQualify = function (typeset, qualifier) {
     // qualifiers are non-empty strings and must appear in the first element, if specified
     if (i === 0) {
       if (isString(rule) && qualifiers.check(rule)) {
+        hasQualifier = true;
         fqts.push(qualifier || rule); // qualifier overrides the one in the typeset
         return; // next rule
       }
@@ -252,8 +254,10 @@ export const fullyQualify = function (typeset, qualifier) {
       // must be a type
       curType = rule;
       fqts.push(curType);
-    } else if (i === 0 && isShape(rule)) {
-      // nested shape descriptor using default object type: move shape into args
+    } else if ((i === 0 || (i === 1 && hasQualifier)) && isShape(rule)) {
+      // nested shape descriptor using default object type that is either first
+      //  in the array (also using default qualifier), or second (because a
+      //  qualifier is in the first position): move shape into args
       curType = DEFAULT_OBJECT_TYPE;
       fqts.push(curType, { $: rule });
     } else if (isTypeArgs(rule)) {
@@ -621,9 +625,10 @@ export const _getCheckOptions = function (current = {}) {
  *
  *  In the Array case, the qualifier is optional, and a type, along with args,
  *   if any, is expected (e.g. `[type]`, `[qualifier, type]`, `[type, args]`, or
- *   `[qualifier, type, args]`). Note that the type may be implied the shorthand
+ *   `[qualifier, type, args]`). Note that the type may be implied if the shorthand
  *   notation is being used for an ARRAY, or if the
- *   {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type} is being implied.
+ *   {@link rtvref.types.DEFAULT_OBJECT_TYPE default object type} is being implied
+ *   for a shape, e.g. `[{foo: rtv.STRING}]`.
  *
  *  NOTE: A {@link rtvref.types.custom_validator custom validator} is not considered
  *   a valid single type. It's also considered a __separate type__ if it were passed-in

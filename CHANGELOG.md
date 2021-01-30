@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+Release date: TBD
+
+### Changed
+
+-   Fixed: The `rtv.fullyQualify()` method was not properly supporting Array typesets with a qualifier and a shape, e.g. `[rtv.OPTIONAL, {foo: rtv.STRING}]`. The method now correctly returns `[rtv.OPTIONAL, rtv.OBJECT, {$ {foo: rtv.STRING}}]`.
+
 ## 3.1.2
 
 Release date: 2021-01-14
