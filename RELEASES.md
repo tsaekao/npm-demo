@@ -2,7 +2,7 @@
 
 The release/publishing process is as follows:
 
-1.  Checkout master, rebase, and make sure it's in a clean state __with no pending commits__ not yet pushed to origin.
+1.  Checkout `master`, rebase, and make sure it's in a clean state __with no pending commits__ not yet pushed to origin.
 2.  Move all entries under the __UNRELEASED__ section in the `/CHANGELOG.md` into a new version section matching the version number that will be released.
     -   Include the release date in the new section.
     -   Remove the __UNRELEASED__ section.
@@ -15,7 +15,8 @@ The release/publishing process is as follows:
     $ npm run release:minor
     ```
 
-5.  Update the [documentation site](https://gitlab.com/stefcameron/rtvjs-web):
+5.  Run `git push && git push --tags` to push the commits and tags to `origin`.
+6.  Update the [documentation site](https://gitlab.com/stefcameron/rtvjs-web):
     1.  Copy the `README.md`, `CHANGELOG.md`, and `API.md` files over to the repo:
         -   `README.md` -> `/index.md`
         -   `CHANGELOG.md` -> `/pages/CHANGELOG.md`
