@@ -1,6 +1,7 @@
 image: node:fermium
 
 before_script:
+  - npm install -g npm@7
   - node --version
   - npm --version
   - npm ci
