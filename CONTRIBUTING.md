@@ -6,8 +6,8 @@ Thank you for considering a contribution to RTV.js!
 
 Local development is straightforward. Use the following versions of Node.js and npm:
 
-*   Node.js: `>=10.11.0`
-*   npm: `>=6.4.1`
+*   Node.js: `>=10.21.0`
+*   npm: `>=7..0.0`
 
 Install all project dependencies:
 

@@ -95,8 +95,13 @@ const getBaseConfig = function (
     throw new Error(`A valid output format is required, format=${format}`);
   }
 
-  // slim builds bundle noting; fat ones bundle everything
-  const externals = isSlim ? Object.keys(pkg.peerDependencies || {}) : []; // {Array<string>}
+  // {Array<string>} slim builds bundle noting; fat ones bundle everything
+  // NOTE: we do not put `peerDependencies` in package.json because the default
+  //  distributions referenced via `main` and `module` are the full versions
+  //  that bundle everything; adding peer dependencies to the package would
+  //  result in "missing peer dependency" warnings on installation, which
+  //  technically aren't true for the package's default use
+  const externals = isSlim ? ['@babel/runtime', 'lodash'] : [];
 
   if (isSlim && format === RU_FORMAT_UMD) {
     // never mark @babel/runtime dependencies as external for UMD because
@@ -135,7 +140,10 @@ const getBaseConfig = function (
     },
     plugins: [
       // ALWAYS FIRST: string token replacement
-      replacePlugin(replaceTokens),
+      replacePlugin({
+        ...replaceTokens,
+        preventAssignment: true,
+      }),
 
       jsonPlugin(),
       resolvePlugin(),
