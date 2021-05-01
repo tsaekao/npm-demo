@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
-## UNRELEASED
+## 4.0.0
 
 Release date: 2021-05-01
 
