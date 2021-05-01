@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+Release date: 2021-05-01
+
+### Changed
+
+-   Dropped support for Node 10 which fell out of LTS as of yesterday. Node >= 12 is supported going forward.
+-   Dropped `npm` from `engines` in `package.json` since that was not helpful to package consumers installing it using `npm@6` (or older) or another package manager such as `yarn`, generating an "engines warning". We don't package the lock file since we package pre-built distributions, so there's no need to enforce a specific package manager on installation.
+
 ## 3.1.4
 
 Release date: 2021-03-27

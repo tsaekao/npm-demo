@@ -6,9 +6,9 @@ Runtime Verification Library for browsers and Node.js.
 
 This library is isomorphic: It runs equally well in modern browsers and on the server with Node.js.
 
-The latest versions of major browsers, and maintained Node.js releases, are supported.
+The latest versions of major browsers, and Node LTS releases, are supported.
 
-[Give it a test drive with RunKit!](https://npm.runkit.com/rtvjs)
+Give it a [test drive with RunKit](https://npm.runkit.com/rtvjs)!
 
 # Installation
 
