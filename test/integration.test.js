@@ -60,8 +60,7 @@ describe('Integration', function () {
         priority: 1,
         notes: [
           {
-            text:
-              'Ingredients: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
+            text: 'Ingredients: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
             updated: new Date('09/20/2018'),
           },
           {

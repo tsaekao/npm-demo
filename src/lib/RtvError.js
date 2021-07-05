@@ -252,9 +252,10 @@ RtvError.prototype.toString = function () {
   // NOTE: we don't include the `typeset` in the serialization since it could be VERY long;
   //  the `path` and `mismatch` should be enough for debugging purposes
 
-  let str = `{rtvref.RtvError path="${renderPath(
-    this.path
-  )}", mismatch=${print(this.mismatch, { isTypeset: true })}`;
+  let str = `{rtvref.RtvError path="${renderPath(this.path)}", mismatch=${print(
+    this.mismatch,
+    { isTypeset: true }
+  )}`;
 
   if (this.rootCause) {
     str += `, rootCause="${this.rootCause.message}"`;
