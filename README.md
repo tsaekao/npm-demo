@@ -18,9 +18,9 @@ npm install rtvjs
 
 The package's `./dist` directory contains 3 types of builds:
 
-*   `rtv[.slim].js`: CJS (for use by bundlers)
-*   `rtv.esm[.slim].js`: ESM (for use by bundlers)
-*   `rtv.umd[.slim][.dev].js`: UMD (for use in browsers, self-contained)
+*   `rtv[.slim].js`: CJS (not minified, for use by bundlers)
+*   `rtv.esm[.slim].js`: ESM (not minified, for use by bundlers)
+*   `rtv.umd[.slim][.dev].js`: UMD (minified, for use in browsers, self-contained)
 
 The CJS and ESM builds require defining the `process.env.NODE_ENV` to either `"development"` or `"production"`. The UMD 'dev' build is the equivalent of defining `process.env.NODE_ENV = "development"`.
 
