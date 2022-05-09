@@ -11,10 +11,13 @@ Date format is YYYY-MM-DD.
 
 ### Changed
 
--   Fixed a bug where using the `exactShapes` option while _not_ specifying a shape in the `$` Shape arguments would require the object being checked to be empty.
+-   Fixed: Using the `exactShapes` option while _not_ specifying a shape in the `$` Shape arguments would require the object being checked to be empty.
     -   If a specific shape isn't specified, the flag is meant to be ignored since there is no explicit shape to check against.
     -   Explicitly providing an empty shape `{}` with the `exactShapes` flag, however, will require the object to be empty (i.e. have no own-properties).
--   Fixed bug where printing a typeset including the `CLASS_OBJECT` type's `ctor` argument resulted in `{"ctor":"<validator>"}`. Now it results in `{"ctor":"<constructor>"}` since the function is not a validator in this case.
+-   Fixed: Printing a typeset including the `CLASS_OBJECT` type's `ctor` argument resulted in `{"ctor":"<validator>"}`. Now it results in `{"ctor":"<constructor>"}` since the function is not a validator in this case.
+-   Ignore falsy values on nested shape property typesets (e.g. `rtv.verify({ foo: 123 }, { foo: null })` will now pass, ignoring/not validating the `foo` property instead of throwing an "invalid typeset" error because `null` is not a valid typeset.
+    -   This can make it easier to combine multiple shapes into a larger shape using destructuring where you use a falsy value to override an inherited shape property in order to exclude it from the larger shape instead of having to explicitly `delete` the property from the shape (and having to build the larger shape seperately instead of inline in an `rtv.check()` or `rtv.verify()` call).
+    -   For example: `shape1 = { foo: rtv.NUMBER }; shape2 = { bar: rtv.STRING }; rtv.verify({ foo: 123 }, { ...shape1, ...shape2, bar: null });` will now succeed.
 
 ## 4.0.0
 

@@ -39,7 +39,7 @@ const renderPath = function (path) {
  * @param {rtvref.types.typeset} typeset The typeset used for verification.
  * @param {Array.<string>} path The path deep into `value` where the failure occurred.
  *  An empty array signifies the _root_ (top-level) value that was checked.
- * @param {rtvref.types.fully_qualified_typeset} mismatch The fully qualified typeset
+ * @param {rtvref.types.fully_qualified_typeset} mismatch The fully-qualified typeset
  *  that resulted in the failed validation. This is normally the fully-qualified version
  *  of `typeset`, but could be a subtype if `typeset` is an Array typeset or a
  *  {@link rtvref.types.shape_descriptor shape descriptor}.
@@ -191,7 +191,7 @@ export const RtvError = function (value, typeset, path, mismatch, rootCause) {
     },
 
     /**
-     * {@link rtvref.types.fully_qualified_typeset Fully qualified typeset} that caused the
+     * {@link rtvref.types.fully_qualified_typeset Fully-qualified typeset} that caused the
      *  validation error (i.e. the mismatched subtype). This will be a subset/subtype of the
      *  {@link rtvref.RtvError#typeset typeset}, and possibly of a nested typeset within it,
      *  expressing only the direct cause of the error.

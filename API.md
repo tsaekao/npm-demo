@@ -725,7 +725,7 @@ Describes a failed runtime verification of a value against a given
 | value | <code>\*</code> | The value being verified. |
 | typeset | [<code>typeset</code>](#rtvref.types.typeset) | The typeset used for verification. |
 | path | <code>Array.&lt;string&gt;</code> | The path deep into `value` where the failure occurred.  An empty array signifies the _root_ (top-level) value that was checked. |
-| mismatch | [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully qualified typeset  that resulted in the failed validation. This is normally the fully-qualified version  of `typeset`, but could be a subtype if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
+| mismatch | [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset) | The fully-qualified typeset  that resulted in the failed validation. This is normally the fully-qualified version  of `typeset`, but could be a subtype if `typeset` is an Array typeset or a  [shape descriptor](#rtvref.types.shape_descriptor). |
 | [rootCause] | [<code>RtvError</code>](#rtvref.RtvError) \| <code>Error</code> | [Custom Validator](#rtvref.types.custom_validator)  error, if the `RtvError` is a result of a failed custom validation and the validator threw an  exception; or some other nested error that was the root cause for the failed validation. |
 
 <a name="rtvref.RtvError+valid"></a>
@@ -793,7 +793,7 @@ __It is YOUR responsibility to exercise necessary caution when validating
 <a name="rtvref.RtvError+mismatch"></a>
 
 ### rtvError.mismatch : [<code>fully\_qualified\_typeset</code>](#rtvref.types.fully_qualified_typeset)
-[Fully qualified typeset](#rtvref.types.fully_qualified_typeset) that caused the
+[Fully-qualified typeset](#rtvref.types.fully_qualified_typeset) that caused the
  validation error (i.e. the mismatched subtype). This will be a subset/subtype of the
  [typeset](#rtvref.RtvError+typeset), and possibly of a nested typeset within it,
  expressing only the direct cause of the error.
@@ -2208,7 +2208,7 @@ Applicable to all object types that may have a shape:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [$] | <code>Object</code> | The [shape descriptor](#rtvref.types.shape_descriptor)  describing the expected interface of the value being verified. If not specified,  none of the value's properties will be verified, and the `exact` flag (as well  as the `exactShapes` verification option) will be ignored.  Applies to all shape object types. |
+| [$] | <code>Object</code> | The [shape descriptor](#rtvref.types.shape_descriptor)  describing the expected interface of the value being verified. If not specified,  none of the value's properties will be verified, and the `exact` flag (as well  as the `exactShapes` verification option) will be ignored.  __NOTE:__ Any properties in the shape itself that are `undefined` will be ignored.   This facilitates merging shapes with destructuring when combining shapes into   larger ones.  Applies to all shape object types. |
 | [ctor] | <code>function</code> | A reference to a constructor function. If specified,  the class object (instance) must have this class function in its inheritance  chain such that `<class_object> instanceof ctor === true`. Note that this  property is not serializable to JSON. Ignored if not a  [function](#rtvref.types.FUNCTION).  Applies to: [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT). |
 | [exact] | <code>boolean</code> | If `true`, this will restrict the __immediate__ object  being verified to having the exact set of own-properties as those specified on  the shape. By default, _additional_ own-properties on the object are ignored.  In other words, the object must always have all of the shape's properties, but   (by default) it may also have additional properties that are not in the shape.   Setting `exact: true` would cause the verification to fail if the object has   more properties than those specified in the shape.  If specified, whether `true` or `false`, this flag overrides the `exactShapes`   option for the verification __for this shape only__. Nested shapes will not   be affected. The `exactShapes` flag that may be set in the verification's   [context options](#rtvref.validator.type_validator_context_options) via   a call to [check](#rtv.check) or [verify](#rtv.verify).  __NOTE:__ If this flag is `true` and the shape is __empty__, it   will restrict the object being verified to an empty object (i.e. no   own-properties).  __NOTE:__ If this flag is `true` and the shape is not specified, the flag   will be ignored, not verifying the value being checked has any specific   own-properties.  Applies to all shape object types. |
 

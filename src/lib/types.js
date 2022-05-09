@@ -221,6 +221,10 @@ import * as pts from './onlyTypes';
  *  none of the value's properties will be verified, and the `exact` flag (as well
  *  as the `exactShapes` verification option) will be ignored.
  *
+ *  __NOTE:__ Any properties in the shape itself that are `undefined` will be ignored.
+ *   This facilitates merging shapes with destructuring when combining shapes into
+ *   larger ones.
+ *
  *  Applies to all shape object types.
  *
  * @property {function} [ctor] A reference to a constructor function. If specified,

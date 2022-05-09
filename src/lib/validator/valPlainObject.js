@@ -94,6 +94,10 @@ export const validate = function valPlainObject(
 
   // only consider enumerable, own-properties of the shape
   _forEach(shape, function (typeset, prop) {
+    if (!typeset) {
+      return; // ignore unspecified property typesets
+    }
+
     // check prop value against shape prop typeset
     const result = impl.check(v[prop], typeset, {
       originalValue: v, // let this get overwritten if `context` is specified

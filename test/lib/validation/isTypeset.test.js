@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types, DEFAULT_OBJECT_TYPE } from '../../../src/lib/types';
 import { qualifiers, DEFAULT_QUALIFIER } from '../../../src/lib/qualifiers';
 import * as isShapeMod from '../../../src/lib/validation/isShape';
@@ -22,7 +23,7 @@ describe('module: lib/validation/isTypeset', function () {
 
       beforeEach(function () {
         goodValues = [
-          { foo: null }, // null is invalid, but we aren't checking deep
+          { foo: null },
           types.STRING,
           [types.ANY],
           [[types.FLOAT]],
@@ -193,7 +194,7 @@ describe('module: lib/validation/isTypeset', function () {
           // only one validator
           [DEFAULT_QUALIFIER, types.ANY, function () {}, function () {}],
 
-          // missing type (when not FQ'd, then ANY is implied)
+          // missing type (when not fully-qualified, then ANY is implied)
           [DEFAULT_QUALIFIER, function () {}],
 
           // validator must be last element
@@ -294,10 +295,11 @@ describe('module: lib/validation/isTypeset', function () {
           [{ foo: [types.FUNCTION, types.FUNCTION] }],
           // STRING type appears more than once in the nested (array) typeset
           [types.STRING, [types.STRING, types.STRING]],
+
+          { foo: null }, // falsy values as shape property typesets are ignored
         ];
 
         badValues = [
-          { foo: null },
           undefined,
           null,
           1,
@@ -408,6 +410,8 @@ describe('module: lib/validation/isTypeset', function () {
             $: [DEFAULT_QUALIFIER, types.STRING, types.STRING],
           },
         ];
+
+        goodValues[16] = [DEFAULT_QUALIFIER, types.OBJECT, goodValues[16]];
 
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
           deep: true,
@@ -533,6 +537,14 @@ describe('module: lib/validation/isTypeset', function () {
         expect(isTypeset(DEFAULT_QUALIFIER)).to.be.false;
         expect(isTypeset([])).to.be.false;
         expect(isTypeset([DEFAULT_QUALIFIER])).to.be.false;
+      });
+
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        it(`should ignore shape property typesets when set to falsy value |${print(
+          falsyValue
+        )}|`, () => {
+          expect(isTypeset({ foo: falsyValue }, { deep: true })).to.be.true;
+        });
       });
     });
   });

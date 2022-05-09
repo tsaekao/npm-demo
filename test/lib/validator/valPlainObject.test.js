@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valPlainObject';
@@ -350,6 +351,21 @@ describe('module: lib/validator/valPlainObject', function () {
         // exact=false by default, therefore shape must be exact because of exactShapes=true
       };
       vtu.expectValidatorSuccess(val, obj, undefined, args, context);
+    });
+
+    vtu.getFalsyValues().forEach((falsyValue) => {
+      it(`ignores unspecified shape property typesets set to falsy value |${print(
+        falsyValue
+      )}|`, () => {
+        const args = { $: { foo: types.NUMBER, bar: undefined } };
+
+        vtu.expectValidatorSuccess(
+          val,
+          { foo: 123 }, // value to check
+          undefined, // default qualifier
+          args
+        );
+      });
     });
   });
 });

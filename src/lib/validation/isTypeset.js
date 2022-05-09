@@ -38,6 +38,9 @@ const deepVerifyShape = function (
   if (valid) {
     // validate all of the shape's typesets (each own-prop should be a typeset)
     _forEach(shape, function (ts, prop) {
+      if (!ts) {
+        return; // ignore unspecified property typesets
+      }
       const opts = Object.assign({}, options); // options.rootCause should not exist at this point
       valid = isTypeset(ts, opts); // eslint-disable-line no-use-before-define
       options.rootCause =
@@ -186,7 +189,7 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
         } else if (isCustomValidator(rule)) {
           // must be a validator, but there can't be more than 1, it must be
           //  in the last position (which enforces the 1 count), always after the
-          //  qualifier, and since the typeset must be FQ'd, we must have an
+          //  qualifier, and since the typeset must be fully-qualified, we must have an
           //  in-scope type
           valid = !!(curType && idx + 1 === v.length);
           if (!valid) {
@@ -243,12 +246,12 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
       });
     } else {
       // automatically invalid if not an array because a typeset must be in the
-      //  array form in order to be FQ'd
+      //  array form in order to be fully-qualified
       valid = false;
       options.rootCause = `${failurePrefix}: Typeset cannot be fully-qualified unless it is an Array of minimum length=2`;
     }
 
-    // NEXT: if it's an array, valid, and does not need to be FQ'd, check its
+    // NEXT: if it's an array, valid, and does not need to be fully-qualified, check its
     //  definition, and deep (if requested)
   } else if (valid && !fullyQualified && isArray(v)) {
     const failurePrefix = `Non-qualified ${
@@ -400,8 +403,8 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
     }
 
     // NEXT: if it's a shape descriptor, check if deep is requested as long as it's
-    //  valid and does not need to be FQ'd (otherwise, 'v' must be an array and
-    //  would be invalid as a FQ'd typeset)
+    //  valid and does not need to be fully-qualified (otherwise, 'v' must be an array and
+    //  would be invalid as a fully-qualified typeset)
   } else if (valid && deep && !fullyQualified && isShape(v)) {
     const failurePrefix = `Non-qualified deep shape=${print(v, {
       isTypeset: true,
@@ -417,7 +420,7 @@ isTypeset = function (v, options = { deep: false, fullyQualified: false }) {
     );
   }
 
-  // ELSE: must be valid (but non-array/shape and doesn't need to be FQ'd), or invalid
+  // ELSE: must be valid (but non-array/shape and doesn't need to be fully-qualified), or invalid
 
   return valid;
 };
