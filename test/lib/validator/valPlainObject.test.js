@@ -298,6 +298,23 @@ describe('module: lib/validator/valPlainObject', function () {
       );
     });
 
+    it('should NOT check for exact shapes if exactShapes=true but shape NOT specified', function () {
+      const args = {};
+      const context = {
+        options: {
+          exactShapes: true,
+        },
+      };
+
+      vtu.expectValidatorSuccess(
+        val,
+        { foo: 123 }, // value to check
+        undefined, // default qualifier
+        args,
+        context
+      );
+    });
+
     it('should allow args.exact to override exactShapes=true', function () {
       let context = { options: { exactShapes: true } };
       let obj = { foo: 1, bar: true };

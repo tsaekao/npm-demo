@@ -77,10 +77,13 @@ export const validate = function valClassObject(
     }
 
     // now validate the shape, if any
-    const shape = args.$ && isShape(args.$) ? args.$ : {};
-    const exact = !!(hasOwnProp(args, 'exact') // args take precedence if specified
-      ? args.exact
-      : context && context.options && context.options.exactShapes);
+    const hasShape = !!(args && args.$ && isShape(args.$));
+    const shape = hasShape ? args.$ : {};
+    const exact =
+      hasShape &&
+      !!(hasOwnProp(args, 'exact') // args take precedence if specified; ignore if no shape
+        ? args.exact
+        : context && context.options && context.options.exactShapes);
 
     if (valid && exact) {
       extraProps = _difference(Object.keys(v), Object.keys(shape));

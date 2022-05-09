@@ -335,6 +335,23 @@ describe('module: lib/validator/valClassObject', function () {
       );
     });
 
+    it('should NOT check for exact shapes if exactShapes=true but shape NOT specified', function () {
+      const args = { ctor: Rectangle };
+      const context = {
+        options: {
+          exactShapes: true,
+        },
+      };
+
+      vtu.expectValidatorSuccess(
+        val,
+        classObject,
+        undefined, // default qualifier
+        args,
+        context
+      );
+    });
+
     it('should allow args.exact to override exactShapes=true', function () {
       let context = { options: { exactShapes: true } };
       let args = { $: { name: types.STRING }, exact: false };

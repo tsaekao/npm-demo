@@ -218,7 +218,8 @@ import * as pts from './onlyTypes';
  * @typedef {Object} rtvref.types.shape_object_args
  * @property {Object} [$] The {@link rtvref.types.shape_descriptor shape descriptor}
  *  describing the expected interface of the value being verified. If not specified,
- *  none of the value's properties will be verified.
+ *  none of the value's properties will be verified, and the `exact` flag (as well
+ *  as the `exactShapes` verification option) will be ignored.
  *
  *  Applies to all shape object types.
  *
@@ -245,9 +246,13 @@ import * as pts from './onlyTypes';
  *   {@link rtvref.validator.type_validator_context_options context options} via
  *   a call to {@link rtv.check} or {@link rtv.verify}.
  *
- *  __NOTE:__ If this flag is `true` and the shape is empty or not specified, it
+ *  __NOTE:__ If this flag is `true` and the shape is __empty__, it
  *   will restrict the object being verified to an empty object (i.e. no
  *   own-properties).
+ *
+ *  __NOTE:__ If this flag is `true` and the shape is not specified, the flag
+ *   will be ignored, not verifying the value being checked has any specific
+ *   own-properties.
  *
  *  Applies to all shape object types.
  *

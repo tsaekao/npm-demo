@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+### Changed
+
+-   Fixed a bug where using the `exactShapes` option while _not_ specifying a shape in the `$` Shape arguments would require the object being checked to be empty.
+    -   If a specific shape isn't specified, the flag is meant to be ignored since there is no explicit shape to check against.
+    -   Explicitly providing an empty shape `{}` with the `exactShapes` flag, however, will require the object to be empty (i.e. have no own-properties).
+
 ## 4.0.0
 
 Release date: 2021-05-01

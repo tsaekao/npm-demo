@@ -83,9 +83,10 @@
  * @property {boolean} [exactShapes] If `true`, any
  *  {@link rtvref.types.shape_descriptor shape} encountered, top-level or nested,
  *  unless specifically configured not to, will require that the related object's
- *  own-properties be _exactly_ those specified in the shape, no more, no less.
- *  By default, extra properties on the object (i.e. not in the shape) being
- *  verified are ignored.
+ *  own-properties be _exactly_ those specified in the shape, no more, no less,
+ *  as long as a shape is specified. By default, extra properties on the object
+ *  (i.e. not in the shape) being verified are ignored. If a shape isn't specified
+ *  on a given object-related typeset, this flag will be ignored for that typeset.
  *
  *  This flag can be overridden on an individual shape basis with the shape's
  *   {@link rtvref.types.shape_object_args exact argument}.

@@ -65,10 +65,13 @@ export const validate = function valPlainObject(
   }
 
   // validate the shape, if any
-  const shape = args && args.$ && isShape(args.$) ? args.$ : {};
-  const exact = !!(hasOwnProp(args, 'exact') // args take precedence if specified
-    ? args.exact
-    : context && context.options && context.options.exactShapes);
+  const hasShape = !!(args && args.$ && isShape(args.$));
+  const shape = hasShape ? args.$ : {};
+  const exact =
+    hasShape &&
+    !!(hasOwnProp(args, 'exact') // args take precedence if specified; ignore if no shape
+      ? args.exact
+      : context && context.options && context.options.exactShapes);
   const extraProps = exact
     ? _difference(Object.keys(v), Object.keys(shape))
     : [];
