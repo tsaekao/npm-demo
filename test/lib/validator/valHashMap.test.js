@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valHashMap';
@@ -317,6 +318,27 @@ describe('module: lib/validator/valHashMap', function () {
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey="0"'],
         mismatch: [qualifiers.REQUIRED, types.HASH_MAP, args],
+      });
+    });
+
+    vtu.getFalsyValues().forEach((falsyValue) => {
+      it(`ignores unspecified $values shape property typesets set to falsy value |${print(
+        falsyValue
+      )}|`, () => {
+        map = {
+          one: { number: 1, string: true },
+          two: { number: 2, string: false },
+          three: { number: 3, string: true },
+        };
+
+        const args = {
+          $values: {
+            number: types.NUMBER,
+            string: falsyValue,
+          },
+        };
+
+        vtu.expectValidatorSuccess(val, map, undefined, args);
       });
     });
   });

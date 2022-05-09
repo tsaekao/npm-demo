@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valMap';
@@ -312,6 +313,40 @@ describe('module: lib/validator/valMap', function () {
       vtu.expectValidatorError(val, map, undefined, args, {
         path: ['valueKey=1', 'key="a"'],
         mismatch: [qualifiers.REQUIRED, types.STRING, { min: 2 }],
+      });
+    });
+
+    vtu.getFalsyValues().forEach((falsyValue) => {
+      it(`ignores unspecified $values shape property typesets set to falsy value |${print(
+        falsyValue
+      )}|`, () => {
+        const map = new Map([
+          [
+            { keyNumber: 1, keyString: true },
+            { valueNumber: 1, valueString: true },
+          ],
+          [
+            { keyNumber: 2, keyString: false },
+            { valueNumber: 2, valueString: false },
+          ],
+          [
+            { keyNumber: 3, keyString: true },
+            { valueNumber: 3, valueString: true },
+          ],
+        ]);
+
+        const args = {
+          $keys: {
+            keyNumber: types.NUMBER,
+            keyString: falsyValue,
+          },
+          $values: {
+            valueNumber: types.NUMBER,
+            valueString: falsyValue,
+          },
+        };
+
+        vtu.expectValidatorSuccess(val, map, undefined, args);
       });
     });
   });

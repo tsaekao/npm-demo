@@ -211,6 +211,27 @@ describe('module: lib/validator/valSet', function () {
         mismatch: [qualifiers.REQUIRED, ...args.$values],
       });
     });
+
+    vtu.getFalsyValues().forEach((falsyValue) => {
+      it(`ignores unspecified $values shape property typesets set to falsy value |${print(
+        falsyValue
+      )}|`, () => {
+        const set = new Set([
+          { number: 1, string: true },
+          { number: 2, string: false },
+          { number: 3, string: true },
+        ]);
+
+        const args = {
+          $values: {
+            number: types.NUMBER,
+            string: falsyValue,
+          },
+        };
+
+        vtu.expectValidatorSuccess(val, set, undefined, args);
+      });
+    });
   });
 
   describe('context', function () {
