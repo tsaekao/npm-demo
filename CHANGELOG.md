@@ -14,6 +14,7 @@ Date format is YYYY-MM-DD.
 -   Fixed a bug where using the `exactShapes` option while _not_ specifying a shape in the `$` Shape arguments would require the object being checked to be empty.
     -   If a specific shape isn't specified, the flag is meant to be ignored since there is no explicit shape to check against.
     -   Explicitly providing an empty shape `{}` with the `exactShapes` flag, however, will require the object to be empty (i.e. have no own-properties).
+-   Fixed bug where printing a typeset including the `CLASS_OBJECT` type's `ctor` argument resulted in `{"ctor":"<validator>"}`. Now it results in `{"ctor":"<constructor>"}` since the function is not a validator in this case.
 
 ## 4.0.0
 

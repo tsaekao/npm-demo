@@ -22,9 +22,12 @@
 export const print = function (printValue, printOptions = {}) {
   const { isTypeset = false } = printOptions;
 
+  let stringifying = false;
+
   // NOTE: key will be undefined when the replacer is called outside of the
   //  JSON.stringify() call, as well as for the first stringify() call
-  const replacer = function (stringifying, key, value) {
+  // NOTE: `this` will be a reference to the object in which the `key` was found
+  const replacer = function (key, value) {
     if (value === undefined || value === null) {
       return stringifying ? value : value + '';
     }
@@ -43,7 +46,17 @@ export const print = function (printValue, printOptions = {}) {
     }
 
     if (typeof value === 'function') {
-      return isTypeset ? '<validator>' : '<function>';
+      if (isTypeset) {
+        if (Array.isArray(this)) {
+          return '<validator>';
+        }
+
+        if (key === 'ctor') {
+          return '<constructor>';
+        }
+      }
+
+      return '<function>';
     }
 
     if (typeof value === 'symbol') {
@@ -53,13 +66,16 @@ export const print = function (printValue, printOptions = {}) {
     return value; // keep stringifying since we're returning an object
   };
 
-  const result = replacer(false, undefined, printValue);
-
+  // first, check to see if we have a simple case that we can immediately
+  //  convert to a string without the extra JSON syntax around it
+  const result = replacer(undefined, printValue);
   if (typeof result === 'string') {
     return result;
   }
 
-  return JSON.stringify(result, replacer.bind(null, true)); // recursive
+  // since it's not simple, go through the formal stringifying process
+  stringifying = true;
+  return JSON.stringify(result, replacer); // recursive
 };
 
 /**

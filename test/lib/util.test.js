@@ -33,6 +33,17 @@ describe('module: lib/util', function () {
         '["STRING","<validator>"]'
       );
     });
+
+    it('should special-case "ctor" as "<constructor>" and other as "<function>"', function () {
+      expect(
+        util.print(
+          ['CLASS_OBJECT', { ctor: () => {}, foo: () => {} }, () => {}],
+          { isTypeset: true }
+        )
+      ).to.equal(
+        '["CLASS_OBJECT",{"ctor":"<constructor>","foo":"<function>"},"<validator>"]'
+      );
+    });
   });
 
   describe('#hasOwnProp', function () {
