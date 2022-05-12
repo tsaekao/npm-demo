@@ -40,11 +40,11 @@ export const config = function (settings) {
  */
 export const validate = function valFunction(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   if (isFunction(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

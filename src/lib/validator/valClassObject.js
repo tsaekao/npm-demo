@@ -62,11 +62,12 @@ export const validate = function valClassObject(
   context
 ) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v }); // `v` is a falsy value which is the MVV also
   }
 
+  const mvv = {}; // CLASS object is not necessarily a plain object, but we interpret it that way
   let valid = isClassObject(v);
-  let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
+  let error; // @type {rtvref.RtvError}
   let extraProps = []; // {Array<string>}
 
   if (valid && args) {
@@ -107,7 +108,9 @@ export const validate = function valClassObject(
           parentKey: prop,
         });
 
-        if (!propResult.valid) {
+        if (propResult.valid) {
+          mvv[prop] = propResult.mvv; // use downstream MVV from check, not prop value
+        } else {
           err = new RtvError(
             v,
             impl.toTypeset(type, q, args),
@@ -121,15 +124,15 @@ export const validate = function valClassObject(
       });
 
       valid = !err;
-      result = err;
+      error = err;
     }
   }
 
-  if (!result) {
+  if (!error) {
     if (valid) {
-      result = new RtvSuccess();
+      error = new RtvSuccess({ mvv });
     } else {
-      result = new RtvError(
+      error = new RtvError(
         v,
         impl.toTypeset(type, q, args),
         [],
@@ -145,5 +148,5 @@ export const validate = function valClassObject(
     }
   }
 
-  return result;
+  return error;
 };

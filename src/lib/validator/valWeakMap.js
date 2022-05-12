@@ -49,11 +49,11 @@ export const config = function (settings) {
  */
 export const validate = function valWeakMap(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   if (isWeakMap(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

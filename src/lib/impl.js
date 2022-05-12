@@ -788,6 +788,7 @@ export const checkWithArray = function (value, arrayTs, context /*, options*/) {
 
   let match; // @type {(rtvref.types.fully_qualified_typeset|undefined)}
   let err; // @type {(RtvError|undefined)}
+  let mvv; // @type {*} Minimum Viable Value
   const qualifier = options.qualifier || getQualifier(arrayTs);
 
   // consider each type in the typeset until we find one that matches the value
@@ -830,6 +831,7 @@ export const checkWithArray = function (value, arrayTs, context /*, options*/) {
 
       if (result.valid) {
         match = fullyQualify(subtype, qualifier);
+        mvv = result.mvv;
         break; // break on first match
       } else if (isSingleType) {
         // capture the error since the Array typeset is a single type; this way,
@@ -891,7 +893,7 @@ export const checkWithArray = function (value, arrayTs, context /*, options*/) {
     }
   }
 
-  return err || new RtvSuccess();
+  return err || new RtvSuccess({ mvv });
 };
 
 /**
@@ -955,7 +957,7 @@ export const check = function (value, typeset, context /*, options*/) {
         );
       }
 
-      return new RtvSuccess();
+      return result; // will be RtvSuccess instance based on ANY type check
     }
 
     if (isShape(typeset)) {

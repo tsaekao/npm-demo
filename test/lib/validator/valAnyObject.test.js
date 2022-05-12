@@ -6,7 +6,36 @@ import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
+import { check as isPlainObject } from '../../../src/lib/validation/isPlainObject';
 import * as val from '../../../src/lib/validator/valAnyObject';
+
+// returns map of valid type to array of sample values
+const getValidValues = () => {
+  const validValues = vtu.getValidValues(); // @type {Object}
+  const validTypes = Object.keys(validValues); // @type {Array}
+
+  // remove primitives
+  _.pull(
+    validTypes,
+    types.ANY,
+    types.NULL,
+    types.STRING,
+    types.BOOLEAN,
+    types.NUMBER,
+    types.FINITE,
+    types.INT,
+    types.SAFE_INT,
+    types.FLOAT,
+    types.SYMBOL
+  );
+
+  const values = {};
+  _.forEach(validTypes, function (type) {
+    values[type] = validValues[type];
+  });
+
+  return values;
+};
 
 describe('module: lib/validator/valAnyObject', function () {
   describe('validator', function () {
@@ -20,29 +49,7 @@ describe('module: lib/validator/valAnyObject', function () {
     });
 
     it('should validate any object', function () {
-      const validValues = vtu.getValidValues(); // @type {Object}
-      const validTypes = Object.keys(validValues); // @type {Array}
-
-      // remove primitives
-      _.pull(
-        validTypes,
-        types.ANY,
-        types.NULL,
-        types.STRING,
-        types.BOOLEAN,
-        types.NUMBER,
-        types.FINITE,
-        types.INT,
-        types.SAFE_INT,
-        types.FLOAT,
-        types.SYMBOL
-      );
-
-      let values = [];
-      _.forEach(validTypes, function (type) {
-        values = values.concat(validValues[type]);
-      });
-
+      const values = Object.values(getValidValues()).flat();
       expect(vtu.testValues(val.type, val.validate, values).failures).to.eql(
         []
       );
@@ -355,6 +362,43 @@ describe('module: lib/validator/valAnyObject', function () {
           args
         );
       });
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('interprets original value as plain object', () => {
+      const validValues = getValidValues();
+      Object.entries(validValues).forEach(([type, values]) => {
+        values.forEach((value, idx) => {
+          const result = val.validate(value);
+          expect(result.mvv).not.to.be.equal(value);
+          expect(isPlainObject(result.mvv), `${type}/${idx} as plain object`).to
+            .be.true;
+        });
+      });
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const message = 'the message';
+      const result = val.validate(new Error(message), undefined, {
+        $: { message: types.STRING },
+      });
+
+      expect(result.mvv).to.eql({ message });
     });
   });
 });

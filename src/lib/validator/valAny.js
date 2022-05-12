@@ -52,7 +52,7 @@ export const validate = function valAny(v, q = REQUIRED) {
   //  value regardless of the qualifier
 
   if (isAny(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

@@ -141,15 +141,15 @@ describe('module: lib/RtvError', function () {
     }).not.to.throw();
 
     expect(function () {
-      new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be FQ'ed
+      new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be fully-qualified
     }).to.throw(/invalid mismatch/i);
 
     expect(function () {
-      new RtvError(null, types.STRING, ['path'], types.STRING); // must be FQ'ed
+      new RtvError(null, types.STRING, ['path'], types.STRING); // must be fully-qualified
     }).to.throw(/invalid mismatch/i);
 
     expect(function () {
-      new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be FQ'ed
+      new RtvError(null, types.STRING, ['path'], [types.STRING]); // must be fully-qualified
     }).to.throw(/invalid mismatch/i);
   });
 

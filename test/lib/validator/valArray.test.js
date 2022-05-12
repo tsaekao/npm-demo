@@ -3,8 +3,10 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
+import { check as isArray } from '../../../src/lib/validation/isArray';
 import * as val from '../../../src/lib/validator/valArray';
 
 describe('module: lib/validator/valArray', function () {
@@ -270,6 +272,46 @@ describe('module: lib/validator/valArray', function () {
         validator,
         { originalValue: value, parent: value, parentKey: 0 },
       ]);
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('interprets original value as array', () => {
+      const value = [1, 2, 3];
+      const result = val.validate(value);
+      expect(result.mvv).not.to.be.equal(value);
+      expect(isArray(result.mvv)).to.be.true;
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const result = val.validate(
+        [
+          { foo: 1, bar: 1 },
+          { foo: 2, bar: 2 },
+        ],
+        undefined,
+        {
+          $: {
+            foo: types.SAFE_INT,
+          },
+        }
+      );
+
+      expect(result.mvv).to.eql([{ foo: 1 }, { foo: 2 }]);
     });
   });
 });

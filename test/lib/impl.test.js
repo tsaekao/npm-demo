@@ -1704,6 +1704,20 @@ describe('module: lib/impl', function () {
         }).to.throw(/Invalid typeset in array/);
       });
     });
+
+    // Minimum Viable Value
+    describe('mvv', () => {
+      it('should return the MVV in successful results', () => {
+        const value = {
+          number: 1,
+          string: 'hello',
+        };
+        const result = impl.checkWithArray(value, [{ number: types.SAFE_INT }]);
+        expect(result.mvv).to.be.eql({
+          number: 1,
+        });
+      });
+    });
   });
 
   describe('#check()', function () {

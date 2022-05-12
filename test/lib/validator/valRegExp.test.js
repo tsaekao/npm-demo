@@ -122,4 +122,9 @@ describe('module: lib/validator/valRegExp', function () {
       });
     });
   });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    vtu.testMvvVerbatimType(val);
+  });
 });

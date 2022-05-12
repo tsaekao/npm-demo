@@ -55,9 +55,10 @@ export const config = function (settings) {
  */
 export const validate = function valSet(v, q = REQUIRED, args, context) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v }); // `v` is a falsy value which is the MVV also
   }
 
+  const mvv = new Set();
   let valid = isSet(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
@@ -86,7 +87,9 @@ export const validate = function valSet(v, q = REQUIRED, args, context) {
           });
           valid = result.valid;
 
-          if (!result.valid) {
+          if (result.valid) {
+            mvv.add(result.mvv); // use downstream MVV from check, not positional value
+          } else {
             // create a new error from the original, but with the value prepended to
             //  the path (since sets don't have indexes; they just have unique values)
             result = new RtvError(
@@ -109,7 +112,7 @@ export const validate = function valSet(v, q = REQUIRED, args, context) {
 
   if (!result) {
     if (valid) {
-      result = new RtvSuccess();
+      result = new RtvSuccess({ mvv });
     } else {
       result = new RtvError(
         v,
@@ -118,6 +121,10 @@ export const validate = function valSet(v, q = REQUIRED, args, context) {
         impl.toTypeset(type, q, args, true)
       );
     }
+  } else if (result.valid) {
+    // `result` will be the RtvSuccess from the last element checked; create a new one
+    //  with the appropriate MVV interpreted from what the validator checked as a whole
+    result = new RtvSuccess({ mvv });
   }
 
   return result;

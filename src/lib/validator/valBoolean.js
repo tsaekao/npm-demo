@@ -54,11 +54,11 @@ export const config = function (settings) {
  */
 export const validate = function valBoolean(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   if (isBoolean(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

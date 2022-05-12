@@ -61,7 +61,7 @@ export const validate = function valPlainObject(
   context
 ) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v }); // `v` is a falsy value which is the MVV also
   }
 
   // validate the shape, if any
@@ -90,6 +90,7 @@ export const validate = function valPlainObject(
     );
   }
 
+  const mvv = {}; // native plain object
   let err; // @type {(RtvError|undefined)}
 
   // only consider enumerable, own-properties of the shape
@@ -106,7 +107,9 @@ export const validate = function valPlainObject(
       parentKey: prop,
     });
 
-    if (!result.valid) {
+    if (result.valid) {
+      mvv[prop] = result.mvv; // use downstream MVV from check, not prop value
+    } else {
       err = new RtvError(
         v,
         shape,
@@ -119,5 +122,5 @@ export const validate = function valPlainObject(
     return !err; // break on first error
   });
 
-  return err || new RtvSuccess();
+  return err || new RtvSuccess({ mvv });
 };

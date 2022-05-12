@@ -52,7 +52,7 @@ export const config = function (settings) {
  */
 export const validate = function valSymbol(v, q = REQUIRED, args) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   let valid = isSymbol(v);
@@ -72,7 +72,7 @@ export const validate = function valSymbol(v, q = REQUIRED, args) {
   }
 
   if (valid) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

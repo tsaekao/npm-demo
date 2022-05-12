@@ -5,6 +5,7 @@ import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
+import { check as isMap } from '../../../src/lib/validation/isMap';
 import * as val from '../../../src/lib/validator/valMap';
 
 describe('module: lib/validator/valMap', function () {
@@ -377,6 +378,56 @@ describe('module: lib/validator/valMap', function () {
         [qualifiers.REQUIRED, types.ANY],
         validator,
         { originalValue: value, parent: value, parentKey: 'key' },
+      ]);
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('interprets original value as Map', () => {
+      const value = new Map([['key', 'value']]);
+      const result = val.validate(value);
+      expect(result.mvv).not.to.be.equal(value);
+      expect(isMap(result.mvv)).to.be.true;
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const map = new Map([
+        [
+          { key: 1, foo: 1 },
+          { value: 1, foo: 1 },
+        ],
+        [
+          { key: 2, foo: 2 },
+          { value: 2, foo: 2 },
+        ],
+      ]);
+
+      const result = val.validate(map, undefined, {
+        $keys: {
+          key: types.SAFE_INT,
+        },
+        $values: {
+          value: types.SAFE_INT,
+        },
+      });
+
+      expect(Array.from(result.mvv.entries())).to.eql([
+        [{ key: 1 }, { value: 1 }],
+        [{ key: 2 }, { value: 2 }],
       ]);
     });
   });

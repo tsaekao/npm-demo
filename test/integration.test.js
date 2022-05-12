@@ -283,4 +283,334 @@ describe('Integration', function () {
       expect(result.rootCause.message).to.equal('tags and tagCount mismatch');
     });
   });
+
+  describe('Minimum Viable Value', () => {
+    it('reduces deep into nested objects and arrays', () => {
+      const tasks = [
+        {
+          title: 'Implement the feature',
+          description: 'A very long description...',
+          due: new Date(),
+          tags: [
+            { id: 1, name: 'tag1' },
+            { id: 2, name: 'tag2' },
+            { id: 3, name: 'tag3' },
+          ],
+          notes: [
+            {
+              text: 'Note 1',
+              author: 'Sam',
+              date: new Date(),
+              tags: [
+                { id: 4, name: 'tag4' },
+                { id: 5, name: 'tag5' },
+                { id: 6, name: 'tag6' },
+              ],
+            },
+            {
+              text: 'Note 2',
+              author: 'Susie',
+              date: new Date(),
+              tags: [
+                { id: 7, name: 'tag7' },
+                { id: 8, name: 'tag8' },
+                { id: 9, name: 'tag9' },
+              ],
+            },
+          ],
+        },
+        {
+          title: 'Add the tests',
+          description: 'Long description...',
+          due: new Date(),
+          tags: [
+            { id: 1, name: 'tag1' },
+            { id: 2, name: 'tag2' },
+          ],
+          notes: [
+            {
+              text: 'Note 1',
+              author: 'Melissa',
+              date: new Date(),
+              tags: [{ id: 4, name: 'tag4' }],
+            },
+            {
+              text: 'Note 2',
+              author: 'Patrick',
+              date: new Date(),
+              tags: [
+                { id: 8, name: 'tag8' },
+                { id: 9, name: 'tag9' },
+              ],
+            },
+            {
+              text: 'Note 3',
+              author: 'Melissa',
+              date: new Date(),
+              tags: [
+                { id: 3, name: 'tag3' },
+                { id: 4, name: 'tag4' },
+              ],
+            },
+          ],
+        },
+      ];
+
+      const result = rtv.verify(tasks, [
+        [
+          {
+            title: rtv.STRING,
+            tags: [[{ name: rtv.STRING }]],
+            notes: [
+              [
+                {
+                  text: rtv.STRING,
+                  tags: [
+                    [
+                      {
+                        id: rtv.SAFE_INT,
+                      },
+                    ],
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      ]);
+
+      expect(result.mvv).to.eql([
+        {
+          title: tasks[0].title,
+          tags: [
+            { name: tasks[0].tags[0].name },
+            { name: tasks[0].tags[1].name },
+            { name: tasks[0].tags[2].name },
+          ],
+          notes: [
+            {
+              text: tasks[0].notes[0].text,
+              tags: [
+                { id: tasks[0].notes[0].tags[0].id },
+                { id: tasks[0].notes[0].tags[1].id },
+                { id: tasks[0].notes[0].tags[2].id },
+              ],
+            },
+            {
+              text: tasks[0].notes[1].text,
+              tags: [
+                { id: tasks[0].notes[1].tags[0].id },
+                { id: tasks[0].notes[1].tags[1].id },
+                { id: tasks[0].notes[1].tags[2].id },
+              ],
+            },
+          ],
+        },
+        {
+          title: tasks[1].title,
+          tags: [
+            { name: tasks[1].tags[0].name },
+            { name: tasks[1].tags[1].name },
+          ],
+          notes: [
+            {
+              text: tasks[1].notes[0].text,
+              tags: [{ id: tasks[1].notes[0].tags[0].id }],
+            },
+            {
+              text: tasks[1].notes[1].text,
+              tags: [
+                { id: tasks[1].notes[1].tags[0].id },
+                { id: tasks[1].notes[1].tags[1].id },
+              ],
+            },
+            {
+              text: tasks[1].notes[2].text,
+              tags: [
+                { id: tasks[1].notes[2].tags[0].id },
+                { id: tasks[1].notes[2].tags[1].id },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('reduces deep into maps', () => {
+      // mapping tasks to notes
+      const entries = [
+        // first entry
+        [
+          // KEY (task)
+          {
+            title: 'Implement the feature',
+            description: 'A very long description...',
+            due: new Date(),
+            tags: [
+              { id: 1, name: 'tag1' },
+              { id: 2, name: 'tag2' },
+              { id: 3, name: 'tag3' },
+            ],
+          },
+          // VALUE (notes)
+          [
+            {
+              text: 'Note 1',
+              author: 'Sam',
+              date: new Date(),
+              tags: [
+                { id: 4, name: 'tag4' },
+                { id: 5, name: 'tag5' },
+                { id: 6, name: 'tag6' },
+              ],
+            },
+            {
+              text: 'Note 2',
+              author: 'Susie',
+              date: new Date(),
+              tags: [
+                { id: 7, name: 'tag7' },
+                { id: 8, name: 'tag8' },
+                { id: 9, name: 'tag9' },
+              ],
+            },
+          ],
+        ],
+
+        // second entry
+        [
+          // KEY (task)
+          {
+            title: 'Add the tests',
+            description: 'Long description...',
+            due: new Date(),
+            tags: [
+              { id: 1, name: 'tag1' },
+              { id: 2, name: 'tag2' },
+            ],
+          },
+          // VALUE (notes)
+          [
+            {
+              text: 'Note 1',
+              author: 'Melissa',
+              date: new Date(),
+              tags: [{ id: 4, name: 'tag4' }],
+            },
+            {
+              text: 'Note 2',
+              author: 'Patrick',
+              date: new Date(),
+              tags: [
+                { id: 8, name: 'tag8' },
+                { id: 9, name: 'tag9' },
+              ],
+            },
+            {
+              text: 'Note 3',
+              author: 'Melissa',
+              date: new Date(),
+              tags: [
+                { id: 3, name: 'tag3' },
+                { id: 4, name: 'tag4' },
+              ],
+            },
+          ],
+        ],
+      ];
+
+      const result = rtv.verify(new Map(entries), [
+        rtv.MAP,
+        {
+          $keys: {
+            title: rtv.STRING,
+            tags: [[{ name: rtv.STRING }]],
+          },
+          $values: [
+            [
+              {
+                text: rtv.STRING,
+                tags: [
+                  [
+                    {
+                      id: rtv.SAFE_INT,
+                    },
+                  ],
+                ],
+              },
+            ],
+          ],
+        },
+      ]);
+
+      expect(Array.from(result.mvv.entries())).to.eql([
+        // first entry
+        [
+          // KEY (task)
+          {
+            title: entries[0][0].title,
+            tags: [
+              { name: entries[0][0].tags[0].name },
+              { name: entries[0][0].tags[1].name },
+              { name: entries[0][0].tags[2].name },
+            ],
+          },
+
+          // VALUE (notes)
+          [
+            {
+              text: entries[0][1][0].text,
+              tags: [
+                { id: entries[0][1][0].tags[0].id },
+                { id: entries[0][1][0].tags[1].id },
+                { id: entries[0][1][0].tags[2].id },
+              ],
+            },
+            {
+              text: entries[0][1][1].text,
+              tags: [
+                { id: entries[0][1][1].tags[0].id },
+                { id: entries[0][1][1].tags[1].id },
+                { id: entries[0][1][1].tags[2].id },
+              ],
+            },
+          ],
+        ],
+
+        // second entry
+        [
+          // KEY (task)
+          {
+            title: entries[1][0].title,
+            tags: [
+              { name: entries[1][0].tags[0].name },
+              { name: entries[1][0].tags[1].name },
+            ],
+          },
+
+          // VALUE (notes)
+          [
+            {
+              text: entries[1][1][0].text,
+              tags: [{ id: entries[1][1][0].tags[0].id }],
+            },
+            {
+              text: entries[1][1][1].text,
+              tags: [
+                { id: entries[1][1][1].tags[0].id },
+                { id: entries[1][1][1].tags[1].id },
+              ],
+            },
+            {
+              text: entries[1][1][2].text,
+              tags: [
+                { id: entries[1][1][2].tags[0].id },
+                { id: entries[1][1][2].tags[1].id },
+              ],
+            },
+          ],
+        ],
+      ]);
+    });
+  });
 });

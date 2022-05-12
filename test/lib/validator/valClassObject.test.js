@@ -6,6 +6,7 @@ import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
+import { check as isPlainObject } from '../../../src/lib/validation/isPlainObject';
 import * as val from '../../../src/lib/validator/valClassObject';
 
 /* eslint-disable no-new-wrappers */
@@ -407,6 +408,46 @@ describe('module: lib/validator/valClassObject', function () {
           args
         );
       });
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    class TestClass {
+      constructor(props = {}) {
+        Object.entries(props).forEach(([key, value]) => {
+          this[key] = value;
+        });
+      }
+    }
+
+    it('interprets original value as plain object', () => {
+      const value = new TestClass();
+      const result = val.validate(value);
+      expect(result.mvv).not.to.be.equal(value);
+      expect(isPlainObject(result.mvv)).to.be.true;
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const prop = 'property';
+      const result = val.validate(new TestClass({ prop, foo: 1 }), undefined, {
+        $: { prop: types.STRING },
+      });
+
+      expect(result.mvv).to.eql({ prop });
     });
   });
 });

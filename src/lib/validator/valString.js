@@ -60,7 +60,7 @@ export const validate = function valString(v, q = REQUIRED, args) {
   // NOTE: this test, when the qualifier is TRUTHY, will permit an empty string regardless
   //  of any args that may not, which is the intended behavior
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   // start by ensuring the value is a string, but allow an empty string for now
@@ -124,7 +124,7 @@ export const validate = function valString(v, q = REQUIRED, args) {
   }
 
   if (valid) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

@@ -49,11 +49,11 @@ export const config = function (settings) {
  */
 export const validate = function valWeakSet(v, q = REQUIRED) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   if (isWeakSet(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

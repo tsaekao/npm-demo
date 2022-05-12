@@ -57,7 +57,7 @@ export const config = function (settings) {
  */
 export const validate = function valFloat(v, q = REQUIRED, args) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   let valid = isFloat(v);
@@ -87,7 +87,7 @@ export const validate = function valFloat(v, q = REQUIRED, args) {
   }
 
   if (valid) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

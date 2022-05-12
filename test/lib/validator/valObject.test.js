@@ -6,6 +6,7 @@ import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
+import { check as isPlainObject } from '../../../src/lib/validation/isPlainObject';
 import * as val from '../../../src/lib/validator/valObject';
 
 /* eslint-disable no-new-wrappers */
@@ -365,6 +366,43 @@ describe('module: lib/validator/valObject', function () {
           args
         );
       });
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('interprets original value as plain object', () => {
+      const value = new Object();
+      const result = val.validate(value);
+      expect(result.mvv).not.to.be.equal(value);
+      expect(isPlainObject(result.mvv)).to.be.true;
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const result = val.validate(
+        { one: { foo: 1, bar: 1 }, two: { foo: 2, bar: 2 } },
+        undefined,
+        {
+          $: {
+            one: { foo: types.SAFE_INT },
+          },
+        }
+      );
+
+      expect(result.mvv).to.eql({ one: { foo: 1 } });
     });
   });
 });

@@ -51,11 +51,11 @@ export const validate = function valJson(v, q = REQUIRED) {
   // NOTE: this test, when the qualifier is TRUTHY, will permit `undefined` since it's
   //  falsy, even though it isn't a valid JSON value; this is the intended behavior
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   if (isJson(v)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

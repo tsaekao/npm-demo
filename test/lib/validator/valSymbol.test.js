@@ -164,4 +164,9 @@ describe('module: lib/validator/valSymbol', function () {
       });
     });
   });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    vtu.testMvvVerbatimType(val);
+  });
 });

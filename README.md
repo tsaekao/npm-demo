@@ -471,7 +471,7 @@ rtv.verify(item, shape); // ok
 
 ### Custom Validations
 
-Finally, there may be occasions where a type, or even its arguments, aren't sufficient to verify the value. In that case, the typeset can be customized with a [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.custom_validator) function.
+While built-in validations are convenient, there may be occasions where a type, or even its arguments, aren't sufficient to verify the value. In that case, the typeset can be customized with a [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.custom_validator) function.
 
 > The function on its own is considered a valid typeset, and gets an _implied_ type of [ANY](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ANY), which validates _anything_, even `undefined` and `null`, regardless of the qualifier.
 
@@ -561,6 +561,174 @@ rtv.verify(item, shape); // ok
 
 > Notice how the validator must handle `null` and `undefined` values because of the [OPTIONAL](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.OPTIONAL) qualifier, and is careful to return a _truthy_ result so that the property remains _optional_.
 
+### Minimum Viable Values
+
+One of the main [goals](#purpose) of this library is to help validate API payloads at runtime, which is where the backend/frontend contract tends to get broken for various reasons.
+
+Sometimes, the payloads returned from the API are much larger than your client cares for. That's why RTV.js makes it easy to define shapes that verify only the [subset](#shapes) of properties your app really cares about.
+
+To go even further, while it verifies a given value, RTV.js also generates a _Minimum Viable Value_ (MVV) that represents the "smallest" dataset that would still pass the same validation.
+
+To put this in perspective, if you're dealing with, say, a [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) and you get a massive payload consisting of a long list of cluster objects, each further described by a very large Kubernetes cluster JSON object from which you only care to use 10 properties, you'll only write a [shape](#shapes) that describes those 10 properties. RTV.js will then generate a new object containing only those 10 properties (no matter how deeply nested they are) based on the shape you used for verification.
+
+Discarding the original value and using the [MVV](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvsuccessmvv-) instead could potentially save your app from heavy memory use depending on how many closures in your code end-up imprisoning those large objects.
+
+<details>
+<summary>Code example</summary>
+To illustrate this, let's say you had retrieved a list of tasks from an API endpoint:
+
+```javascript
+const tasks = [
+  {
+    title: 'Implement the feature',
+    description: 'A very long description...',
+    due: new Date(),
+    tags: [
+      { id: 1, name: 'tag1' },
+      { id: 2, name: 'tag2' },
+      { id: 3, name: 'tag3' },
+    ],
+    notes: [
+      {
+        text: 'Note 1',
+        author: 'Sam',
+        date: new Date(),
+        tags: [
+          { id: 4, name: 'tag4' },
+          { id: 5, name: 'tag5' },
+          { id: 6, name: 'tag6' },
+        ],
+      },
+      {
+        text: 'Note 2',
+        author: 'Susie',
+        date: new Date(),
+        tags: [
+          { id: 7, name: 'tag7' },
+          { id: 8, name: 'tag8' },
+          { id: 9, name: 'tag9' },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Add the tests',
+    description: 'Long description...',
+    due: new Date(),
+    tags: [
+      { id: 1, name: 'tag1' },
+      { id: 2, name: 'tag2' },
+    ],
+    notes: [
+      {
+        text: 'Note 1',
+        author: 'Melissa',
+        date: new Date(),
+        tags: [{ id: 4, name: 'tag4' }],
+      },
+      {
+        text: 'Note 2',
+        author: 'Patrick',
+        date: new Date(),
+        tags: [
+          { id: 8, name: 'tag8' },
+          { id: 9, name: 'tag9' },
+        ],
+      },
+      {
+        text: 'Note 3',
+        author: 'Melissa',
+        date: new Date(),
+        tags: [
+          { id: 3, name: 'tag3' },
+          { id: 4, name: 'tag4' },
+        ],
+      },
+    ],
+  },
+];
+```
+
+You might verify such a payload like this, because you only care about `title`, `tags` (specifically, tag `name`s), and `notes` for the tasks, and only `text` and `tags` (specifically, tag `id`s):
+
+```javascript
+const result = rtv.verify(tasks, [[{
+  title: rtv.STRING,
+  tags: [[{ name: rtv.STRING }]],
+  notes: [[{
+    text: rtv.STRING,
+    tags: [
+      [
+        {
+          id: rtv.SAFE_INT,
+        },
+      ],
+    ],
+  }]],
+}]]);
+```
+
+If the validation is successful, the returned [RtvSuccess](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvrefrtvsuccess) object would have the MVV stored in its `mvv` property, and it would look like this:
+
+```javascript
+[
+  {
+    title: 'Implement the feature',
+    tags: [
+      { name: 'tag1' },
+      { name: 'tag2' },
+      { name: 'tag3' },
+    ],
+    notes: [
+      {
+        text: 'Note 1',
+        tags: [
+          { id: 4 },
+          { id: 5 },
+          { id: 6 },
+        ],
+      },
+      {
+        text: 'Note 2',
+        tags: [
+          { id: 7 },
+          { id: 8 },
+          { id: 9 },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Add the tests',
+    tags: [
+      { name: 'tag1' },
+      { name: 'tag2' },
+    ],
+    notes: [
+      {
+        text: 'Note 1',
+        tags: [{ id: 4 }],
+      },
+      {
+        text: 'Note 2',
+        tags: [
+          { id: 8 },
+          { id: 9 },
+        ],
+      },
+      {
+        text: 'Note 3',
+        tags: [
+          { id: 3 },
+          { id: 4 },
+        ],
+      },
+    ],
+  },
+]
+```
+</details>
+
 ## Configuration
 
 RTV.js provides a [configuration](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.config) interface which allows [checks](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.check) (`rtv.check(value, typeset)`) and [verifications](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.verify) (`rtv.verify(value, typeset)`) to be globally enabled or disabled:
@@ -601,7 +769,7 @@ const item = {
   priority: 1,
   notes: [
     {
-      text: 'Ingredien$: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
+      text: 'Ingredients: Cranberries, apples, cinnamon, walnuts, raisins, maple syrup.',
       updated: new Date('09/20/2018')
     },
     {

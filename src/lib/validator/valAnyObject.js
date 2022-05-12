@@ -56,7 +56,7 @@ export const config = function (settings) {
  */
 export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v }); // `v` is a falsy value which is the MVV also
   }
 
   // validate the shape, if any
@@ -85,6 +85,7 @@ export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
     );
   }
 
+  const mvv = {}; // ANY object is not necessarily a plain object, but we interpret it that way
   let err; // @type {(RtvError|undefined)}
 
   // only consider enumerable, own-properties of the shape
@@ -101,7 +102,9 @@ export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
       parentKey: prop,
     });
 
-    if (!result.valid) {
+    if (result.valid) {
+      mvv[prop] = result.mvv; // use downstream MVV from check, not prop value
+    } else {
       err = new RtvError(
         v,
         shape,
@@ -114,5 +117,5 @@ export const validate = function valAnyObject(v, q = REQUIRED, args, context) {
     return !err; // break on first error
   });
 
-  return err || new RtvSuccess();
+  return err || new RtvSuccess({ mvv });
 };

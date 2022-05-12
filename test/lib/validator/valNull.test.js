@@ -108,4 +108,9 @@ describe('module: lib/validator/valNull', function () {
       });
     });
   });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    vtu.testMvvVerbatimType(val);
+  });
 });

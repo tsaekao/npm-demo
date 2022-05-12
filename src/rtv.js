@@ -275,7 +275,7 @@ export const check = function (value, typeset, options) {
     return impl.check(value, typeset, { options });
   }
 
-  return new RtvSuccess();
+  return new RtvSuccess({});
 };
 
 /**
@@ -310,7 +310,7 @@ export const verify = function (value, typeset, options) {
   }
 
   // for consistency with check()'s behavior when disabled
-  return new RtvSuccess();
+  return new RtvSuccess({});
 };
 
 ////////////////////////////////////////////////////////////////////////////////

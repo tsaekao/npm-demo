@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 import { expect } from 'chai';
-
 import { types } from '../../src/lib/types';
 import { qualifiers, DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
@@ -639,4 +638,61 @@ export const expectValidatorError = function (
   }
 
   return result;
+};
+
+/**
+ * Tests for a validator that should use the original value verbatim for its Minimum
+ *  Viable Value (MVV) result.
+ * @param {rtvref.validator} validator Validator module to test.
+ */
+export const testMvvVerbatimType = function (validator) {
+  // these specific types result in interpreted MVVs instead of verbatim the original value
+  const interpretedTypes = [
+    types.ARRAY,
+    types.PLAIN_OBJECT,
+    types.OBJECT,
+    types.CLASS_OBJECT,
+    types.HASH_MAP,
+    types.ANY_OBJECT,
+    types.MAP,
+    types.SET,
+  ];
+
+  if (interpretedTypes.includes(validator.type)) {
+    throw new Error(
+      `validator.type=${util.print(
+        validator.type
+      )} is interpreted, not verbatim; cannot be tested with testMvvVerbatimType()`
+    );
+  }
+
+  it('uses original value', () => {
+    let validValues;
+    if (validator.type === types.NULL) {
+      validValues = [null];
+    } else if (validator.type === types.JSON) {
+      validValues = getJsonValues();
+    } else {
+      validValues = getValidValues(validator.type);
+    }
+
+    validValues.forEach((value, idx) => {
+      const result = validator.validate(value, `validValues[${idx}]`);
+      expect(result.mvv).to.be.equal(value);
+    });
+  });
+
+  it('interprets falsy values verbatim', () => {
+    getFalsyValues().forEach((falsyValue) => {
+      const result = validator.validate(falsyValue, qualifiers.TRUTHY);
+      if (isNaN(falsyValue)) {
+        expect(isNaN(result.mvv), `${util.print(falsyValue)} verbatim`).to.be
+          .true;
+      } else {
+        expect(result.mvv, `${util.print(falsyValue)} verbatim`).to.equal(
+          falsyValue
+        );
+      }
+    });
+  });
 };

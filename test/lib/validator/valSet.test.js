@@ -2,9 +2,10 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
-import { print } from '../../../src/lib/util';
+import { check as isSet } from '../../../src/lib/validation/isSet';
 import * as val from '../../../src/lib/validator/valSet';
 
 describe('module: lib/validator/valSet', function () {
@@ -246,6 +247,47 @@ describe('module: lib/validator/valSet', function () {
         [qualifiers.REQUIRED, types.ANY],
         validator,
         { originalValue: value, parent: value, parentKey: undefined },
+      ]);
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('interprets original value as Set', () => {
+      const value = new Set([1, 2]);
+      const result = val.validate(value);
+      expect(result.mvv).not.to.be.equal(value);
+      expect(isSet(result.mvv)).to.be.true;
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
+      });
+    });
+
+    it('reduces the original value', () => {
+      const set = new Set([
+        { value: 1, foo: 1 },
+        { value: 2, foo: 2 },
+      ]);
+
+      const result = val.validate(set, undefined, {
+        $values: {
+          value: types.SAFE_INT,
+        },
+      });
+
+      expect(Array.from(result.mvv.values())).to.eql([
+        { value: 1 },
+        { value: 2 },
       ]);
     });
   });

@@ -57,7 +57,7 @@ export const config = function (settings) {
  */
 export const validate = function valFinite(v, q = REQUIRED, args) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   let valid = isFinite(v);
@@ -90,7 +90,7 @@ export const validate = function valFinite(v, q = REQUIRED, args) {
   }
 
   if (valid) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v });
   }
 
   return new RtvError(

@@ -299,8 +299,9 @@ Members herein are _indirectly_ accessed and/or exposed through the
         * [.rootCause](#rtvref.RtvError+rootCause) : <code>Error</code> \| <code>undefined</code>
         * [.toString()](#rtvref.RtvError+toString) ⇒ <code>string</code>
     * [.RtvSuccess](#rtvref.RtvSuccess)
-        * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
+        * [new RtvSuccess(params)](#new_rtvref.RtvSuccess_new)
         * [.valid](#rtvref.RtvSuccess+valid) : <code>boolean</code>
+        * [.mvv](#rtvref.RtvSuccess+mvv) : <code>\*</code>
         * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
     * [.impl](#rtvref.impl) : <code>object</code>
         * [.getQualifier(typeset)](#rtvref.impl.getQualifier) ⇒ <code>string</code>
@@ -833,18 +834,25 @@ A string representation of this instance.
 **Kind**: static class of [<code>rtvref</code>](#rtvref)  
 
 * [.RtvSuccess](#rtvref.RtvSuccess)
-    * [new RtvSuccess()](#new_rtvref.RtvSuccess_new)
+    * [new RtvSuccess(params)](#new_rtvref.RtvSuccess_new)
     * [.valid](#rtvref.RtvSuccess+valid) : <code>boolean</code>
+    * [.mvv](#rtvref.RtvSuccess+mvv) : <code>\*</code>
     * [.toString()](#rtvref.RtvSuccess+toString) ⇒ <code>string</code>
 
 <a name="new_rtvref.RtvSuccess_new"></a>
 
-### new RtvSuccess()
+### new RtvSuccess(params)
 Runtime Verification Success Indicator
 
 Describes a successful runtime verification of a value against a given
  [shape](#rtvref.types.shape_descriptor) or [typeset](#rtvref.types.typeset)
  (note that a shape is a type of typeset).
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| params | <code>Object</code> |  |
+| params.mvv | <code>\*</code> | Minimum Viable Value representing the smallest version of the  original value checked that satisfies the original Typeset against which it was  checked. See the [mvv](#rtvref.RtvSuccess+mvv) property for more information. |
 
 <a name="rtvref.RtvSuccess+valid"></a>
 
@@ -854,6 +862,51 @@ Flag indicating the validation succeeded. Always `true`.
 **Kind**: instance property of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
 **Read only**: true  
 **See**: [valid](#rtvref.RtvError+valid)  
+<a name="rtvref.RtvSuccess+mvv"></a>
+
+### rtvSuccess.mvv : <code>\*</code>
+Minimum Viable Value (MVV). If the original value checked is one that can be deeply checked
+ (see list below of supported types), this is essentially a __representation__ (stressing
+ it is __not__ necessarily a clone) of the original value, __filtered__  by removing any
+ parts of it that were not specifically checked (i.e. extra properties in an object that
+ were not included in a shape, however deep it was nested, even in the key of a `Map`).
+ Otherwise, it's a reference to the original value.
+
+Validating this value (instead of the original value) against the same Typeset would
+ yield the same successful result.
+
+This property is most useful when checking a plain array or object (e.g. JSON API response)
+ against an expected shape when the shape you care about is much smaller than the payload
+ itself. Once the the check is complete, keep the minimum viable value instead of the larger
+ original payload to reduce the overall memory footprint of your code.
+
+The following types are deeply checked and so will produce an MVV, but note the stated
+ exceptions to types that are not plain objects (`{}`) or arrays (`[]`):
+
+- [ARRAY](#rtvref.types.ARRAY): Note that none of the
+  [ARRAY_args](#rtvref.types.ARRAY_args) except for the typeset (`$`) are used,
+  which means items won't be removed if the array is longer than a stated `length`
+  or `max` length.
+- [PLAIN_OBJECT](#rtvref.types.PLAIN_OBJECT)
+- [OBJECT](#rtvref.types.OBJECT): Interpreted as an object (`{}`).
+- [CLASS_OBJECT](#rtvref.types.CLASS_OBJECT): Interpreted as an object (`{}`).
+- [HASH_MAP](#rtvref.types.HASH_MAP): Interpreted as an object (`{}`).
+- [ANY_OBJECT](#rtvref.types.ANY_OBJECT): Interpreted as an object (`{}`) because
+  it's essentially treated as one when it's being checked.
+- [MAP](#rtvref.types.MAP): Interpreted as the native `Map` type.
+- [SET](#rtvref.types.SET): Interpreted as the native `Set` type.
+
+All other types will be referenced, not interpreted.
+
+__NOTE:__ The MVV will based on the [Typeset](#rtvref.types.typeset) that validates
+ the original value. If you use an Array Typeset with multiple possibilities for an
+ object value to check (e.g. `[OBJECT, { $: { foo: NUMBER } }, OBJECT, { $: { bar: STRING } }]`),
+ the resulting MVV will use the matching sub-Typeset. Checking `{ foo: 1, bar: 'a' }` would
+ result in `{ foo: 1 }` as the MVV because `OBJECT, { $: { foo: NUMBER } }` is the first
+ sub-Typeset in the list, and so the first match.
+
+**Kind**: instance property of [<code>RtvSuccess</code>](#rtvref.RtvSuccess)  
+**Read only**: true  
 <a name="rtvref.RtvSuccess+toString"></a>
 
 ### rtvSuccess.toString() ⇒ <code>string</code>
@@ -5126,6 +5179,7 @@ For example, a call to `rtv.verify({foo: 1}, {foo: validator})` would provide th
 | originalValue | <code>\*</code> | The original/first value given to  [rtv.check()](#rtv.check) or [rtv.verify()](#rtv.verify). |
 | parent | <code>Object</code> \| <code>Array</code> \| <code>Map</code> \| <code>Set</code> \| <code>undefined</code> | Reference to the immediate  parent of the property or element being validated.  For example, if we have this object:  <pre><code>const foods = {    fruits: ['apple', 'orange', 'banana'],    vegetables: ['celery', 'cucumber', 'kale']  }  </code></pre>  and we validate it with the following typeset:  <pre><code>[rtv.HASH_MAP, {    keyExp: '\\w+',    $values: [[rtv.STRING, (value, match, typeset, context) => {      // called for each element of both arrays      value; // 'apple', 'orange', ..., 'cucumber', 'kale'      context.originalValue; // `foods`      context.parent; // first `fruits`, then `vegetables`    }]]  }]  </code></pre>  we see (in the comments) how `originalValue` and `parent` differ. `parent`  gives more immediate context than `originalValue` does since it changes as  the validation digs into the object hierarchy.  `parent` will be `undefined` if the custom validator is placed at the top  top of the typeset since there is no parent to reference in that case.  For example:  <pre><code>[    rtv.HASH_MAP,    {      keyExp: '\\w+',      $values: [[rtv.STRING]]    },    (value, match, typeset, context) => {      // called once for the hash map itself      value; // `foods`      context.originalValue; // `foods`      context.parent; // `undefined`    }  ]  </code></pre> |
 | parentKey | <code>\*</code> | Reference to the key/index in the `parent` that is  being validated. The associated value is provided as the first parameter  to the [custom validator](#rtvref.types.custom_validator).  `parentKey` differs depending on the type of `parent`:  - `Set`: `undefined` since Sets do not have indexes. Use the `value`    parameter provided to the    [custom validator](#rtvref.types.custom_validator) as the key into the    `parent` in this case.  - `Map`: When validating __keys__, always `undefined`. Use the `value` parameter    provided to the [custom validator](#rtvref.types.custom_validator) to    know which key is being validated. When validating __values__, `parentKey`    will be any value that is a valid key in a `Map`.  - `Object` (i.e. [HASH_MAP](#rtvref.types.HASH_MAP)): `string`, the key name.  - `Array`: `number`, the element's index.  - `undefined`: `undefined`. |
+| mvv | <code>\*</code> | Minimum Viable Value. If the `originalValue` is one that can be deeply  checked, this is essentially a deep clone of the `originalValue`, __filtered__  by removing  any parts of it that are not specifically checked (i.e. extra properties in an object that  are not included in a shape, however deep it is nested, even in the key of a `Map`).  Otherwise, it's a reference to the `originalValue`.  Validating this value (instead of the `originalValue`) against the same Typeset would yield   the same successful result.  Since the check process is complex and recursive, this value __may be incomplete__ depending   on when it's accessed (e.g. in a [custom validator](#rtvref.types.custom_validator)),   other than when accessed on the [RtvSuccess](#rtvref.RtvSuccess) object resulting   from a successful check.  See [RtvSuccess#mvv](#rtvref.RtvSuccess+mvv) for more information. |
 | [options] | [<code>type\_validator\_context\_options</code>](#rtvref.validator.type_validator_context_options) | Configuration options. |
 
 <a name="rtvref.validator.validator_config_settings"></a>

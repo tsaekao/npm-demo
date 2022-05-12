@@ -91,4 +91,9 @@ describe('module: lib/validator/valJson', function () {
       });
     });
   });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    vtu.testMvvVerbatimType(val);
+  });
 });

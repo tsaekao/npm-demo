@@ -3,10 +3,26 @@ import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as vtu from '../validationTestUtil';
+import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valAny';
 import * as isAnyMod from '../../../src/lib/validation/isAny';
+
+// returns map of valid type to array of sample values
+const getValidValues = () => {
+  const validValues = vtu.getValidValues(); // @type {Object}
+  const validTypes = Object.keys(validValues); // @type {Array}
+
+  const values = {};
+  _.forEach(validTypes, function (type) {
+    values[type] = validValues[type];
+  });
+
+  values.RESTRICTED_VALUES = vtu.getRestrictedValues(); // undefined, null, etc.
+
+  return values;
+};
 
 describe('module: lib/validator/valAny', function () {
   describe('validator', function () {
@@ -20,14 +36,7 @@ describe('module: lib/validator/valAny', function () {
     });
 
     it('should validate any value including undefined and null', function () {
-      const validValues = vtu.getValidValues(); // @type {Object}
-      const validTypes = Object.keys(validValues); // @type {Array}
-
-      let values = vtu.getRestrictedValues(); // undefined, null, etc.
-      _.forEach(validTypes, function (type) {
-        values = values.concat(validValues[type]);
-      });
-
+      const values = Object.values(getValidValues()).flat();
       expect(vtu.testValues(val.type, val.validate, values).failures).to.eql(
         []
       );
@@ -116,6 +125,39 @@ describe('module: lib/validator/valAny', function () {
 
       it('TRUTHY', function () {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
+      });
+    });
+  });
+
+  // Minimum Viable Value
+  describe('mvv', () => {
+    it('uses original value', () => {
+      const validValues = getValidValues();
+      Object.entries(validValues).forEach(([type, values]) => {
+        values.forEach((value, idx) => {
+          const result = val.validate(value);
+          // NOTE: isNaN(Symbol) fails because isNaN() tries to convert the Symbol to a number
+          //  and can't so throws an error
+          if (typeof value === 'number' && isNaN(value)) {
+            expect(isNaN(result.mvv), `${type}/${idx} verbatim (NaN)`).to.be
+              .true;
+          } else {
+            expect(result.mvv, `${type}/${idx} verbatim`).to.be.equal(value);
+          }
+        });
+      });
+    });
+
+    it('interprets falsy values verbatim', () => {
+      vtu.getFalsyValues().forEach((falsyValue) => {
+        const result = val.validate(falsyValue, qualifiers.TRUTHY);
+        if (isNaN(falsyValue)) {
+          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+        } else {
+          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
+            falsyValue
+          );
+        }
       });
     });
   });

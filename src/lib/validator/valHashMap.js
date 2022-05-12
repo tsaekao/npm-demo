@@ -58,9 +58,10 @@ export const config = function (settings) {
  */
 export const validate = function valHashMap(v, q = REQUIRED, args, context) {
   if (valuePermitted(v, q)) {
-    return new RtvSuccess();
+    return new RtvSuccess({ mvv: v }); // `v` is a falsy value which is the MVV also
   }
 
+  const mvv = {}; // interpreted as plain object
   let valid = isHashMap(v);
   let result; // @type {(rtvref.RtvSuccess|rtvref.RtvError)}
 
@@ -125,7 +126,9 @@ export const validate = function valHashMap(v, q = REQUIRED, args, context) {
               valid = result.valid;
             }
 
-            if (!result.valid) {
+            if (result.valid) {
+              mvv[key] = result.mvv; // use downstream MVV from check, not prop value
+            } else {
               // create a new error from the original, but still with the KEY added to the path
               result = new RtvError(
                 v,
@@ -145,7 +148,7 @@ export const validate = function valHashMap(v, q = REQUIRED, args, context) {
 
   if (!result) {
     if (valid) {
-      result = new RtvSuccess();
+      result = new RtvSuccess({ mvv });
     } else {
       result = new RtvError(
         v,
@@ -154,6 +157,11 @@ export const validate = function valHashMap(v, q = REQUIRED, args, context) {
         impl.toTypeset(type, q, args, true)
       );
     }
+  } else if (result.valid) {
+    // `result` will be the RtvSuccess from the last property value checked; create
+    //  a new one with the appropriate MVV interpreted from what the validator checked
+    //  as a whole
+    result = new RtvSuccess({ mvv });
   }
 
   return result;

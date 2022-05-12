@@ -170,18 +170,18 @@ describe('module: rtv', function () {
 
       it('should not check when disabled', function () {
         rtv.config.enabled = false;
-        expect(rtv.check('foobar', rtv.BOOLEAN)).to.be.an.instanceof(
-          RtvSuccess
-        );
+        const result = rtv.check('foobar', rtv.BOOLEAN);
+        expect(result).to.be.an.instanceof(RtvSuccess);
+        expect(result.mvv).to.be.undefined;
         expect(implCheckSpy.called).to.equal(false);
       });
 
       it('should not verify when disabled', function () {
         rtvVerifySpy.restore(); // disable spy
         rtv.config.enabled = false;
-        expect(rtv.verify('foobar', rtv.BOOLEAN)).to.be.an.instanceof(
-          RtvSuccess
-        );
+        const result = rtv.verify('foobar', rtv.BOOLEAN);
+        expect(result).to.be.an.instanceof(RtvSuccess);
+        expect(result.mvv).to.be.undefined;
         expect(implCheckSpy.called).to.equal(false);
       });
     });

@@ -9,6 +9,11 @@ Date format is YYYY-MM-DD.
 
 ## UNRELEASED
 
+### Added
+
+-   New `mvv` (Minimum Viable Value) property on the `RtvSuccess` object returned on successful validations.
+    -   This property contains the "smallest" value that would pass the same validation. See the new section in the README by the same title for more details.
+
 ### Changed
 
 -   Fixed: Using the `exactShapes` option while _not_ specifying a shape in the `$` Shape arguments would require the object being checked to be empty.
