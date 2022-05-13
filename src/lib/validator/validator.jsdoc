@@ -182,26 +182,9 @@
  *  - `Array`: `number`, the element's index.
  *  - `undefined`: `undefined`.
  *
- * @property {*} mvv Minimum Viable Value. If the `originalValue` is one that can be deeply
- *  checked, this is essentially a deep clone of the `originalValue`, __filtered__  by removing
- *  any parts of it that are not specifically checked (i.e. extra properties in an object that
- *  are not included in a shape, however deep it is nested, even in the key of a `Map`).
- *  Otherwise, it's a reference to the `originalValue`.
- *
- *  Validating this value (instead of the `originalValue`) against the same Typeset would yield
- *   the same successful result.
- *
- *  Since the check process is complex and recursive, this value __may be incomplete__ depending
- *   on when it's accessed (e.g. in a {@link rtvref.types.custom_validator custom validator}),
- *   other than when accessed on the {@link rtvref.RtvSuccess RtvSuccess} object resulting
- *   from a successful check.
- *
- *  See {@link rtvref.RtvSuccess#mvv RtvSuccess#mvv} for more information.
- *
  * @property {rtvref.validator.type_validator_context_options} [options]
  *  Configuration options.
  */
-// DEBUG REMOVE: mvv
 
 // TODO[plugins]: Plugins should also be given access to the types and qualifiers
 //  __modules__ which they don't have access to via impl.

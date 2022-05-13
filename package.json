@@ -28,7 +28,7 @@
     "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "fmt": "prettier --write \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
     "fmt:check": "prettier --check \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
-    "lint": "eslint ./*.js \"src/**/*.js\" \"test/**/*.js\" \"tools/**/*.js\"",
+    "lint": "eslint ./*.js \"src/**/*.{js,jsdoc}\" \"test/**/*.js\" \"tools/**/*.js\"",
     "report:coverage": "nyc report --reporter=text-lcov > ./coverage/coverage.lcov && codecov",
     "test:ci": "npm run test && npm run report:coverage",
     "test:unit:run": "BABEL_ENV=test NODE_ENV=production mocha -c -r mocha-setup.js",
