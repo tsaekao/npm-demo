@@ -573,8 +573,6 @@ To put this in perspective, if you're dealing with, say, a [Kubernetes API](http
 
 Discarding the original value and using the [MVV](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvsuccessmvv-) instead could potentially save your app from heavy memory use depending on how many closures in your code end-up imprisoning those large objects.
 
-<details>
-<summary>Code example</summary>
 To illustrate this, let's say you had retrieved a list of tasks from an API endpoint:
 
 ```javascript
@@ -727,7 +725,6 @@ If the validation is successful, the returned [RtvSuccess](https://gitlab.com/st
   },
 ]
 ```
-</details>
 
 ## Configuration
 
