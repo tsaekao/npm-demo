@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## UNRELEASED
+
+Release date: 2023-01-02
+
+### 🚨 BREAKING
+
+- Dropped support of Node 12. Now requires Node `>=14.18`.
+
 ## 4.1.0
 
 Release date: 2022-05-12

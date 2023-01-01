@@ -7,7 +7,7 @@ Thank you for considering a contribution to RTV.js!
 Local development is straightforward. Use the following versions of Node.js and npm:
 
 *   Node: Latest __Active__ LTS (CI will test with latest __Maintenance__ LTS, however)
-*   npm: 7.x
+*   npm: See package.json `engines` requirement
 
 Install all project dependencies:
 
