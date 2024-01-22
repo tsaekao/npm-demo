@@ -1,24 +1,23 @@
-import { expect } from 'chai';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isNull';
 
-describe('module: lib/validation/isNull', function () {
-  it('#type', function () {
-    expect(val.type).to.equal(types.NULL);
+describe('module: lib/validation/isNull', () => {
+  it('#type', () => {
+    expect(val.type).toBe(types.NULL);
   });
 
-  describe('#default', function () {
-    it('valid values', function () {
-      expect(val.check(null)).to.be.true;
+  describe('#default', () => {
+    it('valid values', () => {
+      expect(val.check(null)).toBe(true);
     });
 
-    it('other types/values', function () {
-      expect(val.check(undefined)).to.be.false;
+    it('other types/values', () => {
+      expect(val.check(undefined)).toBe(false);
 
       // does not test for undefined/null
-      expect(vtu.testOtherValues(val.type, val.check)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check)).toEqual([]);
     });
   });
 });

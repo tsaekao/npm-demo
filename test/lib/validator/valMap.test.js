@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
@@ -8,29 +6,29 @@ import { qualifiers } from '../../../src/lib/qualifiers';
 import { check as isMap } from '../../../src/lib/validation/isMap';
 import * as val from '../../../src/lib/validator/valMap';
 
-describe('module: lib/validator/valMap', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valMap', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.MAP);
+    it('#type', () => {
+      expect(val.type).toBe(types.MAP);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, new Map());
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
+    it('other types/values', () => {
+      expect(vtu.testOtherValues(val.type, val.validate)).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+  describe('qualifiers', () => {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
@@ -48,7 +46,7 @@ describe('module: lib/validator/valMap', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
@@ -66,7 +64,7 @@ describe('module: lib/validator/valMap', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
@@ -84,7 +82,7 @@ describe('module: lib/validator/valMap', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -103,31 +101,31 @@ describe('module: lib/validator/valMap', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
-    it('checks for an exact length', function () {
+  describe('arguments', () => {
+    it('checks for an exact length', () => {
       const map = new Map([
         [1, 'one'],
         [2, 'two'],
@@ -155,7 +153,7 @@ describe('module: lib/validator/valMap', function () {
       });
     });
 
-    it('checks for keys with specified typeset', function () {
+    it('checks for keys with specified typeset', () => {
       const map = new Map([
         [1, 'one'],
         [2, 'two'],
@@ -180,7 +178,7 @@ describe('module: lib/validator/valMap', function () {
       });
     });
 
-    it('checks for string keys that match a pattern', function () {
+    it('checks for string keys that match a pattern', () => {
       let map = new Map([
         [1, 'one'],
         [2, 'two'],
@@ -245,7 +243,7 @@ describe('module: lib/validator/valMap', function () {
       });
     });
 
-    it('checks for values with specified typeset', function () {
+    it('checks for values with specified typeset', () => {
       let map = new Map([
         [1, 'one'],
         [2, 'two'],
@@ -281,7 +279,7 @@ describe('module: lib/validator/valMap', function () {
       });
     });
 
-    it('checks for keys and values with specified typeset', function () {
+    it('checks for keys and values with specified typeset', () => {
       const map = new Map([
         [1, new Map([['a', true]])],
         [2, new Map([['b', false]])],
@@ -352,14 +350,14 @@ describe('module: lib/validator/valMap', function () {
     });
   });
 
-  describe('context', function () {
-    it('should set parent to Map and parentKey to undefined for keys', function () {
-      const validator = sinon.spy();
+  describe('context', () => {
+    it('should set parent to Map and parentKey to undefined for keys', () => {
+      const validator = jest.fn();
       const value = new Map([['key', 'bar']]);
       val.validate(value, undefined, { $keys: validator });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'key',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -367,13 +365,13 @@ describe('module: lib/validator/valMap', function () {
       ]);
     });
 
-    it('should set parent to Map and parentKey to key for values', function () {
-      const validator = sinon.spy();
+    it('should set parent to Map and parentKey to key for values', () => {
+      const validator = jest.fn();
       const value = new Map([['key', 'bar']]);
       val.validate(value, undefined, { $values: validator });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -387,19 +385,19 @@ describe('module: lib/validator/valMap', function () {
     it('interprets original value as Map', () => {
       const value = new Map([['key', 'value']]);
       const result = val.validate(value);
-      expect(result.mvv).not.to.be.equal(value);
-      expect(isMap(result.mvv)).to.be.true;
+      expect(result.mvv).not.toBe(value);
+      expect(isMap(result.mvv)).toBe(true);
     });
 
     it('interprets falsy values verbatim', () => {
       vtu.getFalsyValues().forEach((falsyValue) => {
         const result = val.validate(falsyValue, qualifiers.TRUTHY);
         if (isNaN(falsyValue)) {
-          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+          // ${print(falsyValue)} verbatim
+          expect(isNaN(result.mvv)).toBe(true);
         } else {
-          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
-            falsyValue
-          );
+          // ${print(falsyValue)} verbatim
+          expect(result.mvv).toBe(falsyValue);
         }
       });
     });
@@ -425,7 +423,7 @@ describe('module: lib/validator/valMap', function () {
         },
       });
 
-      expect(Array.from(result.mvv.entries())).to.eql([
+      expect(Array.from(result.mvv.entries())).toEqual([
         [{ key: 1 }, { value: 1 }],
         [{ key: 2 }, { value: 2 }],
       ]);

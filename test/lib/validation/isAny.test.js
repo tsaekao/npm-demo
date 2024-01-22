@@ -1,17 +1,17 @@
-import { expect } from 'chai';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isAny';
 
-describe('module: lib/validation/isAny', function () {
-  it('#type', function () {
-    expect(val.type).to.equal(types.ANY);
+describe('module: lib/validation/isAny', () => {
+  it('#type', () => {
+    expect(val.type).toBe(types.ANY);
   });
 
-  describe('#default', function () {
-    it('should validate any value including undefined and null', function () {
+  describe('#default', () => {
+    it('should validate any value including undefined and null', () => {
       const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
 
@@ -20,12 +20,12 @@ describe('module: lib/validation/isAny', function () {
         values = values.concat(validValues[type]);
       });
 
-      expect(vtu.testValues(val.type, val.check, values).failures).to.eql([]);
+      expect(vtu.testValues(val.type, val.check, values).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
+    it('other types/values', () => {
       // for ANY, _all_ other values should be _valid_ also
-      expect(vtu.testOtherValues(val.type, val.check, true)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.check, true)).toEqual([]);
     });
   });
 });

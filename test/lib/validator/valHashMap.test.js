@@ -1,7 +1,6 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
@@ -11,22 +10,22 @@ import * as val from '../../../src/lib/validator/valHashMap';
 
 /* eslint-disable no-new-wrappers */
 
-describe('module: lib/validator/valHashMap', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valHashMap', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.HASH_MAP);
+    it('#type', () => {
+      expect(val.type).toBe(types.HASH_MAP);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, { foo: 'bar' });
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
+    it('other types/values', () => {
       const validValues = vtu.getValidValues(); // @type {Object}
       const validTypes = Object.keys(validValues); // @type {Array}
       const overlaps = [
@@ -56,13 +55,13 @@ describe('module: lib/validator/valHashMap', function () {
       // nothing should pass
       expect(
         vtu.testValues(val.type, val.validate, invalidValues).passes
-      ).to.eql([]);
+      ).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+  describe('qualifiers', () => {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
@@ -80,7 +79,7 @@ describe('module: lib/validator/valHashMap', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
@@ -98,7 +97,7 @@ describe('module: lib/validator/valHashMap', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
@@ -116,7 +115,7 @@ describe('module: lib/validator/valHashMap', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -135,33 +134,33 @@ describe('module: lib/validator/valHashMap', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
+  describe('arguments', () => {
     let map;
 
-    beforeEach(function () {
+    beforeEach(() => {
       map = {
         1: 'one',
         2: 'two',
@@ -169,7 +168,7 @@ describe('module: lib/validator/valHashMap', function () {
       };
     });
 
-    it('checks for an exact length', function () {
+    it('checks for an exact length', () => {
       vtu.expectValidatorSuccess(val, {}, undefined, { length: 0 });
       vtu.expectValidatorSuccess(val, map, undefined, { length: 3 });
 
@@ -191,7 +190,7 @@ describe('module: lib/validator/valHashMap', function () {
       });
     });
 
-    it('checks for string keys that match a pattern', function () {
+    it('checks for string keys that match a pattern', () => {
       map = { key1: 1, key2: 2 };
 
       vtu.expectValidatorSuccess(val, map, undefined, {
@@ -224,7 +223,7 @@ describe('module: lib/validator/valHashMap', function () {
       });
     });
 
-    it('checks for values with specified typeset', function () {
+    it('checks for values with specified typeset', () => {
       vtu.expectValidatorSuccess(val, map, undefined, {
         $values: types.STRING,
       });
@@ -250,7 +249,7 @@ describe('module: lib/validator/valHashMap', function () {
       });
     });
 
-    it('checks for keys and values with specified typeset', function () {
+    it('checks for keys and values with specified typeset', () => {
       map[1] = { a: true };
       map[2] = { b: false };
       map[3] = { c: true };
@@ -284,7 +283,7 @@ describe('module: lib/validator/valHashMap', function () {
       });
     });
 
-    it('recurses into nested hash maps when deep=true', function () {
+    it('recurses into nested hash maps when deep=true', () => {
       map[0] = {
         4: 'four',
         5: 'five',
@@ -307,7 +306,7 @@ describe('module: lib/validator/valHashMap', function () {
       vtu.expectValidatorSuccess(val, map, undefined, args);
     });
 
-    it('only recurses into nested hash maps when deep=true', function () {
+    it('only recurses into nested hash maps when deep=true', () => {
       map[0] = [4, 5, 6];
       const args = {
         deep: true,
@@ -344,16 +343,16 @@ describe('module: lib/validator/valHashMap', function () {
     });
   });
 
-  describe('context', function () {
-    it('should set parent to object and parentKey to property', function () {
-      const validator = sinon.spy();
+  describe('context', () => {
+    it('should set parent to object and parentKey to property', () => {
+      const validator = jest.fn();
       const value = {
         foo: 'bar',
       };
       val.validate(value, undefined, { $values: validator });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -367,19 +366,19 @@ describe('module: lib/validator/valHashMap', function () {
     it('interprets original value as plain object', () => {
       const value = new Object();
       const result = val.validate(value);
-      expect(result.mvv).not.to.be.equal(value);
-      expect(isPlainObject(result.mvv)).to.be.true;
+      expect(result.mvv).not.toBe(value);
+      expect(isPlainObject(result.mvv)).toBe(true);
     });
 
     it('interprets falsy values verbatim', () => {
       vtu.getFalsyValues().forEach((falsyValue) => {
         const result = val.validate(falsyValue, qualifiers.TRUTHY);
         if (isNaN(falsyValue)) {
-          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+          // ${print(falsyValue)} verbatim
+          expect(isNaN(result.mvv)).toBe(true);
         } else {
-          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
-            falsyValue
-          );
+          // ${print(falsyValue)} verbatim
+          expect(result.mvv).toBe(falsyValue);
         }
       });
     });
@@ -393,7 +392,7 @@ describe('module: lib/validator/valHashMap', function () {
         }
       );
 
-      expect(result.mvv).to.eql({ one: { foo: 1 }, two: { foo: 2 } });
+      expect(result.mvv).toEqual({ one: { foo: 1 }, two: { foo: 2 } });
     });
   });
 });

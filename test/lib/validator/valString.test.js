@@ -1,33 +1,33 @@
-import { expect } from 'chai';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valString';
 
-describe('module: lib/validator/valString', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valString', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.STRING);
+    it('#type', () => {
+      expect(val.type).toBe(types.STRING);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, 'hello');
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
+    it('other types/values', () => {
+      expect(vtu.testOtherValues(val.type, val.validate)).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    it('allows empty strings if not REQUIRED', function () {
+  describe('qualifiers', () => {
+    it('allows empty strings if not REQUIRED', () => {
       vtu.expectValidatorError(val, ''); // defaults to REQUIRED
 
       _.forEach(qualifiers, function (qualifier) {
@@ -40,8 +40,8 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         // NOTE: empty string is restricted by REQUIRED
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
@@ -60,7 +60,7 @@ describe('module: lib/validator/valString', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu
           .getRestrictedValues(qualifiers.EXPECTED)
           .filter((v) => v !== '');
@@ -81,7 +81,7 @@ describe('module: lib/validator/valString', function () {
         vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu
           .getRestrictedValues(qualifiers.OPTIONAL)
           .filter((v) => v !== '');
@@ -102,7 +102,7 @@ describe('module: lib/validator/valString', function () {
         vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -122,36 +122,36 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
-    it('checks for an exact value', function () {
+  describe('arguments', () => {
+    it('checks for an exact value', () => {
       vtu.expectValidatorSuccess(val, 'foo', undefined, { oneOf: 'foo' });
       vtu.expectValidatorError(val, 'bar', undefined, { oneOf: 'foo' });
     });
 
-    it('empty string is OK if oneOf allows it', function () {
+    it('empty string is OK if oneOf allows it', () => {
       vtu.expectValidatorSuccess(val, '', undefined, { oneOf: '' });
       vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, { oneOf: '' });
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, { oneOf: '' });
@@ -166,7 +166,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, '', qualifiers.TRUTHY, { oneOf: [''] });
     });
 
-    it('checks for an exact string in a list', function () {
+    it('checks for an exact string in a list', () => {
       vtu.expectValidatorSuccess(val, '7', undefined, {
         oneOf: ['6', '7', '8'],
       });
@@ -183,7 +183,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('checks for a partial value if "exact" is not specified', function () {
+    it('checks for a partial value if "exact" is not specified', () => {
       vtu.expectValidatorSuccess(val, 'partial', undefined, { partial: 'art' });
 
       let args = { partial: 'foo' };
@@ -193,7 +193,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorError(val, 'partial', undefined, args);
     });
 
-    it('checks for min length if "exact" is not specified', function () {
+    it('checks for min length if "exact" is not specified', () => {
       vtu.expectValidatorSuccess(val, 'minimum', undefined, { min: 7 });
       vtu.expectValidatorError(val, 'minimum', undefined, { min: 8 });
 
@@ -206,7 +206,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, 'minimum', undefined, { min: -Infinity });
     });
 
-    it('empty string is allowed if min requires it', function () {
+    it('empty string is allowed if min requires it', () => {
       vtu.expectValidatorSuccess(val, '', undefined, { min: 0 });
       vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, { min: 0 });
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, { min: 0 });
@@ -215,13 +215,13 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, { min: 1 });
     });
 
-    it('empty string is allowed if qualifier=TRUTHY regardless of args', function () {
+    it('empty string is allowed if qualifier=TRUTHY regardless of args', () => {
       vtu.expectValidatorSuccess(val, '', qualifiers.TRUTHY, { oneOf: 'foo' });
       vtu.expectValidatorSuccess(val, '', qualifiers.TRUTHY, { min: 1 });
       vtu.expectValidatorSuccess(val, '', qualifiers.TRUTHY, { exp: '^\\d+$' });
     });
 
-    it('min takes precedence over partial', function () {
+    it('min takes precedence over partial', () => {
       vtu.expectValidatorSuccess(val, 'minimum', undefined, {
         min: 7,
         partial: 'nim',
@@ -242,7 +242,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('checks for max length if "exact" is not specified', function () {
+    it('checks for max length if "exact" is not specified', () => {
       vtu.expectValidatorSuccess(val, 'maximum', undefined, { max: 7 });
       vtu.expectValidatorError(val, 'maximum', undefined, { max: 6 });
 
@@ -254,7 +254,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, 'maximum', undefined, { max: -Infinity });
     });
 
-    it('empty string is allowed if max requires it', function () {
+    it('empty string is allowed if max requires it', () => {
       vtu.expectValidatorSuccess(val, '', undefined, { max: 0 });
       vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, { max: 0 });
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, { max: 0 });
@@ -264,7 +264,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, { max: 0 });
     });
 
-    it('max takes precedence over partial', function () {
+    it('max takes precedence over partial', () => {
       vtu.expectValidatorSuccess(val, 'maximum', undefined, {
         max: 7,
         partial: 'xim',
@@ -285,7 +285,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('checks for min/max length if "exact" is not specified', function () {
+    it('checks for min/max length if "exact" is not specified', () => {
       vtu.expectValidatorSuccess(val, 'minandmax', undefined, {
         min: 9,
         max: 100,
@@ -314,7 +314,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('min/max take precedence over partial', function () {
+    it('min/max take precedence over partial', () => {
       vtu.expectValidatorSuccess(val, 'minandmax', undefined, {
         min: 9,
         max: 100,
@@ -356,7 +356,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('checks for a given regular expression pattern', function () {
+    it('checks for a given regular expression pattern', () => {
       vtu.expectValidatorSuccess(val, '2018-09-30', undefined, {
         exp: '\\d{4}-\\d{2}-\\d{2}',
       });
@@ -368,7 +368,7 @@ describe('module: lib/validator/valString', function () {
       });
     });
 
-    it('empty string is allowed if exp requires it', function () {
+    it('empty string is allowed if exp requires it', () => {
       vtu.expectValidatorSuccess(val, '', undefined, { exp: '^$' });
       vtu.expectValidatorSuccess(val, '', qualifiers.EXPECTED, { exp: '^$' });
       vtu.expectValidatorSuccess(val, '', qualifiers.OPTIONAL, { exp: '^$' });
@@ -378,7 +378,7 @@ describe('module: lib/validator/valString', function () {
       vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED, { exp: '^$' });
     });
 
-    it('oneOf, partial, min, max are ignored when exp specified', function () {
+    it('oneOf, partial, min, max are ignored when exp specified', () => {
       vtu.expectValidatorSuccess(val, 'foo', undefined, {
         exp: 'foo',
         oneOf: 'bar',

@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types, DEFAULT_OBJECT_TYPE } from '../../../src/lib/types';
@@ -11,17 +9,17 @@ import {
   type as isTypesetType,
 } from '../../../src/lib/validation/isTypeset';
 
-describe('module: lib/validation/isTypeset', function () {
-  it('#type', function () {
-    expect(isTypesetType).to.equal(undefined);
+describe('module: lib/validation/isTypeset', () => {
+  it('#type', () => {
+    expect(isTypesetType).toBeUndefined();
   });
 
-  describe('#default', function () {
-    describe('shallow', function () {
+  describe('#default', () => {
+    describe('shallow', () => {
       let goodValues; // @type {Array}
       let badValues; // @type {Array}
 
-      beforeEach(function () {
+      beforeEach(() => {
         goodValues = [
           { foo: null },
           types.STRING,
@@ -113,15 +111,15 @@ describe('module: lib/validation/isTypeset', function () {
         ];
       });
 
-      it('should validate shallow typesets', function () {
+      it('should validate shallow typesets', () => {
         let results = vtu.testValues('isTypeset', isTypeset, goodValues);
-        expect(results.failures).to.eql([]);
+        expect(results.failures).toEqual([]);
 
         results = vtu.testValues('isTypeset', isTypeset, badValues);
-        expect(results.passes).to.eql([]);
+        expect(results.passes).toEqual([]);
       });
 
-      it('should validate shallow fully-qualified typesets', function () {
+      it('should validate shallow fully-qualified typesets', () => {
         goodValues[0] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[0]];
         goodValues[1] = [DEFAULT_QUALIFIER, goodValues[1]];
         goodValues[2].unshift(DEFAULT_QUALIFIER);
@@ -185,7 +183,7 @@ describe('module: lib/validation/isTypeset', function () {
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
           fullyQualified: true,
         });
-        expect(results.failures).to.eql([]);
+        expect(results.failures).toEqual([]);
 
         badValues.push(
           // qualifier is always first
@@ -211,21 +209,21 @@ describe('module: lib/validation/isTypeset', function () {
         results = vtu.testValues('isTypeset', isTypeset, badValues, {
           fullyQualified: true,
         });
-        expect(results.passes).to.eql([]);
+        expect(results.passes).toEqual([]);
       });
 
-      it('should indicate shape in failure message if failure at index 0', function () {
+      it('should indicate shape in failure message if failure at index 0', () => {
         const options = {};
         isTypeset([1], options);
-        expect(options.rootCause).to.contain(
+        expect(options.rootCause).toContain(
           'Unexpected value at index=0: Expecting object (shape)'
         );
       });
 
-      it('should indicate shape in failure message if failure at index 1 with qualifier', function () {
+      it('should indicate shape in failure message if failure at index 1 with qualifier', () => {
         const options = {};
         isTypeset([DEFAULT_QUALIFIER, 1], options);
-        expect(options.rootCause).to.contain(
+        expect(options.rootCause).toContain(
           'Unexpected value at index=1: Expecting object (shape)'
         );
       });
@@ -235,16 +233,16 @@ describe('module: lib/validation/isTypeset', function () {
       it(
         'should indicate type args in failure message if failure at index >1 or index 1 ' +
           'without qualifier',
-        function () {
+        () => {
           let options = {};
           isTypeset([types.CLASS_OBJECT, 1], options);
-          expect(options.rootCause).to.contain(
+          expect(options.rootCause).toContain(
             'Unexpected value at index=1: Expecting object (type args)'
           );
 
           options = {};
           isTypeset([DEFAULT_QUALIFIER, types.PLAIN_OBJECT, 1], options);
-          expect(options.rootCause).to.contain(
+          expect(options.rootCause).toContain(
             'Unexpected value at index=2: Expecting object (type args)'
           );
         }
@@ -252,11 +250,11 @@ describe('module: lib/validation/isTypeset', function () {
       /* eslint-enable indent */
     });
 
-    describe('deep', function () {
+    describe('deep', () => {
       let goodValues; // @type {Array}
       let badValues; // @type {Array}
 
-      beforeEach(function () {
+      beforeEach(() => {
         const shapeWithNonEnumerable = {
           foo: types.FUNCTION,
         };
@@ -342,19 +340,19 @@ describe('module: lib/validation/isTypeset', function () {
         ];
       });
 
-      it('should validate deep typesets', function () {
+      it('should validate deep typesets', () => {
         let results = vtu.testValues('isTypeset', isTypeset, goodValues, {
           deep: true,
         });
-        expect(results.failures).to.eql([]);
+        expect(results.failures).toEqual([]);
 
         results = vtu.testValues('isTypeset', isTypeset, badValues, {
           deep: true,
         });
-        expect(results.passes).to.eql([]);
+        expect(results.passes).toEqual([]);
       });
 
-      it('should validate deep fully-qualified typesets', function () {
+      it('should validate deep fully-qualified typesets', () => {
         goodValues[0].foo = [DEFAULT_QUALIFIER, goodValues[0].foo];
         goodValues[0] = [DEFAULT_QUALIFIER, DEFAULT_OBJECT_TYPE, goodValues[0]];
 
@@ -417,7 +415,7 @@ describe('module: lib/validation/isTypeset', function () {
           deep: true,
           fullyQualified: true,
         });
-        expect(results.failures).to.eql([]);
+        expect(results.failures).toEqual([]);
 
         badValues.push(
           // foo has invalid typeset
@@ -474,53 +472,58 @@ describe('module: lib/validation/isTypeset', function () {
           deep: true,
           fullyQualified: true,
         });
-        expect(results.passes).to.eql([]);
+        expect(results.passes).toEqual([]);
       });
 
-      it('should fail if the given type args are not a valid shape', function () {
-        expect(isTypeset([types.PLAIN_OBJECT, { $: 1 }], { deep: true })).to.be
-          .false;
+      it('should fail if the given type args are not a valid shape', () => {
+        expect(isTypeset([types.PLAIN_OBJECT, { $: 1 }], { deep: true })).toBe(
+          false
+        );
       });
 
-      it('should fail without index in failure message when deep-validating a non-qualified shape', function () {
+      it('should fail without index in failure message when deep-validating a non-qualified shape', () => {
         // NOTE: a little contrived, but the logic in the inner deepVerifyShape()
         //  function should cover the case where the index isn't needed because it
         //  shouldn't depend on the caller having checked that the value is a shape,
         //  but in the case of a shape descriptor typeset, the caller must also
         //  check that it's a shape...
         let count = 0;
-        const isShapeStub = sinon
-          .stub(isShapeMod, 'check')
-          .callsFake(function () {
+        const isShapeStub = jest
+          .spyOn(isShapeMod, 'check')
+          .mockClear()
+          .mockImplementation(function () {
             count++;
             return count < 3;
           });
 
         const options = { deep: true };
-        expect(isTypeset({}, options)).to.be.false;
-        expect(options.rootCause).to.include(
-          `Expecting a valid shape descriptor for type="${types.OBJECT}"`
+        expect(isTypeset({}, options)).toBe(false);
+        expect(options.rootCause).toEqual(
+          expect.stringContaining(
+            `Expecting a valid shape descriptor for type="${types.OBJECT}"`
+          )
         );
 
-        isShapeStub.restore();
+        isShapeStub.mockRestore();
       });
     });
 
-    describe('other', function () {
-      it('should not allow more than 1 custom validator', function () {
-        expect(isTypeset(function () {})).to.be.true;
-        expect(isTypeset([function () {}])).to.be.true;
-        expect(isTypeset([types.STRING, function () {}])).to.be.true;
+    describe('other', () => {
+      it('should not allow more than 1 custom validator', () => {
+        expect(isTypeset(function () {})).toBe(true);
+        expect(isTypeset([function () {}])).toBe(true);
+        expect(isTypeset([types.STRING, function () {}])).toBe(true);
 
         // too many
-        expect(isTypeset([function () {}, function () {}])).to.be.false;
-        expect(isTypeset([types.STRING, function () {}, function () {}])).to.be
-          .false;
+        expect(isTypeset([function () {}, function () {}])).toBe(false);
+        expect(isTypeset([types.STRING, function () {}, function () {}])).toBe(
+          false
+        );
         expect(
           isTypeset([types.STRING, [function () {}, function () {}]], {
             deep: true,
           })
-        ).to.be.false;
+        ).toBe(false);
         expect(
           isTypeset(
             [
@@ -530,20 +533,20 @@ describe('module: lib/validation/isTypeset', function () {
             ],
             { deep: true, fullyQualified: true }
           )
-        ).to.be.false;
+        ).toBe(false);
       });
 
-      it('should not validate with only the qualifier', function () {
-        expect(isTypeset(DEFAULT_QUALIFIER)).to.be.false;
-        expect(isTypeset([])).to.be.false;
-        expect(isTypeset([DEFAULT_QUALIFIER])).to.be.false;
+      it('should not validate with only the qualifier', () => {
+        expect(isTypeset(DEFAULT_QUALIFIER)).toBe(false);
+        expect(isTypeset([])).toBe(false);
+        expect(isTypeset([DEFAULT_QUALIFIER])).toBe(false);
       });
 
       vtu.getFalsyValues().forEach((falsyValue) => {
         it(`should ignore shape property typesets when set to falsy value |${print(
           falsyValue
         )}|`, () => {
-          expect(isTypeset({ foo: falsyValue }, { deep: true })).to.be.true;
+          expect(isTypeset({ foo: falsyValue }, { deep: true })).toBe(true);
         });
       });
     });

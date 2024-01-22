@@ -1,27 +1,27 @@
-import { expect } from 'chai';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valNumber';
 
-describe('module: lib/validator/valNumber', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valNumber', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.NUMBER);
+    it('#type', () => {
+      expect(val.type).toBe(types.NUMBER);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, 1);
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
+    it('other types/values', () => {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
@@ -47,12 +47,12 @@ describe('module: lib/validator/valNumber', function () {
       // nothing should pass
       expect(
         vtu.testValues(val.type, val.validate, invalidValues).passes
-      ).to.eql([]);
+      ).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    it('allows NaN if not REQUIRED', function () {
+  describe('qualifiers', () => {
+    it('allows NaN if not REQUIRED', () => {
       vtu.expectValidatorError(val, NaN); // defaults to REQUIRED
 
       _.forEach(qualifiers, function (qualifier) {
@@ -65,8 +65,8 @@ describe('module: lib/validator/valNumber', function () {
       });
     });
 
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu
           .getRestrictedValues(qualifiers.REQUIRED)
           .filter((v) => v !== 0);
@@ -86,7 +86,7 @@ describe('module: lib/validator/valNumber', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu
           .getRestrictedValues(qualifiers.EXPECTED)
           .filter((v) => v !== 0 && !isNaN(v));
@@ -106,7 +106,7 @@ describe('module: lib/validator/valNumber', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu
           .getRestrictedValues(qualifiers.OPTIONAL)
           .filter((v) => v !== 0 && !isNaN(v));
@@ -126,7 +126,7 @@ describe('module: lib/validator/valNumber', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -145,37 +145,37 @@ describe('module: lib/validator/valNumber', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, /foo/); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, /foo/, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, /foo/, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, /foo/, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, /foo/, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
+  describe('arguments', () => {
     let validTypeValues;
 
-    beforeEach(function () {
+    beforeEach(() => {
       validTypeValues = vtu.getValidValues(val.type);
     });
 
-    it('checks for an exact number', function () {
+    it('checks for an exact number', () => {
       validTypeValues.forEach(function (value) {
         vtu.expectValidatorSuccess(val, value, undefined, { oneOf: value });
       });
@@ -196,7 +196,7 @@ describe('module: lib/validator/valNumber', function () {
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: '6' });
     });
 
-    it('checks for an exact number in a list', function () {
+    it('checks for an exact number in a list', () => {
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: [6, 7, 8] });
       vtu.expectValidatorError(val, 7, undefined, { oneOf: [6, 8] });
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: [7] });
@@ -214,7 +214,7 @@ describe('module: lib/validator/valNumber', function () {
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: new Set([6, 8]) });
     });
 
-    it('exact takes precedence over min/max', function () {
+    it('exact takes precedence over min/max', () => {
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: 7, min: 8 });
       vtu.expectValidatorSuccess(val, 7, undefined, { oneOf: 7, max: 6 });
       vtu.expectValidatorSuccess(val, 7, undefined, {
@@ -229,7 +229,7 @@ describe('module: lib/validator/valNumber', function () {
       });
     });
 
-    it('checks for a minimum number', function () {
+    it('checks for a minimum number', () => {
       validTypeValues.forEach(function (value) {
         vtu.expectValidatorSuccess(val, value, undefined, { min: value });
       });
@@ -258,7 +258,7 @@ describe('module: lib/validator/valNumber', function () {
       vtu.expectValidatorSuccess(val, 7, undefined, { min: NaN });
     });
 
-    it('checks for a maximum number', function () {
+    it('checks for a maximum number', () => {
       validTypeValues.forEach(function (value) {
         vtu.expectValidatorSuccess(val, value, undefined, { max: value });
       });
@@ -287,11 +287,11 @@ describe('module: lib/validator/valNumber', function () {
       vtu.expectValidatorSuccess(val, 7, undefined, { max: NaN });
     });
 
-    it('max ignored if less than min', function () {
+    it('max ignored if less than min', () => {
       vtu.expectValidatorSuccess(val, 7, undefined, { min: 7, max: 6 });
     });
 
-    it('checks for a number in a range', function () {
+    it('checks for a number in a range', () => {
       vtu.expectValidatorSuccess(val, 5, undefined, { min: 1, max: 10 });
       vtu.expectValidatorError(val, 0, undefined, { min: 1, max: 10 });
 

@@ -1,63 +1,61 @@
-import { expect } from 'chai';
-
 import * as util from '../../src/lib/util';
 import * as vtu from './validationTestUtil';
 
-describe('module: lib/util', function () {
-  describe('#print', function () {
-    it('should print just about anything', function () {
+describe('module: lib/util', () => {
+  describe('#print', () => {
+    it('should print just about anything', () => {
       // simple/single values
-      expect(util.print(null)).to.equal('null');
-      expect(util.print(undefined)).to.equal('undefined');
-      expect(util.print('')).to.equal('""');
-      expect(util.print('foo')).to.equal('"foo"');
-      expect(util.print(false)).to.equal('false');
-      expect(util.print(123)).to.equal('123');
-      expect(util.print(NaN)).to.equal('NaN');
-      expect(util.print(() => {})).to.equal('<function>');
-      expect(util.print(Symbol('foo'))).to.equal('Symbol(foo)');
-      expect(util.print([])).to.equal('[]');
-      expect(util.print({})).to.equal('{}');
+      expect(util.print(null)).toBe('null');
+      expect(util.print(undefined)).toBe('undefined');
+      expect(util.print('')).toBe('""');
+      expect(util.print('foo')).toBe('"foo"');
+      expect(util.print(false)).toBe('false');
+      expect(util.print(123)).toBe('123');
+      expect(util.print(NaN)).toBe('NaN');
+      expect(util.print(() => {})).toBe('<function>');
+      expect(util.print(Symbol('foo'))).toBe('Symbol(foo)');
+      expect(util.print([])).toBe('[]');
+      expect(util.print({})).toBe('{}');
 
       // complex values
-      expect(util.print([true])).to.equal('[true]');
-      expect(util.print([1, [2, 'three']])).to.equal('[1,[2,"three"]]');
-      expect(util.print({ foo: 1 })).to.equal('{"foo":1}');
-      expect(util.print({ foo: [1, { bar: 2 }] })).to.equal(
+      expect(util.print([true])).toBe('[true]');
+      expect(util.print([1, [2, 'three']])).toBe('[1,[2,"three"]]');
+      expect(util.print({ foo: 1 })).toBe('{"foo":1}');
+      expect(util.print({ foo: [1, { bar: 2 }] })).toBe(
         '{"foo":[1,{"bar":2}]}'
       );
     });
 
-    it('should special-case functions as validators when printing typesets', function () {
-      expect(util.print(['STRING', () => {}], { isTypeset: true })).to.equal(
+    it('should special-case functions as validators when printing typesets', () => {
+      expect(util.print(['STRING', () => {}], { isTypeset: true })).toBe(
         '["STRING","<validator>"]'
       );
     });
 
-    it('should special-case "ctor" as "<constructor>" and other as "<function>"', function () {
+    it('should special-case "ctor" as "<constructor>" and other as "<function>"', () => {
       expect(
         util.print(
           ['CLASS_OBJECT', { ctor: () => {}, foo: () => {} }, () => {}],
           { isTypeset: true }
         )
-      ).to.equal(
+      ).toBe(
         '["CLASS_OBJECT",{"ctor":"<constructor>","foo":"<function>"},"<validator>"]'
       );
     });
   });
 
-  describe('#hasOwnProp', function () {
-    it('should determine that a prop is an own-prop of an object', function () {
+  describe('#hasOwnProp', () => {
+    it('should determine that a prop is an own-prop of an object', () => {
       const obj = Object.create({ foo: 'not own-prop' });
       obj.bar = 'own-prop';
 
-      expect(util.hasOwnProp(obj, 'foo')).to.equal(false);
-      expect(util.hasOwnProp(obj, 'bar')).to.equal(true);
+      expect(util.hasOwnProp(obj, 'foo')).toBe(false);
+      expect(util.hasOwnProp(obj, 'bar')).toBe(true);
     });
 
-    it('should return false if object is falsy', function () {
+    it('should return false if object is falsy', () => {
       vtu.getFalsyValues().forEach((falsyValue) => {
-        expect(util.hasOwnProp(falsyValue)).to.equal(false);
+        expect(util.hasOwnProp(falsyValue)).toBe(false);
       });
     });
   });

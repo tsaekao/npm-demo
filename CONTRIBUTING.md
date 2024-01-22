@@ -23,9 +23,11 @@ The following npm commands will get you started:
 *   `test:unit`: Runs unit tests only.
 *   `test:unit:watch`: Runs unit tests in watch mode, re-running tests as you make changes to code.
 *   `test:unit:debug`: Runs unit tests in debug mode so you can step through code.
-    *   Use Mocha's `describe.only()` and `it.only()` helpers to isolate the test you want to debug, but be sure to remove them when you're done, otherwise coverage will fail.
+    *   Use Jest's `describe.only()` and `it.only()` helpers to isolate the test you want to debug, but be sure to remove them when you're done, otherwise coverage and lint check will fail.
 *   `test:coverage`: Checks for code coverage after running unit tests, outputs to `/coverage`
 *   `lint`: Checks the code for lint.
+*   `fmt`: Formats the code using Prettier.
+*   `fmt:check`: Checks code formatting without making any changes.
 *   `start`: Builds the library, starts Node.js in debug mode (with `--inspect`), and automatically loads the library into the global environment as `rtv` (along with `lodash` as `ld`, and `Object.prototype.toString` as `ostr`) by running the following script: `/tools/node.js`. Use DevTools or your favorite IDE to attach to the Node process to debug!
 *   `html`: Builds the library and starts `live-server` at http://localhost:8080 with a root of `/tools` where you can load any of the HTML files in that directory to manually test the build in a browser: [UMD](http://localhost:8080/rtvjs-umd.html) or [ESM](http://localhost:8080/rtvjs-esm.html).
 

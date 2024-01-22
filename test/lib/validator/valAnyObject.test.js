@@ -1,7 +1,6 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
@@ -37,28 +36,28 @@ const getValidValues = () => {
   return values;
 };
 
-describe('module: lib/validator/valAnyObject', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valAnyObject', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.ANY_OBJECT);
+    it('#type', () => {
+      expect(val.type).toBe(types.ANY_OBJECT);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, {});
     });
 
-    it('should validate any object', function () {
+    it('should validate any object', () => {
       const values = Object.values(getValidValues()).flat();
-      expect(vtu.testValues(val.type, val.validate, values).failures).to.eql(
+      expect(vtu.testValues(val.type, val.validate, values).failures).toEqual(
         []
       );
     });
   });
 
-  describe('qualifiers', function () {
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+  describe('qualifiers', () => {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
@@ -76,7 +75,7 @@ describe('module: lib/validator/valAnyObject', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
@@ -94,7 +93,7 @@ describe('module: lib/validator/valAnyObject', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
@@ -112,7 +111,7 @@ describe('module: lib/validator/valAnyObject', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -131,66 +130,64 @@ describe('module: lib/validator/valAnyObject', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
+  describe('arguments', () => {
     let checkStub;
 
-    beforeEach(function () {
-      checkStub = sinon.stub(val._impl, 'check');
+    beforeEach(() => {
+      checkStub = jest.spyOn(val._impl, 'check');
     });
 
-    afterEach(function () {
-      checkStub.restore();
+    afterEach(() => {
+      checkStub.mockRestore();
     });
 
-    it('should ignore args.$ if not a shape', function () {
-      checkStub.callThrough();
-
+    it('should ignore args.$ if not a shape', () => {
       vtu.expectValidatorSuccess(val, { foo: 3 }, {});
-      expect(checkStub.called).to.be.false;
+      expect(checkStub).not.toHaveBeenCalled();
+      checkStub.mockClear();
 
       vtu.expectValidatorSuccess(val, { foo: 3 }, { $: undefined });
-      expect(checkStub.called).to.be.false;
+      expect(checkStub).not.toHaveBeenCalled();
+      checkStub.mockClear();
 
       vtu.expectValidatorSuccess(val, { foo: 3 }, { $: null });
-      expect(checkStub.called).to.be.false;
+      expect(checkStub).not.toHaveBeenCalled();
+      checkStub.mockClear();
 
       vtu.expectValidatorSuccess(val, { foo: 3 }, { $: [3] });
-      expect(checkStub.called).to.be.false;
+      expect(checkStub).not.toHaveBeenCalled();
+      checkStub.mockClear();
     });
 
-    it('should check value against shape', function () {
-      checkStub.callThrough();
-
+    it('should check value against shape', () => {
       vtu.expectValidatorSuccess(val, { foo: 3 }, undefined, {
         $: { foo: types.FINITE },
       });
-      expect(checkStub.called).to.be.true;
-
-      checkStub.resetHistory();
-      checkStub.callThrough();
+      expect(checkStub).toHaveBeenCalled();
+      checkStub.mockClear();
 
       vtu.expectValidatorError(
         val,
@@ -203,12 +200,11 @@ describe('module: lib/validator/valAnyObject', function () {
           path: ['foo'],
         }
       );
-      expect(checkStub.called).to.be.true;
+      expect(checkStub).toHaveBeenCalled();
+      checkStub.mockClear();
     });
 
-    it('should require exact own-properties if exact=true', function () {
-      checkStub.callThrough();
-
+    it('should require exact own-properties if exact=true', () => {
       const obj = { foo: 1, bar: true };
       const args = { $: { foo: types.NUMBER } };
 
@@ -219,8 +215,7 @@ describe('module: lib/validator/valAnyObject', function () {
       vtu.expectValidatorError(val, obj, undefined, args);
     });
 
-    it('should require an empty object if shape is empty and exact=true', function () {
-      checkStub.callThrough();
+    it('should require an empty object if shape is empty and exact=true', () => {
       vtu.expectValidatorError(val, { foo: 1 }, undefined, {
         $: {},
         exact: true,
@@ -228,9 +223,9 @@ describe('module: lib/validator/valAnyObject', function () {
     });
   });
 
-  describe('context', function () {
-    it('should set parent to object and parentKey to property', function () {
-      const validator = sinon.spy();
+  describe('context', () => {
+    it('should set parent to object and parentKey to property', () => {
+      const validator = jest.fn();
       const shape = {
         foo: validator,
       };
@@ -239,8 +234,8 @@ describe('module: lib/validator/valAnyObject', function () {
       };
       val.validate(value, undefined, { $: shape });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -248,7 +243,7 @@ describe('module: lib/validator/valAnyObject', function () {
       ]);
     });
 
-    it('should check for exact shapes if exactShapes=true', function () {
+    it('should check for exact shapes if exactShapes=true', () => {
       const obj = { foo: 1, bar: true, baz: 'a' };
       const args = { $: { foo: types.NUMBER } };
       const context = {};
@@ -270,7 +265,7 @@ describe('module: lib/validator/valAnyObject', function () {
       );
     });
 
-    it('should NOT check for exact shapes if exactShapes=false', function () {
+    it('should NOT check for exact shapes if exactShapes=false', () => {
       const args = { $: { foo: types.NUMBER } };
 
       vtu.expectValidatorError(
@@ -295,7 +290,7 @@ describe('module: lib/validator/valAnyObject', function () {
       );
     });
 
-    it('should NOT check for exact shapes if exactShapes=true but shape NOT specified', function () {
+    it('should NOT check for exact shapes if exactShapes=true but shape NOT specified', () => {
       const args = {};
       const context = {
         options: {
@@ -312,7 +307,7 @@ describe('module: lib/validator/valAnyObject', function () {
       );
     });
 
-    it('should allow args.exact to override exactShapes=true', function () {
+    it('should allow args.exact to override exactShapes=true', () => {
       let context = { options: { exactShapes: true } };
       let obj = { foo: 1, bar: true };
       let args = { $: { foo: types.NUMBER }, exact: false };
@@ -372,9 +367,9 @@ describe('module: lib/validator/valAnyObject', function () {
       Object.entries(validValues).forEach(([type, values]) => {
         values.forEach((value, idx) => {
           const result = val.validate(value);
-          expect(result.mvv).not.to.be.equal(value);
-          expect(isPlainObject(result.mvv), `${type}/${idx} as plain object`).to
-            .be.true;
+          expect(result.mvv).not.toBe(value);
+          // ${type}/${idx} as plain object
+          expect(isPlainObject(result.mvv)).toBe(true);
         });
       });
     });
@@ -383,11 +378,11 @@ describe('module: lib/validator/valAnyObject', function () {
       vtu.getFalsyValues().forEach((falsyValue) => {
         const result = val.validate(falsyValue, qualifiers.TRUTHY);
         if (isNaN(falsyValue)) {
-          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+          // ${print(falsyValue)} verbatim
+          expect(isNaN(result.mvv)).toBe(true);
         } else {
-          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
-            falsyValue
-          );
+          // ${print(falsyValue)} verbatim
+          expect(result.mvv).toBe(falsyValue);
         }
       });
     });
@@ -398,7 +393,7 @@ describe('module: lib/validator/valAnyObject', function () {
         $: { message: types.STRING },
       });
 
-      expect(result.mvv).to.eql({ message });
+      expect(result.mvv).toEqual({ message });
     });
   });
 });

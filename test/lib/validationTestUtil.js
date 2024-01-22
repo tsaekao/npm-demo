@@ -1,7 +1,8 @@
-////// Utility for testing validation modules
+//
+// Utility for testing validation and validator modules
+//
 
 import _ from 'lodash';
-import { expect } from 'chai';
 import { types } from '../../src/lib/types';
 import { qualifiers, DEFAULT_QUALIFIER } from '../../src/lib/qualifiers';
 import * as util from '../../src/lib/util';
@@ -455,7 +456,7 @@ export const testOtherValues = function (type, valFn, treatAsValid) {
 export const expectAllToPass = function (type, valFn, values, ...rest) {
   const results = testValues(type, valFn, values, ...rest);
 
-  expect(results.passes.length).to.equal(values.length);
+  expect(results.passes.length).toBe(values.length);
 
   // print these BEFORE we fail the next expectation otherwise this code wouldn't
   //  get executed
@@ -466,7 +467,7 @@ export const expectAllToPass = function (type, valFn, values, ...rest) {
     );
   }
 
-  expect(results.failures.length).to.equal(0);
+  expect(results.failures.length).toBe(0);
 
   return results;
 };
@@ -497,8 +498,8 @@ export const expectAllToFail = function (type, valFn, values, ...rest) {
     );
   }
 
-  expect(results.passes.length).to.equal(0);
-  expect(results.failures.length).to.equal(values.length);
+  expect(results.passes.length).toBe(0);
+  expect(results.failures.length).toBe(values.length);
 
   return results;
 };
@@ -525,8 +526,8 @@ export const expectValidatorSuccess = function (
 ) {
   const result = validator.validate(value, qualifier, args, context);
 
-  expect(result).to.be.an.instanceof(RtvSuccess);
-  expect(result.valid).to.be.true;
+  expect(result).toBeInstanceOf(RtvSuccess);
+  expect(result.valid).toBe(true);
 
   return result;
 };
@@ -559,39 +560,39 @@ export const expectValidatorError = function (
 ) {
   const result = validator.validate(value, qualifier, args, context);
 
-  expect(result).to.be.an.instanceof(RtvError);
-  expect(result.valid).to.be.false;
-  expect(result.name).to.equal('RtvError');
+  expect(result).toBeInstanceOf(RtvError);
+  expect(result.valid).toBe(false);
+  expect(result.name).toBe('RtvError');
 
   // NOTE: Check for the existence of a property on `expectations` rather than
   //  a truthy value since `undefined`, `null`, `0`, `false`, or an empty string
   //  are all possible expectation property values.
 
   if (expectations.hasOwnProperty('value')) {
-    expect(result.value).to.equal(expectations.value);
+    expect(result.value).toBe(expectations.value);
   } else {
     if (_.isNaN(value)) {
-      expect(_.isNaN(result.value)).to.be.true;
+      expect(_.isNaN(result.value)).toBe(true);
     } else {
-      expect(result.value).to.equal(value);
+      expect(result.value).toBe(value);
     }
   }
 
   if (args) {
     if (expectations.hasOwnProperty('typeset')) {
-      expect(result.typeset).to.eql(expectations.typeset);
+      expect(result.typeset).toEqual(expectations.typeset);
     } else {
       if (!qualifier || qualifier === DEFAULT_QUALIFIER) {
-        expect(result.typeset).to.eql([validator.type, args]);
+        expect(result.typeset).toEqual([validator.type, args]);
       } else {
-        expect(result.typeset).to.eql([qualifier, validator.type, args]);
+        expect(result.typeset).toEqual([qualifier, validator.type, args]);
       }
     }
 
     if (expectations.hasOwnProperty('mismatch')) {
-      expect(result.mismatch).to.eql(expectations.mismatch);
+      expect(result.mismatch).toEqual(expectations.mismatch);
     } else {
-      expect(result.mismatch).to.eql([
+      expect(result.mismatch).toEqual([
         qualifier || DEFAULT_QUALIFIER,
         validator.type,
         args,
@@ -599,19 +600,19 @@ export const expectValidatorError = function (
     }
   } else {
     if (expectations.hasOwnProperty('typeset')) {
-      expect(result.typeset).to.eql(expectations.typeset);
+      expect(result.typeset).toEqual(expectations.typeset);
     } else {
       if (!qualifier || qualifier === DEFAULT_QUALIFIER) {
-        expect(result.typeset).to.eql(validator.type);
+        expect(result.typeset).toEqual(validator.type);
       } else {
-        expect(result.typeset).to.eql([qualifier, validator.type]);
+        expect(result.typeset).toEqual([qualifier, validator.type]);
       }
     }
 
     if (expectations.hasOwnProperty('mismatch')) {
-      expect(result.mismatch).to.eql(expectations.mismatch);
+      expect(result.mismatch).toEqual(expectations.mismatch);
     } else {
-      expect(result.mismatch).to.eql([
+      expect(result.mismatch).toEqual([
         qualifier || DEFAULT_QUALIFIER,
         validator.type,
       ]);
@@ -619,21 +620,21 @@ export const expectValidatorError = function (
   }
 
   if (expectations.hasOwnProperty('path')) {
-    expect(result.path).to.eql(expectations.path);
+    expect(result.path).toEqual(expectations.path);
   } else {
-    expect(result.path).to.eql([]);
+    expect(result.path).toEqual([]);
   }
 
   if (expectations.hasOwnProperty('rootCause')) {
     if (expectations.rootCause instanceof Error) {
       // expect rootCause to match the instance
-      expect(result.rootCause).to.equal(expectations.rootCause);
+      expect(result.rootCause).toBe(expectations.rootCause);
     } else if (typeof expectations.rootCause === 'string') {
       // expect rootCause to be an Error with the expectation as the message
-      expect(result.rootCause).to.be.an.instanceof(Error);
-      expect(result.rootCause.message).to.equal(expectations.rootCause);
+      expect(result.rootCause).toBeInstanceOf(Error);
+      expect(result.rootCause.message).toBe(expectations.rootCause);
     } else if (!expectations.rootCause) {
-      expect(result.rootCause).to.be.undefined;
+      expect(result.rootCause).toBeUndefined();
     }
   }
 
@@ -678,7 +679,7 @@ export const testMvvVerbatimType = function (validator) {
 
     validValues.forEach((value, idx) => {
       const result = validator.validate(value, `validValues[${idx}]`);
-      expect(result.mvv).to.be.equal(value);
+      expect(result.mvv).toBe(value);
     });
   });
 
@@ -686,12 +687,11 @@ export const testMvvVerbatimType = function (validator) {
     getFalsyValues().forEach((falsyValue) => {
       const result = validator.validate(falsyValue, qualifiers.TRUTHY);
       if (isNaN(falsyValue)) {
-        expect(isNaN(result.mvv), `${util.print(falsyValue)} verbatim`).to.be
-          .true;
+        // ${util.print(falsyValue)} verbatim
+        expect(isNaN(result.mvv)).toBe(true);
       } else {
-        expect(result.mvv, `${util.print(falsyValue)} verbatim`).to.equal(
-          falsyValue
-        );
+        // ${util.print(falsyValue)} verbatim
+        expect(result.mvv).toBe(falsyValue);
       }
     });
   });

@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
@@ -8,29 +6,29 @@ import { qualifiers } from '../../../src/lib/qualifiers';
 import { check as isSet } from '../../../src/lib/validation/isSet';
 import * as val from '../../../src/lib/validator/valSet';
 
-describe('module: lib/validator/valSet', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valSet', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.SET);
+    it('#type', () => {
+      expect(val.type).toBe(types.SET);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, new Set());
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
+    it('other types/values', () => {
+      expect(vtu.testOtherValues(val.type, val.validate)).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+  describe('qualifiers', () => {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
@@ -48,7 +46,7 @@ describe('module: lib/validator/valSet', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
@@ -66,7 +64,7 @@ describe('module: lib/validator/valSet', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
@@ -84,7 +82,7 @@ describe('module: lib/validator/valSet', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -103,31 +101,31 @@ describe('module: lib/validator/valSet', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
-    it('checks for an exact length', function () {
+  describe('arguments', () => {
+    it('checks for an exact length', () => {
       const set = new Set([1, 2, 3]);
 
       vtu.expectValidatorSuccess(val, new Set(), undefined, { length: 0 });
@@ -151,7 +149,7 @@ describe('module: lib/validator/valSet', function () {
       });
     });
 
-    it('checks for values with specified typeset', function () {
+    it('checks for values with specified typeset', () => {
       let set = new Set(['one', 'two', 'three']);
 
       vtu.expectValidatorSuccess(val, set, undefined, {
@@ -235,14 +233,14 @@ describe('module: lib/validator/valSet', function () {
     });
   });
 
-  describe('context', function () {
-    it('should set parent to Set and parentKey to undefined', function () {
-      const validator = sinon.spy();
+  describe('context', () => {
+    it('should set parent to Set and parentKey to undefined', () => {
+      const validator = jest.fn();
       const value = new Set(['bar']);
       val.validate(value, undefined, { $values: validator });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -256,19 +254,19 @@ describe('module: lib/validator/valSet', function () {
     it('interprets original value as Set', () => {
       const value = new Set([1, 2]);
       const result = val.validate(value);
-      expect(result.mvv).not.to.be.equal(value);
-      expect(isSet(result.mvv)).to.be.true;
+      expect(result.mvv).not.toBe(value);
+      expect(isSet(result.mvv)).toBe(true);
     });
 
     it('interprets falsy values verbatim', () => {
       vtu.getFalsyValues().forEach((falsyValue) => {
         const result = val.validate(falsyValue, qualifiers.TRUTHY);
         if (isNaN(falsyValue)) {
-          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+          // ${print(falsyValue)} verbatim
+          expect(isNaN(result.mvv)).toBe(true);
         } else {
-          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
-            falsyValue
-          );
+          // ${print(falsyValue)} verbatim
+          expect(result.mvv).toBe(falsyValue);
         }
       });
     });
@@ -285,7 +283,7 @@ describe('module: lib/validator/valSet', function () {
         },
       });
 
-      expect(Array.from(result.mvv.values())).to.eql([
+      expect(Array.from(result.mvv.values())).toEqual([
         { value: 1 },
         { value: 2 },
       ]);

@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import _ from 'lodash';
 
 import * as rtv from '../src/rtv';
@@ -11,67 +9,67 @@ import { RtvSuccess } from '../src/lib/RtvSuccess';
 import { RtvError } from '../src/lib/RtvError';
 import pkg from '../package.json';
 
-describe('module: rtv', function () {
-  describe('#types', function () {
-    it('should provide all types', function () {
-      expect('types' in rtv).to.equal(true);
-      expect(rtv.types).to.equal(types);
-      expect(rtv.types instanceof Enumeration).to.equal(true);
+describe('module: rtv', () => {
+  describe('#types', () => {
+    it('should provide all types', () => {
+      expect('types' in rtv).toBe(true);
+      expect(rtv.types).toBe(types);
+      expect(rtv.types instanceof Enumeration).toBe(true);
     });
   });
 
-  describe('#...types', function () {
-    it('should provide all enumerable "types" enum props', function () {
+  describe('#...types', () => {
+    it('should provide all enumerable "types" enum props', () => {
       expect(
         Object.keys(types).every(function (key) {
           return rtv[key] === types[key];
         })
-      ).to.be.true;
+      ).toBe(true);
     });
   });
 
-  describe('#qualifiers', function () {
-    it('should provide all qualifiers', function () {
-      expect('qualifiers' in rtv).to.equal(true);
-      expect(rtv.qualifiers).to.equal(qualifiers);
-      expect(rtv.qualifiers instanceof Enumeration).to.equal(true);
+  describe('#qualifiers', () => {
+    it('should provide all qualifiers', () => {
+      expect('qualifiers' in rtv).toBe(true);
+      expect(rtv.qualifiers).toBe(qualifiers);
+      expect(rtv.qualifiers instanceof Enumeration).toBe(true);
     });
   });
 
-  describe('#...qualifiers', function () {
-    it('should provide all enumerable "qualifiers" enum props', function () {
+  describe('#...qualifiers', () => {
+    it('should provide all enumerable "qualifiers" enum props', () => {
       expect(
         Object.keys(qualifiers).every(function (key) {
           return rtv[key] === qualifiers[key];
         })
-      ).to.be.true;
+      ).toBe(true);
     });
   });
 
-  describe('#isTypeset()', function () {
-    it('should verify a value is a typeset', function () {
-      expect('isTypeset' in rtv).to.equal(true);
-      expect(rtv.isTypeset({})).to.be.true;
-      expect(rtv.isTypeset([])).to.be.false;
+  describe('#isTypeset()', () => {
+    it('should verify a value is a typeset', () => {
+      expect('isTypeset' in rtv).toBe(true);
+      expect(rtv.isTypeset({})).toBe(true);
+      expect(rtv.isTypeset([])).toBe(false);
     });
   });
 
-  describe('#fullyQualify()', function () {
-    it('should fully-qualify a typeset', function () {
-      expect('fullyQualify' in rtv).to.equal(true);
-      expect(rtv.fullyQualify(types.FUNCTION)).to.eql([
+  describe('#fullyQualify()', () => {
+    it('should fully-qualify a typeset', () => {
+      expect('fullyQualify' in rtv).toBe(true);
+      expect(rtv.fullyQualify(types.FUNCTION)).toEqual([
         qualifiers.REQUIRED,
         types.FUNCTION,
       ]);
     });
   });
 
-  describe('#check()', function () {
-    it('should check a value', function () {
-      expect(rtv.check('foo', rtv.STRING)).to.be.an.instanceof(RtvSuccess);
+  describe('#check()', () => {
+    it('should check a value', () => {
+      expect(rtv.check('foo', rtv.STRING)).toBeInstanceOf(RtvSuccess);
     });
 
-    it('should support exactShapes option', function () {
+    it('should support exactShapes option', () => {
       const obj = { parent: { child: 1, sibbling: 2 } };
       const shape = {
         parent: {
@@ -79,29 +77,29 @@ describe('module: rtv', function () {
         },
       };
 
-      expect(rtv.check(obj, shape, { exactShapes: true })).to.be.an.instanceof(
+      expect(rtv.check(obj, shape, { exactShapes: true })).toBeInstanceOf(
         RtvError
       );
     });
   });
 
-  describe('#verify()', function () {
-    it('should verify a value', function () {
+  describe('#verify()', () => {
+    it('should verify a value', () => {
       const params = ['foo', rtv.STRING];
-      expect(rtv.verify.bind(rtv, ...params)).not.to.throw();
-      expect(rtv.verify(...params)).to.be.an.instanceof(RtvSuccess);
+      expect(rtv.verify.bind(rtv, ...params)).not.toThrow();
+      expect(rtv.verify(...params)).toBeInstanceOf(RtvSuccess);
     });
 
-    it('should throw an RtvError if verify fails', function () {
+    it('should throw an RtvError if verify fails', () => {
       try {
         rtv.verify('foo', rtv.BOOLEAN);
-        expect('statement above should have thrown').to.be.true; // fail this test
+        expect('statement above should have thrown').toBe(true); // fail this test
       } catch (err) {
-        expect(err).to.be.an.instanceof(RtvError);
+        expect(err).toBeInstanceOf(RtvError);
       }
     });
 
-    it('should support exactShapes option', function () {
+    it('should support exactShapes option', () => {
       const obj = { parent: { child: 1, sibbling: 2 } };
       const shape = {
         parent: {
@@ -111,78 +109,78 @@ describe('module: rtv', function () {
 
       try {
         rtv.verify(obj, shape, { exactShapes: true });
-        expect('statement above should have thrown').to.be.true; // fail this test
+        expect('statement above should have thrown').toBe(true); // fail this test
       } catch (err) {
-        expect(err).to.be.an.instanceof(RtvError);
+        expect(err).toBeInstanceOf(RtvError);
       }
     });
   });
 
-  describe('#RtvSuccess', function () {
-    it('should provide RtvSuccess property', function () {
-      expect('RtvSuccess' in rtv).to.equal(true);
-      expect(rtv.RtvSuccess).to.equal(RtvSuccess);
+  describe('#RtvSuccess', () => {
+    it('should provide RtvSuccess property', () => {
+      expect('RtvSuccess' in rtv).toBe(true);
+      expect(rtv.RtvSuccess).toBe(RtvSuccess);
     });
   });
 
-  describe('#RtvError', function () {
-    it('should provide RtvError property', function () {
-      expect('RtvError' in rtv).to.equal(true);
-      expect(rtv.RtvError).to.equal(RtvError);
+  describe('#RtvError', () => {
+    it('should provide RtvError property', () => {
+      expect('RtvError' in rtv).toBe(true);
+      expect(rtv.RtvError).toBe(RtvError);
     });
   });
 
-  describe('#version', function () {
-    it('should provide version property', function () {
-      expect('version' in rtv).to.equal(true);
-      expect(rtv.version).to.equal(pkg.version);
+  describe('#version', () => {
+    it('should provide version property', () => {
+      expect('version' in rtv).toBe(true);
+      expect(rtv.version).toBe(pkg.version);
     });
   });
 
-  describe('#config', function () {
+  describe('#config', () => {
     let rtvVerifySpy;
     let implCheckSpy;
 
-    beforeEach(function () {
+    beforeEach(() => {
       rtv.config.enabled = true; // initially enabled
-      rtvVerifySpy = sinon.spy(rtv, 'verify');
-      implCheckSpy = sinon.spy(impl, 'check');
+      rtvVerifySpy = jest.spyOn(rtv, 'verify').mockClear();
+      implCheckSpy = jest.spyOn(impl, 'check').mockClear();
     });
 
-    afterEach(function () {
+    afterEach(() => {
       rtv.config.enabled = true; // reset enabled
-      rtvVerifySpy.restore();
-      implCheckSpy.restore();
+      rtvVerifySpy.mockRestore();
+      implCheckSpy.mockRestore();
     });
 
-    describe('#enabled', function () {
-      it('should be a boolean value', function () {
-        expect(_.isBoolean(rtv.config.enabled)).to.equal(true);
+    describe('#enabled', () => {
+      it('should be a boolean value', () => {
+        expect(_.isBoolean(rtv.config.enabled)).toBe(true);
       });
 
-      it('should cast non-boolean values to booleans', function () {
+      it('should cast non-boolean values to booleans', () => {
         rtv.config.enabled = 0;
-        expect(rtv.config.enabled).to.equal(false);
+        expect(rtv.config.enabled).toBe(false);
 
         rtv.config.enabled = {};
-        expect(rtv.config.enabled).to.equal(true);
+        expect(rtv.config.enabled).toBe(true);
       });
 
-      it('should not check when disabled', function () {
+      it('should not check when disabled', () => {
         rtv.config.enabled = false;
         const result = rtv.check('foobar', rtv.BOOLEAN);
-        expect(result).to.be.an.instanceof(RtvSuccess);
-        expect(result.mvv).to.be.undefined;
-        expect(implCheckSpy.called).to.equal(false);
+        expect(result).toBeInstanceOf(RtvSuccess);
+        expect(result.mvv).toBeUndefined();
+        expect(implCheckSpy).not.toHaveBeenCalled();
       });
 
-      it('should not verify when disabled', function () {
-        rtvVerifySpy.restore(); // disable spy
+      it('should not verify when disabled', () => {
+        rtvVerifySpy.mockRestore(); // disable spy
         rtv.config.enabled = false;
         const result = rtv.verify('foobar', rtv.BOOLEAN);
-        expect(result).to.be.an.instanceof(RtvSuccess);
-        expect(result.mvv).to.be.undefined;
-        expect(implCheckSpy.called).to.equal(false);
+        expect(result).toBeInstanceOf(RtvSuccess);
+        expect(result.mvv).toBeUndefined();
+        expect(implCheckSpy).not.toHaveBeenCalled();
       });
     });
   });

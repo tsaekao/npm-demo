@@ -1,43 +1,41 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
-import { print } from '../../../src/lib/util';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import { check as isArray } from '../../../src/lib/validation/isArray';
 import * as val from '../../../src/lib/validator/valArray';
 
-describe('module: lib/validator/valArray', function () {
-  describe('validator', function () {
+describe('module: lib/validator/valArray', () => {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.ARRAY);
+    it('#type', () => {
+      expect(val.type).toBe(types.ARRAY);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, []);
     });
 
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.validate).failures).to.eql([]);
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.validate).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
+    it('other types/values', () => {
+      expect(vtu.testOtherValues(val.type, val.validate)).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    it('empty arrays allowed', function () {
+  describe('qualifiers', () => {
+    it('empty arrays allowed', () => {
       _.forEach(qualifiers, function (qualifier) {
         vtu.expectValidatorSuccess(val, [], qualifier);
       });
     });
 
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.REQUIRED);
         vtu.expectAllToFail(
           val.type,
@@ -55,7 +53,7 @@ describe('module: lib/validator/valArray', function () {
         );
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.EXPECTED);
         vtu.expectAllToFail(
           val.type,
@@ -73,7 +71,7 @@ describe('module: lib/validator/valArray', function () {
         );
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.OPTIONAL);
         vtu.expectAllToFail(
           val.type,
@@ -91,7 +89,7 @@ describe('module: lib/validator/valArray', function () {
         );
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         const restrictedValues = vtu.getRestrictedValues(qualifiers.TRUTHY);
         vtu.expectAllToFail(
           val.type,
@@ -110,31 +108,31 @@ describe('module: lib/validator/valArray', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });
   });
 
-  describe('arguments', function () {
-    it('checks for an exact length', function () {
+  describe('arguments', () => {
+    it('checks for an exact length', () => {
       const arr = [7];
 
       vtu.expectValidatorSuccess(val, [], undefined, { length: 0 });
@@ -158,7 +156,7 @@ describe('module: lib/validator/valArray', function () {
       });
     });
 
-    it('length takes precedence over min/max', function () {
+    it('length takes precedence over min/max', () => {
       const arr = [7, 8, 9];
       vtu.expectValidatorSuccess(val, arr, undefined, { length: 3, min: 4 });
       vtu.expectValidatorSuccess(val, arr, undefined, { length: 3, max: 2 });
@@ -169,7 +167,7 @@ describe('module: lib/validator/valArray', function () {
       });
     });
 
-    it('checks for a minimum length', function () {
+    it('checks for a minimum length', () => {
       const arr = [7, 8, 9];
 
       vtu.expectValidatorSuccess(val, arr, undefined, { min: 3 });
@@ -189,7 +187,7 @@ describe('module: lib/validator/valArray', function () {
       });
     });
 
-    it('checks for a maximum length', function () {
+    it('checks for a maximum length', () => {
       const arr = [7, 8, 9];
 
       vtu.expectValidatorSuccess(val, arr, undefined, { max: 3 });
@@ -210,11 +208,11 @@ describe('module: lib/validator/valArray', function () {
       });
     });
 
-    it('max ignored if less than min', function () {
+    it('max ignored if less than min', () => {
       vtu.expectValidatorSuccess(val, [7, 8, 9], undefined, { min: 2, max: 1 });
     });
 
-    it('checks each element against typeset', function () {
+    it('checks each element against typeset', () => {
       let arr = ['a', 'b', ''];
       let args = { $: [qualifiers.EXPECTED, types.STRING] };
 
@@ -245,7 +243,7 @@ describe('module: lib/validator/valArray', function () {
       vtu.expectValidatorSuccess(val, arr, undefined, args);
     });
 
-    it('creates error paths that are arrays of strings', function () {
+    it('creates error paths that are arrays of strings', () => {
       vtu.expectValidatorError(
         val,
         ['a', 2],
@@ -259,14 +257,14 @@ describe('module: lib/validator/valArray', function () {
     });
   });
 
-  describe('context', function () {
-    it('should set parent to array and parentKey to index', function () {
-      const validator = sinon.spy();
+  describe('context', () => {
+    it('should set parent to array and parentKey to index', () => {
+      const validator = jest.fn();
       const value = ['bar'];
       val.validate(value, undefined, { $: validator });
 
-      expect(validator.callCount).to.equal(1);
-      expect(validator.firstCall.args).to.eql([
+      expect(validator).toHaveBeenCalledTimes(1);
+      expect(validator.mock.calls[0]).toEqual([
         'bar',
         [qualifiers.REQUIRED, types.ANY],
         validator,
@@ -280,19 +278,19 @@ describe('module: lib/validator/valArray', function () {
     it('interprets original value as array', () => {
       const value = [1, 2, 3];
       const result = val.validate(value);
-      expect(result.mvv).not.to.be.equal(value);
-      expect(isArray(result.mvv)).to.be.true;
+      expect(result.mvv).not.toBe(value);
+      expect(isArray(result.mvv)).toBe(true);
     });
 
     it('interprets falsy values verbatim', () => {
       vtu.getFalsyValues().forEach((falsyValue) => {
         const result = val.validate(falsyValue, qualifiers.TRUTHY);
         if (isNaN(falsyValue)) {
-          expect(isNaN(result.mvv), `${print(falsyValue)} verbatim`).to.be.true;
+          // ${print(falsyValue)} verbatim
+          expect(isNaN(result.mvv)).toBe(true);
         } else {
-          expect(result.mvv, `${print(falsyValue)} verbatim`).to.equal(
-            falsyValue
-          );
+          // ${print(falsyValue)} verbatim
+          expect(result.mvv).toBe(falsyValue);
         }
       });
     });
@@ -311,7 +309,7 @@ describe('module: lib/validator/valArray', function () {
         }
       );
 
-      expect(result.mvv).to.eql([{ foo: 1 }, { foo: 2 }]);
+      expect(result.mvv).toEqual([{ foo: 1 }, { foo: 2 }]);
     });
   });
 });

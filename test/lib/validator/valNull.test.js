@@ -1,42 +1,41 @@
-import { expect } from 'chai';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import { qualifiers } from '../../../src/lib/qualifiers';
 import * as val from '../../../src/lib/validator/valNull';
 
-describe('module: lib/validator/valNull', function () {
+describe('module: lib/validator/valNull', () => {
   let restrictedValues;
 
-  beforeEach(function () {
+  beforeEach(() => {
     restrictedValues = vtu.getRestrictedValues().filter((v) => v !== null);
   });
 
-  describe('validator', function () {
+  describe('validator', () => {
     // module, and value only
-    it('#type', function () {
-      expect(val.type).to.equal(types.NULL);
+    it('#type', () => {
+      expect(val.type).toBe(types.NULL);
     });
 
-    it('succeeds with an RtvSuccess', function () {
+    it('succeeds with an RtvSuccess', () => {
       vtu.expectValidatorSuccess(val, null);
     });
 
-    it('valid values', function () {
+    it('valid values', () => {
       vtu.expectValidatorSuccess(val, null);
     });
 
-    it('other types/values', function () {
+    it('other types/values', () => {
       vtu.expectAllToFail(val.type, val.validate, restrictedValues);
 
       // this does not test for undefined/null
-      expect(vtu.testOtherValues(val.type, val.validate)).to.eql([]);
+      expect(vtu.testOtherValues(val.type, val.validate)).toEqual([]);
     });
   });
 
-  describe('qualifiers', function () {
-    describe('rules are supported', function () {
-      it('REQUIRED (other than values previously tested)', function () {
+  describe('qualifiers', () => {
+    describe('rules are supported', () => {
+      it('REQUIRED (other than values previously tested)', () => {
         vtu.expectAllToFail(
           val.type,
           val.validate,
@@ -48,7 +47,7 @@ describe('module: lib/validator/valNull', function () {
         vtu.expectValidatorSuccess(val, null, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectAllToFail(
           val.type,
           val.validate,
@@ -60,7 +59,7 @@ describe('module: lib/validator/valNull', function () {
         vtu.expectValidatorSuccess(val, null, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         restrictedValues.splice(restrictedValues.indexOf(undefined), 1);
         vtu.expectAllToFail(
           val.type,
@@ -74,7 +73,7 @@ describe('module: lib/validator/valNull', function () {
         vtu.expectValidatorSuccess(val, null, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         // here, ALL restricted values succeed because the qualifier permits them
         vtu.expectAllToPass(
           val.type,
@@ -86,24 +85,24 @@ describe('module: lib/validator/valNull', function () {
       });
     });
 
-    describe('are used in error typesets', function () {
-      it('DEFAULT', function () {
+    describe('are used in error typesets', () => {
+      it('DEFAULT', () => {
         vtu.expectValidatorError(val, 1); // default should be REQUIRED
       });
 
-      it('REQUIRED', function () {
+      it('REQUIRED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.REQUIRED);
       });
 
-      it('EXPECTED', function () {
+      it('EXPECTED', () => {
         vtu.expectValidatorError(val, 1, qualifiers.EXPECTED);
       });
 
-      it('OPTIONAL', function () {
+      it('OPTIONAL', () => {
         vtu.expectValidatorError(val, 1, qualifiers.OPTIONAL);
       });
 
-      it('TRUTHY', function () {
+      it('TRUTHY', () => {
         vtu.expectValidatorError(val, 1, qualifiers.TRUTHY);
       });
     });

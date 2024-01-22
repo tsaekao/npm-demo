@@ -1,137 +1,136 @@
-import { expect } from 'chai';
 import _ from 'lodash';
 
 import { Enumeration } from '../../src/lib/Enumeration';
 
-describe('module: lib/Enumeration', function () {
+describe('module: lib/Enumeration', () => {
   let en;
 
-  beforeEach(function () {
+  beforeEach(() => {
     en = new Enumeration({ a: 1, b: 2 });
   });
 
-  it('should require at least one key', function () {
+  it('should require at least one key', () => {
     const msg = 'map must contain at least one key';
 
     expect(function () {
       new Enumeration();
-    }).to.throw(msg);
+    }).toThrow(msg);
 
     expect(function () {
       new Enumeration({});
-    }).to.throw(msg);
+    }).toThrow(msg);
 
     expect(function () {
       new Enumeration([]);
-    }).to.throw(msg);
+    }).toThrow(msg);
 
     expect(function () {
       new Enumeration(2);
-    }).to.throw(msg);
+    }).toThrow(msg);
 
     expect(function () {
       new Enumeration('foo');
-    }).not.to.throw(msg); // strings are iterable, keys are 0..2
+    }).not.toThrow(msg); // strings are iterable, keys are 0..2
 
     expect(function () {
       new Enumeration({ foo: 'bar' });
-    }).not.to.throw(msg);
+    }).not.toThrow(msg);
   });
 
-  it('should disallow undefined values', function () {
+  it('should disallow undefined values', () => {
     expect(function () {
       new Enumeration({ foo: undefined });
-    }).to.throw(/cannot be undefined/);
+    }).toThrow(/cannot be undefined/);
   });
 
-  it('should prevent duplicate values', function () {
+  it('should prevent duplicate values', () => {
     expect(function () {
       new Enumeration({ foo: 1, bar: 1 });
-    }).to.throw(/duplicate value/);
+    }).toThrow(/duplicate value/);
   });
 
-  it('should disallow keys that begin with "$"', function () {
+  it('should disallow keys that begin with "$"', () => {
     expect(function () {
       new Enumeration({ $foo: 1 });
-    }).to.throw(/cannot start with "\$"/);
+    }).toThrow(/cannot start with "\$"/);
   });
 
-  it('should allow a null value', function () {
+  it('should allow a null value', () => {
     expect(function () {
       new Enumeration({ foo: null });
-    }).not.to.throw();
+    }).not.toThrow();
   });
 
-  it('should have keys as its own properties', function () {
+  it('should have keys as its own properties', () => {
     const keys = Object.keys(en);
-    expect(keys.length).to.equal(2);
-    expect(_.difference(keys, ['a', 'b'])).to.eql([]);
+    expect(keys.length).toBe(2);
+    expect(_.difference(keys, ['a', 'b'])).toEqual([]);
   });
 
-  it('should provide a readonly $values property with all values', function () {
-    expect(en.hasOwnProperty('$values')).to.be.true;
-    expect(Object.keys(en).includes('$values')).to.be.false; // non-enumerable
-    expect(en.$values).to.eql([1, 2]);
+  it('should provide a readonly $values property with all values', () => {
+    expect(en.hasOwnProperty('$values')).toBe(true);
+    expect(Object.keys(en).includes('$values')).toBe(false); // non-enumerable
+    expect(en.$values).toEqual([1, 2]);
 
     expect(function () {
       en.$values = []; // cannot write
-    }).to.throw();
+    }).toThrow();
 
     _.pull(en.$values, 1);
-    expect(en.$values).to.eql([1, 2]); // should be a shallow clone, so pull should have no effect
+    expect(en.$values).toEqual([1, 2]); // should be a shallow clone, so pull should have no effect
 
     const en2 = new Enumeration({ a: [1], b: [2] });
-    expect(en2.$values).to.eql([[1], [2]]);
+    expect(en2.$values).toEqual([[1], [2]]);
     _.pull(en2.$values[0], 1); // since it's a shallow clone, if we modify a referenced value, it should be permanent
-    expect(en2.$values[0]).to.eql([]);
-    expect(en2.a).to.eql([]);
+    expect(en2.$values[0]).toEqual([]);
+    expect(en2.a).toEqual([]);
   });
 
-  it('should verify it has a value', function () {
+  it('should verify it has a value', () => {
     expect(function () {
       en.verify(1);
-    }).not.to.throw;
+    }).not.toThrow();
   });
 
-  it('should throw if it does not have a value', function () {
+  it('should throw if it does not have a value', () => {
     expect(function () {
       en.verify(3);
-    }).to.throw('Invalid value for enum');
+    }).toThrow('Invalid value for enum');
   });
 
-  it('should return the value when it is verified', function () {
-    expect(en.verify(1)).to.equal(1);
+  it('should return the value when it is verified', () => {
+    expect(en.verify(1)).toBe(1);
   });
 
-  it('should return undefined when a value is not verified in silent mode', function () {
-    expect(en.verify(3, true)).to.equal(undefined);
+  it('should return undefined when a value is not verified in silent mode', () => {
+    expect(en.verify(3, true)).toBeUndefined();
   });
 
-  it('should have custom string serialization', function () {
+  it('should have custom string serialization', () => {
     const str = en + '';
-    expect(str).not.to.equal({} + ''); // not the default serialization
-    expect(str).to.contain('Enumeration');
-    expect(str).to.contain('$name=""');
-    expect(str).to.contain('pairs=');
+    expect(str).not.toBe({} + ''); // not the default serialization
+    expect(str).toContain('Enumeration');
+    expect(str).toContain('$name=""');
+    expect(str).toContain('pairs=');
   });
 
-  it('should default to an empty name', function () {
-    expect(en.$name).to.equal('');
+  it('should default to an empty name', () => {
+    expect(en.$name).toBe('');
   });
 
-  it('should have a non-enumerable, read-only "$name" property', function () {
+  it('should have a non-enumerable, read-only "$name" property', () => {
     const desc = Object.getOwnPropertyDescriptor(en, '$name');
-    expect(desc.enumerable).to.be.false;
-    expect(desc.configurable).to.be.true;
-    expect(desc.writable).to.be.false;
+    expect(desc.enumerable).toBe(false);
+    expect(desc.configurable).toBe(true);
+    expect(desc.writable).toBe(false);
   });
 
-  it('should use its name in validation error messages', function () {
+  it('should use its name in validation error messages', () => {
     const en2 = new Enumeration({ a: 1 }, 'foo');
     const str = en2 + '';
-    expect(str).to.contain('$name="foo"');
+    expect(str).toContain('$name="foo"');
     expect(function () {
       en2.verify(2);
-    }).to.throw(/for "foo" enum/);
+    }).toThrow(/for "foo" enum/);
   });
 });

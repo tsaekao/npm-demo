@@ -2,11 +2,25 @@
 
 {
   // extend source settings to add test-specific settings
-  "extends": ["../src/.eslintrc"],
+  "extends": ["../src/.eslintrc", "plugin:jest-dom/recommended"],
   "env": {
-    "mocha": true
+    "jest": true
   },
+  "plugins": ["jest"],
   "rules": {
-    "no-prototype-builtins": "off" // OFF to allow {}.hasOwnProperty('foo')
+    "no-prototype-builtins": "off", // OFF to allow {}.hasOwnProperty('foo')
+
+    //// jest plugin
+
+    "jest/no-disabled-tests": "error",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/valid-expect": "error",
+    "jest/valid-title": "error",
+
+    //// jest-dom plugin
+
+    // this rule is buggy, and doesn't seem to work well with the Testing Library's queries
+    "jest-dom/prefer-in-document": "off",
   }
 }

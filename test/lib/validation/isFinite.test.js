@@ -1,21 +1,21 @@
-import { expect } from 'chai';
 import _ from 'lodash';
 
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isFinite';
 
-describe('module: lib/validation/isFinite', function () {
-  it('#type', function () {
-    expect(val.type).to.equal(types.FINITE);
+describe('module: lib/validation/isFinite', () => {
+  it('#type', () => {
+    expect(val.type).toBe(types.FINITE);
   });
 
-  describe('#default', function () {
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.check).failures).to.eql([]);
+  describe('#default', () => {
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.check).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
+    it('other types/values', () => {
       const validValues = vtu.getValidValues(); // @type {Object}
       const invalidTypes = Object.keys(validValues); // @type {Array}
 
@@ -43,7 +43,7 @@ describe('module: lib/validation/isFinite', function () {
       });
 
       // nothing should pass
-      expect(vtu.testValues(val.type, val.check, invalidValues).passes).to.eql(
+      expect(vtu.testValues(val.type, val.check, invalidValues).passes).toEqual(
         []
       );
     });

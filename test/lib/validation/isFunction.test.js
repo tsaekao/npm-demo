@@ -1,21 +1,20 @@
-import { expect } from 'chai';
-
+import '../../../src/rtv'; // make sure all validators we might use in typesets get configured
 import * as vtu from '../validationTestUtil';
 import { types } from '../../../src/lib/types';
 import * as val from '../../../src/lib/validation/isFunction';
 
-describe('module: lib/validation/isFunction', function () {
-  it('#type', function () {
-    expect(val.type).to.equal(types.FUNCTION);
+describe('module: lib/validation/isFunction', () => {
+  it('#type', () => {
+    expect(val.type).toBe(types.FUNCTION);
   });
 
-  describe('#default', function () {
-    it('valid values', function () {
-      expect(vtu.testValues(val.type, val.check).failures).to.eql([]);
+  describe('#default', () => {
+    it('valid values', () => {
+      expect(vtu.testValues(val.type, val.check).failures).toEqual([]);
     });
 
-    it('other types/values', function () {
-      expect(vtu.testOtherValues(val.type, val.check)).to.eql([]);
+    it('other types/values', () => {
+      expect(vtu.testOtherValues(val.type, val.check)).toEqual([]);
     });
   });
 });

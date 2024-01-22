@@ -1,24 +1,22 @@
 ////// Integration-style tests using public RTV.js interface
 
-import { expect } from 'chai';
-
 import * as rtv from '../src/rtv';
 
 import { RtvSuccess } from '../src/lib/RtvSuccess';
 import { RtvError } from '../src/lib/RtvError';
 
-describe('Integration', function () {
-  describe('Typesets', function () {
-    it('should be valid non-fully-qualified typesets', function () {
+describe('Integration', () => {
+  describe('Typesets', () => {
+    it('should be valid non-fully-qualified typesets', () => {
       rtv.isTypeset([rtv.BOOLEAN, [rtv.STRING], [rtv.INT]], { deep: true });
     });
   });
 
-  describe('Simple TODO items', function () {
+  describe('Simple TODO items', () => {
     let item;
     let shape;
 
-    beforeEach(function () {
+    beforeEach(() => {
       item = {
         title: 'Make Christmas Oatmeal',
         due: new Date('12/25/2018'),
@@ -43,17 +41,17 @@ describe('Integration', function () {
       };
     });
 
-    it('should validate', function () {
+    it('should validate', () => {
       const result = rtv.check(item, shape);
-      expect(result).to.be.an.instanceof(RtvSuccess);
+      expect(result).toBeInstanceOf(RtvSuccess);
     });
   });
 
-  describe('Advanced TODO items', function () {
+  describe('Advanced TODO items', () => {
     let item;
     let shapes;
 
-    beforeEach(function () {
+    beforeEach(() => {
       item = {
         title: 'Make Christmas Oatmeal',
         due: new Date('12/25/2018'),
@@ -88,26 +86,26 @@ describe('Integration', function () {
       };
     });
 
-    it('should validate', function () {
+    it('should validate', () => {
       const result = rtv.check(item, shapes.todo);
-      expect(result).to.be.an.instanceof(RtvSuccess);
+      expect(result).toBeInstanceOf(RtvSuccess);
     });
 
-    it('should fail if a note is missing "updated"', function () {
+    it('should fail if a note is missing "updated"', () => {
       delete item.notes[1].updated;
 
       const todoShape = shapes.todo;
       const result = rtv.check(item, todoShape);
-      expect(result).to.be.an.instanceof(RtvError);
-      expect(result.value).to.equal(item);
-      expect(result.typeset).to.equal(todoShape);
-      expect(result.mismatch).to.eql(rtv.fullyQualify(shapes.note.updated));
-      expect(result.path).to.eql(['notes', '1', 'updated']);
+      expect(result).toBeInstanceOf(RtvError);
+      expect(result.value).toBe(item);
+      expect(result.typeset).toBe(todoShape);
+      expect(result.mismatch).toEqual(rtv.fullyQualify(shapes.note.updated));
+      expect(result.path).toEqual(['notes', '1', 'updated']);
     });
   });
 
-  describe('Dynamic Note class', function () {
-    it('creates a class from a shape with setters that verify values', function () {
+  describe('Dynamic Note class', () => {
+    it('creates a class from a shape with setters that verify values', () => {
       const { STRING, DATE } = rtv.types; // some types
       const { EXPECTED } = rtv.qualifiers; // some qualifiers
       const tags = ['car', 'money', 'reminder', 'grocery'];
@@ -180,27 +178,27 @@ describe('Integration', function () {
       const Note = classGenerator(noteShape);
       let note = new Note();
 
-      expect(Object.keys(note)).to.eql(Object.keys(noteShape));
+      expect(Object.keys(note)).toEqual(Object.keys(noteShape));
       expect(function () {
         note.text = null;
-      }).to.throw(RtvError);
+      }).toThrow(RtvError);
 
       expect(function () {
         note = new Note({
           text: null,
           tags: [],
         });
-      }).not.to.throw();
-      expect(note.text).to.equal(null);
-      expect(note.tags).to.eql([]);
+      }).not.toThrow();
+      expect(note.text).toBeNull();
+      expect(note.tags).toEqual([]);
       expect(function () {
         note.text = 'Awesome';
-      }).not.to.throw();
+      }).not.toThrow();
     });
   });
 
-  describe('Reactive Validations', function () {
-    it('validates an object with varying property values', function () {
+  describe('Reactive Validations', () => {
+    it('validates an object with varying property values', () => {
       const { STRING, DATE, SAFE_INT } = rtv.types;
       const { EXPECTED } = rtv.qualifiers;
       const tags = ['car', 'money', 'reminder', 'grocery'];
@@ -230,12 +228,12 @@ describe('Integration', function () {
 
       const result = rtv.check(note, noteShape);
 
-      expect(result).to.be.an.instanceOf(RtvError);
-      expect(result.rootCause).to.be.an.instanceOf(Error);
-      expect(result.rootCause.message).to.equal('tags and tagCount mismatch');
+      expect(result).toBeInstanceOf(RtvError);
+      expect(result.rootCause).toBeInstanceOf(Error);
+      expect(result.rootCause.message).toBe('tags and tagCount mismatch');
     });
 
-    it('validates a NESTED object with varying property values', function () {
+    it('validates a NESTED object with varying property values', () => {
       const { STRING, DATE, SAFE_INT } = rtv.types;
       const { EXPECTED } = rtv.qualifiers;
       const tags = ['car', 'money', 'reminder', 'grocery'];
@@ -265,9 +263,9 @@ describe('Integration', function () {
 
       let result = rtv.check([note], [[noteShape]]);
 
-      expect(result).to.be.an.instanceOf(RtvError);
-      expect(result.rootCause).to.be.an.instanceOf(Error);
-      expect(result.rootCause.message).to.equal('tags and tagCount mismatch');
+      expect(result).toBeInstanceOf(RtvError);
+      expect(result.rootCause).toBeInstanceOf(Error);
+      expect(result.rootCause.message).toBe('tags and tagCount mismatch');
 
       result = rtv.check(
         {
@@ -278,9 +276,9 @@ describe('Integration', function () {
         }
       );
 
-      expect(result).to.be.an.instanceOf(RtvError);
-      expect(result.rootCause).to.be.an.instanceOf(Error);
-      expect(result.rootCause.message).to.equal('tags and tagCount mismatch');
+      expect(result).toBeInstanceOf(RtvError);
+      expect(result.rootCause).toBeInstanceOf(Error);
+      expect(result.rootCause.message).toBe('tags and tagCount mismatch');
     });
   });
 
@@ -379,7 +377,7 @@ describe('Integration', function () {
         ],
       ]);
 
-      expect(result.mvv).to.eql([
+      expect(result.mvv).toEqual([
         {
           title: tasks[0].title,
           tags: [
@@ -543,7 +541,7 @@ describe('Integration', function () {
         },
       ]);
 
-      expect(Array.from(result.mvv.entries())).to.eql([
+      expect(Array.from(result.mvv.entries())).toEqual([
         // first entry
         [
           // KEY (task)
