@@ -1,4 +1,4 @@
-[![CI](https://github.com/stefcameron/rtvjs/workflows/CI/badge.svg?branch=master&event=push)](https://github.com/stefcameron/rtvjs/actions?query=workflow:CI+branch:master) [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
+[![CI](https://github.com/stefcameron/rtvjs/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stefcameron/rtvjs/actions/workflows/ci.yml) [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 
 # RTV.js
 
