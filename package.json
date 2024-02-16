@@ -17,41 +17,43 @@
     "precommit:docs"
   ],
   "scripts": {
-    "precommit:msg": "echo 'Running pre-commit checks...'",
-    "precommit:docs": "git add API.md",
+    "ci:lint": "npm run fmt:check && npm run lint",
+    "ci:build": "npm run build:lib",
+    "ci:test": "npm run test:coverage",
+    "clean": "npm run clean:lib && npm run clean:internals",
     "clean:internals": "rm -rf ./dist_tools",
     "clean:lib": "rm -rf ./dist",
-    "clean": "npm run clean:lib && npm run clean:internals",
-    "start": "npm run build:lib && npm run node",
+    "build": "npm run build:lib",
     "build:internals": "npm run clean:internals && rollup -c tools/rollup.internals.js",
     "build:lib": "npm run clean:lib && node ./tools/build/build.js",
-    "build": "npm run build:lib",
     "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "fmt": "prettier --write \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
     "fmt:check": "prettier --check \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
     "lint": "eslint ./*.js \"src/**/*.{js,jsdoc}\" \"test/**/*.js\" \"tools/**/*.js\"",
-    "test:ci": "npm run test",
-    "test:unit": "BABEL_ENV=test NODE_ENV=production jest",
-    "test:unit:watch": "npm run test:unit -- --watch",
-    "test:unit:debug": "npm run test:unit -- --inspect-brk --runInBand",
-    "test:coverage": "npm run test:unit -- --coverage",
-    "test": "npm run fmt:check && npm run lint && npm run test:coverage",
+    "html": "npm run build:lib && npm run html:live",
+    "html:live": "live-server --no-browser --mount=\"/dist:./dist\" ./tools",
     "node": "echo \"\n!!! REMEMBER TO REBUILD IF NECESSARY !!!\n\n\" && node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
     "node:internals": "npm run build:internals && node -r ./dist_tools/internals.js --inspect",
-    "html": "npm run build:lib && npm run html:live",
-    "html:live": "live-server --no-browser --mount=\"/dist:./dist\" ./tools",
-    "preversion": "npm test",
-    "postversion": "git push && git push --tags",
+    "precommit:docs": "git add API.md",
+    "precommit:msg": "echo 'Running pre-commit checks...'",
     "prepublish:checkdocs": "git diff HEAD --exit-code -- API.md",
     "prepublishOnly": "npm test && npm run build && npm run docs && npm run prepublish:checkdocs",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags",
     "release:major": "npm version major -m \"Version %s release\" && npm publish",
     "release:minor": "npm version minor -m \"Version %s release\" && npm publish",
-    "release:patch": "npm version patch -m \"Version %s release\" && npm publish"
+    "release:patch": "npm version patch -m \"Version %s release\" && npm publish",
+    "start": "npm run build:lib && npm run node",
+    "test": "npm run fmt:check && npm run lint && npm run test:coverage",
+    "test:coverage": "npm run test:unit -- --coverage",
+    "test:unit": "BABEL_ENV=test NODE_ENV=production jest",
+    "test:unit:debug": "npm run test:unit -- --inspect-brk --runInBand",
+    "test:unit:watch": "npm run test:unit -- --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/stefcameron/rtvjs.git"
+    "url": "https://github.com/stefcameron/rtvjs"
   },
   "keywords": [
     "javascript",
@@ -66,13 +68,13 @@
   ],
   "author": {
     "name": "Stefan Cameron",
-    "url": "https://twitter.com/stefcameron"
+    "url": "https://stefancameron.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/stefcameron/rtvjs/issues"
+    "url": "https://github.com/stefcameron/rtvjs/issues"
   },
-  "homepage": "https://gitlab.com/stefcameron/rtvjs#README",
+  "homepage": "https://github.com/stefcameron/rtvjs#README",
   "files": [
     "API.md",
     "CHANGELOG.md",
@@ -95,7 +97,6 @@
     "@rollup/plugin-replace": "^5.0.5",
     "babel-plugin-istanbul": "^6.1.1",
     "chokidar": "^3.5.3",
-    "codecov": "^3.8.3",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^27.8.0",

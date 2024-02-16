@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/stefcameron/rtvjs/badges/master/pipeline.svg)](https://gitlab.com/stefcameron/rtvjs/commits/master) [![codecov](https://codecov.io/gl/stefcameron/rtvjs/branch/master/graph/badge.svg)](https://codecov.io/gl/stefcameron/rtvjs)
+[![CI](https://github.com/stefcameron/rtvjs/workflows/CI/badge.svg?branch=master&event=push)](https://github.com/stefcameron/rtvjs/actions?query=workflow:CI+branch:master) [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 
 # RTV.js
 
