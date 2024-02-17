@@ -18,7 +18,9 @@ $ npm install
 The following npm commands will get you started:
 
 *   `build`: Builds the library, outputs to `/dist`
-*   `docs`: Builds the API documentation, _overwritting_ `/API.md`
+*   `api`: Builds the API documentation, _overwritting_ `/API.md`
+*   `docs`: Runs the docs on http://localhost:4000 in live-reload mode.
+*   `docs:build`: Builds the docs.
 *   `test`: Runs all unit tests and linting.
 *   `test:unit`: Runs unit tests only.
 *   `test:unit:watch`: Runs unit tests in watch mode, re-running tests as you make changes to code.

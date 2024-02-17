@@ -1,5 +1,5 @@
 npm run precommit:msg
 npm run fmt:check
 npm run lint
-npm run docs
-npm run precommit:docs
+npm run api
+npm run precommit:api

@@ -26,7 +26,7 @@ const FILE_NAME = 'rtv'; // skip the 'js' since that's in the extension, e.g. 'r
 
 const banner = `/*!
  * ${pkg.name} ${pkg.version}
- * @license MIT, https://gitlab.com/stefcameron/rtvjs/blob/master/LICENSE.md
+ * @license MIT, https://github.com/stefcameron/rtvjs/blob/master/LICENSE.md
  * Parts of Lodash used internally: https://github.com/lodash/lodash/
  */`;
 

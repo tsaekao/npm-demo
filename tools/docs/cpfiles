@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# NOTE: Meant to be run from the repo root
+cd docs
+
+TIMESTAMP=$(date '+%Y%m%d+%H%M')
+VERSION=$(sed -n 's/"version": "\(.*\)",$/\1/p' ../package.json | tr -d ' ')
+
+# only do this in CI
+if [ X"$CI" != X ]; then
+  echo "Updating //docs/_config.yml with cache_bust timestamp: '${TIMESTAMP}'"
+  sed -i'.bak' "s/^cache_bust: 'TIMESTAMP'/cache_bust: '${TIMESTAMP}'/" _config.yml
+  rm -f _config.yml.bak
+fi
+
+echo "Copying //README.md -> //docs/index.md and adding Jekyll header"
+cat ../tools/docs/index-header.txt > index.md
+cat ../README.md >> index.md
+
+echo "Copying //API.md -> //docs/pages/API.md and adding Jekyll header and version"
+cat ../tools/docs/api-header.txt > pages/API.md
+echo "Version: \`$VERSION\`" >> pages/API.md
+echo "" >> pages/API.md
+cat ../API.md >> pages/API.md
+
+echo "Copying //CHANGELOG.md -> //docs/pages/CHANGELOG.md and adding Jekyll header"
+cat ../tools/docs/changelog-header.txt > pages/CHANGELOG.md
+cat ../CHANGELOG.md >> pages/CHANGELOG.md

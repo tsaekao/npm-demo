@@ -9,14 +9,8 @@
   "main": "dist/rtv.js",
   "module": "dist/rtv.esm.js",
   "sideEffects": false,
-  "pre-commit": [
-    "precommit:msg",
-    "fmt:check",
-    "lint",
-    "docs",
-    "precommit:docs"
-  ],
   "scripts": {
+    "api": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
     "ci:lint": "npm run fmt:check && npm run lint",
     "ci:build": "npm run build:lib",
     "ci:test": "npm run test:coverage",
@@ -26,7 +20,9 @@
     "build": "npm run build:lib",
     "build:internals": "npm run clean:internals && rollup -c tools/rollup.internals.js",
     "build:lib": "npm run clean:lib && node ./tools/build/build.js",
-    "docs": "jsdoc2md -f \"src/**/*.js\" -f \"src/**/*.jsdoc\" --heading-depth 1 > API.md",
+    "docs": "npm run docs:cpfiles; cd docs; bundle exec jekyll serve -w -l",
+    "docs:build": "npm run docs:cpfiles; cd docs; bundle exec jekyll build",
+    "docs:cpfiles": "./tools/docs/cpfiles",
     "fmt": "prettier --write \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
     "fmt:check": "prettier --check \"{*,src/**/*,test/**/*,tools/**/*}.+(js|yml)\"",
     "lint": "eslint ./*.js \"src/**/*.{js,jsdoc}\" \"test/**/*.js\" \"tools/**/*.js\"",
@@ -35,10 +31,11 @@
     "node": "echo \"\n!!! REMEMBER TO REBUILD IF NECESSARY !!!\n\n\" && node -r ./tools/node.js --inspect",
     "node:build": "npm run build:lib && npm run node",
     "node:internals": "npm run build:internals && node -r ./dist_tools/internals.js --inspect",
-    "precommit:docs": "git add API.md",
+    "precommit:api": "git add API.md",
     "precommit:msg": "echo 'Running pre-commit checks...'",
+    "prepare": "husky; cd docs; bundle install",
     "prepublish:checkdocs": "git diff HEAD --exit-code -- API.md",
-    "prepublishOnly": "npm test && npm run build && npm run docs && npm run prepublish:checkdocs",
+    "prepublishOnly": "npm test && npm run build && npm run api && npm run prepublish:checkdocs",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
     "release:major": "npm version major -m \"Version %s release\" && npm publish",
@@ -49,8 +46,7 @@
     "test:coverage": "npm run test:unit -- --coverage",
     "test:unit": "BABEL_ENV=test NODE_ENV=production jest",
     "test:unit:debug": "npm run test:unit -- --inspect-brk --runInBand",
-    "test:unit:watch": "npm run test:unit -- --watch",
-    "prepare": "husky"
+    "test:unit:watch": "npm run test:unit -- --watch"
   },
   "repository": {
     "type": "git",

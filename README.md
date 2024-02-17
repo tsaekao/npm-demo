@@ -12,6 +12,8 @@ Give it a [test drive with RunKit](https://npm.runkit.com/rtvjs)!
 
 # Installation
 
+First, __install Ruby 2.7+__ (needed for the Jekyll-based docs), then:
+
 ```bash
 npm install rtvjs
 ```
@@ -162,16 +164,16 @@ rtv.verify(state, [rtv.STRING, {oneOf: ['on', 'off']}]);
 
 The `[rtv.STRING, {oneOf: ['on', 'off']}]` portion of the example above is called a _typeset_. It expresses the expectation for the value of the "state" variable.
 
-[Typesets](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) must be:
+[Typesets](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) must be:
 
-*   Easy to express, using rich [types](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvreftypes-object) and [qualifiers](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvrefqualifiers-object).
+*   Easy to express, using rich [types](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvreftypes-object) and [qualifiers](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvrefqualifiers-object).
 *   Composable, whereby complex typesets can be built by combining multiple typesets into larger ones.
-*   Easy to customize, using [custom validators](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) when the existing types and arguments don't provide the exact verification needed on a value.
-*   Intuitive, using simple native JavaScript language constructs like strings (for types), inline Arrays `[]` for lists and complex typesets, and inline objects `{}` for [shapes](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) (i.e. _interfaces_).
-*   [Serializable](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#json-serialization) to JSON via `JSON.stringify()` so they can be easily transferred between systems.
+*   Easy to customize, using [custom validators](https://github.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) when the existing types and arguments don't provide the exact verification needed on a value.
+*   Intuitive, using simple native JavaScript language constructs like strings (for types), inline Arrays `[]` for lists and complex typesets, and inline objects `{}` for [shapes](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) (i.e. _interfaces_).
+*   [Serializable](https://github.com/stefcameron/rtvjs/blob/master/API.md#json-serialization) to JSON via `JSON.stringify()` so they can be easily transferred between systems.
     *   Backend and frontend systems in JavaScript stacks could dynamically inform one another of expectations by sharing typesets.
-    *   Similar to the `@context` property of a JavaScript Object for [JSON-LD](https://json-ld.org/), an object's expected [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) could be transferred along with the object itself.
-    *   With the exceptions of [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) functions and the `ctor` property of [shape object arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_object_args).
+    *   Similar to the `@context` property of a JavaScript Object for [JSON-LD](https://json-ld.org/), an object's expected [shape](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) could be transferred along with the object itself.
+    *   With the exceptions of [custom validator](https://github.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) functions and the `ctor` property of [shape object arguments](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_object_args).
 
 # Tutorials
 
@@ -193,7 +195,7 @@ import { check, verify, STRING, ... } from 'rtvjs';
 
 ### Checks and Verifications
 
-RTV.js provides two functions for verifying values against [typesets](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset). A _typeset_ is simply a set of one or more types that form an expectation about the value:
+RTV.js provides two functions for verifying values against [typesets](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset). A _typeset_ is simply a set of one or more types that form an expectation about the value:
 
 ```javascript
 rtv.verify(value, typeset); // will throw an error if verification fails
@@ -204,7 +206,7 @@ rtv.check(value, typeset); // returns the error instead of throwing it
 
 Typesets can be strings, objects (shapes), functions (custom validators), or Arrays (multiple possibilities).
 
-At their simplest, typesets are strings that represent type names like `STRING`, `INT`, `DATE`, etc. See the full list of types [here](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.types).
+At their simplest, typesets are strings that represent type names like `STRING`, `INT`, `DATE`, etc. See the full list of types [here](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.types).
 
 ```javascript
 rtv.verify('Hello world!', rtv.STRING); // ok
@@ -213,7 +215,7 @@ rtv.verify('', rtv.STRING); // ERROR: a required string cannot be empty
 
 ### Qualifiers
 
-The first verification succeeds because the value is a non-empty string. The second one fails because the typeset uses the default [qualifier](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.qualifiers), which is `REQUIRED`. A _required_ string cannot be empty (nor can it be `null` or `undefined`).
+The first verification succeeds because the value is a non-empty string. The second one fails because the typeset uses the default [qualifier](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.qualifiers), which is `REQUIRED`. A _required_ string cannot be empty (nor can it be `null` or `undefined`).
 
 In some implementations, an empty string is considered a bad value because it's a _falsy_ value in JavaScript, just like `null`, `undefined`, `false`, `0`, and `NaN`.
 
@@ -250,7 +252,7 @@ if (objectOrFalsy) {
 
 Some types accept arguments. Arguments are simple objects that map argument names to values, and immediately follow a type in a typeset. Once again, an Array must be used to describe the typeset. Type arguments are optional, unless otherwise stated; some types don't accept arguments.
 
-The `STRING` type accepts [arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.STRING_args), one of which is `min`. It lets us specify the minimum length of the string. By default, when the qualifier is `REQUIRED`, `min` defaults to 1, but we can override that:
+The `STRING` type accepts [arguments](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.STRING_args), one of which is `min`. It lets us specify the minimum length of the string. By default, when the qualifier is `REQUIRED`, `min` defaults to 1, but we can override that:
 
 ```javascript
 rtv.verify('Hello world!', [rtv.STRING, {min: 0}]); // ok
@@ -317,7 +319,7 @@ rtv.verify(50, typeset); // ERROR
 
 ### Shapes
 
-Most of the time, especially when integrating with an API, you'll want to verify what you receive against an expected [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor). A _shape_ describes the __interface__ an __object__ is expected to have. As the term implies, an interface describes the properties, and types thereof, expected on an object while ignoring any other properties that the object may have (since the code using this object shouldn't care about them anyway).
+Most of the time, especially when integrating with an API, you'll want to verify what you receive against an expected [shape](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor). A _shape_ describes the __interface__ an __object__ is expected to have. As the term implies, an interface describes the properties, and types thereof, expected on an object while ignoring any other properties that the object may have (since the code using this object shouldn't care about them anyway).
 
 Plain JavaScript objects are used to describe shapes, where expected property names are own-enumerable properties mapped to typesets. For example, we could describe a simple TODO item like this:
 
@@ -339,7 +341,7 @@ Since typesets are fully nestable/composable, we can get a bit more sophisticate
 }
 ```
 
-Since shapes also represent objects, they have an _implied_ (default) type of [OBJECT](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.OBJECT). When [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) (which means not using any implied typeset elements like the qualifier and type), the shape would __move into the special `$` argument__ of the `OBJECT` type:
+Since shapes also represent objects, they have an _implied_ (default) type of [OBJECT](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.OBJECT). When [fully-qualified](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) (which means not using any implied typeset elements like the qualifier and type), the shape would __move into the special `$` argument__ of the `OBJECT` type:
 
 ```javascript
 [rtv.REQUIRED, rtv.OBJECT, {$: {
@@ -401,17 +403,17 @@ rtv.verify(item, {
 }); // ok
 ```
 
-> When the default object type is implied, this is called the _shorthand syntax_. For shapes, it may be used when the typeset is the shape itself, or in an Array typeset that is _not_ [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset), when a qualifier immediately precedes the shape (as we've done above for the "note" property).
+> When the default object type is implied, this is called the _shorthand syntax_. For shapes, it may be used when the typeset is the shape itself, or in an Array typeset that is _not_ [fully-qualified](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset), when a qualifier immediately precedes the shape (as we've done above for the "note" property).
 
 ### Lists
 
-Many times, an API response or a function's arguments will contain a list of values or objects. At their most basic, lists are simple JavaScript Arrays that contain values of some type. The simplest way to verify a list is homogenous is to use the _shorthand_ syntax for the [ARRAY](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY) type:
+Many times, an API response or a function's arguments will contain a list of values or objects. At their most basic, lists are simple JavaScript Arrays that contain values of some type. The simplest way to verify a list is homogenous is to use the _shorthand_ syntax for the [ARRAY](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY) type:
 
 ```javascript
 [[rtv.STRING]]
 ```
 
-This would verify that an Array contains non-empty string values, but the Array could be __empty__, given the default [arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY_args).
+This would verify that an Array contains non-empty string values, but the Array could be __empty__, given the default [arguments](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ARRAY_args).
 
 > __Note the nested Array.__
 
@@ -471,11 +473,11 @@ rtv.verify(item, shape); // ok
 
 ### Custom Validations
 
-While built-in validations are convenient, there may be occasions where a type, or even its arguments, aren't sufficient to verify the value. In that case, the typeset can be customized with a [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.custom_validator) function.
+While built-in validations are convenient, there may be occasions where a type, or even its arguments, aren't sufficient to verify the value. In that case, the typeset can be customized with a [custom validator](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.custom_validator) function.
 
-> The function on its own is considered a valid typeset, and gets an _implied_ type of [ANY](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ANY), which validates _anything_, even `undefined` and `null`, regardless of the qualifier.
+> The function on its own is considered a valid typeset, and gets an _implied_ type of [ANY](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.ANY), which validates _anything_, even `undefined` and `null`, regardless of the qualifier.
 
-Let's say we wanted to verify that a value is a multiple of two. None of the [numeric type arguments](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.numeric_args) will verify that on their own, so we would need a custom validator:
+Let's say we wanted to verify that a value is a multiple of two. None of the [numeric type arguments](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.numeric_args) will verify that on their own, so we would need a custom validator:
 
 ```javascript
 function validator(value) {
@@ -501,9 +503,9 @@ rtv.verify(2, validator); // ok
 rtv.verify(3, validator); // ERROR (rootCause: 'Not a number...')
 ```
 
-> The error thrown by the custom validator (or the one generated by the library) will be included in the [rootCause](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.RtvError+rootCause) property of the failed verification results.
+> The error thrown by the custom validator (or the one generated by the library) will be included in the [rootCause](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.RtvError+rootCause) property of the failed verification results.
 
-Custom validators are intended to be used as _compliments_ to existing types rather than complete replacements. For example, rather than worry about parsing the value as an integer and checking to see if it's not a number, we could let RTV.js first verify the value is an [integer](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.INT) by using an Array typeset:
+Custom validators are intended to be used as _compliments_ to existing types rather than complete replacements. For example, rather than worry about parsing the value as an integer and checking to see if it's not a number, we could let RTV.js first verify the value is an [integer](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.INT) by using an Array typeset:
 
 ```javascript
 const typeset = [rtv.INT, (v) => v % 2 === 0];
@@ -559,7 +561,7 @@ item.due = new Date(Date.now() - 12 * 60 * 1000); // 12 hours ago
 rtv.verify(item, shape); // ok
 ```
 
-> Notice how the validator must handle `null` and `undefined` values because of the [OPTIONAL](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.OPTIONAL) qualifier, and is careful to return a _truthy_ result so that the property remains _optional_.
+> Notice how the validator must handle `null` and `undefined` values because of the [OPTIONAL](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers.OPTIONAL) qualifier, and is careful to return a _truthy_ result so that the property remains _optional_.
 
 ### Minimum Viable Values
 
@@ -571,7 +573,7 @@ To go even further, while it verifies a given value, RTV.js also generates a _Mi
 
 To put this in perspective, if you're dealing with, say, a [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) and you get a massive payload consisting of a long list of cluster objects, each further described by a very large Kubernetes cluster JSON object from which you only care to use 10 properties, you'll only write a [shape](#shapes) that describes those 10 properties. RTV.js will then generate a new object containing only those 10 properties (no matter how deeply nested they are) based on the shape you used for verification.
 
-Discarding the original value and using the [MVV](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvsuccessmvv-) instead could potentially save your app from heavy memory use depending on how many closures in your code end-up imprisoning those large objects.
+Discarding the original value and using the [MVV](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvsuccessmvv-) instead could potentially save your app from heavy memory use depending on how many closures in your code end-up imprisoning those large objects.
 
 To illustrate this, let's say you had retrieved a list of tasks from an API endpoint:
 
@@ -666,7 +668,7 @@ const result = rtv.verify(tasks, [[{
 }]]);
 ```
 
-If the validation is successful, the returned [RtvSuccess](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvrefrtvsuccess) object would have the MVV stored in its `mvv` property, and it would look like this:
+If the validation is successful, the returned [RtvSuccess](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvrefrtvsuccess) object would have the MVV stored in its `mvv` property, and it would look like this:
 
 ```javascript
 [
@@ -728,7 +730,7 @@ If the validation is successful, the returned [RtvSuccess](https://gitlab.com/st
 
 ## Configuration
 
-RTV.js provides a [configuration](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.config) interface which allows [checks](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.check) (`rtv.check(value, typeset)`) and [verifications](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtv.verify) (`rtv.verify(value, typeset)`) to be globally enabled or disabled:
+RTV.js provides a [configuration](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtv.config) interface which allows [checks](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtv.check) (`rtv.check(value, typeset)`) and [verifications](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtv.verify) (`rtv.verify(value, typeset)`) to be globally enabled or disabled:
 
 ```javascript
 rtv.config.enabled = false; // default: true
@@ -753,7 +755,7 @@ rtv.config.enabled && rtv.verify('foo', rtv.INT);
 DO_TYPE_CHECKS && rtv.verify('foo', rtv.INT);
 ```
 
-Now, a JavaScript bundler that supports _tree shaking_ (e.g. Webpack or Rollup) can be configured to completely _exclude_ the entire code for a build. This could be handy if you're concerned about script download size over runtime checks, say, in a production build. See the [Rollup example](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#enabled-example-rollup) for more information.
+Now, a JavaScript bundler that supports _tree shaking_ (e.g. Webpack or Rollup) can be configured to completely _exclude_ the entire code for a build. This could be handy if you're concerned about script download size over runtime checks, say, in a production build. See the [Rollup example](https://github.com/stefcameron/rtvjs/blob/master/API.md#enabled-example-rollup) for more information.
 
 ## Verifications
 
@@ -777,7 +779,7 @@ const item = {
 };
 ```
 
-We can describe this object using two [shapes](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor):
+We can describe this object using two [shapes](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor):
 
 ```javascript
 const {STRING, DATE, INT} = rtv;
@@ -817,7 +819,7 @@ todo.notes[1].updated = true;
 
 Lexically, there's no reason for this assignment to fail, but the boolean value violates what is stated in the spec for a TODO item.
 
-If we were to run the same verification again, __an exception would be thrown__. The exception would be an [RtvError](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.RtvError) with the following properties:
+If we were to run the same verification again, __an exception would be thrown__. The exception would be an [RtvError](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.RtvError) with the following properties:
 
 ```javascript
 rtv.verify(item, shapes.todo);
@@ -833,9 +835,9 @@ rtv.verify(item, shapes.todo);
 }
 ```
 
-The `cause` property is providing us with the [fully-qualified](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) version of the nested typeset that caused the failure. The original typeset simply specified `DATE` as the nested typeset for the `note.updated` property.
+The `cause` property is providing us with the [fully-qualified](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.fully_qualified_typeset) version of the nested typeset that caused the failure. The original typeset simply specified `DATE` as the nested typeset for the `note.updated` property.
 
-In reality, all typesets have a [qualifier](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers), and the default qualifier is `'!'` which means the value is _required_. Required values can neither be `undefined` nor `null`. Depending on the type, other restrictions may be imposed, such as the [STRING](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.STRING) type, which must also not be empty (by default).
+In reality, all typesets have a [qualifier](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.qualifiers), and the default qualifier is `'!'` which means the value is _required_. Required values can neither be `undefined` nor `null`. Depending on the type, other restrictions may be imposed, such as the [STRING](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.STRING) type, which must also not be empty (by default).
 
 For brevity, typesets don't always have to be fully-qualified since the default qualifier is implied when not specified. Note that a typeset must have exactly __one__ qualifier, implied or not, but each nested typeset may have its own qualifier.
 
@@ -847,7 +849,7 @@ The `RtvError` object can also be obtained without catching an exception thrown 
 rtv.check(item, shapes.todo); // returns the RtvError object
 ```
 
-If the check was successful, an [RtvSuccess](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvrefrtvsuccess) would be returned instead. Since both `RtvError` and `RtvSuccess` objects have a common `valid: boolean` property, it's easy to check for success and failure:
+If the check was successful, an [RtvSuccess](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvrefrtvsuccess) would be returned instead. Since both `RtvError` and `RtvSuccess` objects have a common `valid: boolean` property, it's easy to check for success and failure:
 
 ```javascript
 if (rtv.check(item, shapes.todo).valid) {
@@ -868,7 +870,7 @@ rtv.verify('', [rtv.EXPECTED, rtv.STRING]); // ok: expected strings can be null/
 
 This is an advanced use of the RTV.js library. I recommend you read through the [Getting Started](#getting-started) guide or the [Verifications](#verifications) example first.
 
-Let's suppose we have the following [shape](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) that describes a simple note:
+Let's suppose we have the following [shape](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.shape_descriptor) that describes a simple note:
 
 ```javascript
 const {STRING, DATE} = rtv; // some types
@@ -999,7 +1001,7 @@ const note = {
 rtv.verify(note, noteShape); // ok (but not ok...)
 ```
 
-To address this issue, we can use the `context` parameter provided to any [custom validator](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) since it provides a reference to the `originalValue` being validated:
+To address this issue, we can use the `context` parameter provided to any [custom validator](https://github.com/stefcameron/rtvjs/blob/master/API.md#typescustom_validator-function) since it provides a reference to the `originalValue` being validated:
 
 ```javascript
 const noteShape = {
@@ -1019,7 +1021,7 @@ const noteShape = {
 };
 ```
 
-The first parameter, `value`, is the value of the `tagCount` property being validated by the [typeset](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) in which the custom validator is located. The fourth parameter, `context`, provides some additional information such as the original value, that being the Node object itself (the `note` object given to `rtv.verify(note, typeset)`).
+The first parameter, `value`, is the value of the `tagCount` property being validated by the [typeset](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.types.typeset) in which the custom validator is located. The fourth parameter, `context`, provides some additional information such as the original value, that being the Node object itself (the `note` object given to `rtv.verify(note, typeset)`).
 
 ```javascript
 rtv.verify(note, noteShape); // ERROR: 'tags and tagCount mismatch'
@@ -1037,7 +1039,7 @@ rtv.verify([note], [[noteShape]]); // ERROR: 'cannot read property "length" of u
     // so `originalValue.tags.length` causes an exception)
 ```
 
-This is where `parent` (and `parentKey`) are handy: `parent` will always refer to the immediate enclosing `Object`, `Array`, `Map`, or `Set`, whenever a property or element _within_ it is being validated. `parentKey` will be the property or index, depending on `parent`'s type, whose _value_ is being validated. See [custom validator context](https://gitlab.com/stefcameron/rtvjs/blob/master/API.md#rtvref.validator.type_validator_context) for more details on these two properties.
+This is where `parent` (and `parentKey`) are handy: `parent` will always refer to the immediate enclosing `Object`, `Array`, `Map`, or `Set`, whenever a property or element _within_ it is being validated. `parentKey` will be the property or index, depending on `parent`'s type, whose _value_ is being validated. See [custom validator context](https://github.com/stefcameron/rtvjs/blob/master/API.md#rtvref.validator.type_validator_context) for more details on these two properties.
 
 Therefore, we can change our typeset to this:
 
@@ -1085,6 +1087,6 @@ RTV.js is not your only choice for runtime verification of values. Here are some
 
 # Future
 
-See the list of proposed [enhancements](https://gitlab.com/stefcameron/rtvjs/issues?label_name%5B%5D=enhancement). Up-vote the ones you like to help contributors prioritize them!
+See the list of proposed [enhancements](https://github.com/stefcameron/rtvjs/issues?label_name%5B%5D=enhancement). Up-vote the ones you like to help contributors prioritize them!
 
 Feel free to log an __enhancement__ if you have an idea! You may also file a PR, although it might be best to discuss your idea with the community first by creating an enhancement issue.

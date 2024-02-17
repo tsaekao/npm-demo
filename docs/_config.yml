@@ -1,0 +1,74 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+#
+# Jekyll Configuration
+# https://jekyllrb.com/docs/configuration/options/
+#
+
+timezone: 'America/Chicago'
+permalink: pretty
+
+#
+# Site settings
+#
+
+title: 'RTV.js Documentation'
+description: > # this means to ignore newlines until "baseurl:"
+  RTV.js is a JavaScript library that provides runtime type verifications.
+baseurl: '' # the subpath of your site, e.g. /blog
+url: 'https://rtvjs.stefcameron.com' # the base hostname & protocol for your site
+author: 'Stefan Cameron' # used by jekyll-feed plugin when generating feed.xml
+author_url: 'https://stefancameron.com' # not used by jekyll-feed (custom)
+github_repo: 'stefcameron/rtvjs'
+twitter_username: # not used
+google_analytics: 'G-1Z9SDSSNVQ'
+cache_bust: 'TIMESTAMP' # value is set automatically by //tools/docs/cpfiles script on deploy
+
+#
+# Build settings
+#
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+#
+# Content conversion
+#
+
+# Kramdown docs: https://kramdown.gettalong.org/documentation.html
+markdown: kramdown
+kramdown:
+  input: GFM # GitHub Flavored Markdown support
+  syntax_highlighter: rouge
+
+#
+# Exclude from processing.
+# The following items will not be processed, by default.
+# Any item listed under the `exclude:` key here will be automatically added to
+# the internal "default list".
+#
+# Excluded items can be processed by explicitly listing the directories or
+# their entries' file path in the `include:` list.
+#
+
+exclude:
+  - .git/
+  - .gitignore
+  - .vscode/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
