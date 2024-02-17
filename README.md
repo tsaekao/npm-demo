@@ -12,8 +12,6 @@ Give it a [test drive with RunKit](https://npm.runkit.com/rtvjs)!
 
 # Installation
 
-First, __install Ruby 2.7+__ (needed for the Jekyll-based docs), then:
-
 ```bash
 npm install rtvjs
 ```

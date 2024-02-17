@@ -4,15 +4,19 @@ Thank you for considering a contribution to RTV.js!
 
 ## Development
 
-Local development is straightforward. Use the following versions of Node.js and npm:
+Local development is straightforward. Use the following CLI tools:
 
-*   Node: Latest __Active__ LTS (CI will test with latest __Maintenance__ LTS, however)
-*   npm: See package.json `engines` requirement
+*   `node`: At least the latest __Active__ LTS (note CI will test with latest stable version)
+*   `npm`: See package.json `engines` requirement
+*   `ruby`: v2.7+ (to run/build the docs)
 
 Install all project dependencies:
 
 ```bash
 $ npm install
+
+# OPTIONAL: If you will work on the docs site
+$ cd docs; bundle install # assumes you have pre-installed Ruby
 ```
 
 The following npm commands will get you started:
@@ -20,9 +24,9 @@ The following npm commands will get you started:
 *   `build`: Builds the library, outputs to `/dist`
 *   `api`: Builds the API documentation, _overwritting_ `/API.md`
 *   `docs`: Runs the docs on http://localhost:4000 in live-reload mode.
-    *   ❗️ You'll first need to run the `docs:install` script __once__ before running this command.
+    *   ❗️ You'll first need to run the `docs:install` script __once__ (or if the `./docs/Gemfile` changes) before running this command.
 *   `docs:build`: Builds the docs.
-    *   ❗️ You'll first need to run the `docs:install` script __once__ before running this command.
+    *   ❗️ You'll first need to run the `docs:install` script __once__ (or if the `./docs/Gemfile` changes) before running this command.
 *   `test`: Runs all unit tests and linting.
 *   `test:unit`: Runs unit tests only.
 *   `test:unit:watch`: Runs unit tests in watch mode, re-running tests as you make changes to code.
