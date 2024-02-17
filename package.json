@@ -4,7 +4,7 @@
   "description": "Runtime Verification Library for browsers and Node.js.",
   "engines": {
     "node": ">=14.18.0",
-    "npm": ">=8.0.0"
+    "npm": ">=10.0.0"
   },
   "main": "dist/rtv.js",
   "module": "dist/rtv.esm.js",
