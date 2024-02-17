@@ -3,7 +3,7 @@
 # NOTE: Meant to be run from the repo root
 cd docs
 
-TIMESTAMP=$(date '+%Y%m%d+%H%M')
+TIMESTAMP=$(date '+%Y%m%d%H%M%S')
 VERSION=$(sed -n 's/"version": "\(.*\)",$/\1/p' ../package.json | tr -d ' ')
 
 # only do this in CI
