@@ -27,7 +27,6 @@ jobs:
           cache: 'npm'
 
       - name: Install packages
-        # if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |-
           node --version
           npm --version
