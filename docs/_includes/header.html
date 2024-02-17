@@ -21,7 +21,7 @@
         {% endfor %}
 
         <a class="page-link" href="https://github.com/stefcameron/rtvjs" noreferrer target="_blank">
-          <img src="/assets/images/github-mark-dark-32x.png" />
+          <img src="{{ "/assets/images/github-mark-dark-32x.png" | prepend: site.baseurl | append: cache_bust }}" />
         </a>
       </div>
     </nav>
