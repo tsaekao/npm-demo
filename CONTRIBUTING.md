@@ -20,7 +20,9 @@ The following npm commands will get you started:
 *   `build`: Builds the library, outputs to `/dist`
 *   `api`: Builds the API documentation, _overwritting_ `/API.md`
 *   `docs`: Runs the docs on http://localhost:4000 in live-reload mode.
+    *   ❗️ You'll first need to run the `docs:install` script __once__ before running this command.
 *   `docs:build`: Builds the docs.
+    *   ❗️ You'll first need to run the `docs:install` script __once__ before running this command.
 *   `test`: Runs all unit tests and linting.
 *   `test:unit`: Runs unit tests only.
 *   `test:unit:watch`: Runs unit tests in watch mode, re-running tests as you make changes to code.
@@ -87,7 +89,7 @@ Place an X in all relevant checks and delete those that aren't, along with this 
 - [] I have performed a self-review of my own code
 - [] I have commented my code, particularly in hard-to-understand areas
 - [] I have made corresponding changes to the documentation, including the `/README.md`
-- [] I have verified my changes to the API documentation in `/API.md` (cross-reference links in particular, verified _in part_ with `npm run docs`)
+- [] I have verified my changes to the API documentation in `/API.md` (cross-reference links in particular, verified _in part_ with `npm run api`)
 - [] My changes generate no new warnings or errors (verified with `npm test`)
 - [] I have added tests that prove my fix is effective or that my feature works
 - [] New and existing unit tests pass locally with my changes

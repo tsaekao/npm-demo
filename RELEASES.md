@@ -15,11 +15,4 @@ The release/publishing process is as follows:
     $ npm run release:minor
     ```
 
-5.  Update the [documentation site](https://github.com/stefcameron/rtvjs-web):
-    1.  Copy the `README.md`, `CHANGELOG.md`, and `API.md` files over to the repo:
-        -   `README.md` -> `/index.md`
-        -   `CHANGELOG.md` -> `/pages/CHANGELOG.md`
-        -   `API.md` -> `/pages/API.md`
-    2.  Be sure to __restore the correct front matter__ that the existing files are currently using.
-    3.  Add the library version to the top of the content in `API.md`.
-    4.  Follow [publishing](https://github.com/stefcameron/rtvjs-web#publishing) instructions in the `rtvjs-web` repository.
+5.  Update the [documentation site](https://github.com/stefcameron/rtvjs/tree/master/docs): Happens automatically on merge to `master` branch.
