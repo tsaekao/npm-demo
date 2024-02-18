@@ -72,7 +72,7 @@
   "bugs": {
     "url": "https://github.com/stefcameron/rtvjs/issues"
   },
-  "homepage": "https://github.com/stefcameron/rtvjs#README",
+  "homepage": "https://github.com/stefcameron/rtvjs?tab=readme-ov-file#rtvjs",
   "files": [
     "API.md",
     "CHANGELOG.md",
