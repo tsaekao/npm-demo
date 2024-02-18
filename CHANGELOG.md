@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Date format is YYYY-MM-DD.
 
+## 4.1.1
+
+Release date: 2024-02-17
+
+There are no code changes in this release.
+
+### Changed
+
+- Links in `package.json`, `README.md`, `API.md`, and `CHANGELOG.md` updated to point to new GitHub repo.
+
 ## 4.1.0
 
 Release date: 2022-05-12
